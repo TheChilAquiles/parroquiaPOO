@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen bg-[#F8EDE3]">
         
         <?php
             require_once('menubar.php');
