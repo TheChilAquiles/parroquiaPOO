@@ -7,6 +7,8 @@ class UsuarioController
         require_once('Modelo/ModeloUsuario.php');
     }
 
+
+
     public function ctrlCrearUsuario($usuario)
     {
         // Validar los datos del usuario
@@ -22,14 +24,11 @@ class UsuarioController
         // Registrar el usuario
         $resultado = $usuarioModel->mdlRegistrarUsuario($usuario);
 
-        if ($resultado && $resultado['status']) {
-            return [ 'status' => 'error' , 'error' => $resultado['message'] ]; // El email ya existe
+        if ($resultado && $resultado['status'] === 'error') {
+            return ['status' => 'error', 'error' => $resultado['message']]; // El email ya existe
         } else {
-            return [ 'status' => 'success', 'message' => "Usuario registrado correctamente" ]; // Usuario registrado correctamente
+            return ['status' => 'success', 'message' => "Usuario registrado correctamente"]; // Usuario registrado correctamente
         }
-
-   
-
     }
 
     public function obtenerUsuarios()

@@ -15,6 +15,7 @@
             <label class="mt-2" for="">Confirmar contraseña</label>
             <input name="password-confirm" type="password" class="border border-gray-300 rounded p-2  w-full" placeholder="Confirma Tu contraseña"  Value="<?php if (isset($_POST['password-confirm'])) echo $_POST['password-confirm']; ?>" >
             <label name="confirm-error" class="text-red-500 hidden">Corrije Este Campo </label>
+            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('registro') ?>">
             <button class="cursor-pointer bg-[#E3FFCD] p-4 rounded w-[10svw] self-center border border-emerald-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-700 mt-4" type="submit">Registar</button>
         </form>
 

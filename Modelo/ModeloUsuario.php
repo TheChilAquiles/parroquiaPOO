@@ -27,7 +27,7 @@ class ModeloUsuario
         } else {
 
 
-            $sql = "INSERT INTO `usuarios`(`rol`, `email`, `password`) VALUES ('Feligres','" . $usuario['email'] . "','" . md5($usuario['password']) . "')";
+            $sql = "INSERT INTO `usuarios`(`usuario_rol_id`, `email`, `contraseña`) VALUES (1,'" . $usuario['email'] . "','" . md5($usuario['password']) . "')";
             $conexion->consulta($sql);
             if ($conexion->obtenerFilasAfectadas() <= 0) {
                 return ['status' => 'error', 'message' => "Usuario registrado correctamente"]; // No se pudo registrar el usuario
@@ -39,6 +39,32 @@ class ModeloUsuario
 
         $this->usuarios[] = $usuario;
         return false; // Simula que el usuario se creó correctamente
+    }
+
+    public function consultarUsuario($email)
+    {
+        $conexion = new Conexion();
+
+        if (!$conexion->abrir()) {
+            return false;
+        }
+
+        // Usamos sentencia preparada para evitar inyección
+        $mysqli = $conexion->obtenerMySQLI();
+        $stmt = $mysqli->prepare("SELECT * FROM usuarios WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $resultado = $stmt->get_result();
+
+        if ($resultado->num_rows > 0) {
+            $usuario = $resultado->fetch_assoc();
+            $stmt->close();
+            return $usuario; // Devuelve un array asociativo con los datos del usuario
+        } else {
+            $stmt->close();
+            return null; // Usuario no encontrado
+        }
     }
 
     public function obtenerUsuarios()
