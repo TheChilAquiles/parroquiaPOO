@@ -1,55 +1,24 @@
 <?php
 
-class Conexion {
 
-    private $mySQLI;
-    private $sql;
-    private $result;
-    private $filasAfectadas;
-
-    public function __construct() {
-        $this->abrir();
-    }
-
-    public function abrir() {
-        $this->mySQLI = new mysqli("localhost", "root", "", "parroquia");
-
-        if ($this->mySQLI->connect_error) {
-            die("Error de conexión: " . $this->mySQLI->connect_error);
+class Conexion
+{
+    static public function conectar()
+    {
+        try {
+            $link = new PDO(
+                "mysql:host=localhost;dbname=parroquia",
+                "root", // ✅ Usuario de la base de datos
+                "",     // ✅ Contraseña de la base de datos (vacía para XAMPP por defecto)
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            );
+            $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Para manejar errores PDO
+            return $link;
+        } catch (PDOException $e) {
+            // ✅ Es buena práctica loguear el error para depuración
+            error_log("Error de conexión a la base de datos: " . $e->getMessage());
+            // ✅ En desarrollo, puedes mostrar el error; en producción, un mensaje genérico.
+            die("Error de conexión a la base de datos: " . $e->getMessage()); // Muestra el mensaje de error en desarrollo
         }
-
-        return true;
-    }
-
-    public function cerrar() {
-        $this->mySQLI->close();
-    }
-
-    public function consulta($sql) {
-        $this->sql = $sql;
-        $this->result = $this->mySQLI->query($this->sql);
-
-        if (!$this->result) {
-            die("Error en la consulta: " . $this->mySQLI->error);
-        }
-
-        $this->filasAfectadas = $this->mySQLI->affected_rows;
-        return true;
-    }
-
-    public function obtenerMySQLI() {
-        return $this->mySQLI;
-    }
-
-    public function obtenerSql() {
-        return $this->sql;
-    }
-
-    public function obtenerResult() {
-        return $this->result;
-    }
-
-    public function obtenerFilasAfectadas() {
-        return $this->filasAfectadas;
     }
 }

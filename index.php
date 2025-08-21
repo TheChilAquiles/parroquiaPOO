@@ -194,13 +194,85 @@ switch ($_SESSION['menu-item']) {
 
   case 'Libros':
 
-    if(isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('DefinirLibro') ) {
-      echo "Definir Libro";
+
+    if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('DefinirTipolibro')) {
+
+
+      if (isset($_POST[md5('tipo')])) {
+
+        $tipo = "";
+
+        switch ($_POST[md5('tipo')]) {
+
+          case md5('Bautizos'):
+            $libroTipo = 'Bautizos';
+            $tipo = 1;
+            break;
+
+
+          case md5('Confirmaciones'):
+            $libroTipo = 'Confirmaciones';
+            $tipo = 2;
+            break;
+
+          case md5('Defunciones'):
+            $libroTipo = 'Defunciones';
+            $tipo = 3;
+            break;
+
+
+          case md5('Matrimonios'):
+            $libroTipo = 'Matrimonios';
+            $tipo = 4;
+            break;
+        }
+
+
+        include_once('Controlador/ControladorLibro.php');
+
+        $controllerLibro = new LibroController();
+
+        $cantidad = $controllerLibro->ctrlConsultarCantidadLibros($tipo);
+
+
+
+        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('NuevoLibro')) {
+
+
+          $controllerLibro->ctrlCrearLibro($tipo, $cantidad);
+          $cantidad = $controllerLibro->ctrlConsultarCantidadLibros($tipo);
+        }
+
+
+        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('RegistrosLibro')) {
+
+          echo "sisas :D";
+
+           include_once('Vista/sacramentos.php');
+
+
+        } else {
+          include_once('Vista/libros.php');
+        }
+      } else {
+        include_once('Vista/libros-tipo.php');
+      }
+    } else {
+      include_once('Vista/libros-tipo.php');
     }
 
 
 
-    include_once('Vista/libros-tipo.php');
+
+    // $_POST['']
+
+
+
+
+
+
+
+    // include_once('Vista/libros-tipo.php');
 
 
     break;
