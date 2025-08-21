@@ -1,10 +1,10 @@
 <?php
 
 
-class Conexion
-{
-    static public function conectar()
-    {
+class Conexion {
+
+
+    static public function conectar() {
         try {
             $link = new PDO(
                 "mysql:host=localhost;dbname=parroquia",
@@ -21,4 +21,9 @@ class Conexion
             die("Error de conexión a la base de datos: " . $e->getMessage()); // Muestra el mensaje de error en desarrollo
         }
     }
+
+
 }
+
+
+?>

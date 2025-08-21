@@ -32,18 +32,17 @@ class LibroController {
 
     }
 
+
+
+    
+
+
+
 }
 
 
-
-
-
-
-
-
 class records {
-    
-    private $recordsTable = 'usuarios';
+    private $recordsTable = 'bautizos';
     private $conn;
 
     public $id;

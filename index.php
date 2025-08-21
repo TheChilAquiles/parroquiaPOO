@@ -247,10 +247,6 @@ switch ($_SESSION['menu-item']) {
         if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('RegistrosLibro')) {
 
           echo "sisas :D";
-
-           include_once('Vista/sacramentos.php');
-
-
         } else {
           include_once('Vista/libros.php');
         }
@@ -275,6 +271,11 @@ switch ($_SESSION['menu-item']) {
     // include_once('Vista/libros-tipo.php');
 
 
+    break;
+
+
+    case 'Informacion':
+        include_once ('Vista/informacion.php');
     break;
 }
 
