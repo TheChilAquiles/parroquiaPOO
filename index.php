@@ -277,6 +277,10 @@ switch ($_SESSION['menu-item']) {
     case 'Informacion':
         include_once ('Vista/informacion.php');
     break;
+
+    case 'Noticias':
+      include_once ('Vista/noticia.php');
+    break;
 }
 
 
