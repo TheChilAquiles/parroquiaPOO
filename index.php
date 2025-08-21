@@ -198,7 +198,9 @@ switch ($_SESSION['menu-item']) {
       echo "Definir Libro";
     }
 
-    include_once('Vista/libros.php');
+
+
+    include_once('Vista/libros-tipo.php');
 
 
     break;

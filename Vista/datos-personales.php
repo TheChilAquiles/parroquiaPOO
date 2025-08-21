@@ -289,6 +289,3 @@
     }
 </script>
 
-<?php
-echo $_POST['tipoDocumento'];
-?>
