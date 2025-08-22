@@ -238,7 +238,6 @@ switch ($_SESSION['menu-item']) {
 
         if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('NuevoLibro')) {
 
-
           $controllerLibro->ctrlCrearLibro($tipo, $cantidad);
           $cantidad = $controllerLibro->ctrlConsultarCantidadLibros($tipo);
         }
@@ -247,7 +246,10 @@ switch ($_SESSION['menu-item']) {
         if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('RegistrosLibro')) {
 
           echo "sisas :D";
+
+          include_once('Vista/sacramentos.php');
         } else {
+
           include_once('Vista/libros.php');
         }
       } else {
@@ -271,15 +273,6 @@ switch ($_SESSION['menu-item']) {
     // include_once('Vista/libros-tipo.php');
 
 
-    break;
-
-
-    case 'Informacion':
-        include_once ('Vista/informacion.php');
-    break;
-
-    case 'Noticias':
-      include_once ('Vista/noticia.php');
     break;
 }
 

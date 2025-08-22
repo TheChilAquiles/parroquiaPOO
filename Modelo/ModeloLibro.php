@@ -3,6 +3,7 @@
 class ModeloLibro
 {
 
+    
 
     public function mdlConsultarCantidadLibros($tipo)
     {

@@ -6,9 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['menu-item'])) {
   $_SESSION['menu-item'] = $_POST['menu-item'];
 }
 
-// teste comit
-// teste comit Rusbel
- 
 include_once('Vista/componentes/plantillaTop.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" ))  {

@@ -1,68 +1,6 @@
-
-
-	
+alert('golas');
 
 console.log("Inicializando DataTable");
-
-
-$(document).ready(function () {
-
-
-    
-    
-
-
-
-    const dataRecords = new DataTable('#recordListing', {
-
-        // processing: false,
-        // serverSide: true,
-        // serverMethod: 'post',
-        // order: [],
-        // language: {
-        //     lengthMenu: "Mostrar _MENU_ registros",
-        //     zeroRecords: "No se encontraron resultados",
-        //     info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-        //     infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
-        //     infoFiltered: "(filtrado de un total de _MAX_ registros)",
-        //     sSearch: "Buscar:",
-        //     oPaginate: {
-        //         sFirst: "Primero",
-        //         sLast: "Último",
-        //         sNext: "Siguiente",
-        //         sPrevious: "Anterior"
-        //     },
-        //     sProcessing: "Procesando...",
-        // },
-        // ajax: {
-        //     url: "Controlador/ControladorAjax.php",
-        //     type: "POST",
-        //     data: { Doaction: 'listRecords' },
-        //     dataType: "json"
-        // },
-        // columnDefs: [
-        //     {
-        //         targets: [0, 6, 7],
-        //         orderable: false,
-        //     },
-        // ],
-        // pageLength: 10
-
-
-    });
-
-
-
-
-
-
-
-
-
-
-});
-
-
 
 // $(document).ready(function () {
 
@@ -100,9 +38,6 @@ $(document).ready(function () {
 //         ],
 //         pageLength: 10
 //     });
-
-
-
 
 //     // Abrir modal para nuevo registro
 //     $('#addRecord').click(function () {

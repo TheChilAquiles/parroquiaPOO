@@ -9,10 +9,12 @@
 
                 <form class="" method="POST">
 
+                <!-- <?=  $libroTipo ?> -->
+
                     <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('DefinirTipolibro') ?>">
                     <input type="hidden" name="<?= md5('tipo') ?>" value="<?= md5($libroTipo) ?>">
                     <input type="hidden" name="<?= md5('sub-action') ?>" value="<?= md5('RegistrosLibro') ?>">
-                    <input type="hidden" name="<?= md5('numero-libro') ?>" value="<?= $i ?>">
+                    <input type="hidden" name="numero-libro" value="<?= $i ?>">
 
 
                     <button type="submit" class="w-full cursor-pointer relative flex justify-center items-center p-2 rounded-md border border-gray-500/50 hover:bg-emerald-100">
