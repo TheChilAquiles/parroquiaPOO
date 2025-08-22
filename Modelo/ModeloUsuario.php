@@ -13,34 +13,44 @@ class ModeloUsuario
 
 
 
-    // public function mdlRegistrarUsuario($usuario)
-    // {
-    //     $conexion = new Conexion();
+  public function mdlRegistrarUsuario($usuario)
+{
+    $conexion = Conexion::conectar(); // Usamos tu clase PDO
 
-    //     if (!$conexion->abrir()) {
-    //         return false; // No se pudo conectar a la base de datos
-    //     }
+    if (!$conexion) {
+        return false; // No se pudo conectar a la base de datos
+    }
 
-    //     $exist = $this->existEmail($usuario['email']);
+    // Verificar si el email ya existe usando tu método actual
+    $exist = $this->existEmail($usuario['email']);
 
-    //     if ($exist) {
-    //         return ['status' => 'error', 'message' => "El email ya existe"]; // El email ya existe
-    //     } else {
+    if ($exist) {
+        return ['status' => 'error', 'message' => "El email ya existe"];
+    } else {
+        // Insertar usuario con PDO
+        $sql = "INSERT INTO `usuarios`(`usuario_rol_id`, `email`, `contraseña`) 
+                VALUES (1, :email, :password)";
 
+        $stmt = $conexion->prepare($sql);
+        $stmt->bindParam(':email', $usuario['email'], PDO::PARAM_STR);
+        $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
 
-    //         $sql = "INSERT INTO `usuarios`(`usuario_rol_id`, `email`, `contraseña`) VALUES (1,'" . $usuario['email'] . "','" . md5($usuario['password']) . "')";
-    //         $conexion->consulta($sql);
-    //         if ($conexion->obtenerFilasAfectadas() <= 0) {
-    //             return ['status' => 'error', 'message' => "Usuario registrado correctamente"]; // No se pudo registrar el usuario
-    //         }
+        // Usar md5 como en tu código original
+        $hashedPassword = md5($usuario['password']);
 
-    //         return ['status' => 'success', 'message' => "Usuario registrado correctamente"]; // Usuario registrado correctamente
-    //     }
+        $stmt->execute();
 
+        if ($stmt->rowCount() <= 0) {
+            return ['status' => 'error', 'message' => "No se pudo registrar el usuario"];
+        }
 
-    //     $this->usuarios[] = $usuario;
-    //     return false; // Simula que el usuario se creó correctamente
-    // }
+        return ['status' => 'success', 'message' => "Usuario registrado correctamente"];
+    }
+
+    // Este bloque nunca se ejecuta por la lógica anterior, pero lo dejamos como en el original
+    $this->usuarios[] = $usuario;
+    return false;
+}
 
 
 
