@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-08-2025 a las 01:15:09
+-- Tiempo de generación: 23-08-2025 a las 01:54:12
 -- Versión del servidor: 11.8.3-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `certificado`
+-- Estructura de tabla para la tabla `certificados`
 --
 
-CREATE TABLE `certificado` (
+CREATE TABLE `certificados` (
   `id` bigint(20) NOT NULL,
   `usuario_generador_id` bigint(20) DEFAULT NULL,
   `feligres_certificado_id` bigint(20) DEFAULT NULL,
@@ -83,10 +83,10 @@ CREATE TABLE `grupo_roles` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `libro`
+-- Estructura de tabla para la tabla `libros`
 --
 
-CREATE TABLE `libro` (
+CREATE TABLE `libros` (
   `id` bigint(20) NOT NULL,
   `libro_tipo_id` bigint(20) DEFAULT NULL,
   `numero` int(11) DEFAULT NULL,
@@ -94,6 +94,13 @@ CREATE TABLE `libro` (
   `folio` int(11) DEFAULT NULL,
   `fecha_generacion` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `libros`
+--
+
+INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `acta`, `folio`, `fecha_generacion`) VALUES
+(2, 1, 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -106,13 +113,21 @@ CREATE TABLE `libro_tipo` (
   `tipo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `libro_tipo`
+--
+
+INSERT INTO `libro_tipo` (`id`, `tipo`) VALUES
+(1, 'b'),
+(2, 'c');
+
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pago`
+-- Estructura de tabla para la tabla `pagos`
 --
 
-CREATE TABLE `pago` (
+CREATE TABLE `pagos` (
   `id` bigint(20) NOT NULL,
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
@@ -134,10 +149,10 @@ CREATE TABLE `parentezcos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `pariente`
+-- Estructura de tabla para la tabla `parientes`
 --
 
-CREATE TABLE `pariente` (
+CREATE TABLE `parientes` (
   `id` bigint(20) NOT NULL,
   `parentesco_id` bigint(20) DEFAULT NULL,
   `feligres_sujeto_id` bigint(20) DEFAULT NULL,
@@ -171,10 +186,10 @@ CREATE TABLE `participantes_rol` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `sacramento`
+-- Estructura de tabla para la tabla `sacramentos`
 --
 
-CREATE TABLE `sacramento` (
+CREATE TABLE `sacramentos` (
   `id` bigint(20) NOT NULL,
   `libro_id` bigint(20) DEFAULT NULL,
   `tipo_sacramento_id` bigint(20) DEFAULT NULL
@@ -245,16 +260,17 @@ CREATE TABLE `usuario_roles` (
 INSERT INTO `usuario_roles` (`id`, `rol`) VALUES
 (1, 'Feligres'),
 (2, 'Secretario'),
-(3, 'Administrador')
+(3, 'Feligres'),
+(5, 'Administrador');
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `certificado`
+-- Indices de la tabla `certificados`
 --
-ALTER TABLE `certificado`
+ALTER TABLE `certificados`
   ADD PRIMARY KEY (`id`),
   ADD KEY `usuario_generador_id` (`usuario_generador_id`),
   ADD KEY `feligres_certificado_id` (`feligres_certificado_id`),
@@ -280,9 +296,9 @@ ALTER TABLE `grupo_roles`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `libro`
+-- Indices de la tabla `libros`
 --
-ALTER TABLE `libro`
+ALTER TABLE `libros`
   ADD PRIMARY KEY (`id`),
   ADD KEY `libro_tipo_id` (`libro_tipo_id`);
 
@@ -293,9 +309,9 @@ ALTER TABLE `libro_tipo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `pago`
+-- Indices de la tabla `pagos`
 --
-ALTER TABLE `pago`
+ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `certificado_id` (`certificado_id`);
 
@@ -306,9 +322,9 @@ ALTER TABLE `parentezcos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `pariente`
+-- Indices de la tabla `parientes`
 --
-ALTER TABLE `pariente`
+ALTER TABLE `parientes`
   ADD PRIMARY KEY (`id`),
   ADD KEY `parentesco_id` (`parentesco_id`),
   ADD KEY `feligres_sujeto_id` (`feligres_sujeto_id`),
@@ -330,9 +346,9 @@ ALTER TABLE `participantes_rol`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `sacramento`
+-- Indices de la tabla `sacramentos`
 --
-ALTER TABLE `sacramento`
+ALTER TABLE `sacramentos`
   ADD PRIMARY KEY (`id`),
   ADD KEY `libro_id` (`libro_id`),
   ADD KEY `tipo_sacramento_id` (`tipo_sacramento_id`);
@@ -370,9 +386,9 @@ ALTER TABLE `usuario_roles`
 --
 
 --
--- AUTO_INCREMENT de la tabla `certificado`
+-- AUTO_INCREMENT de la tabla `certificados`
 --
-ALTER TABLE `certificado`
+ALTER TABLE `certificados`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -394,21 +410,21 @@ ALTER TABLE `grupo_roles`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `libro`
+-- AUTO_INCREMENT de la tabla `libros`
 --
-ALTER TABLE `libro`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `libros`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `libro_tipo`
 --
 ALTER TABLE `libro_tipo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT de la tabla `pago`
+-- AUTO_INCREMENT de la tabla `pagos`
 --
-ALTER TABLE `pago`
+ALTER TABLE `pagos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -418,9 +434,9 @@ ALTER TABLE `parentezcos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `pariente`
+-- AUTO_INCREMENT de la tabla `parientes`
 --
-ALTER TABLE `pariente`
+ALTER TABLE `parientes`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -436,9 +452,9 @@ ALTER TABLE `participantes_rol`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `sacramento`
+-- AUTO_INCREMENT de la tabla `sacramentos`
 --
-ALTER TABLE `sacramento`
+ALTER TABLE `sacramentos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
@@ -463,19 +479,19 @@ ALTER TABLE `usuario_grupos`
 -- AUTO_INCREMENT de la tabla `usuario_roles`
 --
 ALTER TABLE `usuario_roles`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
 --
 
 --
--- Filtros para la tabla `certificado`
+-- Filtros para la tabla `certificados`
 --
-ALTER TABLE `certificado`
-  ADD CONSTRAINT `certificado_ibfk_1` FOREIGN KEY (`usuario_generador_id`) REFERENCES `usuarios` (`id`),
-  ADD CONSTRAINT `certificado_ibfk_2` FOREIGN KEY (`feligres_certificado_id`) REFERENCES `feligreses` (`id`),
-  ADD CONSTRAINT `certificado_ibfk_3` FOREIGN KEY (`sacramento_id`) REFERENCES `sacramento` (`id`);
+ALTER TABLE `certificados`
+  ADD CONSTRAINT `certificados_ibfk_1` FOREIGN KEY (`usuario_generador_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `certificados_ibfk_2` FOREIGN KEY (`feligres_certificado_id`) REFERENCES `feligreses` (`id`),
+  ADD CONSTRAINT `certificados_ibfk_3` FOREIGN KEY (`sacramento_id`) REFERENCES `sacramentos` (`id`);
 
 --
 -- Filtros para la tabla `feligreses`
@@ -484,39 +500,39 @@ ALTER TABLE `feligreses`
   ADD CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
 
 --
--- Filtros para la tabla `libro`
+-- Filtros para la tabla `libros`
 --
-ALTER TABLE `libro`
-  ADD CONSTRAINT `libro_ibfk_1` FOREIGN KEY (`libro_tipo_id`) REFERENCES `libro_tipo` (`id`);
+ALTER TABLE `libros`
+  ADD CONSTRAINT `libros_ibfk_1` FOREIGN KEY (`libro_tipo_id`) REFERENCES `libro_tipo` (`id`);
 
 --
--- Filtros para la tabla `pago`
+-- Filtros para la tabla `pagos`
 --
-ALTER TABLE `pago`
-  ADD CONSTRAINT `pago_ibfk_1` FOREIGN KEY (`certificado_id`) REFERENCES `certificado` (`id`);
+ALTER TABLE `pagos`
+  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`certificado_id`) REFERENCES `certificados` (`id`);
 
 --
--- Filtros para la tabla `pariente`
+-- Filtros para la tabla `parientes`
 --
-ALTER TABLE `pariente`
-  ADD CONSTRAINT `pariente_ibfk_1` FOREIGN KEY (`parentesco_id`) REFERENCES `parentezcos` (`id`),
-  ADD CONSTRAINT `pariente_ibfk_2` FOREIGN KEY (`feligres_sujeto_id`) REFERENCES `feligreses` (`id`),
-  ADD CONSTRAINT `pariente_ibfk_3` FOREIGN KEY (`feligres_pariente_id`) REFERENCES `feligreses` (`id`);
+ALTER TABLE `parientes`
+  ADD CONSTRAINT `parientes_ibfk_1` FOREIGN KEY (`parentesco_id`) REFERENCES `parentezcos` (`id`),
+  ADD CONSTRAINT `parientes_ibfk_2` FOREIGN KEY (`feligres_sujeto_id`) REFERENCES `feligreses` (`id`),
+  ADD CONSTRAINT `parientes_ibfk_3` FOREIGN KEY (`feligres_pariente_id`) REFERENCES `feligreses` (`id`);
 
 --
 -- Filtros para la tabla `participantes`
 --
 ALTER TABLE `participantes`
   ADD CONSTRAINT `participantes_ibfk_1` FOREIGN KEY (`feligres_id`) REFERENCES `feligreses` (`id`),
-  ADD CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`sacramento_id`) REFERENCES `sacramento` (`id`),
+  ADD CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`sacramento_id`) REFERENCES `sacramentos` (`id`),
   ADD CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`rol_participante_id`) REFERENCES `participantes_rol` (`id`);
 
 --
--- Filtros para la tabla `sacramento`
+-- Filtros para la tabla `sacramentos`
 --
-ALTER TABLE `sacramento`
-  ADD CONSTRAINT `sacramento_ibfk_1` FOREIGN KEY (`libro_id`) REFERENCES `libro` (`id`),
-  ADD CONSTRAINT `sacramento_ibfk_2` FOREIGN KEY (`tipo_sacramento_id`) REFERENCES `sacramento_tipo` (`id`);
+ALTER TABLE `sacramentos`
+  ADD CONSTRAINT `sacramentos_ibfk_1` FOREIGN KEY (`libro_id`) REFERENCES `libros` (`id`),
+  ADD CONSTRAINT `sacramentos_ibfk_2` FOREIGN KEY (`tipo_sacramento_id`) REFERENCES `sacramento_tipo` (`id`);
 
 --
 -- Filtros para la tabla `usuarios`

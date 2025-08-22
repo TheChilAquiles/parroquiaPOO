@@ -18,4 +18,6 @@ Numero2Contructor2sacra tipo2sisas1Numero2Contructor2sacra tipo2sisas1setetadoIn
 Registro hecho
 Numero2Contructor2sacra tipo2sisas1setetadoInicio records
 Registro hecho
-Numero2Contructor2sacra tipo2sisas1
+Numero2Contructor2sacra tipo2sisas1Numero1Contructor1sacra tipo1sisas1Numero1Contructor1sacra tipo1sisas1setetadoInicio records
+Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'parroquia.sacramentos' doesn't exist
+Numero1Contructor1sacra tipo1sisas1
