@@ -52,12 +52,23 @@
 
 
 
+            <div>
+                <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
+                <input type="text" id="fecha-evento" name="fecha-evento" placeholder="Name" class="w-full mt-1 p-2 border border-gray-300 rounded">
+            </div>
+
+
+
 
             <!-- <input type="hidden" name="save" id="save" value="" /> -->
             <div>
                 <label for="name" class="block font-medium">Nombre del Bautizado</label>
                 <input type="text" id="name" name="name" placeholder="Name" class="w-full mt-1 p-2 border border-gray-300 rounded">
             </div>
+
+
+
+
 
             <div>
                 <label for="parroquia" class="block font-medium">Nombre de la Parroquia</label>

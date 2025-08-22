@@ -38,9 +38,7 @@ class ModeloSacramento
         $this->nameTable = 'sacramentos';
         $this->sacramentoTipo = $tipo;
         $this->numero = $numero;
-
         $this->setLibroID();
-        
     }
 
 
@@ -120,34 +118,44 @@ class ModeloSacramento
         echo json_encode($response);
     }
 
-
     public function addRecords()
     {
+        $archivo = 'logs/app.log';
 
-        $archivo = 'logs/app.log'; // Carpeta logs/ debe existir o se crea
-        file_put_contents($archivo, "addRecordssssssssssss", FILE_APPEND);
+        file_put_contents($archivo, "Inicio records\n", FILE_APPEND);
 
+        try {
+            // Variables con valores reales
+            $libro_id = 1;
+            $tipo_sacramento_id = 2;
+            $acta = 10;
+            $folio = 5;
+            $fecha_generacion = '2025-08-20';
 
+            $stmt = $this->conn->prepare("
+            INSERT INTO {$this->nameTable}
+            (libro_id, tipo_sacramento_id, acta, folio, fecha_generacion)
+            VALUES (?, ?, ?, ?, ?)
+        ");
 
+            // Enlazar variables correctamente
+            $stmt->bindParam(1, $this->libroID, PDO::PARAM_INT);
+            $stmt->bindParam(2, $this->sacramentoTipo, PDO::PARAM_INT);
+            $stmt->bindParam(3, $acta, PDO::PARAM_INT);
+            $stmt->bindParam(4, $folio, PDO::PARAM_INT);
+            $stmt->bindParam(5, $fecha_generacion, PDO::PARAM_STR);
 
-        // $stmt = $this->conn->prepare("
-        //     INSERT INTO {$this->recordsTable}
-        //     (name, parroquia, fechaFallecimiento, lugarNacimiento, age, causaMuerte, hijoDe, estadoCivil)
-        //     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        // ");
-        // $stmt->bind_param(
-        //     "ssssisss",
-        //     $this->name,
-        //     $this->parroquia,
-        //     $this->fechaFallecimiento,
-        //     $this->lugarNacimiento,
-        //     $this->age,
-        //     $this->causaMuerte,
-        //     $this->hijoDe,
-        //     $this->estadoCivil
-        // );
-        // return $stmt->execute();
+            $result = $stmt->execute();
+
+            file_put_contents($archivo, "Registro hecho\n", FILE_APPEND);
+
+            return $result;
+        } catch (\Throwable $th) {
+            file_put_contents($archivo, "Error: " . $th->getMessage() . "\n", FILE_APPEND);
+            return false;
+        }
     }
+
 
 
 
@@ -175,7 +183,11 @@ class ModeloSacramento
             // Carpeta logs/ debe existir o se crea
 
             file_put_contents($archivo, 'sisas', FILE_APPEND);
-            file_put_contents($archivo, $data, FILE_APPEND);
+            file_put_contents($archivo, count($data), FILE_APPEND);
+
+            if (count($data)) {
+                $this->libroID = $this->libroID = $data[0]['id'];
+            };
         } catch (\Throwable $th) {
 
             file_put_contents($archivo, $th, FILE_APPEND);

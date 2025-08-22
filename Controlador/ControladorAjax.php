@@ -31,14 +31,13 @@ if (!empty($_POST['Doaction']) && $_POST['Doaction'] == 'listRecords') {
 if (!empty($_POST['Doaction']) && $_POST['Doaction'] == 'addRecord') {
 
 
-        $archivo = 'logs/app.log'; // Carpeta logs/ debe existir o se crea
-       
-        file_put_contents($archivo, ' asd asd as'.$_POST['Numero'] , FILE_APPEND);
-
-
-        
-        file_put_contents($archivo, 'setetado', FILE_APPEND);
-
+  
+  $archivo = 'logs/app.log'; // Carpeta logs/ debe existir o se crea
+  
+  
+  file_put_contents($archivo, 'setetado', FILE_APPEND);
+  
+  
 
     return $record->addRecords();
 
