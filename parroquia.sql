@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-08-2025 a las 04:53:21
+-- Tiempo de generación: 22-08-2025 a las 02:33:41
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.4.7
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `proyectoparroquia`
+-- Base de datos: `basedatos2`
 --
 
 -- --------------------------------------------------------
@@ -51,7 +51,11 @@ CREATE TABLE `feligreses` (
   `tipo_documento_id` bigint(20) DEFAULT NULL,
   `numero_documento` varchar(255) DEFAULT NULL,
   `telefono` varchar(255) DEFAULT NULL,
-  `direccion` varchar(255) DEFAULT NULL
+  `direccion` varchar(255) DEFAULT NULL,
+  `primer_nombre` varchar(255) NOT NULL,
+  `segundo_nombre` varchar(255) NOT NULL,
+  `primer_apellido` varchar(255) NOT NULL,
+  `segundo_apellido` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
