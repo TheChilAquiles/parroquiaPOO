@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-08-2025 a las 02:33:41
--- Versión del servidor: 10.4.32-MariaDB
+-- Tiempo de generación: 23-08-2025 a las 01:15:09
+-- Versión del servidor: 11.8.3-MariaDB
 -- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `basedatos2`
+-- Base de datos: `parroquia`
 --
 
 -- --------------------------------------------------------
@@ -206,6 +206,14 @@ CREATE TABLE `usuarios` (
   `datos_completos` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`) VALUES
+(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', NULL),
+(11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -229,6 +237,15 @@ CREATE TABLE `usuario_roles` (
   `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuario_roles`
+--
+
+INSERT INTO `usuario_roles` (`id`, `rol`) VALUES
+(1, 'Feligres'),
+(2, 'Secretario'),
+(3, 'Administrador')
 
 --
 -- Índices para tablas volcadas
@@ -434,7 +451,7 @@ ALTER TABLE `sacramento_tipo`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`
@@ -446,7 +463,7 @@ ALTER TABLE `usuario_grupos`
 -- AUTO_INCREMENT de la tabla `usuario_roles`
 --
 ALTER TABLE `usuario_roles`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Restricciones para tablas volcadas
