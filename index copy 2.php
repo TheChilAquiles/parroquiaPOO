@@ -11,6 +11,10 @@ include_once('Vista/componentes/plantillaTop.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST" ))  {
 
   // echo "Post".$_POST['menu-item'] ;
+
+
+  // teste Sebastian
+
   echo "Session" . $_SESSION['menu-item'];
 
   switch ($_SESSION['menu-item'] ) {
