@@ -227,7 +227,7 @@ switch ($_SESSION['menu-item']) {
             break;
         }
 
-        
+
 
 
         include_once('Controlador/ControladorLibro.php');
@@ -260,7 +260,28 @@ switch ($_SESSION['menu-item']) {
     } else {
       include_once('Vista/libros-tipo.php');
     }
-break;
+    break;
+
+  case 'Contacto':
+    include_once('Vista/contacto.php');
+    break;
+
+  case 'Informacion':
+    include_once('Vista/informacion.php');
+    break;
+
+  case 'Noticias':
+
+    if (isset($_SESSION["logged"]) &&  $_SESSION["logged"] = true) {
+
+      include_once('Vista/noticiaAdministrador.php');
+    } else {
+
+      include_once('Vista/noticiaUsuario.php');
+    }
+    break;
+
+    break;
 
 
 
@@ -268,17 +289,6 @@ break;
 
 
     // $_POST['']
-
-
-
-
-    case'Contacto':
-      include_once('Vista/contacto.php');
-     
-
-
-    break;
-
 
     // include_once('Vista/libros-tipo.php');
 
