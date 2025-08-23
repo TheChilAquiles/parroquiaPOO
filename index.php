@@ -227,6 +227,8 @@ switch ($_SESSION['menu-item']) {
             break;
         }
 
+        
+
 
         include_once('Controlador/ControladorLibro.php');
 
@@ -262,12 +264,19 @@ switch ($_SESSION['menu-item']) {
 
 
 
+
+
     // $_POST['']
 
 
 
 
+    case'Contacto':
+      include_once('Vista/contacto.php');
+      exit;
 
+
+    break;
 
 
     // include_once('Vista/libros-tipo.php');
