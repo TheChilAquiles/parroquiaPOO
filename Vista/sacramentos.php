@@ -45,11 +45,15 @@
             <input type="hidden" name="numero-libro" value="<?= $_POST['numero-libro'] ?>">
             <!-- Fin inputs de navegacion  -->
 
-
-
             <input type="hidden" name="id" id="id" />
             <input type="hidden" name="Doaction" id="Doaction" value="" />
 
+
+
+
+
+
+            <!-- inicio campos Inputs  -->
 
 
             <div>
@@ -57,8 +61,7 @@
                 <input type="text" id="fecha-evento" name="fecha-evento" placeholder="Name" class="w-full mt-1 p-2 border border-gray-300 rounded">
             </div>
 
-
-
+            
 
             <!-- <input type="hidden" name="save" id="save" value="" /> -->
             <div>
@@ -149,33 +152,6 @@
         // $('#save').val('Adicionar');
     });
 
-    $("#recordModal").on('submit', '#recordForm', function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        //    $('#save').attr('disabled','disabled');
-        // alert('fformData: ' + formData);
-        $.ajax({
-            url: "Controlador/ControladorAjax.php",
-            method: "POST",
-        data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
-            success: function(data) {
-
-                $('#recordForm')[0].reset();
-                $('#recordModal').addClass('hidden');
-
-                //  $('#save').attr('disabled', false);
-
-                alert('completado');
-                dataRecords.ajax.reload();
-
-            }
-        })
-    });
-
-
-
-
-
 
     const table = new DataTable('#recordListing', {
 
@@ -216,4 +192,32 @@
         pageLength: 10
 
     });
+
+
+
+        $("#recordModal").on('submit', '#recordForm', function(event) {
+        event.preventDefault();
+        var formData = $(this).serialize();
+        //    $('#save').attr('disabled','disabled');
+        // alert('fformData: ' + formData);
+        $.ajax({
+            url: "Controlador/ControladorAjax.php",
+            method: "POST",
+        data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
+            success: function(data) {
+
+                $('#recordForm')[0].reset();
+                $('#recordModal').addClass('hidden');
+
+                //  $('#save').attr('disabled', false);
+
+                table.ajax.reload();
+                alert('completado');
+
+            }
+        })
+    });
+
+
+
 </script>

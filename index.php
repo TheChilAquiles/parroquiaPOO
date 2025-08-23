@@ -260,6 +260,7 @@ switch ($_SESSION['menu-item']) {
     } else {
       include_once('Vista/libros-tipo.php');
     }
+break;
 
 
 
@@ -273,7 +274,7 @@ switch ($_SESSION['menu-item']) {
 
     case'Contacto':
       include_once('Vista/contacto.php');
-      exit;
+     
 
 
     break;

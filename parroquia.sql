@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-08-2025 a las 01:54:12
+-- Tiempo de generación: 23-08-2025 a las 03:03:15
 -- Versión del servidor: 11.8.3-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -89,18 +89,22 @@ CREATE TABLE `grupo_roles` (
 CREATE TABLE `libros` (
   `id` bigint(20) NOT NULL,
   `libro_tipo_id` bigint(20) DEFAULT NULL,
-  `numero` int(11) DEFAULT NULL,
-  `acta` int(11) DEFAULT NULL,
-  `folio` int(11) DEFAULT NULL,
-  `fecha_generacion` date DEFAULT NULL
+  `numero` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `libros`
 --
 
-INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `acta`, `folio`, `fecha_generacion`) VALUES
-(2, 1, 1, NULL, NULL, NULL);
+INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`) VALUES
+(2, 1, 1),
+(3, 1, 2),
+(4, 1, 3),
+(5, 1, 4),
+(6, 1, 5),
+(7, 1, 6),
+(8, 1, 7),
+(9, 1, 8);
 
 -- --------------------------------------------------------
 
@@ -118,8 +122,10 @@ CREATE TABLE `libro_tipo` (
 --
 
 INSERT INTO `libro_tipo` (`id`, `tipo`) VALUES
-(1, 'b'),
-(2, 'c');
+(1, 'Bautizos'),
+(2, 'Confirmaciones'),
+(3, 'Defunciones'),
+(4, 'Matrimonios');
 
 -- --------------------------------------------------------
 
@@ -192,8 +198,24 @@ CREATE TABLE `participantes_rol` (
 CREATE TABLE `sacramentos` (
   `id` bigint(20) NOT NULL,
   `libro_id` bigint(20) DEFAULT NULL,
-  `tipo_sacramento_id` bigint(20) DEFAULT NULL
+  `tipo_sacramento_id` bigint(20) DEFAULT NULL,
+  `acta` int(11) NOT NULL,
+  `folio` int(11) NOT NULL,
+  `fecha_generacion` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `sacramentos`
+--
+
+INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`) VALUES
+(3, 2, 1, 10, 5, '2025-08-20'),
+(4, 3, 1, 10, 5, '2025-08-20'),
+(5, 3, 1, 10, 5, '2025-08-20'),
+(6, 3, 1, 10, 5, '2025-08-20'),
+(7, 3, 1, 10, 5, '2025-08-20'),
+(8, 3, 1, 10, 5, '2025-08-20'),
+(9, 3, 1, 10, 5, '2025-08-20');
 
 -- --------------------------------------------------------
 
@@ -206,6 +228,16 @@ CREATE TABLE `sacramento_tipo` (
   `tipo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `sacramento_tipo`
+--
+
+INSERT INTO `sacramento_tipo` (`id`, `tipo`) VALUES
+(1, 'Bautizos'),
+(2, 'Confirmaciones'),
+(3, 'Defunciones'),
+(4, 'Matrimonios');
+
 -- --------------------------------------------------------
 
 --
@@ -216,9 +248,9 @@ CREATE TABLE `usuarios` (
   `id` bigint(20) NOT NULL,
   `usuario_rol_id` bigint(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `email_confirmed` tinyint(1) DEFAULT NULL,
+  `email_confirmed` tinyint(1) DEFAULT 0,
   `contraseña` varchar(255) DEFAULT NULL,
-  `datos_completos` tinyint(1) DEFAULT NULL
+  `datos_completos` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -226,8 +258,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`) VALUES
-(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', NULL),
-(11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', NULL);
+(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
+(11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
+(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0);
 
 -- --------------------------------------------------------
 
@@ -413,7 +446,7 @@ ALTER TABLE `grupo_roles`
 -- AUTO_INCREMENT de la tabla `libros`
 --
 ALTER TABLE `libros`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `libro_tipo`
@@ -455,19 +488,19 @@ ALTER TABLE `participantes_rol`
 -- AUTO_INCREMENT de la tabla `sacramentos`
 --
 ALTER TABLE `sacramentos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `sacramento_tipo`
 --
 ALTER TABLE `sacramento_tipo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`

@@ -7,29 +7,28 @@ class LoginController
 
         if (isset($_SESSION["logged"]) &&  $_SESSION["logged"] = true) {
 
+
+            // Decomentar Despues :
+
+
+            
+            // if (isset($_SESSION['user-datos']) && $_SESSION['user-datos'] == false && $_SESSION['menu-item'] !== "Perfil" && $_SESSION['menu-item'] !== "Salir") {
+            //     $_SESSION['menu-item'] = "Perfil";
+            //     header('refresh:0');
+            // }
+            
             if (!isset($_SESSION['menu-item'])) {
                 $_SESSION['menu-item'] = "Dashboard";
                 header('refresh:0');
             }
 
 
-
-            if (isset($_SESSION['user-datos']) && $_SESSION['user-datos'] == false && $_SESSION['menu-item'] !== "Perfil" && $_SESSION['menu-item'] !== "Salir") {
-                $_SESSION['menu-item'] = "Perfil";
-                header('refresh:0');
-            }
-            
         } else {
 
             if (!isset($_SESSION['menu-item'])) {
                 $_SESSION['menu-item'] = "Inicio";
                 header('refresh:0');
             }
-
-            // if (!isset($_SESSION['menu-item'])) {
-            //     $_SESSION['menu-item'] = "Inicio";
-            //     header('refresh:0');
-            // }
 
             // require_once('Vista/home.php');
 
