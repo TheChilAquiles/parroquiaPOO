@@ -84,6 +84,26 @@ class ModeloUsuario
 
 
 
+    //     public function consultarUsuario($email)
+    // {
+    //     try {
+    //         $conexion = Conexion::conectar(); // Llama al método estático para obtener la conexión PDO
+
+    //         $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE email = :email");
+    //         $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+    //         $stmt->execute();
+
+    //         $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // Devuelve un array asociativo o false si no encuentra nada
+
+    //         return $usuario ?: null; // Si no hay resultados, devuelve null
+    //     } catch (PDOException $e) {
+    //         error_log("Error en consultarUsuario: " . $e->getMessage());
+    //         return false; // Manejo de error general
+    //     }
+    // }
+
+
+
 
 
     public function obtenerUsuarios()

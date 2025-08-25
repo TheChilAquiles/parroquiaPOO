@@ -25,17 +25,24 @@
     </div>
 </div>
 
-<?= "Solae : ". $_POST['numero-libro'] ?>
+<?= "Solae : " . $tipo ?>
+
+
+
 
 <!-- Modal Tailwind -->
 <div id="recordModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
         <h4 class="text-xl font-semibold mb-4 modal-title w-full text-center">Editar Registro</h4>
 
 
 
 
         <form id="recordForm" class="space-y-4" method="POST">
+
+
+
+
 
 
             <!-- inputs de navegacion  -->
@@ -55,68 +62,242 @@
 
             <!-- inicio campos Inputs  -->
 
-
-            <div>
-                <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
-                <input type="text" id="fecha-evento" name="fecha-evento" placeholder="Name" class="w-full mt-1 p-2 border border-gray-300 rounded">
+            <div id="Form1">
+                <div>
+                    <div class=" text-center text-lg font-bold my-4">
+                        Fecha Evento
+                    </div>
+                    <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
+                    <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded">
+                </div>
             </div>
 
-            
+            <div id="Form2" class="hidden">
 
-            <!-- <input type="hidden" name="save" id="save" value="" /> -->
-            <div>
-                <label for="name" class="block font-medium">Nombre del Bautizado</label>
-                <input type="text" id="name" name="name" placeholder="Name" class="w-full mt-1 p-2 border border-gray-300 rounded">
+                <div class="border border-blue-400 rounded">
+
+                    <div class=" text-center text-lg font-bold my-1">
+                        Participantes
+                    </div>
+
+
+
+                    <ul id="contenedor-integrantes">
+
+                        <li id="integranteVacio">
+                            <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+                                <span class="font-bold"> --- Vacio --- </span>
+                            </div>
+                        </li>
+
+                        <!-- Aquí se mostrarán los integrantes -->
+                    </ul>
+                </div>
+                <hr class="my-4 border-t-2 border-gray-300">
+
+                <div class="border border-emerald-400 p-2 rounded mb-4">
+
+
+                    <div class=" text-center text-lg font-bold my-1">
+                        Añadir Participante
+                    </div>
+
+
+
+                    <div class="flex space-x-2 w-full justify-evenly ">
+                        <label for="tipo-doc" class="block font-medium flex-1 ">Tipo Documento</label>
+
+                        <label for="numero-doc" class="block font-medium flex-1 ">Numero De Documento</label>
+
+                    </div>
+
+
+
+                    <div class="flex space-x-2 w-full justify-between ">
+
+
+                        <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center " name="tipo-doc" id="tipo-doc">
+                            <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
+                            <option value="1">CC</option>
+                            <option value="2">Ti</option>
+                        </select>
+
+
+                        <input class="border border-gray-300 rounded  w-full placeholder:text-center " type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+
+                        <div id="BuscarUser" class="p-2 rounded bg-green-500">
+                            <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
+                                <g fill="#616161">
+                                    <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
+                                    <circle cx="20" cy="20" r="16" />
+                                </g>
+                                <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
+                                <circle fill="#64B5F6" cx="20" cy="20" r="13" />
+                                <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
+                            </svg>
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+                    <div class="flex space-x-2">
+
+                        <div>
+                            <label for="">Primer Nombre</label>
+                            <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
+                            <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                        </div>
+
+                        <div>
+                            <label for="">Segundo Nombre</label>
+                            <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
+                            <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="flex space-x-2">
+
+                        <div>
+                            <label for="">Primer Apellido</label>
+                            <input type="text" name="primerApellido" id="primerApellido" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerApellido'])) echo $_POST['primerApellido']; ?>">
+                            <label name="primerApellido-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                        </div>
+
+                        <div>
+                            <label for="">Segundo Apellido</label>
+                            <input type="text" name="segundoApellido" id="segundoApellido" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Apellido" value="<?php if (isset($_POST['segundoApellido'])) echo $_POST['segundoApellido']; ?>">
+                            <label name="segundoApellido-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                        </div>
+
+                    </div>
+
+
+
+                    <div>
+                        <label for="rol-participante" class="block font-medium">Rol</label>
+                        <select class="border border-gray-300 rounded p-2 w-full" name="rol-participante" id="rol-participante">
+                            <option class="text-center" value="" disabled selected>-- Selecciona un Rol --</option>
+
+                            <?php
+
+                            if ($tipo == 1) {
+                                echo '<option value="Bautizado">Bautizado</option>';
+                            } elseif ($tipo == 2) {
+                                echo '<option value="Confirmando">Confirmando</option>';
+                            } elseif ($tipo == 3) {
+                                echo '<option value="Difunto">Difunto</option>';
+                            } elseif ($tipo == 4) {
+                                echo '<option value="Esposo">Esposo</option>';
+                                echo '<option value="Esposa">Esposa</option>';
+                            }
+
+
+                            ?>
+
+
+
+                            <option value="Padre">Padre</option>
+                            <option value="Madre">Madre</option>
+                            <option value="Padrino">Padrino</option>
+                            <option value="Madrina">Madrina</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+
+
+                    <div id="AddNew" class="w-full bg-gray-200 rounded text-center font-bold py-1 cursor-pointer my-3">+ Añadir Participante</div>
+
+
+
+
+
+
+
+                </div>
+
+
+
+                <!-- <div id="Form2" class="hidden">
+                <div class="flex space-x-2 w-full justify-between ">
+                    <select class="border border-gray-300 rounded  w-full" name="TipDoc" id="TipDoc">
+                        <option value="CC">CC</option>
+                        <option value="CC">Ti</option>
+                    </select>
+
+
+                    <input class="border border-gray-300 rounded  w-full" type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento">
+
+
+                    <div class="p-2 rounded bg-green-500">
+                        <svg class="w-10" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="#616161">
+                                <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
+                                <circle cx="20" cy="20" r="16" />
+                            </g>
+                            <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
+                            <circle fill="#64B5F6" cx="20" cy="20" r="13" />
+                            <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
+                        </svg>
+                    </div>
+
+                </div>
+
+
+
+                <div class="flex space-x-2">
+
+                    <div>
+                        <label for="">Primer Nombre</label>
+                        <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
+                        <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                    </div>
+
+                    <div>
+                        <label for="">Segundo Nombre</label>
+                        <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
+                        <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                    </div>
+
+                </div>
+
+
+
+                <div class="flex space-x-2">
+
+                    <div>
+                        <label for="">Primer Apellido</label>
+                        <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
+                        <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                    </div>
+
+                    <div>
+                        <label for="">Segundo Apellido</label>
+                        <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
+                        <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                    </div>
+
+                </div>
+            </div> -->
+
+
+
             </div>
 
-
-
-
-
-            <div>
-                <label for="parroquia" class="block font-medium">Nombre de la Parroquia</label>
-                <input type="text" id="parroquia" name="parroquia" placeholder="Parroquia" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="fechaFallecimiento" class="block font-medium">Fecha del Evento</label>
-                <input type="date" id="fechaFallecimiento" name="fechaFallecimiento" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="lugarNacimiento" class="block font-medium">Lugar de Nacimiento</label>
-                <input type="text" id="lugarNacimiento" name="lugarNacimiento" placeholder="Lugar de nacimiento" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="age" class="block font-medium">Edad</label>
-                <input type="number" id="age" name="age" placeholder="Edad" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="causaMuerte" class="block font-medium">Madrina</label>
-                <input type="text" id="causaMuerte" name="causaMuerte" placeholder="Madrina" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="hijoDe" class="block font-medium">Hijo de</label>
-                <input type="text" id="hijoDe" name="hijoDe" placeholder="Hijo de" class="w-full mt-1 p-2 border border-gray-300 rounded">
-            </div>
-
-            <div>
-                <label for="estadoCivil" class="block font-medium">Estado Civil</label>
-                <select id="estadoCivil" name="estadoCivil" class="w-full mt-1 p-2 border border-gray-300 rounded">
-                    <option value="" disabled selected>Seleccione el Estado Civil</option>
-                    <option value="Soltero">Soltero</option>
-                    <option value="Casado">Casado</option>
-                    <option value="Divorciado">Divorciado</option>
-                    <option value="Viudo">Viudo</option>
-                </select>
-            </div>
 
             <div class="flex justify-end gap-2 pt-4">
 
-                <button type="submit" class="bg-blue-100 text-black/50 px-4 py-2 rounded">Guardar</button>
+                <button type="button" id="Anterior" class="bg-blue-100 px-4 py-2 rounded cursor-pointer hidden">Anterior</button>
+                <button type="button" id="Siguiente" class="bg-blue-100 px-4 py-2 rounded cursor-pointer">Siguiente</button>
+                <button type="submit" id="Guardar" class="bg-blue-100 text-black/50 px-4 py-2 rounded hidden">Guardar</button>
+
                 <button type="button" id="cerrarFormSacramentos" class="bg-red-100 px-4 py-2 rounded cursor-pointer">Cerrar</button>
             </div>
         </form>
@@ -137,17 +318,241 @@
 
 
 
-
 <script>
+    $(document).on('click', '#BuscarUser', function() {
+
+        alert('Buscar Usuario');
+
+        $numeroDoc = document.getElementById('numero-doc').value.trim();
+        $tipoDoc = document.getElementById('tipo-doc').value.trim();
+
+        if (!$tipoDoc) {
+            document.getElementById('tipo-doc').classList.add('border-red-500');
+            alert('Por favor, ingresa el tipo de documento.');
+            return;
+        } else {
+            document.getElementById('tipo-doc').classList.remove('border-red-500');
+        }
+
+        if (!$numeroDoc) {
+            document.getElementById('numero-doc').classList.add('border-red-500');
+            alert('Por favor, ingresa el número de documento.');
+            return;
+        } else {
+            document.getElementById('numero-doc').classList.remove('border-red-500');
+        }
+
+
+
+
+
+        $.ajax({
+            url: "Controlador/ControladorSacramento.php",
+            method: "POST",
+            dataType: "json",
+            data: {
+                Doaction: 'buscarUsuario',
+                numeroDoc: $numeroDoc,
+                tipoDoc: $tipoDoc,
+                Tipo: <?php echo json_encode($tipo); ?>,
+                Numero: <?php echo json_encode($_POST['numero-libro']); ?>
+            },
+            success: function(usuario) {
+
+                alert('Usuario encontrado: ' + usuario.primer_nombre);
+
+                if (usuario) {
+                    // Rellenar los campos del formulario con los datos del usuario
+                    $('#primerNombre').val(usuario.primer_nombre || '');
+                    $('#segundoNombre').val(usuario.segundo_nombre || '');
+                    $('#primerApellido').val(usuario.primer_apellido || '');
+                    $('#segundoApellido').val(usuario.segundo_apellido || '');
+                    // Agrega más campos según sea necesario
+                } else {
+                    alert('No se encontró el usuario con el número de documento proporcionado.');
+                }
+
+            },
+            error: function() {
+                alert('Error al buscar el usuario.');
+            }
+        });
+
+
+
+    });
+
+    $(document).on('click', '#AddNew', function() {
+        agregarIntegrante();
+        resetVacio(contador);
+    });
+
+
+    let contador = 0;
+
+    function resetVacio(con) {
+
+        if (con > 0) {
+            document.getElementById('integranteVacio').classList.add('hidden');;
+        } else {
+            document.getElementById('integranteVacio').classList.remove('hidden');;
+        }
+
+    }
+
+
+
+
+
+    function agregarIntegrante() {
+
+        const rolParticipante = document.getElementById('rol-participante').value.trim();
+        const tipoDoc = document.getElementById('tipo-doc').value.trim();
+        const numeroDoc = document.getElementById('numero-doc').value.trim();
+
+        if (!tipoDoc || !numeroDoc || !rolParticipante) {
+            alert('Por favor, completa los datos antes de añadir.');
+            return;
+        }
+
+        const existe = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]')).some(input => input.value === rolParticipante);
+        if (existe) {
+            alert('Este participante ya ha sido añadido.');
+            return;
+        }
+
+
+        contador++;
+
+
+
+
+
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+
+
+        <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-between items-center">
+        
+        <span class="font-bold">${rolParticipante}</span>
+
+        <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
+        <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
+   
+          <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
+          <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDoc}">
+          <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${numeroDoc}">
+          <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
+          </div>
+
+      `;
+
+        document.getElementById('contenedor-integrantes').appendChild(li);
+
+        // Limpiar los campos después de añadir
+        document.getElementById('tipo-doc').value = '';
+        document.getElementById('numero-doc').value = '';
+        document.getElementById('rol-participante').value = '';
+
+
+
+    }
+
+    function eliminarIntegrante(boton) {
+        boton.closest('li').remove();
+        contador--;
+        resetVacio(contador);
+    }
+
+
+    function eliminarTodos() {
+        const contenedor = document.getElementById('contenedor-integrantes');
+        contenedor.innerHTML = "";
+
+        const li = document.createElement('li');
+        li.id = "integranteVacio";
+        li.innerHTML = `
+        <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+            <span class="font-bold"> --- Vacio --- </span>
+        </div>
+    `;
+
+        console.log("Antes de agregar", contenedor.innerHTML);
+        contenedor.appendChild(li);
+        console.log("Después de agregar", contenedor.innerHTML);
+
+    
+
+    }
+
+
+
+    var form = 1; // empezamos en el primer formulario
+    var totalForms = 2; // cantidad total de formularios
+
+    function mostrarFormulario(index) {
+        // Oculta todos los formularios
+        $('[id^=Form]').addClass('hidden');
+
+        // Muestra solo el actual
+        $('#Form' + index).removeClass('hidden');
+
+        // Control de botones
+        if (index === 1) {
+            $('#Anterior').addClass('hidden');
+            $('#Siguiente').removeClass('hidden');
+            $('#Guardar').addClass('hidden');
+        } else if (index === totalForms) {
+            $('#Anterior').removeClass('hidden');
+            $('#Siguiente').addClass('hidden');
+            $('#Guardar').removeClass('hidden');
+        } else {
+            $('#Anterior').removeClass('hidden');
+            $('#Siguiente').removeClass('hidden');
+            $('#Guardar').addClass('hidden');
+        }
+    }
+
+    $(document).on('click', '#Siguiente', function() {
+        if (form < totalForms) form++;
+        mostrarFormulario(form);
+    });
+
+    $(document).on('click', '#Anterior', function() {
+        if (form > 1) form--;
+        mostrarFormulario(form);
+    });
+
+
     $(document).on('click', '#cerrarFormSacramentos', function() {
         $('#recordModal').addClass('hidden');
         $('#recordForm')[0].reset();
+
+        const contenedor = document.getElementById('contenedor-integrantes');
+        contenedor.innerHTML = "";
+
+        const li = document.createElement('li');
+        li.id = "integranteVacio";
+        li.innerHTML = `
+        <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+            <span class="font-bold"> --- Vacio --- </span>
+        </div>
+    `;
+
+        console.log("Antes de agregar", contenedor.innerHTML);
+        contenedor.appendChild(li);
+        console.log("Después de agregar", contenedor.innerHTML);
+
+    
+        mostrarFormulario(1);
+
     });
 
     $(document).on('click', '#addRecord', function() {
         $('#recordModal').removeClass('hidden');
         $('#recordForm')[0].reset();
-        $('.modal-title').html("<i class='fa fa-plus'></i> Adición Registro");
+        $('.modal-title').html("<i class='fa fa-plus'></i> Añadir Sacramento En <?php echo $libroTipo  . " " . $_POST['numero-libro'] ?>  ");
         $('#Doaction').val('addRecord');
         // $('#save').val('Adicionar');
     });
@@ -175,7 +580,7 @@
             sProcessing: "Procesando...",
         },
         ajax: {
-            url: "Controlador/ControladorAjax.php",
+            url: "Controlador/ControladorSacramento.php",
             type: "POST",
             data: {
                 Doaction: 'listRecords',
@@ -195,15 +600,15 @@
 
 
 
-        $("#recordModal").on('submit', '#recordForm', function(event) {
+    $("#recordModal").on('submit', '#recordForm', function(event) {
         event.preventDefault();
         var formData = $(this).serialize();
         //    $('#save').attr('disabled','disabled');
         // alert('fformData: ' + formData);
         $.ajax({
-            url: "Controlador/ControladorAjax.php",
+            url: "Controlador/ControladorSacramento.php",
             method: "POST",
-        data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
+            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
             success: function(data) {
 
                 $('#recordForm')[0].reset();
@@ -217,7 +622,4 @@
             }
         })
     });
-
-
-
 </script>

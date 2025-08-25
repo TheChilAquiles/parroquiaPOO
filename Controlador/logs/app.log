@@ -1,23 +1,911 @@
-Numero1Contructor1Numero1Contructor1sacra tipo1sisas
-1
-setetadoInicio records
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => 1
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => 1
+)
+
+Numero11Contructor1sacra tipo1sisas1setetadoInicio records
 Registro hecho
-Numero1Contructor1Numero1Contructor1Numero1Contructor1sacra tipo1sisas0setetadoInicio records
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => 1
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => Array
+        (
+            [id] => 1
+            [usuario_id] => 
+            [tipo_documento_id] => 1
+            [numero_documento] => 123
+            [telefono] => 
+            [direccion] => 
+            [primer_nombre] => 
+            [segundo_nombre] => 
+            [primer_apellido] => 
+            [segundo_apellido] => 0
+        )
+
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => Array
+        (
+            [id] => 1
+            [usuario_id] => 
+            [tipo_documento_id] => 1
+            [numero_documento] => 123
+            [telefono] => 
+            [direccion] => 
+            [primer_nombre] => 
+            [segundo_nombre] => 
+            [primer_apellido] => 
+            [segundo_apellido] => 0
+        )
+
+    [0] => numero_documento :123
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => Array
+        (
+            [id] => 1
+            [usuario_id] => 
+            [tipo_documento_id] => 1
+            [numero_documento] => 123
+            [telefono] => 
+            [direccion] => 
+            [primer_nombre] => 
+            [segundo_nombre] => 
+            [primer_apellido] => 
+            [segundo_apellido] => 0
+        )
+
+    [numero_documento ] => 123
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => Array
+        (
+            [id] => 1
+            [usuario_id] => 
+            [tipo_documento_id] => 1
+            [numero_documento] => 123
+            [telefono] => 
+            [direccion] => 
+            [primer_nombre] => 
+            [segundo_nombre] => 
+            [primer_apellido] => 
+            [segundo_apellido] => 0
+        )
+
+    [numero_documento ] => 123
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [status] => success
+    [message] => Feligres consultado correctamente
+    [data] => Array
+        (
+            [id] => 1
+            [usuario_id] => 
+            [tipo_documento_id] => 1
+            [numero_documento] => 123
+            [telefono] => 
+            [direccion] => 
+            [primer_nombre] => 
+            [segundo_nombre] => 
+            [primer_apellido] => 
+            [segundo_apellido] => 0
+        )
+
+    [numero_documento] => 123
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => 
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => 
+    [primer_apellido] => 
+    [segundo_apellido] => 0
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => asd
+    [segundo_apellido] => asd
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => asd
+    [segundo_apellido] => asd
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc2buscarUsuario: 123
+feligres: 
+Numero11Contructor1sacra tipo1sisas1Tipo doc2buscarUsuario: 123
+feligres: 
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc2buscarUsuario: 123
+feligres: 
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Tipo doc1buscarUsuario: 123
+feligres: Array
+(
+    [id] => 1
+    [usuario_id] => 
+    [tipo_documento_id] => 1
+    [numero_documento] => 123
+    [telefono] => 
+    [direccion] => 
+    [primer_nombre] => Daniel
+    [segundo_nombre] => asd
+    [primer_apellido] => godoy
+    [segundo_apellido] => duran
+)
+
+Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1Numero11Contructor1sacra tipo1sisas1setetadoInicio records
 Registro hecho
-Numero1Contructor1sacra tipo1sisas0setetadoInicio records
-Registro hecho
-Numero1Contructor1Numero1Contructor1Numero1Contructor1sacra tipo1sisas1setetadoInicio records
-Registro hecho
-Numero1Contructor1Numero1Contructor1sacra tipo1sisas1setetadoInicio records
-Registro hecho
-Numero2Contructor2Numero2Contructor2sacra tipo2sisas1setetadoInicio records
-Registro hecho
-Numero2Contructor2sacra tipo2sisas1Numero2Contructor2sacra tipo2sisas1Numero2Contructor2sacra tipo2sisas1setetadoInicio records
-Registro hecho
-Numero2Contructor2sacra tipo2sisas1Numero2Contructor2sacra tipo2sisas1setetadoInicio records
-Registro hecho
-Numero2Contructor2sacra tipo2sisas1setetadoInicio records
-Registro hecho
-Numero2Contructor2sacra tipo2sisas1Numero1Contructor1sacra tipo1sisas1Numero1Contructor1sacra tipo1sisas1setetadoInicio records
-Error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'parroquia.sacramentos' doesn't exist
-Numero1Contructor1sacra tipo1sisas1
+Numero11Contructor1sacra tipo1sisas1

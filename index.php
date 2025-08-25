@@ -129,7 +129,8 @@ switch ($_SESSION['menu-item']) {
           echo "<script>errorFeligres()</script>";
         } else {
 
-          $_SESSION['user-datos'] = $feligres;
+          // $_SESSION['user-datos'] = $feligres;
+          $_SESSION['user-datos'] = 1;
 
 
           echo "<script>DatosFeligres(" . $feligres . ")</script>";
@@ -156,10 +157,9 @@ switch ($_SESSION['menu-item']) {
         ];
 
         if ($_SESSION['user-datos'] == false) {
-
           $status = $Feligres->ctrlCrearFeligres($datosFeligres);
         } else {
-          $status = $Feligres->mdlActualizarFeligres($datosFeligres);
+          $status = $Feligres->ctrlActualizarFeligres($datosFeligres);
         }
 
 

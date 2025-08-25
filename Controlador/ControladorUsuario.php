@@ -4,7 +4,8 @@ class UsuarioController
 {
     public function __construct()
     {
-        require_once('Modelo/ModeloUsuario.php');
+        
+         require_once __DIR__ . '/../Modelo/ModeloUsuario.php';
     }
 
 
@@ -31,6 +32,10 @@ class UsuarioController
         }
     }
 
+
+    
+
+
     public function obtenerUsuarios()
     {
         $usuarioModel = new Usuario();
@@ -42,4 +47,6 @@ class UsuarioController
         $usuarioModel = new Usuario();
         return $usuarioModel->obtenerUsuarioPorId($id);
     }
+
+    
 }

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-08-2025 a las 03:03:15
--- Versión del servidor: 11.8.3-MariaDB
--- Versión de PHP: 8.2.12
+-- Tiempo de generación: 25-08-2025 a las 03:48:23
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.4.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -42,6 +42,25 @@ CREATE TABLE `certificados` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `documento_tipos`
+--
+
+CREATE TABLE `documento_tipos` (
+  `id` bigint(20) NOT NULL,
+  `tipo` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `documento_tipos`
+--
+
+INSERT INTO `documento_tipos` (`id`, `tipo`) VALUES
+(1, 'Cc'),
+(2, 'Ti');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `feligreses`
 --
 
@@ -55,8 +74,15 @@ CREATE TABLE `feligreses` (
   `primer_nombre` varchar(255) NOT NULL,
   `segundo_nombre` varchar(255) NOT NULL,
   `primer_apellido` varchar(255) NOT NULL,
-  `segundo_apellido` int(255) NOT NULL
+  `segundo_apellido` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `feligreses`
+--
+
+INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`) VALUES
+(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran');
 
 -- --------------------------------------------------------
 
@@ -104,7 +130,10 @@ INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`) VALUES
 (6, 1, 5),
 (7, 1, 6),
 (8, 1, 7),
-(9, 1, 8);
+(9, 1, 8),
+(10, 2, 1),
+(11, 3, 1),
+(12, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -215,7 +244,23 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 (6, 3, 1, 10, 5, '2025-08-20'),
 (7, 3, 1, 10, 5, '2025-08-20'),
 (8, 3, 1, 10, 5, '2025-08-20'),
-(9, 3, 1, 10, 5, '2025-08-20');
+(9, 3, 1, 10, 5, '2025-08-20'),
+(10, 2, 1, 10, 5, '2025-08-20'),
+(11, 2, 1, 10, 5, '2025-08-20'),
+(12, 2, 1, 10, 5, '2025-08-20'),
+(13, 2, 1, 10, 5, '2025-08-20'),
+(14, 2, 1, 10, 5, '2025-08-20'),
+(15, 2, 1, 10, 5, '2025-08-20'),
+(16, 2, 1, 10, 5, '2025-08-20'),
+(17, 2, 1, 10, 5, '2025-08-20'),
+(18, 2, 1, 10, 5, '2025-08-20'),
+(19, 2, 1, 10, 5, '2025-08-20'),
+(20, 2, 1, 10, 5, '2025-08-20'),
+(21, 12, 4, 10, 5, '2025-08-20'),
+(22, 12, 4, 10, 5, '2025-08-20'),
+(23, 12, 4, 10, 5, '2025-08-20'),
+(24, 12, 4, 10, 5, '2025-08-20'),
+(25, 2, 1, 10, 5, '2025-08-20');
 
 -- --------------------------------------------------------
 
@@ -260,7 +305,8 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`) VALUES
 (10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
 (11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0);
+(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
+(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0);
 
 -- --------------------------------------------------------
 
@@ -310,11 +356,18 @@ ALTER TABLE `certificados`
   ADD KEY `sacramento_id` (`sacramento_id`);
 
 --
+-- Indices de la tabla `documento_tipos`
+--
+ALTER TABLE `documento_tipos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `feligreses`
 --
 ALTER TABLE `feligreses`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `usuario_id` (`usuario_id`);
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `tipo_documento_id` (`tipo_documento_id`);
 
 --
 -- Indices de la tabla `grupos`
@@ -425,10 +478,16 @@ ALTER TABLE `certificados`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `documento_tipos`
+--
+ALTER TABLE `documento_tipos`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `feligreses`
 --
 ALTER TABLE `feligreses`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `grupos`
@@ -446,13 +505,13 @@ ALTER TABLE `grupo_roles`
 -- AUTO_INCREMENT de la tabla `libros`
 --
 ALTER TABLE `libros`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `libro_tipo`
 --
 ALTER TABLE `libro_tipo`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
@@ -488,7 +547,7 @@ ALTER TABLE `participantes_rol`
 -- AUTO_INCREMENT de la tabla `sacramentos`
 --
 ALTER TABLE `sacramentos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `sacramento_tipo`
@@ -500,7 +559,7 @@ ALTER TABLE `sacramento_tipo`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`

@@ -10,10 +10,10 @@ class ModeloFeligres
 
         try {
 
-            $sql = "SELECT * FROM feligreses WHERE numero_documento = ? AND numero_documento = ?";
+            $sql = "SELECT * FROM feligreses WHERE tipo_documento_id = ? AND numero_documento = ?";
             $stmt = $conexion->prepare($sql);
             $stmt->execute([$tipoDoc, $documento]);
-            $resultado = $stmt->fetchColumn();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
             return $resultado;
