@@ -16,15 +16,14 @@
                         'Libros',
                         'Noticias',
                         'Informacion',
+                        'Grupos',
                     ];
                 } else {
 
                     $menu = [
                         'Inicio',
                         'Noticias',
-                        'Galeria',
                         'Informacion',
-                        'PQRS',
                         'Contacto',
                     ];
                 }
