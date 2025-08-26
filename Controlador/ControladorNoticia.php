@@ -1,67 +1,88 @@
 <?php
-// Asegúrate de que las rutas a tus modelos y vistas sean correctas
-require_once '../modelo/Conexion.php';
-require_once '../modelo/ModeloNoticia.php';
+// Usamos rutas absolutas para evitar el error de "file not found"
+require_once __DIR__ . '/../Modelo/Conexion.php';
+require_once __DIR__ . '/../Modelo/ModeloNoticia.php';
 
-// Conexión y modelo
-$conexion = Conexion::conectar();
-$modeloNoticia = new ModeloNoticia($conexion);
+class NoticiaController
+{
+    private $modeloNoticia;
+    private $conexion;
 
-// Lógica para manejar las acciones (GET y POST)
-$accion = $_GET['accion'] ?? 'listar';
+    public function __construct()
+    {
+        $this->conexion = Conexion::conectar();
+        $this->modeloNoticia = new ModeloNoticia();
+    }
 
-switch ($accion) {
-    case 'listar':
-        $noticias = $modeloNoticia->mdlLeerNoticias();
-        // Incluir la vista que muestra el listado
-        include_once '../vistas/ver_';
-        break;
+    public function ctrlGestionarNoticias()
+    {
+        $accion = $_GET['accion'] ?? 'listar';
+        $noticia = null;
+        $noticias = [];
+        $mensaje = null;
 
-    case 'ver_editar':
-        $id = $_GET['id'] ?? null;
-        if ($id) {
-            $noticia = $modeloNoticia->mdlLeerNoticiaPorId($id);
-            // Incluir la vista del formulario de edición
-            include_once '../vista/admin/noticias/editar_noticia.php';
-        } else {
-            // Redirigir o mostrar un error si no hay ID
-            header('Location: NoticiaController.php?accion=listar');
+        switch ($accion) {
+            case 'ver_form':
+                // Si se pide editar, se obtiene la noticia
+                $id = $_GET['id'] ?? null;
+                if ($id) {
+                    $noticia = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
+                    if (!$noticia) {
+                        $mensaje = ['tipo' => 'error', 'texto' => 'Noticia no encontrada.'];
+                        $noticia = null; // Reiniciar noticia si no se encuentra
+                    }
+                }
+                break;
+
+            case 'guardar':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $id = $_POST['id'] ?? null;
+                    $titulo = $_POST['titulo'] ?? '';
+                    $descripcion = $_POST['descripcion'] ?? '';
+                    
+                    // Lógica para subir la imagen (ejemplo)
+                    $imagen = 'ruta/de/tu/imagen.jpg'; 
+
+                    if ($id) {
+                        $resultado = $this->modeloNoticia->mdlActualizarNoticia($id, $titulo, $descripcion, $imagen);
+                        if ($resultado) {
+                            $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia actualizada con éxito.'];
+                        } else {
+                            $mensaje = ['tipo' => 'error', 'texto' => 'Error al actualizar la noticia.'];
+                        }
+                    } else {
+                        $resultado = $this->modeloNoticia->mdlCrearNoticia($titulo, $descripcion, $imagen);
+                        if ($resultado) {
+                            $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia creada con éxito.'];
+                        } else {
+                            $mensaje = ['tipo' => 'error', 'texto' => 'Error al crear la noticia.'];
+                        }
+                    }
+                }
+                $accion = 'listar'; // Volver a la vista de lista
+                break;
+
+            case 'eliminar':
+                $id = $_GET['id'] ?? null;
+                if ($id) {
+                    $resultado = $this->modeloNoticia->mdlEliminarNoticia($id);
+                    if ($resultado) {
+                        $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia eliminada con éxito.'];
+                    } else {
+                        $mensaje = ['tipo' => 'error', 'texto' => 'Error al eliminar la noticia.'];
+                    }
+                }
+                $accion = 'listar'; // Volver a la vista de lista
+                break;
+
+            default:
+            case 'listar':
+                $noticias = $this->modeloNoticia->mdlLeerNoticias();
+                break;
         }
-        break;
 
-    case 'guardar':
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'] ?? null;
-            $titulo = $_POST['titulo'] ?? '';
-            $descripcion = $_POST['descripcion'] ?? ''; 
-            // Lógica para manejar la imagen (subida y ruta)
-            $imagen = 'ruta/de/tu/imagen.jpg'; 
-
-            if ($id) {
-                // Si hay ID, es una actualización
-                $modeloNoticia->mdlActualizarNoticia($id, $titulo, $descripcion, $imagen);
-            } else {
-                // Si no hay ID, es una nueva noticia
-                $modeloNoticia->mdlCrearNoticia($titulo, $descripcion, $imagen);
-            }
-            // Redirigir al listado después de guardar
-            header('Location: NoticiaController.php?accion=listar');
-        }
-        break;
-
-    case 'eliminar':
-        $id = $_GET['id'] ?? null;
-        if ($id) {
-            $modeloNoticia->mdlEliminarNoticia($id);
-        }
-        // Redirigir al listado
-        header('Location: NoticiaController.php?accion=listar');
-        break;
-
-    default:
-        // Por defecto, redirigir al listado
-        header('Location: NoticiaController.php?accion=listar');
-        break;
+        // Se incluye la única vista, y las variables se pasan
+        include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
+    }
 }
-
-$conexion = null; // Cerrar la conexión
+?>

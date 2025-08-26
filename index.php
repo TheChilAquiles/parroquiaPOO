@@ -275,16 +275,12 @@ switch ($_SESSION['menu-item']) {
     break;
 
   case 'Noticias':
+    // Include the news controller
+    require_once('Controlador/ControladorNoticia.php');
+    $noticiaController = new NoticiaController();
 
-    if (isset($_SESSION["logged"]) &&  $_SESSION["logged"] = true) {
-
-      include_once('Vista/noticiaAdministrador.php');
-    } else {
-
-      include_once('Vista/noticiaUsuario.php');
-    }
-    break;
-
+    // Call the method that handles all news-related actions
+    $noticiaController->ctrlGestionarNoticias();
     break;
 
   case 'Grupos':
