@@ -17,6 +17,7 @@
                         'Noticias',
                         'Informacion',
                         'Grupos',
+                        'Reportes'
                     ];
                 } else {
 

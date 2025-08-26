@@ -290,6 +290,10 @@ switch ($_SESSION['menu-item']) {
     $grupoController->ctrlGestionarGrupos();
     break;
 
+    case 'Reportes':
+    include_once('Vista/reportes.php');
+    break;
+
 
 
 
