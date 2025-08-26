@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-08-2025 a las 02:47:27
+-- Tiempo de generación: 26-08-2025 a las 03:02:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -173,7 +173,7 @@ CREATE TABLE `noticias` (
   `id` bigint(20) NOT NULL,
   `id_usuario` bigint(20) NOT NULL,
   `titulo` varchar(150) NOT NULL,
-  `des` longtext NOT NULL,
+  `descripcion` longtext NOT NULL,
   `imagen` longtext NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
