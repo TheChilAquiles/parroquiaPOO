@@ -39,6 +39,10 @@ include_once('Vista/componentes/plantillaTop.php');
 
 switch ($_SESSION['menu-item']) {
 
+  case 'Inicio':
+    include_once('Vista/home.php');
+  break;
+
   case 'Salir':
     include_once('Controlador/ControladorLogin.php');
     $Login = new LoginController();
@@ -281,6 +285,13 @@ switch ($_SESSION['menu-item']) {
     }
     break;
 
+    break;
+
+  case 'Grupos':
+    // Llama al controlador de grupos y al método que gestiona todo
+    require_once('Controlador/ControladorGrupo.php');
+    $grupoController = new GrupoController();
+    $grupoController->ctrlGestionarGrupos();
     break;
 
 
