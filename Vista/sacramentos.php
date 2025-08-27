@@ -31,8 +31,8 @@
 
 
 <!-- Modal Tailwind -->
-<div id="recordModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6">
+<div id="recordModal" class="modal fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 max-h-[80svh] ">
         <h4 class="text-xl font-semibold mb-4 modal-title w-full text-center">Editar Registro</h4>
 
 
@@ -72,9 +72,9 @@
                 </div>
             </div>
 
-            <div id="Form2" class="hidden">
+            <div id="Form2" class="hidden py-4">
 
-                <div class="border border-blue-400 rounded">
+                <div class="border border-blue-400 rounded mt-4">
 
                     <div class=" text-center text-lg font-bold my-1">
                         Participantes
@@ -93,6 +93,7 @@
                         <!-- Aquí se mostrarán los integrantes -->
                     </ul>
                 </div>
+
                 <hr class="my-4 border-t-2 border-gray-300">
 
                 <div class="border border-emerald-400 p-2 rounded mb-4">
@@ -103,50 +104,104 @@
                     </div>
 
 
-
-                    <div class="flex space-x-2 w-full justify-evenly ">
-                        <label for="tipo-doc" class="block font-medium flex-1 ">Tipo Documento</label>
-
-                        <label for="numero-doc" class="block font-medium flex-1 ">Numero De Documento</label>
-
-                    </div>
+                    <div class="mx-7">
 
 
-
-                    <div class="flex space-x-2 w-full justify-between ">
-
-
-                        <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center " name="tipo-doc" id="tipo-doc">
-                            <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
-                            <option value="1">CC</option>
-                            <option value="2">Ti</option>
-                        </select>
+                        <div class="flex space-x-2 mt-4 justify-center items-end">
 
 
-                        <input class="border border-gray-300 rounded  w-full placeholder:text-center " type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <div>
+                                <label for="">Tipo Documento</label>
+
+                                <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center p-2" name="tipo-doc" id="tipo-doc">
+                                    <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
+                                    <option value="1">CC</option>
+                                    <option value="2">Ti</option>
+                                </select>
+
+                                <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                            </div>
 
 
-                        <div id="BuscarUser" class="p-2 rounded bg-green-500">
-                            <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
-                                <g fill="#616161">
-                                    <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
-                                    <circle cx="20" cy="20" r="16" />
-                                </g>
-                                <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
-                                <circle fill="#64B5F6" cx="20" cy="20" r="13" />
-                                <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
-                            </svg>
+                            <div class="flex">
+
+                                <div>
+                                    <label for="">Numero De Documento</label>
+                                    <input class="border border-gray-300 rounded  w-full placeholder:text-center p-2" type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                                </div>
+
+                            </div>
+
+
+                            <div id="BuscarUser" class="p-2 rounded bg-green-500">
+                                <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
+                                    <g fill="#616161">
+                                        <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
+                                        <circle cx="20" cy="20" r="16" />
+                                    </g>
+                                    <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
+                                    <circle fill="#64B5F6" cx="20" cy="20" r="13" />
+                                    <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
+                                </svg>
+                            </div>
+
+
+
                         </div>
 
 
+
+
+
+
+
+
+                        <!-- <div class="flex space-x-2 w-full justify-evenly flex-1">
+                            <label for="tipo-doc" class="block font-medium flex-1">Tipo Documento</label>
+
+                            <label for="numero-doc" class="block font-medium flex-1 ">Numero De Documento</label>
+
+                        </div>
+
+
+
+                        <div class="flex space-x-2 w-full justify-between mb-4 flex-1">
+
+
+                            <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center " name="tipo-doc" id="tipo-doc">
+                                <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
+                                <option value="1">CC</option>
+                                <option value="2">Ti</option>
+                            </select>
+
+
+                            <input class="border border-gray-300 rounded  w-full placeholder:text-center " type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+
+                            <div id="BuscarUser" class="p-2 rounded bg-green-500">
+                                <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
+                                    <g fill="#616161">
+                                        <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
+                                        <circle cx="20" cy="20" r="16" />
+                                    </g>
+                                    <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
+                                    <circle fill="#64B5F6" cx="20" cy="20" r="13" />
+                                    <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
+                                </svg>
+                            </div>
+
+
+                        </div> -->
+
+                    </div>
+
+                    <div class="text-center text-orange-500 font-bold bg-orange-100  rounded rounded-orange-500 my-2 mx-1 hidden" id="feligresNoExiste">
+                        <span>feligres no existe ingresa sus datos : </span>
                     </div>
 
 
-
-
-
-                    <div class="flex space-x-2">
-
+                    <div class="flex space-x-2 mt-4 justify-center">
                         <div>
                             <label for="">Primer Nombre</label>
                             <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
@@ -163,7 +218,9 @@
 
 
 
-                    <div class="flex space-x-2">
+
+
+                    <div class="flex space-x-2 mt-4 justify-center">
 
                         <div>
                             <label for="">Primer Apellido</label>
@@ -181,7 +238,7 @@
 
 
 
-                    <div>
+                    <div class="mx-7">
                         <label for="rol-participante" class="block font-medium">Rol</label>
                         <select class="border border-gray-300 rounded p-2 w-full" name="rol-participante" id="rol-participante">
                             <option class="text-center" value="" disabled selected>-- Selecciona un Rol --</option>
@@ -359,22 +416,49 @@
             },
             success: function(usuario) {
 
-                alert('Usuario encontrado: ' + usuario.primer_nombre);
-
-                if (usuario) {
+                if (usuario.status === 'success' && usuario.data) {
                     // Rellenar los campos del formulario con los datos del usuario
-                    $('#primerNombre').val(usuario.primer_nombre || '');
-                    $('#segundoNombre').val(usuario.segundo_nombre || '');
-                    $('#primerApellido').val(usuario.primer_apellido || '');
-                    $('#segundoApellido').val(usuario.segundo_apellido || '');
+                    $('#primerNombre').val(usuario.data.primer_nombre || '');
+                    $('#segundoNombre').val(usuario.data.segundo_nombre || '');
+                    $('#primerApellido').val(usuario.data.primer_apellido || '');
+                    $('#segundoApellido').val(usuario.data.segundo_apellido || '');
                     // Agrega más campos según sea necesario
+
+                    $('#feligresNoExiste').addClass('hidden');
+
+                    // alert('Usuario encontrado: ' + usuario.primer_nombre);
+
+
+
                 } else {
                     alert('No se encontró el usuario con el número de documento proporcionado.');
+                    $('#feligresNoExiste').removeClass('hidden');
+
+                    function resaltarCampo(idCampo) {
+                        if ($(idCampo).val() === '') {
+                            $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
+                            setTimeout(function() {
+                                $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
+                            }, 5000);
+                        }
+                    }
+
+                    resaltarCampo('#primerNombre');
+                    resaltarCampo('#segundoNombre');
+                    resaltarCampo('#primerApellido');
+                    resaltarCampo('#segundoApellido');
+                    
                 }
 
+
+
+
+
             },
-            error: function() {
-                alert('Error al buscar el usuario.');
+
+            error: function(e) {
+                alert('Error al buscar el usuario.' + e.responseText);
+                console.log('Error al buscar el usuario.', e);
             }
         });
 
@@ -482,7 +566,7 @@
         contenedor.appendChild(li);
         console.log("Después de agregar", contenedor.innerHTML);
 
-    
+
 
     }
 
@@ -544,7 +628,7 @@
         contenedor.appendChild(li);
         console.log("Después de agregar", contenedor.innerHTML);
 
-    
+
         mostrarFormulario(1);
 
     });
