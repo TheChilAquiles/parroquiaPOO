@@ -82,7 +82,12 @@ class NoticiaController
         }
 
         // Se incluye la única vista, y las variables se pasan
-        include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
+        if (isset($_SESSION["logged"]) &&  $_SESSION["logged"] = true) {
+            include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
+        } else {
+            include_once __DIR__ . '/../Vista/noticiaUsuario.php';
+        }
+        
     }
 }
 ?>

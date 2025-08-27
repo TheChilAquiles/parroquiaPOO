@@ -61,7 +61,7 @@ class ModeloNoticia
     public function mdlCrearNoticia($titulo, $descripcion, $imagen)
     {
         $conexion = Conexion::conectar();
-        $sql = "INSERT INTO {$this->tabla} (titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO noticias (titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, NOW())";
 
         try {
             $stmt = $conexion->prepare($sql);
