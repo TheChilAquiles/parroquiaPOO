@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-08-2025 a las 03:02:26
+-- Tiempo de generación: 27-08-2025 a las 03:34:56
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -55,8 +55,12 @@ CREATE TABLE `documento_tipos` (
 --
 
 INSERT INTO `documento_tipos` (`id`, `tipo`) VALUES
-(1, 'Cc'),
-(2, 'Ti');
+(1, 'Cedula Ciudadania '),
+(2, 'Tarjeta Identidad'),
+(3, 'Cedula extranjeria'),
+(4, 'Registro Civil'),
+(5, 'Permiso Especial'),
+(6, 'Numero Identificación Tributaria');
 
 -- --------------------------------------------------------
 
@@ -194,13 +198,35 @@ CREATE TABLE `pagos` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `parentezcos`
+-- Estructura de tabla para la tabla `parentescos`
 --
 
-CREATE TABLE `parentezcos` (
+CREATE TABLE `parentescos` (
   `id` bigint(20) NOT NULL,
   `parentesco` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `parentescos`
+--
+
+INSERT INTO `parentescos` (`id`, `parentesco`) VALUES
+(1, 'Abuela'),
+(2, 'Abuelo'),
+(3, 'Madre'),
+(4, 'Padre'),
+(5, 'Hermano'),
+(6, 'Hermana'),
+(7, 'Tío'),
+(8, 'Tía'),
+(9, 'Primo'),
+(10, 'Prima'),
+(11, 'Hijo'),
+(12, 'Hija'),
+(13, 'Esposo'),
+(14, 'Esposa'),
+(15, 'Madrina'),
+(16, 'Padrino');
 
 -- --------------------------------------------------------
 
@@ -342,7 +368,8 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 (10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
 (11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
 (12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0);
+(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0),
+(14, 1, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0);
 
 -- --------------------------------------------------------
 
@@ -445,9 +472,9 @@ ALTER TABLE `pagos`
   ADD KEY `certificado_id` (`certificado_id`);
 
 --
--- Indices de la tabla `parentezcos`
+-- Indices de la tabla `parentescos`
 --
-ALTER TABLE `parentezcos`
+ALTER TABLE `parentescos`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -531,7 +558,7 @@ ALTER TABLE `certificados`
 -- AUTO_INCREMENT de la tabla `documento_tipos`
 --
 ALTER TABLE `documento_tipos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `feligreses`
@@ -570,10 +597,10 @@ ALTER TABLE `pagos`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `parentezcos`
+-- AUTO_INCREMENT de la tabla `parentescos`
 --
-ALTER TABLE `parentezcos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `parentescos`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `parientes`
@@ -615,7 +642,7 @@ ALTER TABLE `sacramento_tipo`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`
@@ -669,7 +696,7 @@ ALTER TABLE `pagos`
 -- Filtros para la tabla `parientes`
 --
 ALTER TABLE `parientes`
-  ADD CONSTRAINT `parientes_ibfk_1` FOREIGN KEY (`parentesco_id`) REFERENCES `parentezcos` (`id`),
+  ADD CONSTRAINT `parientes_ibfk_1` FOREIGN KEY (`parentesco_id`) REFERENCES `parentescos` (`id`),
   ADD CONSTRAINT `parientes_ibfk_2` FOREIGN KEY (`feligres_sujeto_id`) REFERENCES `feligreses` (`id`),
   ADD CONSTRAINT `parientes_ibfk_3` FOREIGN KEY (`feligres_pariente_id`) REFERENCES `feligreses` (`id`);
 
