@@ -115,8 +115,13 @@
 
                                 <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center p-2" name="tipo-doc" id="tipo-doc">
                                     <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
-                                    <option value="1">CC</option>
-                                    <option value="2">Ti</option>
+                                    <option value="1">Cedula Ciudadania</option>
+                                    <option value="2">Tarjeta Identidad</option>
+                                    <option value="3">Cedula Extranjeria</option>
+                                    <option value="4">Registro Civil</option>
+                                    <option value="5">Permiso Especial</option>
+                                    <option value="6">Numero Identificación Tributaria</option>
+
                                 </select>
 
                                 <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
