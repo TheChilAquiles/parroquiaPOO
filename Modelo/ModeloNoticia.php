@@ -12,7 +12,7 @@ class ModeloNoticia
     public function mdlLeerNoticias()
     {
         $conexion = Conexion::conectar();
-        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM {$this->tabla} ORDER BY fecha DESC";
+        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM noticias ORDER BY fecha DESC";
 
         try {
             $stmt = $conexion->prepare($sql);
@@ -36,7 +36,7 @@ class ModeloNoticia
     public function mdlLeerNoticiaPorId($id)
     {
         $conexion = Conexion::conectar();
-        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM {$this->tabla} WHERE id = ?";
+        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM  noticias WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);
@@ -58,10 +58,10 @@ class ModeloNoticia
      * @param string $imagen
      * @return bool Retorna true si se insertó con éxito, de lo contrario false.
      */
-    public function mdlCrearNoticia($titulo, $descripcion, $imagen)
+    public function mdlCrearNoticia($titulo, $descripcion, $imagen, $fecha )
     {
         $conexion = Conexion::conectar();
-        $sql = "INSERT INTO noticias (titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO noticias (titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, ?)";
 
         try {
             $stmt = $conexion->prepare($sql);
@@ -84,10 +84,10 @@ class ModeloNoticia
      * @param string $imagen
      * @return bool Retorna true si se actualizó con éxito, de lo contrario false.
      */
-    public function mdlActualizarNoticia($id, $titulo, $descripcion, $imagen)
+    public function mdlActualizarNoticia($id, $titulo, $descripcion, $imagen, $fecha)
     {
         $conexion = Conexion::conectar();
-        $sql = "UPDATE {$this->tabla} SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?";
+        $sql = "UPDATE  noticias SET titulo = ?, descripcion = ?, imagen = ?, fecha = ? WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);
@@ -109,7 +109,7 @@ class ModeloNoticia
     public function mdlEliminarNoticia($id)
     {
         $conexion = Conexion::conectar();
-        $sql = "DELETE FROM {$this->tabla} WHERE id = ?";
+        $sql = "DELETE FROM  noticias WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);

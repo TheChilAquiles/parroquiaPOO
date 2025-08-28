@@ -10,26 +10,30 @@ class NoticiaController
 
     public function __construct()
     {
-        $this->conexion = Conexion::conectar();
         $this->modeloNoticia = new ModeloNoticia();
     }
 
     public function ctrlGestionarNoticias()
     {
-        $accion = $_GET['accion'] ?? 'listar';
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // ✅ Se obtiene la acción del POST usando la clave hash
+        $accion = $_POST[md5('action')] ?? 'listar';
         $noticia = null;
         $noticias = [];
         $mensaje = null;
 
         switch ($accion) {
             case 'ver_form':
-                // Si se pide editar, se obtiene la noticia
-                $id = $_GET['id'] ?? null;
+                // ✅ Se obtiene el ID del POST
+                $id = $_POST['id'] ?? null;
                 if ($id) {
                     $noticia = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
                     if (!$noticia) {
                         $mensaje = ['tipo' => 'error', 'texto' => 'Noticia no encontrada.'];
-                        $noticia = null; // Reiniciar noticia si no se encuentra
+                        $noticia = null;
                     }
                 }
                 break;
@@ -39,40 +43,63 @@ class NoticiaController
                     $id = $_POST['id'] ?? null;
                     $titulo = $_POST['titulo'] ?? '';
                     $descripcion = $_POST['descripcion'] ?? '';
-                    
-                    // Lógica para subir la imagen (ejemplo)
-                    $imagen = 'ruta/de/tu/imagen.jpg'; 
+                    $imagen = '';
+
+                    // Lógica para manejar la subida de la imagen
+                    if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+                        $directorioDestino = __DIR__ . '/../assets/img/noticias/';
+                        if (!is_dir($directorioDestino)) {
+                            mkdir($directorioDestino, 0755, true);
+                        }
+                        $nombreArchivo = uniqid() . '_' . basename($_FILES['imagen']['name']);
+                        $rutaArchivo = $directorioDestino . $nombreArchivo;
+
+                        if (move_uploaded_file($_FILES['imagen']['tmp_name'], $rutaArchivo)) {
+                            $imagen = 'assets/img/noticias/' . $nombreArchivo;
+                        } else {
+                            $mensaje = ['tipo' => 'error', 'texto' => 'Error al subir la imagen.'];
+                            break;
+                        }
+                    } elseif ($id && empty($_FILES['imagen']['name'])) {
+                        $noticiaExistente = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
+                        if ($noticiaExistente) {
+                            $imagen = $noticiaExistente['imagen'];
+                        }
+                    }
 
                     if ($id) {
+                        // ✅ Se corrige la llamada: se elimina el parámetro $fecha
                         $resultado = $this->modeloNoticia->mdlActualizarNoticia($id, $titulo, $descripcion, $imagen);
-                        if ($resultado) {
-                            $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia actualizada con éxito.'];
-                        } else {
-                            $mensaje = ['tipo' => 'error', 'texto' => 'Error al actualizar la noticia.'];
-                        }
+                        $mensaje = $resultado ? ['tipo' => 'exito', 'texto' => 'Noticia actualizada con éxito.'] : ['tipo' => 'error', 'texto' => 'Error al actualizar la noticia.'];
                     } else {
-                        $resultado = $this->modeloNoticia->mdlCrearNoticia($titulo, $descripcion, $imagen);
-                        if ($resultado) {
-                            $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia creada con éxito.'];
+                        $idUsuario = $_SESSION['user-id'] ?? null;
+                        if ($idUsuario && !empty($imagen)) {
+                            // ✅ Se corrige la llamada: se elimina el parámetro $fecha
+                            $resultado = $this->modeloNoticia->mdlCrearNoticia($titulo, $descripcion, $imagen, $idUsuario);
+                            $mensaje = $resultado ? ['tipo' => 'exito', 'texto' => 'Noticia creada con éxito.'] : ['tipo' => 'error', 'texto' => 'Error al crear la noticia.'];
                         } else {
-                            $mensaje = ['tipo' => 'error', 'texto' => 'Error al crear la noticia.'];
+                            $mensaje = ['tipo' => 'error', 'texto' => 'No se puede crear la noticia. Usuario no logueado o no se subió una imagen.'];
                         }
                     }
                 }
-                $accion = 'listar'; // Volver a la vista de lista
+                $accion = 'listar';
                 break;
 
             case 'eliminar':
-                $id = $_GET['id'] ?? null;
+                // ✅ Se obtiene el ID del POST (asumiendo que el formulario de eliminación lo envía por POST)
+                $id = $_POST['id'] ?? null;
                 if ($id) {
-                    $resultado = $this->modeloNoticia->mdlEliminarNoticia($id);
-                    if ($resultado) {
-                        $mensaje = ['tipo' => 'exito', 'texto' => 'Noticia eliminada con éxito.'];
-                    } else {
-                        $mensaje = ['tipo' => 'error', 'texto' => 'Error al eliminar la noticia.'];
+                    $noticia = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
+                    if ($noticia) {
+                        $rutaArchivo = __DIR__ . '/../' . $noticia['imagen'];
+                        if (file_exists($rutaArchivo)) {
+                            unlink($rutaArchivo);
+                        }
                     }
+                    $resultado = $this->modeloNoticia->mdlEliminarNoticia($id);
+                    $mensaje = $resultado ? ['tipo' => 'exito', 'texto' => 'Noticia eliminada con éxito.'] : ['tipo' => 'error', 'texto' => 'Error al eliminar la noticia.'];
                 }
-                $accion = 'listar'; // Volver a la vista de lista
+                $accion = 'listar';
                 break;
 
             default:
@@ -82,12 +109,10 @@ class NoticiaController
         }
 
         // Se incluye la única vista, y las variables se pasan
-        if (isset($_SESSION["logged"]) &&  $_SESSION["logged"] = true) {
+        if (isset($_SESSION["logged"]) && $_SESSION["logged"] == true) {
             include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
         } else {
             include_once __DIR__ . '/../Vista/noticiaUsuario.php';
         }
-        
     }
 }
-?>
