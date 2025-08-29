@@ -244,8 +244,8 @@
 
 
                     <div class="mx-7">
-                        <label for="rol-participante" class="block font-medium">Rol</label>
-                        <select class="border border-gray-300 rounded p-2 w-full" name="rol-participante" id="rol-participante">
+                        <label for="rolParticipante" class="block font-medium">Rol</label>
+                        <select class="border border-gray-300 rounded p-2 w-full" name="rolParticipante" id="rolParticipante">
                             <option class="text-center" value="" disabled selected>-- Selecciona un Rol --</option>
 
                             <?php
@@ -388,6 +388,8 @@
         $numeroDoc = document.getElementById('numero-doc').value.trim();
         $tipoDoc = document.getElementById('tipo-doc').value.trim();
 
+
+
         if (!$tipoDoc) {
             document.getElementById('tipo-doc').classList.add('border-red-500');
             alert('Por favor, ingresa el tipo de documento.');
@@ -431,6 +433,17 @@
 
                     $('#feligresNoExiste').addClass('hidden');
 
+
+
+                    $('#rolParticipante').addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
+                    setTimeout(
+                        function() {
+                            $('#rolParticipante').removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
+                        }, 5000);
+
+
+
+
                     // alert('Usuario encontrado: ' + usuario.primer_nombre);
 
 
@@ -439,20 +452,16 @@
                     alert('No se encontró el usuario con el número de documento proporcionado.');
                     $('#feligresNoExiste').removeClass('hidden');
 
-                    function resaltarCampo(idCampo) {
-                        if ($(idCampo).val() === '') {
-                            $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
-                            setTimeout(function() {
-                                $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
-                            }, 5000);
-                        }
-                    }
+
 
                     resaltarCampo('#primerNombre');
                     resaltarCampo('#segundoNombre');
                     resaltarCampo('#primerApellido');
                     resaltarCampo('#segundoApellido');
-                    
+
+
+
+
                 }
 
 
@@ -473,6 +482,7 @@
 
     $(document).on('click', '#AddNew', function() {
         agregarIntegrante();
+        $('#feligresNoExiste').addClass('hidden');
         resetVacio(contador);
     });
 
@@ -480,28 +490,60 @@
     let contador = 0;
 
     function resetVacio(con) {
-
         if (con > 0) {
             document.getElementById('integranteVacio').classList.add('hidden');;
         } else {
             document.getElementById('integranteVacio').classList.remove('hidden');;
         }
-
     }
 
 
-
+    function resaltarCampo(idCampo) {
+        if ($(idCampo).val() === '') {
+            $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
+            setTimeout(function() {
+                $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
+            }, 5000);
+        }
+    }
 
 
     function agregarIntegrante() {
 
-        const rolParticipante = document.getElementById('rol-participante').value.trim();
+        const rolParticipante = document.getElementById('rolParticipante').value.trim();
         const tipoDoc = document.getElementById('tipo-doc').value.trim();
         const numeroDoc = document.getElementById('numero-doc').value.trim();
 
-        if (!tipoDoc || !numeroDoc || !rolParticipante) {
+
+
+        const primerNombre = document.getElementById('primerNombre').value.trim();
+        const segundoNombre = document.getElementById('segundoNombre').value.trim();
+        const primerApellido = document.getElementById('primerApellido').value.trim();
+        const segundoApellido = document.getElementById('segundoApellido').value.trim();
+
+
+        if (!tipoDoc || !numeroDoc || !rolParticipante || !primerNombre || !primerApellido) {
+
+            resaltarCampo('#primerNombre');
+            resaltarCampo('#segundoNombre');
+            resaltarCampo('#primerApellido');
+            resaltarCampo('#segundoApellido');
+
+
+
+
+            $('#rolParticipante').addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
+            setTimeout(
+                function() {
+                    $('#rolParticipante').removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
+                }, 5000);
+
+
             alert('Por favor, completa los datos antes de añadir.');
+
             return;
+
+
         }
 
         const existe = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]')).some(input => input.value === rolParticipante);
@@ -527,7 +569,10 @@
         <span class="font-bold">${rolParticipante}</span>
 
         <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
-        <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
+        <span class="font-medium">  ${primerNombre +
+segundoNombre +
+primerApellido +
+segundoApellido}  </span>
    
           <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
           <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDoc}">
@@ -542,8 +587,11 @@
         // Limpiar los campos después de añadir
         document.getElementById('tipo-doc').value = '';
         document.getElementById('numero-doc').value = '';
-        document.getElementById('rol-participante').value = '';
-
+        document.getElementById('primerNombre').value = '';
+        document.getElementById('segundoNombre').value = '';
+        document.getElementById('primerApellido').value = '';
+        document.getElementById('segundoApellido').value = '';
+        document.getElementById('rolParticipante').value = '';
 
 
     }
@@ -616,6 +664,7 @@
 
     $(document).on('click', '#cerrarFormSacramentos', function() {
         $('#recordModal').addClass('hidden');
+        $('#feligresNoExiste').addClass('hidden');
         $('#recordForm')[0].reset();
 
         const contenedor = document.getElementById('contenedor-integrantes');
@@ -702,6 +751,8 @@
 
                 $('#recordForm')[0].reset();
                 $('#recordModal').addClass('hidden');
+                $('#feligresNoExiste').addClass('hidden');
+
 
                 //  $('#save').attr('disabled', false);
 

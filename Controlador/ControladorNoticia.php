@@ -15,9 +15,6 @@ class NoticiaController
 
     public function ctrlGestionarNoticias()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
 
         $accion = $_POST[md5('action')] ?? 'listar';
         $noticia = null;
@@ -96,12 +93,12 @@ class NoticiaController
                 }
                 $accion = 'listar';
                 break;
-                
+        }
+
         if (isset($_SESSION["logged"]) && $_SESSION["logged"] == true) {
             include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
         } else {
             include_once __DIR__ . '/../Vista/noticiaUsuario.php';
         }
     }
-}
 }

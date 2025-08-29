@@ -275,20 +275,20 @@ switch ($_SESSION['menu-item']) {
     break;
 
   case 'Noticias':
-        require_once('Controlador/NoticiaController.php');
+        require_once(__DIR__.'/Controlador/ControladorNoticia.php');
         $noticiaController = new NoticiaController();
         $noticiaController->ctrlGestionarNoticias();
         break;
 
   case 'Grupos':
     // Llama al controlador de grupos y al método que gestiona todo
-    require_once('Controlador/ControladorGrupo.php');
+    require_once(__DIR__.'/Controlador/ControladorGrupo.php');
     $grupoController = new GrupoController();
     $grupoController->ctrlGestionarGrupos();
     break;
 
     case 'Reportes':
-    include_once('Vista/reportes.php');
+    include_once(__DIR__.'/Vista/reportes.php');
     break;
 
 
