@@ -15,11 +15,13 @@
                 <label for="">Tipo Documento</label>
                 <select onblur="cambioTipo()" id="tipoDocumento" name="tipoDocumento" class="border border-gray-300 rounded p-2 w-full">
                     <option value="" disabled <?= empty($_POST['tipoDocumento']) ? 'selected' : '' ?>>Selecciona Tipo Documento</option>
-                    <option value="1" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Cédula') ? 'selected' : '' ?>>Cédula</option>
-                    <option value="2" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'RUC') ? 'selected' : '' ?>>RUC</option>
-                    <option value="2" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'DNI') ? 'selected' : '' ?>>DNI</option>
-                    <option value="3" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Pasaporte') ? 'selected' : '' ?>>Pasaporte</option>
-                    <option value="5" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Otro') ? 'selected' : '' ?>>Otro</option>
+                    <option value="1" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Cédula') ? 'selected' : '' ?>>Cédula Ciudadania</option>
+                    <option value="2" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Tarjeta Identidad') ? 'selected' : '' ?>>Tarjeta Identidad</option>
+                    <option value="3" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Cedula Extranjera') ? 'selected' : '' ?>>Cedula Extranjera</option>
+                    <option value="4" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Registro Civil') ? 'selected' : '' ?>>Registro Civil</option>
+                    <option value="5" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Permiso Especial') ? 'selected' : '' ?>>Permiso Especial</option>
+                    <option value="6" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == 'Numero Identificación Tributaria') ? 'selected' : '' ?>>Numero Identificación Tributaria</option>
+
                 </select>
                 <label name="tipoDocumento-error" class="text-red-500 hidden">Corrije Este Campo </label>
             </div>
