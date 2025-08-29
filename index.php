@@ -302,6 +302,10 @@ switch ($_SESSION['menu-item']) {
 
 
     break;
+
+    case 'Dashboard':
+      include_once('Vista/dashboard.php');
+    break;
 }
 
 
