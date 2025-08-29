@@ -9,7 +9,7 @@ class Conexion
             $link = new PDO(
                 "mysql:host=localhost;dbname=parroquia",
                 "root", // ✅ Usuario de la base de datos
-                "",     // ✅ Contraseña de la base de datos (vacía para XAMPP por defecto)
+                "usbw",     // ✅ Contraseña de la base de datos (vacía para XAMPP por defecto)
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Para manejar errores PDO

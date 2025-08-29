@@ -4,24 +4,26 @@ require_once 'Conexion.php';
 
 class ModeloNoticia
 {
-    private $tabla = 'noticias'; // Reemplaza con el nombre de tu tabla de noticias
+    private $tabla = 'noticias'; 
 
     /**
-     * @return array|false Retorna un array de noticias o false si hay un error.
+     * @param string $termino El término de búsqueda.
+     * @return array|false Retorna un array de noticias que coinciden o false si hay un error.
      */
-    public function mdlLeerNoticias()
+    public function mdlBuscarNoticias($termino)
     {
         $conexion = Conexion::conectar();
-        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM noticias ORDER BY fecha DESC";
+        // ✅ Se utiliza la variable de tabla para consistencia
+        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM noticias WHERE titulo LIKE ? OR descripcion LIKE ? ORDER BY fecha DESC";
+        $termino = "%" . $termino . "%"; 
 
         try {
             $stmt = $conexion->prepare($sql);
-            $stmt->execute();
+            $stmt->execute([$termino, $termino]);
             $noticias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $noticias;
         } catch (PDOException $e) {
-            // Manejo de errores
-            error_log("Error al leer noticias: " . $e->getMessage());
+            error_log("Error al buscar noticias: " . $e->getMessage());
             return false;
         } finally {
             $stmt = null;
@@ -36,7 +38,8 @@ class ModeloNoticia
     public function mdlLeerNoticiaPorId($id)
     {
         $conexion = Conexion::conectar();
-        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM  noticias WHERE id = ?";
+        // ✅ Se utiliza la variable de tabla para consistencia
+        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM noticias WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);
@@ -56,19 +59,21 @@ class ModeloNoticia
      * @param string $titulo
      * @param string $descripcion
      * @param string $imagen
+     * @param int $idUsuario El ID del usuario que crea la noticia
      * @return bool Retorna true si se insertó con éxito, de lo contrario false.
      */
-    public function mdlCrearNoticia($titulo, $descripcion, $imagen, $fecha )
+    public function mdlCrearNoticia($titulo, $descripcion, $imagen, $idUsuario)
     {
         $conexion = Conexion::conectar();
-        $sql = "INSERT INTO noticias (titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, ?)";
+        // ✅ Se agrega 'id_usuario' a la consulta SQL
+        $sql = "INSERT INTO {$this->tabla} (id_usuario, titulo, descripcion, imagen, fecha) VALUES (?, ?, ?, ?, NOW())";
 
         try {
             $stmt = $conexion->prepare($sql);
-            $stmt->execute([$titulo, $descripcion, $imagen]);
+            // ✅ Se agrega $idUsuario al array de ejecución
+            $stmt->execute([$idUsuario, $titulo, $descripcion, $imagen]);
             return true;
         } catch (PDOException $e) {
-            // Un ejemplo de manejo de errores si necesitas
             error_log("Error al crear noticia: " . $e->getMessage());
             return false;
         } finally {
@@ -84,13 +89,15 @@ class ModeloNoticia
      * @param string $imagen
      * @return bool Retorna true si se actualizó con éxito, de lo contrario false.
      */
-    public function mdlActualizarNoticia($id, $titulo, $descripcion, $imagen, $fecha)
+    public function mdlActualizarNoticia($id, $titulo, $descripcion, $imagen)
     {
         $conexion = Conexion::conectar();
-        $sql = "UPDATE  noticias SET titulo = ?, descripcion = ?, imagen = ?, fecha = ? WHERE id = ?";
+        // ✅ Se utiliza la variable de tabla y se elimina la fecha de la consulta
+        $sql = "UPDATE {$this->tabla} SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);
+            // ✅ Se corrige el orden y se pasan los parámetros correctos
             $stmt->execute([$titulo, $descripcion, $imagen, $id]);
             return $stmt->rowCount() > 0;
         } catch (PDOException $e) {
@@ -109,7 +116,8 @@ class ModeloNoticia
     public function mdlEliminarNoticia($id)
     {
         $conexion = Conexion::conectar();
-        $sql = "DELETE FROM  noticias WHERE id = ?";
+        // ✅ Se utiliza la variable de tabla para consistencia
+        $sql = "DELETE FROM {$this->tabla} WHERE id = ?";
 
         try {
             $stmt = $conexion->prepare($sql);

@@ -275,13 +275,10 @@ switch ($_SESSION['menu-item']) {
     break;
 
   case 'Noticias':
-    // Include the news controller
-    require_once('Controlador/ControladorNoticia.php');
-    $noticiaController = new NoticiaController();
-
-    // Call the method that handles all news-related actions
-    $noticiaController->ctrlGestionarNoticias();
-    break;
+        require_once('Controlador/NoticiaController.php');
+        $noticiaController = new NoticiaController();
+        $noticiaController->ctrlGestionarNoticias();
+        break;
 
   case 'Grupos':
     // Llama al controlador de grupos y al método que gestiona todo

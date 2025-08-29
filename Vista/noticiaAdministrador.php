@@ -1,104 +1,163 @@
-<div class="max-w-7xl mx-auto px-4 py-8">
-    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 text-center mb-10">
-        Gestión de Noticias
-    </h1>
+<div class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg mb-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-center text-gray-800">Lista de Noticias</h2>
+        <button id="openModalBtn" class="px-4 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition duration-300">
+            Crear Nueva Noticia
+        </button>
+    </div>
 
     <?php if (isset($mensaje)): ?>
-        <div class="p-4 mb-4 text-sm rounded-lg
-            <?php echo ($mensaje['tipo'] == 'exito') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'; ?>">
-            <?php echo htmlspecialchars($mensaje['texto']); ?>
+        <div class="mb-4 p-4 rounded-lg <?= $mensaje['tipo'] === 'exito' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
+            <?= $mensaje['texto'] ?>
         </div>
     <?php endif; ?>
 
-    <?php if ($accion === 'ver_form' || $accion === 'guardar'): ?>
-        <div class="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold text-gray-900 mb-4">
-                <?php echo ($noticia) ? 'Editar Noticia' : 'Crear Nueva Noticia'; ?>
-            </h2>
-            <form action="?menu-item=Noticias&accion=guardar" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" value="<?php echo ($noticia) ? htmlspecialchars($noticia['id']) : ''; ?>">
-                
-                <div class="mb-4">
-                    <label for="titulo" class="block text-gray-700 font-bold mb-2">Título</label>
-                    <input type="text" id="titulo" name="titulo" value="<?php echo ($noticia) ? htmlspecialchars($noticia['titulo']) : ''; ?>" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                </div>
-                
-                <div class="mb-4">
-                    <label for="descripcion" class="block text-gray-700 font-bold mb-2">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" rows="5" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"><?php echo ($noticia) ? htmlspecialchars($noticia['descripcion']) : ''; ?></textarea>
-                </div>
-
-                <div class="mb-4">
-                    <label for="imagen" class="block text-gray-700 font-bold mb-2">Imagen</label>
-                    <input type="file" id="imagen" name="imagen" <?php echo ($noticia) ? '' : 'required'; ?> class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
-                    <?php if ($noticia && $noticia['imagen']): ?>
-                        <p class="text-xs text-gray-500 mt-1">Imagen actual: <?php echo htmlspecialchars($noticia['imagen']); ?></p>
-                    <?php endif; ?>
-                </div>
-
-                <div class="flex items-center justify-between">
-                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Guardar
-                    </button>
-                    <a href="?menu-item=Noticias" class="inline-block align-baseline font-bold text-sm text-purple-500 hover:text-purple-800">
-                        Volver al Listado
-                    </a>
-                </div>
-            </form>
-        </div>
-
-    <?php else: ?>
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex justify-end mb-4">
-                <a href="?menu-item=Noticias&accion=ver_form" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                    Crear Nueva Noticia
-                </a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white">
-                    <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Título</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <?php if (!empty($noticias)): ?>
+                    <?php foreach ($noticias as $noticiaItem): ?>
                         <tr>
-                            <th class="py-3 px-6 text-left">Título</th>
-                            <th class="py-3 px-6 text-left">Descripción</th>
-                            <th class="py-3 px-6 text-center">Imagen</th>
-                            <th class="py-3 px-6 text-center">Fecha</th>
-                            <th class="py-3 px-6 text-center">Acciones</th>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?= htmlspecialchars($noticiaItem['titulo']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['descripcion']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <img src="<?= htmlspecialchars($noticiaItem['imagen']) ?>" alt="Imagen de la noticia" class="h-10 w-auto object-cover rounded-md">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['fecha']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-indigo-600 hover:text-indigo-900 transition duration-300 open-edit-modal"
+                                            data-id="<?= $noticiaItem['id'] ?>"
+                                            data-titulo="<?= htmlspecialchars($noticiaItem['titulo']) ?>"
+                                            data-descripcion="<?= htmlspecialchars($noticiaItem['descripcion']) ?>"
+                                            data-imagen="<?= htmlspecialchars($noticiaItem['imagen']) ?>">
+                                        Editar
+                                    </button>
+
+                                    <form action="index.php?ruta=noticias" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta noticia?');">
+                                        <input type="hidden" name="id" value="<?= $noticiaItem['id'] ?>">
+                                        <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('eliminar') ?>">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition duration-300">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        <?php if ($noticias && !empty($noticias)): ?>
-                            <?php foreach ($noticias as $noticia): ?>
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="py-3 px-6 text-left whitespace-nowrap"><?php echo htmlspecialchars($noticia['titulo']); ?></td>
-                                    <td class="py-3 px-6 text-left"><?php echo htmlspecialchars(substr($noticia['descripcion'], 0, 50)) . '...'; ?></td>
-                                    <td class="py-3 px-6 text-center">
-                                        <img src="<?php echo htmlspecialchars($noticia['imagen']); ?>" alt="Imagen de noticia" class="h-10 w-10 rounded-full mx-auto object-cover">
-                                    </td>
-                                    <td class="py-3 px-6 text-center"><?php echo htmlspecialchars($noticia['fecha']); ?></td>
-                                    <td class="py-3 px-6 text-center">
-                                        <div class="flex item-center justify-center">
-                                            <a href="?menu-item=Noticias&accion=ver_form&id=<?php echo $noticia['id']; ?>" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                </svg>
-                                            </a>
-                                            <a href="?menu-item=Noticias&accion=eliminar&id=<?php echo $noticia['id']; ?>" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" onclick="return confirm('¿Estás seguro de que quieres eliminar esta noticia?');">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1H4a1 1 0 00-1 1v2m-1 1h16" />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="py-3 px-6 text-center text-gray-500">No hay noticias para mostrar.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No hay noticias para mostrar.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<div id="noticiaModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Crear Noticia</h3>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">&times;</button>
+        </div>
+        
+        <form id="noticiaForm" action="index.php?ruta=noticias" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="id" id="noticiaId">
+            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('guardar') ?>">
+            
+            <div>
+                <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
+                <input type="text" id="titulo" name="titulo" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea id="descripcion" name="descripcion" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+
+            <div>
+                <label for="imagen" class="block text-sm font-medium text-gray-700">Imagen</label>
+                <input type="file" id="imagen" name="imagen" class="mt-1 block w-full text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                <p class="mt-2 text-sm text-gray-500">Deja este campo vacío si no quieres cambiar la imagen.</p>
+                <img id="imagenPreview" src="" alt="Vista previa" class="mt-2 h-20 w-auto object-cover rounded-md hidden">
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition duration-300">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('noticiaModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const noticiaForm = document.getElementById('noticiaForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const noticiaId = document.getElementById('noticiaId');
+    const tituloInput = document.getElementById('titulo');
+    const descripcionInput = document.getElementById('descripcion');
+    const imagenPreview = document.getElementById('imagenPreview');
+    const editButtons = document.querySelectorAll('.open-edit-modal');
+
+    // Abre el modal para crear una nueva noticia
+    openModalBtn.addEventListener('click', () => {
+        modalTitle.textContent = 'Crear Noticia';
+        noticiaId.value = '';
+        noticiaForm.reset();
+        imagenPreview.classList.add('hidden');
+        modal.classList.remove('hidden', 'opacity-0');
+        modal.classList.add('flex', 'opacity-100');
+    });
+
+    // Cierra el modal
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.remove('flex', 'opacity-100');
+        modal.classList.add('hidden', 'opacity-0');
+    });
+
+    // Abre el modal para editar una noticia
+    editButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
+            const titulo = e.target.dataset.titulo;
+            const descripcion = e.target.dataset.descripcion;
+            const imagen = e.target.dataset.imagen;
+
+            modalTitle.textContent = 'Editar Noticia';
+            noticiaId.value = id;
+            tituloInput.value = titulo;
+            descripcionInput.value = descripcion;
+            
+            // Muestra la imagen actual si existe
+            if (imagen && imagen.length > 0) {
+                imagenPreview.src = imagen;
+                imagenPreview.classList.remove('hidden');
+            } else {
+                imagenPreview.classList.add('hidden');
+            }
+
+            modal.classList.remove('hidden', 'opacity-0');
+            modal.classList.add('flex', 'opacity-100');
+        });
+    });
+
+    // Cierra el modal al hacer clic fuera
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('flex', 'opacity-100');
+            modal.classList.add('hidden', 'opacity-0');
+        }
+    });
+</script>

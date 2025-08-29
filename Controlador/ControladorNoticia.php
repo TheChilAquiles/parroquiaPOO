@@ -19,7 +19,6 @@ class NoticiaController
             session_start();
         }
 
-        // ✅ Se obtiene la acción del POST usando la clave hash
         $accion = $_POST[md5('action')] ?? 'listar';
         $noticia = null;
         $noticias = [];
@@ -27,7 +26,6 @@ class NoticiaController
 
         switch ($accion) {
             case 'ver_form':
-                // ✅ Se obtiene el ID del POST
                 $id = $_POST['id'] ?? null;
                 if ($id) {
                     $noticia = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
@@ -68,13 +66,11 @@ class NoticiaController
                     }
 
                     if ($id) {
-                        // ✅ Se corrige la llamada: se elimina el parámetro $fecha
                         $resultado = $this->modeloNoticia->mdlActualizarNoticia($id, $titulo, $descripcion, $imagen);
                         $mensaje = $resultado ? ['tipo' => 'exito', 'texto' => 'Noticia actualizada con éxito.'] : ['tipo' => 'error', 'texto' => 'Error al actualizar la noticia.'];
                     } else {
                         $idUsuario = $_SESSION['user-id'] ?? null;
                         if ($idUsuario && !empty($imagen)) {
-                            // ✅ Se corrige la llamada: se elimina el parámetro $fecha
                             $resultado = $this->modeloNoticia->mdlCrearNoticia($titulo, $descripcion, $imagen, $idUsuario);
                             $mensaje = $resultado ? ['tipo' => 'exito', 'texto' => 'Noticia creada con éxito.'] : ['tipo' => 'error', 'texto' => 'Error al crear la noticia.'];
                         } else {
@@ -86,7 +82,6 @@ class NoticiaController
                 break;
 
             case 'eliminar':
-                // ✅ Se obtiene el ID del POST (asumiendo que el formulario de eliminación lo envía por POST)
                 $id = $_POST['id'] ?? null;
                 if ($id) {
                     $noticia = $this->modeloNoticia->mdlLeerNoticiaPorId($id);
@@ -101,18 +96,12 @@ class NoticiaController
                 }
                 $accion = 'listar';
                 break;
-
-            default:
-            case 'listar':
-                $noticias = $this->modeloNoticia->mdlLeerNoticias();
-                break;
-        }
-
-        // Se incluye la única vista, y las variables se pasan
+                
         if (isset($_SESSION["logged"]) && $_SESSION["logged"] == true) {
             include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
         } else {
             include_once __DIR__ . '/../Vista/noticiaUsuario.php';
         }
     }
+}
 }
