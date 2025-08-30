@@ -62,7 +62,7 @@
     </div>
 </div>
 
-<div id="noticiaModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden opacity-0 transition-opacity duration-300">
+<div id="noticiaModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg mx-auto">
         <div class="flex justify-between items-center mb-4">
             <h3 id="modalTitle" class="text-xl font-bold text-gray-800">Crear Noticia</h3>

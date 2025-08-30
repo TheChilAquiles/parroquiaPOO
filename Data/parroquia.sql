@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.1.3
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 27-08-2025 a las 03:34:56
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Servidor: localhost
+-- Tiempo de generación: 30-08-2025 a las 01:16:29
+-- Versión del servidor: 5.7.36
+-- Versión de PHP: 8.1.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -36,8 +36,9 @@ CREATE TABLE `certificados` (
   `tipo_certificado` varchar(255) DEFAULT NULL,
   `sacramento_id` bigint(20) DEFAULT NULL,
   `ruta_archivo` varchar(255) DEFAULT NULL,
-  `estado` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `estado` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -47,20 +48,21 @@ CREATE TABLE `certificados` (
 
 CREATE TABLE `documento_tipos` (
   `id` bigint(20) NOT NULL,
-  `tipo` varchar(255) NOT NULL
+  `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `documento_tipos`
 --
 
-INSERT INTO `documento_tipos` (`id`, `tipo`) VALUES
-(1, 'Cedula Ciudadania '),
-(2, 'Tarjeta Identidad'),
-(3, 'Cedula extranjeria'),
-(4, 'Registro Civil'),
-(5, 'Permiso Especial'),
-(6, 'Numero Identificación Tributaria');
+INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
+(1, 'Cedula Ciudadania ', NULL),
+(2, 'Tarjeta Identidad', NULL),
+(3, 'Cedula extranjeria', NULL),
+(4, 'Registro Civil', NULL),
+(5, 'Permiso Especial', NULL),
+(6, 'Numero Identificación Tributaria', NULL);
 
 -- --------------------------------------------------------
 
@@ -78,15 +80,16 @@ CREATE TABLE `feligreses` (
   `primer_nombre` varchar(255) NOT NULL,
   `segundo_nombre` varchar(255) NOT NULL,
   `primer_apellido` varchar(255) NOT NULL,
-  `segundo_apellido` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `segundo_apellido` varchar(255) NOT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `feligreses`
 --
 
-INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`) VALUES
-(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran');
+INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `estado_registro`) VALUES
+(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL);
 
 -- --------------------------------------------------------
 
@@ -96,15 +99,16 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 
 CREATE TABLE `grupos` (
   `id` bigint(20) NOT NULL,
-  `nombre` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `nombre` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `grupos`
 --
 
-INSERT INTO `grupos` (`id`, `nombre`) VALUES
-(1, 'sasda');
+INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
+(1, 'sasda', NULL);
 
 -- --------------------------------------------------------
 
@@ -114,8 +118,9 @@ INSERT INTO `grupos` (`id`, `nombre`) VALUES
 
 CREATE TABLE `grupo_roles` (
   `id` bigint(20) NOT NULL,
-  `rol` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `rol` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -126,25 +131,26 @@ CREATE TABLE `grupo_roles` (
 CREATE TABLE `libros` (
   `id` bigint(20) NOT NULL,
   `libro_tipo_id` bigint(20) DEFAULT NULL,
-  `numero` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `numero` int(11) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `libros`
 --
 
-INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`) VALUES
-(2, 1, 1),
-(3, 1, 2),
-(4, 1, 3),
-(5, 1, 4),
-(6, 1, 5),
-(7, 1, 6),
-(8, 1, 7),
-(9, 1, 8),
-(10, 2, 1),
-(11, 3, 1),
-(12, 4, 1);
+INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
+(2, 1, 1, NULL),
+(3, 1, 2, NULL),
+(4, 1, 3, NULL),
+(5, 1, 4, NULL),
+(6, 1, 5, NULL),
+(7, 1, 6, NULL),
+(8, 1, 7, NULL),
+(9, 1, 8, NULL),
+(10, 2, 1, NULL),
+(11, 3, 1, NULL),
+(12, 4, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -154,18 +160,19 @@ INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`) VALUES
 
 CREATE TABLE `libro_tipo` (
   `id` bigint(20) NOT NULL,
-  `tipo` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tipo` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `libro_tipo`
 --
 
-INSERT INTO `libro_tipo` (`id`, `tipo`) VALUES
-(1, 'Bautizos'),
-(2, 'Confirmaciones'),
-(3, 'Defunciones'),
-(4, 'Matrimonios');
+INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
+(1, 'Bautizos', NULL),
+(2, 'Confirmaciones', NULL),
+(3, 'Defunciones', NULL),
+(4, 'Matrimonios', NULL);
 
 -- --------------------------------------------------------
 
@@ -176,9 +183,10 @@ INSERT INTO `libro_tipo` (`id`, `tipo`) VALUES
 CREATE TABLE `noticias` (
   `id` bigint(20) NOT NULL,
   `id_usuario` bigint(20) NOT NULL,
-  `titulo` varchar(150) NOT NULL,
-  `descripcion` longtext NOT NULL,
-  `imagen` longtext NOT NULL
+  `titulo` varchar(150) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `descripcion` longtext COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `imagen` longtext COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -192,8 +200,9 @@ CREATE TABLE `pagos` (
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
-  `metodo_de_pago` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `metodo_de_pago` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -203,30 +212,31 @@ CREATE TABLE `pagos` (
 
 CREATE TABLE `parentescos` (
   `id` bigint(20) NOT NULL,
-  `parentesco` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `parentesco` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `parentescos`
 --
 
-INSERT INTO `parentescos` (`id`, `parentesco`) VALUES
-(1, 'Abuela'),
-(2, 'Abuelo'),
-(3, 'Madre'),
-(4, 'Padre'),
-(5, 'Hermano'),
-(6, 'Hermana'),
-(7, 'Tío'),
-(8, 'Tía'),
-(9, 'Primo'),
-(10, 'Prima'),
-(11, 'Hijo'),
-(12, 'Hija'),
-(13, 'Esposo'),
-(14, 'Esposa'),
-(15, 'Madrina'),
-(16, 'Padrino');
+INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
+(1, 'Abuela', NULL),
+(2, 'Abuelo', NULL),
+(3, 'Madre', NULL),
+(4, 'Padre', NULL),
+(5, 'Hermano', NULL),
+(6, 'Hermana', NULL),
+(7, 'Tío', NULL),
+(8, 'Tía', NULL),
+(9, 'Primo', NULL),
+(10, 'Prima', NULL),
+(11, 'Hijo', NULL),
+(12, 'Hija', NULL),
+(13, 'Esposo', NULL),
+(14, 'Esposa', NULL),
+(15, 'Madrina', NULL),
+(16, 'Padrino', NULL);
 
 -- --------------------------------------------------------
 
@@ -238,8 +248,9 @@ CREATE TABLE `parientes` (
   `id` bigint(20) NOT NULL,
   `parentesco_id` bigint(20) DEFAULT NULL,
   `feligres_sujeto_id` bigint(20) DEFAULT NULL,
-  `feligres_pariente_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `feligres_pariente_id` bigint(20) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -251,8 +262,9 @@ CREATE TABLE `participantes` (
   `id` bigint(20) NOT NULL,
   `feligres_id` bigint(20) DEFAULT NULL,
   `sacramento_id` bigint(20) DEFAULT NULL,
-  `rol_participante_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `rol_participante_id` bigint(20) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -262,8 +274,9 @@ CREATE TABLE `participantes` (
 
 CREATE TABLE `participantes_rol` (
   `id` bigint(20) NOT NULL,
-  `rol` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `rol` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -274,10 +287,11 @@ CREATE TABLE `participantes_rol` (
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
   `id_pagos` bigint(20) NOT NULL,
-  `titulo` varchar(255) NOT NULL,
-  `descripcion` text NOT NULL,
-  `categoria` varchar(100) DEFAULT NULL,
-  `fecha` timestamp NOT NULL DEFAULT current_timestamp()
+  `titulo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `categoria` varchar(100) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -292,37 +306,38 @@ CREATE TABLE `sacramentos` (
   `tipo_sacramento_id` bigint(20) DEFAULT NULL,
   `acta` int(11) NOT NULL,
   `folio` int(11) NOT NULL,
-  `fecha_generacion` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `fecha_generacion` date NOT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `sacramentos`
 --
 
-INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`) VALUES
-(3, 2, 1, 10, 5, '2025-08-20'),
-(4, 3, 1, 10, 5, '2025-08-20'),
-(5, 3, 1, 10, 5, '2025-08-20'),
-(6, 3, 1, 10, 5, '2025-08-20'),
-(7, 3, 1, 10, 5, '2025-08-20'),
-(8, 3, 1, 10, 5, '2025-08-20'),
-(9, 3, 1, 10, 5, '2025-08-20'),
-(10, 2, 1, 10, 5, '2025-08-20'),
-(11, 2, 1, 10, 5, '2025-08-20'),
-(12, 2, 1, 10, 5, '2025-08-20'),
-(13, 2, 1, 10, 5, '2025-08-20'),
-(14, 2, 1, 10, 5, '2025-08-20'),
-(15, 2, 1, 10, 5, '2025-08-20'),
-(16, 2, 1, 10, 5, '2025-08-20'),
-(17, 2, 1, 10, 5, '2025-08-20'),
-(18, 2, 1, 10, 5, '2025-08-20'),
-(19, 2, 1, 10, 5, '2025-08-20'),
-(20, 2, 1, 10, 5, '2025-08-20'),
-(21, 12, 4, 10, 5, '2025-08-20'),
-(22, 12, 4, 10, 5, '2025-08-20'),
-(23, 12, 4, 10, 5, '2025-08-20'),
-(24, 12, 4, 10, 5, '2025-08-20'),
-(25, 2, 1, 10, 5, '2025-08-20');
+INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`, `estado_registro`) VALUES
+(3, 2, 1, 10, 5, '2025-08-20', NULL),
+(4, 3, 1, 10, 5, '2025-08-20', NULL),
+(5, 3, 1, 10, 5, '2025-08-20', NULL),
+(6, 3, 1, 10, 5, '2025-08-20', NULL),
+(7, 3, 1, 10, 5, '2025-08-20', NULL),
+(8, 3, 1, 10, 5, '2025-08-20', NULL),
+(9, 3, 1, 10, 5, '2025-08-20', NULL),
+(10, 2, 1, 10, 5, '2025-08-20', NULL),
+(11, 2, 1, 10, 5, '2025-08-20', NULL),
+(12, 2, 1, 10, 5, '2025-08-20', NULL),
+(13, 2, 1, 10, 5, '2025-08-20', NULL),
+(14, 2, 1, 10, 5, '2025-08-20', NULL),
+(15, 2, 1, 10, 5, '2025-08-20', NULL),
+(16, 2, 1, 10, 5, '2025-08-20', NULL),
+(17, 2, 1, 10, 5, '2025-08-20', NULL),
+(18, 2, 1, 10, 5, '2025-08-20', NULL),
+(19, 2, 1, 10, 5, '2025-08-20', NULL),
+(20, 2, 1, 10, 5, '2025-08-20', NULL),
+(21, 12, 4, 10, 5, '2025-08-20', NULL),
+(22, 12, 4, 10, 5, '2025-08-20', NULL),
+(23, 12, 4, 10, 5, '2025-08-20', NULL),
+(24, 12, 4, 10, 5, '2025-08-20', NULL),
+(25, 2, 1, 10, 5, '2025-08-20', NULL);
 
 -- --------------------------------------------------------
 
@@ -332,18 +347,19 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 
 CREATE TABLE `sacramento_tipo` (
   `id` bigint(20) NOT NULL,
-  `tipo` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `tipo` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `sacramento_tipo`
 --
 
-INSERT INTO `sacramento_tipo` (`id`, `tipo`) VALUES
-(1, 'Bautizos'),
-(2, 'Confirmaciones'),
-(3, 'Defunciones'),
-(4, 'Matrimonios');
+INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
+(1, 'Bautizos', NULL),
+(2, 'Confirmaciones', NULL),
+(3, 'Defunciones', NULL),
+(4, 'Matrimonios', NULL);
 
 -- --------------------------------------------------------
 
@@ -355,21 +371,22 @@ CREATE TABLE `usuarios` (
   `id` bigint(20) NOT NULL,
   `usuario_rol_id` bigint(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `email_confirmed` tinyint(1) DEFAULT 0,
+  `email_confirmed` tinyint(1) DEFAULT '0',
   `contraseña` varchar(255) DEFAULT NULL,
-  `datos_completos` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `datos_completos` tinyint(1) DEFAULT '0',
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`) VALUES
-(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0),
-(14, 1, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0);
+INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`) VALUES
+(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(14, 1, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -381,8 +398,9 @@ CREATE TABLE `usuario_grupos` (
   `id` bigint(20) NOT NULL,
   `usuario_id` bigint(20) DEFAULT NULL,
   `grupo_parroquial_id` bigint(20) DEFAULT NULL,
-  `grupo_rol_id` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `grupo_rol_id` bigint(20) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -392,18 +410,18 @@ CREATE TABLE `usuario_grupos` (
 
 CREATE TABLE `usuario_roles` (
   `id` bigint(20) NOT NULL,
-  `rol` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `rol` varchar(255) DEFAULT NULL,
+  `estado_registro` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Volcado de datos para la tabla `usuario_roles`
 --
 
-INSERT INTO `usuario_roles` (`id`, `rol`) VALUES
-(1, 'Feligres'),
-(2, 'Secretario'),
-(3, 'Feligres'),
-(5, 'Administrador');
+INSERT INTO `usuario_roles` (`id`, `rol`, `estado_registro`) VALUES
+(1, 'Feligres', NULL),
+(2, 'Administrador', NULL),
+(3, 'Secretario', NULL),
 
 --
 -- Índices para tablas volcadas
@@ -654,7 +672,7 @@ ALTER TABLE `usuario_grupos`
 -- AUTO_INCREMENT de la tabla `usuario_roles`
 --
 ALTER TABLE `usuario_roles`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas

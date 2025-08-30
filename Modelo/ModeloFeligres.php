@@ -1,8 +1,9 @@
 <?php
 
 class ModeloFeligres
-{
 
+{
+//poner atributos del modelo vista controlador
 
     public function mdlConsultarFeligres($tipoDoc, $documento)
     {

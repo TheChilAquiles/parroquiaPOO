@@ -14,7 +14,7 @@ class ModeloNoticia
     {
         $conexion = Conexion::conectar();
         // ✅ Se utiliza la variable de tabla para consistencia
-        $sql = "SELECT id, titulo, descripcion, imagen, fecha FROM noticias WHERE titulo LIKE ? OR descripcion LIKE ? ORDER BY fecha DESC";
+        $sql = "SELECT titulo, descripcion, imagen, fecha FROM noticias WHERE titulo LIKE ? OR descripcion LIKE ? ORDER BY fecha DESC";
         $termino = "%" . $termino . "%"; 
 
         try {
