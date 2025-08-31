@@ -13,7 +13,7 @@ class ModeloUsuario
 
 
 
-  public function mdlRegistrarUsuario($usuario)
+    public function mdlRegistrarUsuario($usuario)
 {
     $conexion = Conexion::conectar(); // Usamos tu clase PDO
 

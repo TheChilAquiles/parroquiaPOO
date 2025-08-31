@@ -6,9 +6,9 @@
         </button>
     </div>
 
-    <?php if (isset($mensaje)): ?>
-        <div class="mb-4 p-4 rounded-lg <?= $mensaje['tipo'] === 'exito' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
-            <?= $mensaje['texto'] ?>
+    <?php if (isset($mensaje['texto'])): ?>
+        <div class="mb-4 p-4 rounded-lg <?= $mensaje['tipo'] === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' ?>">
+            <?= htmlspecialchars($mensaje['texto']) ?>
         </div>
     <?php endif; ?>
 
@@ -28,11 +28,11 @@
                     <?php foreach ($noticias as $noticiaItem): ?>
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"><?= htmlspecialchars($noticiaItem['titulo']) ?></td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['descripcion']) ?></td>
+                            <td class="px-6 py-4 whitespace-now-text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['descripcion']) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 <img src="<?= htmlspecialchars($noticiaItem['imagen']) ?>" alt="Imagen de la noticia" class="h-10 w-auto object-cover rounded-md">
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['fecha']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><?= htmlspecialchars($noticiaItem['estado_registro']) ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex items-center space-x-2">
                                     <button class="text-indigo-600 hover:text-indigo-900 transition duration-300 open-edit-modal"
@@ -43,7 +43,7 @@
                                         Editar
                                     </button>
 
-                                    <form action="index.php?ruta=noticias" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta noticia?');">
+                                    <form action="index.php?menu-item=Noticias" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta noticia?');">
                                         <input type="hidden" name="id" value="<?= $noticiaItem['id'] ?>">
                                         <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('eliminar') ?>">
                                         <button type="submit" class="text-red-600 hover:text-red-900 transition duration-300">Eliminar</button>
@@ -69,9 +69,10 @@
             <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
         
-        <form id="noticiaForm" action="index.php?ruta=noticias" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <form id="noticiaForm" action="index.php?menu-item=Noticias" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="id" id="noticiaId">
             <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('guardar') ?>">
+            <input type="hidden" name="imagen_actual" id="imagenActual">
             
             <div>
                 <label for="titulo" class="block text-sm font-medium text-gray-700">Título</label>
@@ -108,8 +109,11 @@
     const noticiaId = document.getElementById('noticiaId');
     const tituloInput = document.getElementById('titulo');
     const descripcionInput = document.getElementById('descripcion');
+    const imagenInput = document.getElementById('imagen');
     const imagenPreview = document.getElementById('imagenPreview');
+    const imagenActualInput = document.getElementById('imagenActual');
     const editButtons = document.querySelectorAll('.open-edit-modal');
+    const actionInput = document.querySelector('input[name="<?= md5('action') ?>"]');
 
     // Abre el modal para crear una nueva noticia
     openModalBtn.addEventListener('click', () => {
@@ -117,6 +121,8 @@
         noticiaId.value = '';
         noticiaForm.reset();
         imagenPreview.classList.add('hidden');
+        imagenActualInput.value = '';
+        actionInput.value = '<?= md5('guardar') ?>';
         modal.classList.remove('hidden', 'opacity-0');
         modal.classList.add('flex', 'opacity-100');
     });
@@ -139,6 +145,8 @@
             noticiaId.value = id;
             tituloInput.value = titulo;
             descripcionInput.value = descripcion;
+            imagenActualInput.value = imagen; // Guarda la URL de la imagen actual
+            actionInput.value = '<?= md5('guardar') ?>';
             
             // Muestra la imagen actual si existe
             if (imagen && imagen.length > 0) {
@@ -158,6 +166,19 @@
         if (e.target === modal) {
             modal.classList.remove('flex', 'opacity-100');
             modal.classList.add('hidden', 'opacity-0');
+        }
+    });
+
+    // Vista previa de la nueva imagen
+    imagenInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagenPreview.src = e.target.result;
+                imagenPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
         }
     });
 </script>

@@ -421,7 +421,7 @@ CREATE TABLE `usuario_roles` (
 INSERT INTO `usuario_roles` (`id`, `rol`, `estado_registro`) VALUES
 (1, 'Feligres', NULL),
 (2, 'Administrador', NULL),
-(3, 'Secretario', NULL),
+(3, 'Secretario', NULL);
 
 --
 -- Índices para tablas volcadas

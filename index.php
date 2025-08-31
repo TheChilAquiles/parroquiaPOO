@@ -38,7 +38,6 @@ include_once('Vista/componentes/plantillaTop.php');
 
 
 switch ($_SESSION['menu-item']) {
-
   case 'Inicio':
     include_once('Vista/home.php');
   break;
@@ -133,8 +132,7 @@ switch ($_SESSION['menu-item']) {
           echo "<script>errorFeligres()</script>";
         } else {
 
-          // $_SESSION['user-datos'] = $feligres;
-          $_SESSION['user-datos'] = 1;
+          $_SESSION['user-datos'] = $feligres;
 
 
           echo "<script>DatosFeligres(" . $feligres . ")</script>";
@@ -161,6 +159,7 @@ switch ($_SESSION['menu-item']) {
         ];
 
         if ($_SESSION['user-datos'] == false) {
+
           $status = $Feligres->ctrlCrearFeligres($datosFeligres);
         } else {
           $status = $Feligres->ctrlActualizarFeligres($datosFeligres);
@@ -290,6 +289,12 @@ switch ($_SESSION['menu-item']) {
     case 'Reportes':
     include_once(__DIR__.'/Vista/reportes.php');
     break;
+    break;
+
+    break;
+    case 'Dashboard':
+      include_once('Vista/dashboard.php');
+    break;
 
 
 
@@ -301,10 +306,6 @@ switch ($_SESSION['menu-item']) {
     // include_once('Vista/libros-tipo.php');
 
 
-    break;
-
-    case 'Dashboard':
-      include_once('Vista/dashboard.php');
     break;
 }
 
