@@ -12,22 +12,22 @@ $Login->isLogged();
 
 // if ($Login->isLogged()) {
 
-//   if (isset($_SESSION['user-datos']) && $_SESSION['user-datos'] == false && $_SESSION['menu-item'] !== "Perfil" && $_SESSION['menu-item'] !== "Salir") {
-//     $_SESSION['menu-item'] = "Perfil";
-//     header('refresh:0');
-//   }
+//  if (isset($_SESSION['user-datos']) && $_SESSION['user-datos'] == false && $_SESSION['menu-item'] !== "Perfil" && $_SESSION['menu-item'] !== "Salir") {
+//  	$_SESSION['menu-item'] = "Perfil";
+//  	header('refresh:0');
+//  }
 
-//   if (!isset($_SESSION['menu-item'])) {
-//     $_SESSION['menu-item'] = "Dashboard";
-//     header('refresh:0');
-//   }
+//  if (!isset($_SESSION['menu-item'])) {
+//  	$_SESSION['menu-item'] = "Dashboard";
+//  	header('refresh:0');
+//  }
 
 
 // } else {
-//   if (!isset($_SESSION['menu-item'])) {
-//     $_SESSION['menu-item'] = "Inicio";
-//     header('refresh:0');
-//   }
+//  if (!isset($_SESSION['menu-item'])) {
+//  	$_SESSION['menu-item'] = "Inicio";
+//  	header('refresh:0');
+//  }
 // };
 
 echo "Session" . $_SESSION['menu-item'];
@@ -40,7 +40,7 @@ include_once('Vista/componentes/plantillaTop.php');
 switch ($_SESSION['menu-item']) {
   case 'Inicio':
     include_once('Vista/home.php');
-  break;
+    break;
 
   case 'Salir':
     include_once('Controlador/ControladorLogin.php');
@@ -149,7 +149,7 @@ switch ($_SESSION['menu-item']) {
           'idUser' => $_SESSION['user-id'],
           'tipo-doc' => $_POST['tipoDocumento'],
           'documento' => $_POST['numeroDocumento'],
-          'primer-nombre' =>  $_POST['primerNombre'],
+          'primer-nombre' =>   $_POST['primerNombre'],
           'segundo-nombre' => $_POST['segundoNombre'] ? $_POST['segundoNombre'] : '',
           'primer-apellido' => $_POST['primerApellido'],
           'segundo-apellido' => $_POST['segundoApellido'] ? $_POST['segundoApellido'] : '',
@@ -241,14 +241,14 @@ switch ($_SESSION['menu-item']) {
 
 
 
-        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('NuevoLibro')) {
+        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==   md5('NuevoLibro')) {
 
           $controllerLibro->ctrlCrearLibro($tipo, $cantidad);
           $cantidad = $controllerLibro->ctrlConsultarCantidadLibros($tipo);
         }
 
 
-        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==  md5('RegistrosLibro')) {
+        if (isset($_POST[md5('sub-action')]) && $_POST[md5('sub-action')] ==   md5('RegistrosLibro')) {
 
           echo "sisas :D";
 
@@ -274,26 +274,24 @@ switch ($_SESSION['menu-item']) {
     break;
 
   case 'Noticias':
-        require_once(__DIR__.'/Controlador/ControladorNoticia.php');
-        $noticiaController = new NoticiaController();
-        $noticiaController->ctrlGestionarNoticias();
-        break;
+    require_once(__DIR__ . '/Controlador/ControladorNoticia.php');
+    $noticiaController = new ControladorNoticia();
+    $noticiaController->ctrGestionarNoticias();
+    break;
 
   case 'Grupos':
     // Llama al controlador de grupos y al método que gestiona todo
-    require_once(__DIR__.'/Controlador/ControladorGrupo.php');
+    require_once(__DIR__ . '/Controlador/ControladorGrupo.php');
     $grupoController = new GrupoController();
     $grupoController->ctrlGestionarGrupos();
     break;
 
-    case 'Reportes':
-    include_once(__DIR__.'/Vista/reportes.php');
-    break;
+  case 'Reportes':
+    include_once(__DIR__ . '/Vista/reportes.php');
     break;
 
-    break;
-    case 'Dashboard':
-      include_once('Vista/dashboard.php');
+  case 'Dashboard':
+    include_once('Vista/dashboard.php');
     break;
 
 
@@ -316,7 +314,7 @@ switch ($_SESSION['menu-item']) {
 
 
 // if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['menu-item'])) {
-//   $_SESSION['menu-item'] = $_POST['menu-item'];
+//  $_SESSION['menu-item'] = $_POST['menu-item'];
 // } else {
 // }
 
@@ -329,110 +327,110 @@ echo "Session" . $_SESSION['menu-item'];
 
 
 
-// if ($_SERVER["REQUEST_METHOD"] == "POST" ))  {
+// if ($_SERVER["REQUEST_METHOD"] == "POST" )) 	{
 
-//   // echo "Post".$_POST['menu-item'] ;
-//   echo "Session" . $_SESSION['menu-item'];
+//  // echo "Post".$_POST['menu-item'] ;
+//  echo "Session" . $_SESSION['menu-item'];
 
-//   switch ($_SESSION['menu-item'] ) {
+//  switch ($_SESSION['menu-item'] ) {
 
-//     case 'Salir':
-//       include_once('Controlador/ControladorLogin.php');
-//       $Login = new LoginController();
-//       $Login->logOut();
-//       header('refresh:0');
-//       break;
+//  	case 'Salir':
+//  	  include_once('Controlador/ControladorLogin.php');
+//  	  $Login = new LoginController();
+//  	  $Login->logOut();
+//  	  header('refresh:0');
+//  	  break;
 
-//     case 'Login':
-
-
-//       if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('login') && isset($_POST['email']) && isset($_POST['password'])) {
-//         include_once('Controlador/ControladorLogin.php');
-//         $Login = new LoginController();
-//         $logear = $Login->logIn($_POST['email'], $_POST['password']);
-//         if ($logear) {
-//           $_SESSION['menu-item'] = "Dashboard";
-//           header('refresh:0');
-//         } else {
-//           include_once('Vista/login.php');
-//           echo "<script>errorLogin()</script>";
-//           exit();
-//         }
+//  	case 'Login':
 
 
-
-//         // $_SESSION['menu-item'] = "Dashboard";
-//         // header('refresh:0');
-
-//       } else {
-//         include_once('Vista/login.php');
-//       }
-
-//       break;
-
-//     case 'Registro':
-
-//       if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('registro') && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password-confirm'])) {
-
-//         $datosUsuario = [
-//           'email' => $_POST['email'],
-//           'password' => $_POST['password'],
-//           'password-confirm' => $_POST['password-confirm']
-//         ];
-
-//         include_once('Controlador/ControladorUsuario.php');
-//         $usuario = new UsuarioController();
-//         $status = $usuario->ctrlCrearUsuario($datosUsuario);
-
-//         if ($status['status'] == 'error') {
-//           $error = $status['error'];
-//           include_once('Vista/register.php');
-//           echo "<script>existEmail()</script>";
-//           exit();
-//         } else {
-//           $message = $status['message'];
-//         }
+//  	  if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('login') && isset($_POST['email']) && isset($_POST['password'])) {
+//  	  	include_once('Controlador/ControladorLogin.php');
+//  	  	$Login = new LoginController();
+//  	  	$logear = $Login->logIn($_POST['email'], $_POST['password']);
+//  	  	if ($logear) {
+//  	  	  $_SESSION['menu-item'] = "Dashboard";
+//  	  	  header('refresh:0');
+//  	  	} else {
+//  	  	  include_once('Vista/login.php');
+//  	  	  echo "<script>errorLogin()</script>";
+//  	  	  exit();
+//  	  	}
 
 
-//         // include_once('Controlador/ControladorLogin.php');
-//         // $Login = new LoginController();
-//         // $Login->register($_POST['email'], $_POST['password'], $_POST['password-confirm']);
-//         // $_SESSION['menu-item'] = "Dashboard";
-//         // header('refresh:0');
 
-//         echo $_POST['email'];
-//         include_once('Vista/registroCompleto.php');
-//       } else {
-//         include_once('Vista/register.php');
-//       };
+//  	  	// $_SESSION['menu-item'] = "Dashboard";
+//  	  	// header('refresh:0');
 
-//       break;
+//  	  } else {
+//  	  	include_once('Vista/login.php');
+//  	  }
 
-//     case 'Inicio':
+//  	  break;
 
-//       header('refresh:0');
-//       break;
+//  	case 'Registro':
 
-//     case 'Dashboard':
-//       echo "Hola Desde el casw2";
-//       break;
+//  	  if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('registro') && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['password-confirm'])) {
 
-//     case 'Perfil':
+//  	  	$datosUsuario = [
+//  	  	  'email' => $_POST['email'],
+//  	  	  'password' => $_POST['password'],
+//  	  	  'password-confirm' => $_POST['password-confirm']
+//  	  	];
 
-//       break;
+//  	  	include_once('Controlador/ControladorUsuario.php');
+//  	  	$usuario = new UsuarioController();
+//  	  	$status = $usuario->ctrlCrearUsuario($datosUsuario);
+
+//  	  	if ($status['status'] == 'error') {
+//  	  	  $error = $status['error'];
+//  	  	  include_once('Vista/register.php');
+//  	  	  echo "<script>existEmail()</script>";
+//  	  	  exit();
+//  	  	} else {
+//  	  	  $message = $status['message'];
+//  	  	}
 
 
-//     default:
-//       # code...
-//       break;
-//   }
+//  	  	// include_once('Controlador/ControladorLogin.php');
+//  	  	// $Login = new LoginController();
+//  	  	// $Login->register($_POST['email'], $_POST['password'], $_POST['password-confirm']);
+//  	  	// $_SESSION['menu-item'] = "Dashboard";
+//  	  	// header('refresh:0');
+
+//  	  	echo $_POST['email'];
+//  	  	include_once('Vista/registroCompleto.php');
+//  	  } else {
+//  	  	include_once('Vista/register.php');
+//  	  };
+
+//  	  break;
+
+//  	case 'Inicio':
+
+//  	  header('refresh:0');
+//  	  break;
+
+//  	case 'Dashboard':
+//  	  echo "Hola Desde el casw2";
+//  	  break;
+
+//  	case 'Perfil':
+
+//  	  break;
+
+
+//  	default:
+//  	  # code...
+//  	  break;
+//  }
 // } else {
 
-//   echo "sesion else" . $_SESSION['menu-item'];
+//  echo "sesion else" . $_SESSION['menu-item'];
 
-//   include_once('Controlador/ControladorLogin.php');
-//   $Login = new LoginController();
-//   $Login->isLogged();
+//  include_once('Controlador/ControladorLogin.php');
+//  $Login = new LoginController();
+//  $Login->isLogged();
 // }
 
 

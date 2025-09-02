@@ -1,108 +1,172 @@
 <?php
 
-require_once('Conexion.php');
-
-class NoticiaModel {
-
+/**
+ * Clase ModeloNoticia
+ *
+ * Esta clase se encarga de las operaciones de acceso a datos (CRUD) relacionadas con la entidad 'noticias'.
+ * Utiliza PDO para interactuar de forma segura con la base de datos, previniendo la inyección SQL.
+ *
+ * Se asume la existencia de una clase 'Conexion' con un método estático 'conectar()'.
+ *
+ * @package Modelo
+ * @category Data Access
+ */
+class ModeloNoticia
+{
     /**
-     * Crea una nueva noticia en la base de datos.
-     * @param string $titulo Título de la noticia.
-     * @param string $descripcion Contenido de la noticia.
-     * @param string $imagen Ruta o contenido de la imagen.
-     * @param int $id_usuario ID del usuario que crea la noticia.
-     * @return bool Retorna true si la inserción fue exitosa, de lo contrario false.
+     * Crea un nuevo registro de noticia en la base de datos.
+     *
+     * Este método inserta una nueva noticia en la tabla `noticias` con los datos proporcionados.
+     *
+     * @param array $datos Un array asociativo que contiene los datos de la noticia:
+     * 'id_usuario', 'titulo', 'descripcion', 'imagen'.
+     * @return array Un array con un mensaje de éxito o un array con un mensaje de error en caso de fallo.
      */
-    public function crearNoticia($titulo, $descripcion, $imagen, $id_usuario) {
-        $sql = "INSERT INTO noticias (id_usuario, titulo, descripcion, imagen) VALUES (?, ?, ?, ?)";
+    public function mdlCrearNoticia($datos)
+    {
+        // Obtiene la conexión a la base de datos.
+        $conexion = Conexion::conectar();
+
         try {
-            // Se usa el método estático directamente para obtener la conexión
-            $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(1, $id_usuario, PDO::PARAM_INT);
-            $stmt->bindParam(2, $titulo, PDO::PARAM_STR);
-            $stmt->bindParam(3, $descripcion, PDO::PARAM_STR);
-            $stmt->bindParam(4, $imagen, PDO::PARAM_STR);
-            return $stmt->execute();
+            // Prepara la consulta SQL para la inserción.
+            $sql = "INSERT INTO `noticias` (`id_usuario`, `titulo`, `descripcion`, `imagen`, `estado_registro`) VALUES (?, ?, ?, ?, NOW())";
+            $stmt = $conexion->prepare($sql);
+
+            // Vincula los parámetros del array a la consulta.
+            $stmt->execute([
+                $datos['id_usuario'],
+                $datos['titulo'],
+                $datos['descripcion'],
+                $datos['imagen']
+            ]);
+
+            // Comprueba si la inserción fue exitosa.
+            if ($stmt->rowCount() > 0) {
+                return ['exito' => true, 'mensaje' => "Noticia creada correctamente."];
+            } else {
+                return ['exito' => false, 'mensaje' => "No se pudo crear la noticia."];
+            }
         } catch (PDOException $e) {
+            // Captura errores de PDO y devuelve un mensaje de error.
             error_log("Error al crear noticia: " . $e->getMessage());
-            return false;
+            return ['exito' => false, 'mensaje' => "Error interno al guardar la noticia."];
+        } finally {
+            // Cierra la conexión y libera los recursos del statement.
+            $stmt = null;
+            $conexion = null;
         }
     }
 
     /**
      * Obtiene todas las noticias de la base de datos.
-     * @return array|false Retorna un array con todas las noticias o false en caso de error.
+     *
+     * Este método selecciona todos los registros de la tabla `noticias`.
+     *
+     * @return array Un array de arrays asociativos con los datos de las noticias.
+     * Retorna un array vacío si no se encuentran noticias o en caso de error.
      */
-    public function obtenerTodasLasNoticias() {
-        $sql = "SELECT * FROM noticias ORDER BY estado_registro DESC";
+    public function mdlObtenerNoticias()
+    {
+        // Obtiene la conexión a la base de datos.
+        $conexion = Conexion::conectar();
+        $noticias = [];
+
         try {
-            // Se usa el método estático directamente para obtener la conexión
-            $stmt = Conexion::conectar()->prepare($sql);
+            // Prepara la consulta SQL.
+            $sql = "SELECT * FROM `noticias` ORDER BY `estado_registro` DESC";
+            $stmt = $conexion->prepare($sql);
+
+            // Ejecuta la consulta.
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Obtiene todos los resultados como un array asociativo.
+            $noticias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
+            // Captura errores de PDO.
             error_log("Error al obtener noticias: " . $e->getMessage());
-            return false;
+        } finally {
+            // Cierra la conexión y libera los recursos.
+            $stmt = null;
+            $conexion = null;
         }
+
+        return $noticias;
     }
 
     /**
-     * Obtiene una noticia específica por su ID.
-     * @param int $id_noticia ID de la noticia a obtener.
-     * @return array|false Retorna un array con los datos de la noticia o false.
+     * Actualiza una noticia existente en la base de datos.
+     *
+     * Este método modifica un registro en la tabla `noticias` basado en su ID.
+     *
+     * @param int $id El ID de la noticia a actualizar.
+     * @param array $datos Array con los datos de la noticia a actualizar:
+     * 'titulo', 'descripcion', 'imagen'.
+     * @return array Un array con un mensaje de éxito o un array con un mensaje de error.
      */
-    public function obtenerNoticiaPorId($id_noticia) {
-        $sql = "SELECT * FROM noticias WHERE id = ?";
+    public function mdlActualizarNoticia($id, $datos)
+    {
+        $conexion = Conexion::conectar();
         try {
-            // Se usa el método estático directamente para obtener la conexión
-            $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(1, $id_noticia, PDO::PARAM_INT);
-            $stmt->execute();
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener noticia por ID: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * Actualiza una noticia existente.
-     * @param int $id_noticia ID de la noticia a actualizar.
-     * @param string $titulo Nuevo título.
-     * @param string $descripcion Nuevo contenido.
-     * @param string $imagen Nueva ruta de imagen.
-     * @return bool Retorna true si la actualización fue exitosa, de lo contrario false.
-     */
-    public function actualizarNoticia($id_noticia, $titulo, $descripcion, $imagen) {
-        $sql = "UPDATE noticias SET titulo = ?, descripcion = ?, imagen = ? WHERE id = ?";
-        try {
-            // Se usa el método estático directamente para obtener la conexión
-            $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(1, $titulo, PDO::PARAM_STR);
-            $stmt->bindParam(2, $descripcion, PDO::PARAM_STR);
-            $stmt->bindParam(3, $imagen, PDO::PARAM_STR);
-            $stmt->bindParam(4, $id_noticia, PDO::PARAM_INT);
-            return $stmt->execute();
+            $sql = "UPDATE `noticias` SET `titulo` = ?, `descripcion` = ?, `imagen` = ? WHERE `id` = ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([
+                $datos['titulo'],
+                $datos['descripcion'],
+                $datos['imagen'],
+                $id
+            ]);
+            
+            if ($stmt->rowCount() > 0) {
+                return ['exito' => true, 'mensaje' => "Noticia actualizada correctamente."];
+            } else {
+                return ['exito' => false, 'mensaje' => "No se encontró la noticia para actualizar o no se realizaron cambios."];
+            }
         } catch (PDOException $e) {
             error_log("Error al actualizar noticia: " . $e->getMessage());
-            return false;
+            return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
+        } finally {
+            $stmt = null;
+            $conexion = null;
         }
     }
 
     /**
-     * Elimina una noticia por su ID.
-     * @param int $id_noticia ID de la noticia a eliminar.
-     * @return bool Retorna true si la eliminación fue exitosa, de lo contrario false.
+     * Elimina una noticia de la base de datos.
+     *
+     * Este método borra un registro de la tabla `noticias` basado en su ID.
+     *
+     * @param int $id El ID de la noticia a eliminar.
+     * @return array Un array con un mensaje de éxito o un array con un mensaje de error.
      */
-    public function eliminarNoticia($id_noticia) {
-        $sql = "DELETE FROM noticias WHERE id = ?";
+    public function mdlBorrarNoticia($id)
+    {
+        // Obtiene la conexión a la base de datos.
+        $conexion = Conexion::conectar();
+
         try {
-            // Se usa el método estático directamente para obtener la conexión
-            $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->bindParam(1, $id_noticia, PDO::PARAM_INT);
-            return $stmt->execute();
+            // Prepara la consulta SQL para la eliminación.
+            $sql = "DELETE FROM `noticias` WHERE `id` = ?";
+            $stmt = $conexion->prepare($sql);
+
+            // Vincula el ID a la consulta.
+            $stmt->execute([$id]);
+            
+            // Comprueba si se eliminó algún registro.
+            if ($stmt->rowCount() > 0) {
+                return ['exito' => true, 'mensaje' => "Noticia eliminada correctamente."];
+            } else {
+                return ['exito' => false, 'mensaje' => "No se encontró la noticia para eliminar."];
+            }
+
         } catch (PDOException $e) {
-            error_log("Error al eliminar noticia: " . $e->getMessage());
-            return false;
+            // Captura errores de PDO.
+            error_log("Error al borrar noticia: " . $e->getMessage());
+            return ['exito' => false, 'mensaje' => "Error interno al borrar la noticia."];
+        } finally {
+            // Cierra la conexión y libera los recursos.
+            $stmt = null;
+            $conexion = null;
         }
     }
 }

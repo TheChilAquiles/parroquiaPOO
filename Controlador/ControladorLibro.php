@@ -1,46 +1,59 @@
 <?php
 
+/**
+ * Clase LibroController
+ *
+ * Maneja la lógica de negocio para la entidad 'Libro'.
+ *
+ * @category Controller
+ * @package  Libro
+ */
 class LibroController {
-
-
     
+    /**
+     * Constructor de la clase LibroController.
+     */
     public function __construct()
     {
         require_once('Modelo/ModeloLibro.php');
         require_once('Modelo/Conexion.php');
     }
 
-
+    /**
+     * Consulta la cantidad de libros de un tipo específico.
+     *
+     * @param string $tipo El tipo de libro a consultar.
+     * @return int La cantidad de libros.
+     */
     public function ctrlConsultarCantidadLibros($tipo){
-
-        $libros = new  ModeloLibro();
-
+        $libros = new ModeloLibro();
         $cantidad = $libros->mdlConsultarCantidadLibros($tipo);
-
-        return $cantidad ;
-
+        return $cantidad;
     }
 
-
-        public function ctrlCrearLibro($tipo,$cantidad){
-
-        $libros = new  ModeloLibro();
-
-        $cantidad = $libros->mdlAñadirLibro($tipo,$cantidad);
-
-        return $cantidad ;
-
+    /**
+     * Crea un nuevo registro de libro.
+     *
+     * @param string $tipo     El tipo del libro.
+     * @param int    $cantidad La cantidad de libros a añadir.
+     * @return int La cantidad de libros añadidos.
+     */
+    public function ctrlCrearLibro($tipo, $cantidad){
+        $libros = new ModeloLibro();
+        $cantidad = $libros->mdlAñadirLibro($tipo, $cantidad);
+        return $cantidad;
     }
-
 }
 
 
-
-
-
-
-
-
+/**
+ * Clase records
+ *
+ * Maneja las operaciones de base de datos (CRUD) para la tabla 'usuarios'.
+ *
+ * @category Modelo
+ * @package  Records
+ */
 class records {
     
     private $recordsTable = 'usuarios';
@@ -56,14 +69,24 @@ class records {
     public $hijoDe;
     public $estadoCivil;
 
+    /**
+     * Constructor de la clase records.
+     *
+     * @param mysqli $db La conexión a la base de datos.
+     */
     public function __construct($db) {
         $this->conn = $db;
     }
 
+    /**
+     * Obtiene y devuelve una lista de registros.
+     *
+     * @return void Genera una salida en formato JSON.
+     */
     public function listRecords() {
         $sqlQuery = "SELECT * FROM {$this->recordsTable} ";
 
-        // Búsqueda
+        // Funcionalidad de búsqueda.
         if (!empty($_POST["search"]["value"])) {
             $search = $this->conn->real_escape_string($_POST["search"]["value"]);
             $sqlQuery .= "WHERE (
@@ -75,7 +98,7 @@ class records {
             ) ";
         }
 
-        // Orden
+        // Funcionalidad de ordenamiento.
         if (!empty($_POST["order"])) {
             $columns = ["id", "name", "parroquia", "fechaFallecimiento", "lugarNacimiento", "age", "causaMuerte", "hijoDe", "estadoCivil"];
             $colIndex = intval($_POST["order"][0]["column"]);
@@ -86,7 +109,7 @@ class records {
             $sqlQuery .= "ORDER BY id DESC ";
         }
 
-        // Paginación
+        // Funcionalidad de paginación.
         if ($_POST["length"] != -1) {
             $start = intval($_POST["start"]);
             $length = intval($_POST["length"]);
@@ -96,7 +119,7 @@ class records {
         $stmt = $this->conn->prepare($sqlQuery);
         $stmt->execute();
         $result = $stmt->get_result();
-
+        
         $stmtTotal = $this->conn->prepare("SELECT * FROM {$this->recordsTable}");
         $stmtTotal->execute();
         $allResult = $stmtTotal->get_result();
@@ -127,6 +150,11 @@ class records {
         ]);
     }
 
+    /**
+     * Añade un nuevo registro a la base de datos.
+     *
+     * @return bool Verdadero si tiene éxito, falso si falla.
+     */
     public function addRecord() {
         $stmt = $this->conn->prepare("
             INSERT INTO {$this->recordsTable}
@@ -146,6 +174,11 @@ class records {
         return $stmt->execute();
     }
 
+    /**
+     * Obtiene un solo registro por su ID.
+     *
+     * @return void Genera una salida en formato JSON.
+     */
     public function getRecord() {
         $stmt = $this->conn->prepare("SELECT * FROM {$this->recordsTable} WHERE id = ?");
         $stmt->bind_param("i", $this->id);
@@ -154,6 +187,11 @@ class records {
         echo json_encode($result->fetch_assoc());
     }
 
+    /**
+     * Actualiza un registro existente en la base de datos.
+     *
+     * @return bool Verdadero si tiene éxito, falso si falla.
+     */
     public function updateRecord() {
         $stmt = $this->conn->prepare("
             UPDATE {$this->recordsTable}
@@ -174,6 +212,11 @@ class records {
         return $stmt->execute();
     }
 
+    /**
+     * Elimina un registro de la base de datos por su ID.
+     *
+     * @return bool Verdadero si tiene éxito, falso si falla.
+     */
     public function deleteRecord() {
         $stmt = $this->conn->prepare("DELETE FROM {$this->recordsTable} WHERE id = ?");
         $stmt->bind_param("i", $this->id);
