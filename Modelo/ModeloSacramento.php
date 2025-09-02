@@ -118,11 +118,11 @@ class ModeloSacramento
         echo json_encode($response);
     }
 
-    public function addRecords()
+    public function CrearSacramento($data)
     {
-        $archivo = 'logs/app.log';
+        $archivo = 'logs/app3.log';
 
-        file_put_contents($archivo, "Inicio records\n", FILE_APPEND);
+        file_put_contents($archivo, 'setetado : ' . print_r($data, true), FILE_APPEND);
 
         try {
             // Variables con valores reales
@@ -147,7 +147,25 @@ class ModeloSacramento
 
             $result = $stmt->execute();
 
-            file_put_contents($archivo, "Registro hecho\n", FILE_APPEND);
+
+            // Obtener el ID del nuevo registro
+            $sacramentoID = $this->conn->lastInsertId();
+
+
+
+            $ControladorParticipantes  = new ControladorParticipante($sacramentoID);
+
+
+
+
+            
+
+
+
+
+
+
+            file_put_contents($archivo, "Registro hecho\n id :" .     $sacramentoID, FILE_APPEND);
 
             return $result;
         } catch (\Throwable $th) {

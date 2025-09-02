@@ -268,8 +268,10 @@
 
                             <option value="Padre">Padre</option>
                             <option value="Madre">Madre</option>
-                            <option value="Padrino">Padrino</option>
-                            <option value="Madrina">Madrina</option>
+                            <?php if ($tipo !== 3) {
+                                echo ' <option value="Padrino">Padrino</option>';
+                                echo '<option value="Madrina">Madrina</option>';
+                            }; ?>
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
@@ -381,6 +383,23 @@
 
 
 <script>
+    
+
+    Guardar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $(document).on('click', '#BuscarUser', function() {
 
         alert('Buscar Usuario');
@@ -569,14 +588,18 @@
         <span class="font-bold">${rolParticipante}</span>
 
         <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
-        <span class="font-medium">  ${primerNombre +
-segundoNombre +
-primerApellido +
-segundoApellido}  </span>
+        <span class="font-medium">  ${[primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ')}  </span>
    
           <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
           <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDoc}">
           <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${numeroDoc}">
+          <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${primerNombre}">
+          <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${segundoNombre}">
+          <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
+          <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
+
+
+
           <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
           </div>
 
@@ -741,12 +764,12 @@ segundoApellido}  </span>
     $("#recordModal").on('submit', '#recordForm', function(event) {
         event.preventDefault();
         var formData = $(this).serialize();
-        //    $('#save').attr('disabled','disabled');
+        //  $('#Guardar').attr('disabled','disabled');
         // alert('fformData: ' + formData);
         $.ajax({
             url: "Controlador/ControladorSacramento.php",
             method: "POST",
-            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
+            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>'  ,
             success: function(data) {
 
                 $('#recordForm')[0].reset();
@@ -762,4 +785,6 @@ segundoApellido}  </span>
             }
         })
     });
+
+
 </script>

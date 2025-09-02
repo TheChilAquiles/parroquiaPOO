@@ -1,1 +1,3 @@
-/logs/app.log
+# ignore all logs
+**/logs/*.log
+indexold
