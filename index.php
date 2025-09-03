@@ -5,7 +5,7 @@ session_start();
 
 
 // -- LINEA PARA TESTEAR EN LOG --
-file_put_contents(__DIR__ . '/logs/RusbelApp.log', 'Entro a Mostrar noticias controlador ' . "\n", FILE_APPEND);
+file_put_contents(__DIR__ . '/logs/SebastianApp.log', 'Paso por el index ' . "\n", FILE_APPEND);
 // -- LINEA PARA TESTEAR EN LOG  --
 
 
@@ -332,6 +332,15 @@ switch ($_SESSION['menu-item']) {
     include_once('Vista/dashboard.php');
     break;
 
+  case'Certificados':
+
+    // -- LINEA PARA TESTEAR EN LOG --
+file_put_contents(__DIR__ . '/logs/SebastianApp.log', 'Entro a  Certificados ' . "\n", FILE_APPEND);
+// -- LINEA PARA TESTEAR EN LOG  --
+
+
+      include_once('Vista/certificados.php');
+    break;
 
 
 

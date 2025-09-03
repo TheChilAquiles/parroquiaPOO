@@ -22,6 +22,7 @@
                         'Grupos',
                         'Reportes',
                         'Pagos',
+                        'Certificados'
                     ];
                 } else {
 
