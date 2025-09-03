@@ -12,13 +12,12 @@
  * @package Controlador
  */
 
-// Se inicia la sesión para el manejo de usuarios.
-session_start();
-
 // El controlador se encarga de requerir los archivos necesarios.
 // Se asume que el archivo del modelo está en el mismo directorio.
-require_once 'ModeloNoticia.php';
 
+
+
+require_once __DIR__ . '/../Modelo/ModeloNoticia.php';
 class ControladorNoticia
 {
     /**
@@ -35,7 +34,7 @@ class ControladorNoticia
     {
         $this->modeloNoticia = new ModeloNoticia();
     }
-    
+
     /**
      * Método principal que gestiona la lógica de la aplicación.
      *
@@ -44,8 +43,15 @@ class ControladorNoticia
      */
     public function ctrGestionarNoticias()
     {
+
+
+
         $action = isset($_POST[md5('action')]) ? $_POST[md5('action')] : '';
-        $isLoggedIn = isset($_SESSION['user-id']);
+
+
+
+        $isLoggedIn = isset($_SESSION["logged"]);
+
 
         if ($isLoggedIn) {
             switch ($action) {
@@ -62,6 +68,8 @@ class ControladorNoticia
         } else {
             $this->ctrMostrarNoticiasPublicas();
         }
+
+
     }
 
     /**
@@ -76,7 +84,7 @@ class ControladorNoticia
         $titulo = htmlspecialchars($_POST['titulo'], ENT_QUOTES, 'UTF-8');
         $descripcion = htmlspecialchars($_POST['descripcion'], ENT_QUOTES, 'UTF-8');
         $id_usuario = $_SESSION['user-id'];
-        
+
         // Manejo de la imagen. La lógica de guardado es la misma que la tuya.
         $imagen = $_POST['imagen_actual'] ?? '';
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
@@ -90,7 +98,7 @@ class ControladorNoticia
                 exit;
             }
         }
-        
+
         if (empty($id)) {
             // Es una nueva noticia.
             $this->modeloNoticia->mdlCrearNoticia([
@@ -131,8 +139,18 @@ class ControladorNoticia
      */
     private function ctrMostrarAdminNoticias()
     {
+
+
+        // if (!is_dir($dir)) {
+        //   mkdir($dir, 0777, true); // Crea la carpeta con permisos recursivos
+        // }
+        $archivo = __DIR__ . '/logs/SantiagoApp.log';
+        file_put_contents($archivo, 'Entro a Mostrar noticias controlador  /n', FILE_APPEND);
+
+
+
         $noticias = $this->modeloNoticia->mdlObtenerNoticias();
-        require_once 'Vista/NoticiaAdministrador.php';
+        require_once __DIR__ . '/../Vista/noticiaAdministrador.php';
     }
 
     /**
@@ -141,6 +159,6 @@ class ControladorNoticia
     private function ctrMostrarNoticiasPublicas()
     {
         $noticias = $this->modeloNoticia->mdlObtenerNoticias();
-        require_once 'VistaNoticiaUsuario.php';
+        require_once '/../Vista/noticiaUsuario.php';
     }
 }

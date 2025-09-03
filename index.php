@@ -2,6 +2,17 @@
 ob_start();
 session_start();
 
+
+
+// -- LINEA PARA TESTEAR EN LOG --
+file_put_contents(__DIR__ . '/logs/RusbelApp.log', 'Entro a Mostrar noticias controlador ' . "\n", FILE_APPEND);
+// -- LINEA PARA TESTEAR EN LOG  --
+
+
+
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['menu-item'])) {
   $_SESSION['menu-item'] = $_POST['menu-item'];
 }
@@ -274,9 +285,27 @@ switch ($_SESSION['menu-item']) {
     break;
 
   case 'Noticias':
-    require_once(__DIR__ . '/Controlador/ControladorNoticia.php');
-    $noticiaController = new ControladorNoticia();
-    $noticiaController->ctrGestionarNoticias();
+
+    // -- LINEA PARA TESTEAR EN LOG --
+    file_put_contents(__DIR__ . '/logs/SamuelApp.log', __DIR__ . '/Controlador/ControladorNoticia.php' . "\n", FILE_APPEND);
+    // -- LINEA PARA TESTEAR EN LOG  --
+
+
+
+    try {
+      require_once(__DIR__ . '/Controlador/ControladorNoticia.php');
+      $noticiaController = new ControladorNoticia();
+      $noticiaController->ctrGestionarNoticias();
+
+      file_put_contents(__DIR__ . '/logs/SamuelApp.log', 'All fine' . "\n", FILE_APPEND);
+    } catch (\Throwable $th) {
+
+      // -- LINEA PARA TESTEAR EN LOG --
+      file_put_contents(__DIR__ . '/logs/SamuelApp.log', 'AaaaaaaaaH ! : ' . $th->getMessage() . "\n", FILE_APPEND);
+      // -- LINEA PARA TESTEAR EN LOG  --
+    }
+
+
     break;
 
   case 'Grupos':
@@ -288,8 +317,8 @@ switch ($_SESSION['menu-item']) {
 
   case 'Reportes':
     include_once(__DIR__ . '/Vista/reportes.php');
-    break;
 
+    break;
   case 'Dashboard':
     include_once('Vista/dashboard.php');
     break;
@@ -304,7 +333,6 @@ switch ($_SESSION['menu-item']) {
     // include_once('Vista/libros-tipo.php');
 
 
-    break;
 }
 
 

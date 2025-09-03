@@ -11,8 +11,16 @@
  * @package Modelo
  * @category Data Access
  */
+
+
+
 class ModeloNoticia
+
 {
+    public function __construct()
+    {
+        require_once __DIR__ . "/Conexion.php";
+    }
     /**
      * Crea un nuevo registro de noticia en la base de datos.
      *
