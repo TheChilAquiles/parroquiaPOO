@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: localhost
--- Tiempo de generación: 30-08-2025 a las 01:16:29
--- Versión del servidor: 5.7.36
--- Versión de PHP: 8.1.3
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 03-09-2025 a las 03:15:56
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,7 +38,7 @@ CREATE TABLE `certificados` (
   `ruta_archivo` varchar(255) DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE `certificados` (
 
 CREATE TABLE `documento_tipos` (
   `id` bigint(20) NOT NULL,
-  `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` varchar(255) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -82,7 +82,7 @@ CREATE TABLE `feligreses` (
   `primer_apellido` varchar(255) NOT NULL,
   `segundo_apellido` varchar(255) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `feligreses`
@@ -101,7 +101,7 @@ CREATE TABLE `grupos` (
   `id` bigint(20) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `grupos`
@@ -120,7 +120,7 @@ CREATE TABLE `grupo_roles` (
   `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -133,7 +133,7 @@ CREATE TABLE `libros` (
   `libro_tipo_id` bigint(20) DEFAULT NULL,
   `numero` int(11) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `libros`
@@ -162,7 +162,7 @@ CREATE TABLE `libro_tipo` (
   `id` bigint(20) NOT NULL,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `libro_tipo`
@@ -183,9 +183,9 @@ INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 CREATE TABLE `noticias` (
   `id` bigint(20) NOT NULL,
   `id_usuario` bigint(20) NOT NULL,
-  `titulo` varchar(150) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `descripcion` longtext COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `imagen` longtext COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `titulo` varchar(150) NOT NULL,
+  `descripcion` longtext NOT NULL,
+  `imagen` longtext NOT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -200,9 +200,9 @@ CREATE TABLE `pagos` (
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
-  `metodo_de_pago` varchar(255) DEFAULT NULL,
-  `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `estado_registro` datetime DEFAULT NULL,
+  `tipo_pago_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -214,7 +214,7 @@ CREATE TABLE `parentescos` (
   `id` bigint(20) NOT NULL,
   `parentesco` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `parentescos`
@@ -250,7 +250,7 @@ CREATE TABLE `parientes` (
   `feligres_sujeto_id` bigint(20) DEFAULT NULL,
   `feligres_pariente_id` bigint(20) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -264,7 +264,7 @@ CREATE TABLE `participantes` (
   `sacramento_id` bigint(20) DEFAULT NULL,
   `rol_participante_id` bigint(20) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -276,7 +276,7 @@ CREATE TABLE `participantes_rol` (
   `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -287,10 +287,10 @@ CREATE TABLE `participantes_rol` (
 CREATE TABLE `reportes` (
   `id` int(11) NOT NULL,
   `id_pagos` bigint(20) NOT NULL,
-  `titulo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `descripcion` text COLLATE utf8mb4_spanish2_ci NOT NULL,
-  `categoria` varchar(100) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
-  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `titulo` varchar(255) NOT NULL,
+  `descripcion` text NOT NULL,
+  `categoria` varchar(100) DEFAULT NULL,
+  `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -308,7 +308,7 @@ CREATE TABLE `sacramentos` (
   `folio` int(11) NOT NULL,
   `fecha_generacion` date NOT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `sacramentos`
@@ -349,7 +349,7 @@ CREATE TABLE `sacramento_tipo` (
   `id` bigint(20) NOT NULL,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `sacramento_tipo`
@@ -364,6 +364,28 @@ INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tipos_pago`
+--
+
+CREATE TABLE `tipos_pago` (
+  `id` int(11) NOT NULL,
+  `descripcion` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tipos_pago`
+--
+
+INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
+(1, 'Tarjeta Crédito'),
+(2, 'Tarjeta Débito'),
+(3, 'Efectivo'),
+(4, 'Transferencia Bancaria'),
+(5, 'Paypal');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -371,11 +393,11 @@ CREATE TABLE `usuarios` (
   `id` bigint(20) NOT NULL,
   `usuario_rol_id` bigint(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `email_confirmed` tinyint(1) DEFAULT '0',
+  `email_confirmed` tinyint(1) DEFAULT 0,
   `contraseña` varchar(255) DEFAULT NULL,
-  `datos_completos` tinyint(1) DEFAULT '0',
+  `datos_completos` tinyint(1) DEFAULT 0,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
@@ -400,7 +422,7 @@ CREATE TABLE `usuario_grupos` (
   `grupo_parroquial_id` bigint(20) DEFAULT NULL,
   `grupo_rol_id` bigint(20) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -412,7 +434,7 @@ CREATE TABLE `usuario_roles` (
   `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuario_roles`
@@ -487,7 +509,8 @@ ALTER TABLE `noticias`
 --
 ALTER TABLE `pagos`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `certificado_id` (`certificado_id`);
+  ADD KEY `certificado_id` (`certificado_id`),
+  ADD KEY `tipo_pago_id` (`tipo_pago_id`);
 
 --
 -- Indices de la tabla `parentescos`
@@ -538,6 +561,12 @@ ALTER TABLE `sacramentos`
 -- Indices de la tabla `sacramento_tipo`
 --
 ALTER TABLE `sacramento_tipo`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `tipos_pago`
+--
+ALTER TABLE `tipos_pago`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -708,7 +737,8 @@ ALTER TABLE `noticias`
 -- Filtros para la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`certificado_id`) REFERENCES `certificados` (`id`);
+  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`certificado_id`) REFERENCES `certificados` (`id`),
+  ADD CONSTRAINT `pagos_ibfk_2` FOREIGN KEY (`tipo_pago_id`) REFERENCES `tipos_pago` (`id`);
 
 --
 -- Filtros para la tabla `parientes`

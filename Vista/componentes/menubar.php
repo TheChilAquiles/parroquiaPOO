@@ -20,7 +20,8 @@
                         'Noticias',
                         'Informacion',
                         'Grupos',
-                        'Reportes'
+                        'Reportes',
+                        'Pagos',
                     ];
                 } else {
 

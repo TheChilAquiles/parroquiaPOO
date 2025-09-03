@@ -315,6 +315,15 @@ switch ($_SESSION['menu-item']) {
     $grupoController->ctrlGestionarGrupos();
     break;
 
+    
+
+    case 'Pagos':
+      include_once('Vista/crear_pago.php');
+    break;
+
+
+
+
   case 'Reportes':
     include_once(__DIR__ . '/Vista/reportes.php');
 

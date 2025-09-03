@@ -1,155 +1,134 @@
-
-  <div class="max-w-7xl mx-auto p-6">
-    <!-- Header -->
-    <header class="flex items-center justify-between gap-4 mb-6">
-      <div class="flex items-center gap-4">
-        <div class="h-12 w-12 rounded-lg brand flex items-center justify-center shadow-lg">
-          <span class="text-xl font-bold">PS</span>
-        </div>
-        <div>
-          <h1 class="text-2xl font-bold">Panel de reportes</h1>
-          <p class="text-sm text-slate-500">Todos los registros están centralizados — filtra, exporta o revisa detalles.</p>
-        </div>
+<div class="max-w-7xl mx-auto p-6">
+  <!-- Header -->
+  <header class="flex items-center justify-between gap-4 mb-6">
+    <div class="flex items-center gap-4">
+      <div class="h-12 w-12 rounded-lg brand flex items-center justify-center shadow-lg">
+        <span class="text-xl font-bold">PS</span>
       </div>
-
-      <div class="flex items-center gap-3">
-        <button id="exportCsv" class="inline-flex items-center gap-2 rounded-lg bg-[#1877f2] px-4 py-2 text-white shadow hover:brightness-95">
-          Exportar CSV
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
-        </button>
-        <button id="newReport" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 hover:shadow">Nuevo</button>
+      <div>
+        <h1 class="text-2xl font-bold">Panel de reportes</h1>
+        <p class="text-sm text-slate-500">Todos los registros están centralizados — filtra, exporta o revisa detalles.</p>
       </div>
-    </header>
-
-    <!-- Controls -->
-    <section class="bg-white rounded-2xl p-4 shadow-sm mb-6 ring-1 ring-slate-100">
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div class="sm:col-span-2 flex gap-2">
-          <input id="search" type="text" placeholder="Buscar por nombre, email, id..." class="flex-1 rounded-lg border p-2 focus:ring-2 focus:ring-[#cfa3ff]" />
-          <select id="stateFilter" class="rounded-lg border p-2">
-            <option value="">Estado (todos)</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="completado">Completado</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-        </div>
-
-        <div class="flex gap-2 items-center">
-          <label class="text-xs text-slate-500 mr-2">Desde</label>
-          <input id="dateFrom" type="date" class="rounded-lg border p-2" />
-        </div>
-
-        <div class="flex gap-2 items-center">
-          <label class="text-xs text-slate-500 mr-2">Hasta</label>
-          <input id="dateTo" type="date" class="rounded-lg border p-2" />
-        </div>
-      </div>
-    </section>
-
-    <!-- Tabla -->
-    <section class="bg-white rounded-2xl p-4 shadow-sm ring-1 ring-slate-100">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y">
-          <thead class="bg-[linear-gradient(90deg,#f8f4ff,#fbfbff)]">
-            <tr>
-              <th class="p-3 text-left text-sm font-semibold">ID <button data-col="id" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
-              <th class="p-3 text-left text-sm font-semibold">Nombre <button data-col="name" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
-              <th class="p-3 text-left text-sm font-semibold">Email <button data-col="email" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
-              <th class="p-3 text-left text-sm font-semibold">Fecha <button data-col="date" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
-              <th class="p-3 text-left text-sm font-semibold">Estado <button data-col="status" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
-              <th class="p-3 text-left text-sm font-semibold">Total</th>
-              <th class="p-3 text-center text-sm font-semibold">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody" class="divide-y"></tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div class="mt-4 flex items-center justify-between">
-        <div>
-          <label class="text-sm">Mostrar</label>
-          <select id="perPage" class="ml-2 rounded-lg border p-1">
-            <option>5</option>
-            <option selected>10</option>
-            <option>25</option>
-          </select>
-          <span class="ml-2 text-sm text-slate-500" id="rangeInfo"></span>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button id="prevPage" class="rounded-lg px-3 py-1 border">Anterior</button>
-          <div id="pageNumbers" class="flex items-center gap-2"></div>
-          <button id="nextPage" class="rounded-lg px-3 py-1 border">Siguiente</button>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <!-- Modal detalle -->
-  <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center">
-    <div class="absolute inset-0 bg-black/40"></div>
-    <div class="relative w-[90%] max-w-2xl bg-white rounded-2xl p-6 shadow-2xl ring-1 ring-slate-200">
-      <div class="flex items-start justify-between">
-        <h3 class="text-lg font-semibold">Detalle del registro</h3>
-        <button id="closeModal" class="text-slate-500 hover:text-slate-800">Cerrar ✕</button>
-      </div>
-      <div id="modalContent" class="mt-4 space-y-3 text-sm text-slate-700"></div>
     </div>
+
+    <div class="flex items-center gap-3">
+      <button id="exportCsv" class="inline-flex items-center gap-2 rounded-lg bg-[#1877f2] px-4 py-2 text-white shadow hover:brightness-95">
+        Exportar CSV
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/>
+        </svg>
+      </button>
+      <button id="newReport" class="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 hover:shadow">Nuevo</button>
+    </div>
+  </header>
+
+  <!-- Controls -->
+  <section class="bg-white rounded-2xl p-4 shadow-sm mb-6 ring-1 ring-slate-100">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div class="sm:col-span-2 flex gap-2">
+        <input id="search" type="text" placeholder="Buscar por título, descripción, id..." class="flex-1 rounded-lg border p-2 focus:ring-2 focus:ring-[#cfa3ff]" />
+        <select id="stateFilter" class="rounded-lg border p-2">
+          <option value="">Estado (todos)</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="completado">Completado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2 items-center">
+        <label class="text-xs text-slate-500 mr-2">Desde</label>
+        <input id="dateFrom" type="date" class="rounded-lg border p-2" />
+      </div>
+
+      <div class="flex gap-2 items-center">
+        <label class="text-xs text-slate-500 mr-2">Hasta</label>
+        <input id="dateTo" type="date" class="rounded-lg border p-2" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Tabla -->
+  <section class="bg-white rounded-2xl p-4 shadow-sm ring-1 ring-slate-100">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y">
+        <thead class="bg-[linear-gradient(90deg,#f8f4ff,#fbfbff)]">
+          <tr>
+            <th class="p-3 text-left text-sm font-semibold">ID <button data-col="id" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
+            <th class="p-3 text-left text-sm font-semibold">Título <button data-col="titulo" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
+            <th class="p-3 text-left text-sm font-semibold">Descripción</th>
+            <th class="p-3 text-left text-sm font-semibold">Fecha <button data-col="fecha" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
+            <th class="p-3 text-left text-sm font-semibold">Categoría <button data-col="categoria" class="sort-btn text-xs ml-2 text-slate-400">↕</button></th>
+            <th class="p-3 text-left text-sm font-semibold">Pago (ID)</th>
+            <th class="p-3 text-center text-sm font-semibold">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody" class="divide-y"></tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 flex items-center justify-between">
+      <div>
+        <label class="text-sm">Mostrar</label>
+        <select id="perPage" class="ml-2 rounded-lg border p-1">
+          <option>5</option>
+          <option selected>10</option>
+          <option>25</option>
+        </select>
+        <span class="ml-2 text-sm text-slate-500" id="rangeInfo"></span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="prevPage" class="rounded-lg px-3 py-1 border">Anterior</button>
+        <div id="pageNumbers" class="flex items-center gap-2"></div>
+        <button id="nextPage" class="rounded-lg px-3 py-1 border">Siguiente</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Modal detalle -->
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <div class="relative w-[90%] max-w-2xl bg-white rounded-2xl p-6 shadow-2xl ring-1 ring-slate-200">
+    <div class="flex items-start justify-between">
+      <h3 class="text-lg font-semibold">Detalle del registro</h3>
+      <button id="closeModal" class="text-slate-500 hover:text-slate-800">Cerrar ✕</button>
+    </div>
+    <div id="modalContent" class="mt-4 space-y-3 text-sm text-slate-700"></div>
   </div>
+</div>
 
 <script>
-/* ========== Datos de ejemplo (puedes sustituir por fetch a tu API) ========== */
-const sampleData = [];
-const estados = ['pendiente','completado','cancelado'];
-function randomDate(start, end){
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-}
-for(let i=1;i<=73;i++){
-  const d = randomDate(new Date(2024,0,1), new Date());
-  sampleData.push({
-    id: i,
-    name: 'Cliente ' + i,
-    email: 'cliente'+i+'@ejemplo.com',
-    date: d.toISOString().slice(0,10),
-    status: estados[Math.floor(Math.random()*estados.length)],
-    total: (Math.random()*250 + 10).toFixed(2),
-    notes: 'Observaciones del registro #' + i
-  });
-}
-
 /* ========== Estado UI / variables ========== */
-let data = sampleData.slice();
+let data = [];
 let sortField = null, sortDir = 1;
 let currentPage = 1, perPage = 10;
 
 /* ========== Helpers ========== */
 const $ = id => document.getElementById(id);
-const formatCurrency = v => '$' + Number(v).toLocaleString();
 
 function applyFiltersAndRender(){
-  // Read filters
   const q = $('search').value.trim().toLowerCase();
   const state = $('stateFilter').value;
   const from = $('dateFrom').value;
   const to = $('dateTo').value;
 
-  let filtered = sampleData.filter(r => {
-    if(state && r.status !== state) return false;
+  let filtered = data.filter(r => {
+    if(state && r.categoria !== state) return false;
     if(q){
-      const hay = (r.name + ' ' + r.email + ' ' + r.id).toLowerCase();
+      const hay = (r.titulo + ' ' + r.descripcion + ' ' + r.id).toLowerCase();
       if(!hay.includes(q)) return false;
     }
-    if(from && r.date < from) return false;
-    if(to && r.date > to) return false;
+    if(from && r.fecha < from) return false;
+    if(to && r.fecha > to) return false;
     return true;
   });
 
-  // Sorting
   if(sortField){
     filtered.sort((a,b)=> {
       let A = a[sortField], B = b[sortField];
-      if(sortField === 'date') { A = new Date(A); B = new Date(B); }
+      if(sortField === 'fecha') { A = new Date(A); B = new Date(B); }
       if(A < B) return -1 * sortDir;
       if(A > B) return 1 * sortDir;
       return 0;
@@ -161,7 +140,7 @@ function applyFiltersAndRender(){
   renderTable();
 }
 
-/* ========== Render table and pagination ========== */
+/* ========== Render tabla + paginación ========== */
 function renderTable(){
   const tbody = $('tableBody');
   tbody.innerHTML = '';
@@ -179,15 +158,11 @@ function renderTable(){
     tr.className = 'hover:bg-slate-50';
     tr.innerHTML = `
       <td class="p-3 text-sm">${row.id}</td>
-      <td class="p-3 text-sm font-medium">${row.name}</td>
-      <td class="p-3 text-sm text-slate-600">${row.email}</td>
-      <td class="p-3 text-sm">${row.date}</td>
-      <td class="p-3 text-sm">
-        <span class="px-2 py-1 rounded-full text-xs font-medium ${row.status === 'completado' ? 'bg-emerald-50 text-emerald-700' : row.status === 'pendiente' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700'}">
-          ${row.status}
-        </span>
-      </td>
-      <td class="p-3 text-sm">${formatCurrency(row.total)}</td>
+      <td class="p-3 text-sm font-medium">${row.titulo}</td>
+      <td class="p-3 text-sm text-slate-600">${row.descripcion}</td>
+      <td class="p-3 text-sm">${row.fecha}</td>
+      <td class="p-3 text-sm">${row.categoria}</td>
+      <td class="p-3 text-sm">${row.id_pagos}</td>
       <td class="p-3 text-sm text-center">
         <button data-id="${row.id}" class="viewBtn inline-flex items-center gap-2 rounded-lg bg-[#6d0ba9] px-3 py-1 text-white text-xs">Ver</button>
       </td>
@@ -195,7 +170,6 @@ function renderTable(){
     tbody.appendChild(tr);
   });
 
-  // Pagination UI
   $('rangeInfo').textContent = `${Math.min(total, start+1)} - ${Math.min(total, end)} de ${total}`;
   const pageNumbers = $('pageNumbers');
   pageNumbers.innerHTML = '';
@@ -210,28 +184,23 @@ function renderTable(){
   $('prevPage').disabled = currentPage === 1;
   $('nextPage').disabled = currentPage === pages;
 
-  // attach view handlers
   document.querySelectorAll('.viewBtn').forEach(b=>{
-    b.addEventListener('click', ()=> {
-      const id = Number(b.dataset.id);
-      openModal(id);
-    });
+    b.addEventListener('click', ()=> openModal(Number(b.dataset.id)));
   });
 }
 
 /* ========== Modal ========== */
 function openModal(id){
-  const rec = sampleData.find(x=>x.id===id);
+  const rec = data.find(x=>x.id===id);
   if(!rec) return;
   $('modalContent').innerHTML = `
     <div class="grid grid-cols-1 gap-3">
       <div><strong>ID:</strong> ${rec.id}</div>
-      <div><strong>Nombre:</strong> ${rec.name}</div>
-      <div><strong>Email:</strong> ${rec.email}</div>
-      <div><strong>Fecha:</strong> ${rec.date}</div>
-      <div><strong>Estado:</strong> ${rec.status}</div>
-      <div><strong>Total:</strong> ${formatCurrency(rec.total)}</div>
-      <div><strong>Notas:</strong> ${rec.notes}</div>
+      <div><strong>Título:</strong> ${rec.titulo}</div>
+      <div><strong>Descripción:</strong> ${rec.descripcion}</div>
+      <div><strong>Fecha:</strong> ${rec.fecha}</div>
+      <div><strong>Categoría:</strong> ${rec.categoria}</div>
+      <div><strong>ID Pago:</strong> ${rec.id_pagos}</div>
     </div>
   `;
   $('modal').classList.remove('hidden');
@@ -240,7 +209,7 @@ function closeModal(){ $('modal').classList.add('hidden'); }
 
 /* ========== Export CSV ========== */
 function exportCsv(){
-  const header = ['id','name','email','date','status','total','notes'];
+  const header = ['id','titulo','descripcion','fecha','categoria','id_pagos'];
   const rows = data.map(r => header.map(k => `"${String(r[k]).replace(/"/g,'""')}"`).join(','));
   const csv = [header.join(','), ...rows].join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
@@ -252,23 +221,31 @@ function exportCsv(){
   URL.revokeObjectURL(url);
 }
 
-/* ========== Events ========== */
-document.addEventListener('DOMContentLoaded', () => {
-  // initial render
-  renderTable();
+/* ========== Cargar datos reales ========== */
+async function cargarDatos(){
+  try {
+    const res = await fetch('controlador/reportes.php?accion=listar');
+    const json = await res.json();
+    data = json;
+    renderTable();
+  } catch (e) {
+    console.error("Error cargando datos:", e);
+  }
+}
 
-  // filters
+/* ========== Eventos ========== */
+document.addEventListener('DOMContentLoaded', () => {
+  cargarDatos();
+
   $('search').addEventListener('input', debounce(()=>applyFiltersAndRender(), 300));
   $('stateFilter').addEventListener('change', applyFiltersAndRender);
   $('dateFrom').addEventListener('change', applyFiltersAndRender);
   $('dateTo').addEventListener('change', applyFiltersAndRender);
   $('perPage').addEventListener('change', ()=> { currentPage = 1; renderTable(); });
 
-  // pagination
   $('prevPage').addEventListener('click', ()=> { currentPage--; renderTable(); });
   $('nextPage').addEventListener('click', ()=> { currentPage++; renderTable(); });
 
-  // sorting buttons
   document.querySelectorAll('.sort-btn').forEach(b=>{
     b.addEventListener('click', ()=> {
       const col = b.dataset.col;
@@ -277,19 +254,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // modal
   $('closeModal').addEventListener('click', closeModal);
   $('modal').addEventListener('click', (e)=> { if(e.target === $('modal')) closeModal(); });
 
-  // export
   $('exportCsv').addEventListener('click', exportCsv);
 
-  // New (decorativo)
   $('newReport').addEventListener('click', ()=> alert('Crear nuevo registro — integrar con backend.'));
 });
 
-/* ========== Utilidades pequeñas ========== */
+/* ========== Utilidad: debounce ========== */
 function debounce(fn, ms=200){ let t; return (...a)=>{ clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; }
-
 </script>
-
