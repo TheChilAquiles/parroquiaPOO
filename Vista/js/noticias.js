@@ -1,97 +1,126 @@
-const modal = document.getElementById('noticiaModal');
-const openModalBtn = document.getElementById('openModalBtn');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const noticiaForm = document.getElementById('noticiaForm');
-const modalTitle = document.getElementById('modalTitle');
-const noticiaId = document.getElementById('noticiaId');
-const tituloInput = document.getElementById('titulo');
-const descripcionInput = document.getElementById('descripcion');
-const imagenInput = document.getElementById('imagen');
-const imagenPreview = document.getElementById('imagenPreview');
-const imagenActualInput = document.getElementById('imagenActual');
-const editButtons = document.querySelectorAll('.open-edit-modal');
-const actionInput = document.querySelector('input[name="<?= md5('action') ?>"]');
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Variables para los modales
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const noticiaModal = document.getElementById('noticiaModal');
+    const form = document.getElementById('noticiaForm');
+    const modalTitle = document.getElementById('modalTitle');
+    const noticiaIdInput = document.getElementById('noticiaId');
+    const tituloInput = document.getElementById('titulo');
+    const descripcionInput = document.getElementById('descripcion');
+    const imagenPreview = document.getElementById('imagenPreview');
+    const imagenActualInput = document.getElementById('imagenActual');
+    const imagenInput = document.getElementById('imagen');
 
+    // Obtener el campo de acción del formulario por su ID
+    const actionInput = document.getElementById('actionInput');
+    const editActionHash = '<?= md5("editar") ?>'; // Nota: esta variable se define en el archivo PHP
 
-/**
- * Muestra el modal con una animación.
- */
-function showModal() {
-    modal.classList.remove('hidden', 'opacity-0');
-    modal.classList.add('flex');
-    setTimeout(() => {
-        modal.classList.add('opacity-100');
-    }, 10);
-}
+    // Variables para el modal de eliminación
+    const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    let formToDelete = null;
 
-/**
- * Oculta el modal con una animación.
- */
-function hideModal() {
-    modal.classList.remove('opacity-100');
-    modal.classList.add('opacity-0');
-    setTimeout(() => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    }, 300);
-}
+    // Funciones para mostrar/ocultar modales
+    const showModal = (modal) => {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
+        }, 10);
+    };
 
-// Evento para abrir el modal para crear una nueva noticia
-openModalBtn.addEventListener('click', () => {
-    modalTitle.textContent = 'Crear Noticia';
-    noticiaId.value = '';
-    noticiaForm.reset();
-    imagenPreview.classList.add('hidden');
-    imagenActualInput.value = '';
-    actionInput.value = '<?= md5('guardar') ?>';
-    showModal();
-});
+    const hideModal = (modal) => {
+        modal.classList.add('opacity-0');
+        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('div').classList.remove('scale-100');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+    };
 
-// Evento para cerrar el modal
-closeModalBtn.addEventListener('click', hideModal);
-
-// Evento para abrir el modal para editar una noticia
-editButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        const id = e.currentTarget.dataset.id;
-        const titulo = e.currentTarget.dataset.titulo;
-        const descripcion = e.currentTarget.dataset.descripcion;
-        const imagen = e.currentTarget.dataset.imagen;
-
-        modalTitle.textContent = 'Editar Noticia';
-        noticiaId.value = id;
-        tituloInput.value = titulo;
-        descripcionInput.value = descripcion;
-        imagenActualInput.value = imagen;
-        actionInput.value = '<?= md5('guardar') ?>';
-        
-        // Muestra la imagen actual si existe
-        if (imagen && imagen.length > 0) {
-            imagenPreview.src = imagen;
-            imagenPreview.classList.remove('hidden');
-        } else {
+    // Manejar clic para abrir el modal de creación
+    if (openModalBtn) {
+        openModalBtn.addEventListener('click', () => {
+            form.reset();
+            noticiaIdInput.value = '';
+            modalTitle.textContent = 'Crear Noticia';
             imagenPreview.classList.add('hidden');
-        }
-        showModal();
-    });
-});
-
-// Evento para cerrar el modal al hacer clic fuera
-window.addEventListener('click', (e) => {
-    if (e.target === modal) {
-        hideModal();
+            showModal(noticiaModal);
+        });
     }
-});
 
-// Vista previa de la nueva imagen
-imagenInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            imagenPreview.src = e.target.result;
-            imagenPreview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
+    // Manejar clic para abrir el modal de edición
+    document.querySelectorAll('.open-edit-modal').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const { id, titulo, descripcion, imagen } = e.currentTarget.dataset;
+
+            noticiaIdInput.value = id;
+            tituloInput.value = titulo;
+            descripcionInput.value = descripcion;
+            imagenActualInput.value = imagen;
+            modalTitle.textContent = 'Editar Noticia';
+
+            if (imagen) {
+                imagenPreview.src = imagen;
+                imagenPreview.classList.remove('hidden');
+            } else {
+                imagenPreview.classList.add('hidden');
+            }
+
+            // Ahora actualizamos el valor del campo usando su ID
+            if (actionInput) {
+                actionInput.value = editActionHash;
+            }
+
+            showModal(noticiaModal);
+        });
+    });
+
+    // Manejar clic para cerrar el modal de creación/edición
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => hideModal(noticiaModal));
+    }
+
+    // Manejar la vista previa de la imagen
+    if (imagenInput) {
+        imagenInput.addEventListener('change', () => {
+            const file = imagenInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagenPreview.src = e.target.result;
+                    imagenPreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagenPreview.src = '';
+                imagenPreview.classList.add('hidden');
+            }
+        });
+    }
+
+    // Manejar clic para abrir el modal de confirmación de eliminación
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            formToDelete = e.currentTarget.closest('.delete-form');
+            showModal(deleteConfirmationModal);
+        });
+    });
+
+    // Manejar clic para confirmar la eliminación
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (formToDelete) {
+                formToDelete.submit();
+            }
+            hideModal(deleteConfirmationModal);
+        });
+    }
+
+    // Manejar clic para cancelar la eliminación
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => hideModal(deleteConfirmationModal));
     }
 });

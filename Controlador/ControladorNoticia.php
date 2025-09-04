@@ -14,9 +14,6 @@
 
 // El controlador se encarga de requerir los archivos necesarios.
 // Se asume que el archivo del modelo está en el mismo directorio.
-
-
-
 require_once __DIR__ . '/../Modelo/ModeloNoticia.php';
 class ControladorNoticia
 {
@@ -25,6 +22,69 @@ class ControladorNoticia
      */
     private $modeloNoticia;
 
+
+    /**
+     * Guarda o actualiza una noticia.
+     *
+     * Este método maneja el procesamiento de formularios, incluyendo la subida
+     * de archivos de imagen, y llama al modelo para guardar los datos.
+     */
+    private function ctrGuardarNoticia()
+    {
+        $id = $_POST['id'] ?? null;
+        $titulo = htmlspecialchars($_POST['titulo'], ENT_QUOTES, 'UTF-8');
+        $descripcion = htmlspecialchars($_POST['descripcion'], ENT_QUOTES, 'UTF-8');
+        $id_usuario = $_SESSION['user-id'] ?? null;
+
+        // Manejo de la subida de la imagen.
+        $imagen = $_POST['imagen_actual'] ?? null; // ✅ CORRECCIÓN: Si no hay imagen, el valor es null.
+
+        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+            $nombre_archivo = uniqid() . '-' . $_FILES['imagen']['name'];
+            $directorio_destino = __DIR__ . '/../assets/img/noticias/' . $nombre_archivo;
+
+            if (!is_dir(dirname($directorio_destino))) {
+                mkdir(dirname($directorio_destino), 0777, true);
+            }
+
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $directorio_destino)) {
+                $imagen = 'assets/img/noticias/' . $nombre_archivo;
+            } else {
+                $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "Error al subir la imagen. Código de error: " . $_FILES['imagen']['error']];
+                header('Location: index.php');
+                exit();
+            }
+        }
+
+        // Prepara los datos para el modelo.
+        $datos = [
+            'titulo' => $titulo,
+            'descripcion' => $descripcion,
+            'imagen' => $imagen
+        ];
+
+        if (empty($id)) {
+            // Es una nueva noticia.
+
+            // ✅ VALIDACIÓN: Asegúrate de que el ID de usuario existe.
+            if (empty($id_usuario)) {
+                $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "Error: No se encontró la sesión de usuario."];
+                header('Location: index.php');
+                exit();
+            }
+
+            $datos['id_usuario'] = $id_usuario;
+            $respuesta = $this->modeloNoticia->mdlCrearNoticia($datos);
+        } else {
+            // Es una actualización.
+            $respuesta = $this->modeloNoticia->mdlActualizarNoticia($id, $datos);
+        }
+
+        $_SESSION['mensaje'] = ['tipo' => $respuesta['exito'] ? 'success' : 'error', 'texto' => $respuesta['mensaje']];
+        $_SESSION['menu-item'] = 'Noticias';
+        header('Location: index.php');
+        exit();
+    }
     /**
      * Constructor de la clase.
      *
@@ -43,23 +103,17 @@ class ControladorNoticia
      */
     public function ctrGestionarNoticias()
     {
-
-
-
         $action = isset($_POST[md5('action')]) ? $_POST[md5('action')] : '';
-
-
-
         $isLoggedIn = isset($_SESSION["logged"]);
 
-
+        // La acción se maneja solo si el usuario ha iniciado sesión, excepto para la visualización pública.
         if ($isLoggedIn) {
             switch ($action) {
                 case md5('guardar'):
                     $this->ctrGuardarNoticia();
                     break;
                 case md5('eliminar'):
-                    $this->ctrEliminarNoticia($_POST['id']);
+                    $this->ctrEliminarNoticia();
                     break;
                 default:
                     $this->ctrMostrarAdminNoticias();
@@ -68,67 +122,25 @@ class ControladorNoticia
         } else {
             $this->ctrMostrarNoticiasPublicas();
         }
-
-
     }
 
-    /**
-     * Guarda o actualiza una noticia.
-     *
-     * Este método maneja el procesamiento de formularios, incluyendo la subida
-     * de archivos de imagen, y llama al modelo para guardar los datos.
-     */
-    private function ctrGuardarNoticia()
-    {
-        $id = $_POST['id'] ?? null;
-        $titulo = htmlspecialchars($_POST['titulo'], ENT_QUOTES, 'UTF-8');
-        $descripcion = htmlspecialchars($_POST['descripcion'], ENT_QUOTES, 'UTF-8');
-        $id_usuario = $_SESSION['user-id'];
 
-        // Manejo de la imagen. La lógica de guardado es la misma que la tuya.
-        $imagen = $_POST['imagen_actual'] ?? '';
-        if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-            $nombre_archivo = uniqid() . '-' . $_FILES['imagen']['name'];
-            $directorio_destino = __DIR__ . '/../Recursos/Imagenes/' . $nombre_archivo;
-            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $directorio_destino)) {
-                $imagen = 'Recursos/Imagenes/' . $nombre_archivo;
-            } else {
-                // Manejar error en la subida.
-                echo "Error al subir la imagen.";
-                exit;
-            }
-        }
-
-        if (empty($id)) {
-            // Es una nueva noticia.
-            $this->modeloNoticia->mdlCrearNoticia([
-                'id_usuario' => $id_usuario,
-                'titulo' => $titulo,
-                'descripcion' => $descripcion,
-                'imagen' => $imagen
-            ]);
-        } else {
-            // Es una actualización.
-            $this->modeloNoticia->mdlActualizarNoticia($id, [
-                'titulo' => $titulo,
-                'descripcion' => $descripcion,
-                'imagen' => $imagen
-            ]);
-        }
-
-        $_SESSION['menu-item'] = 'Noticias';
-        header('Location: index.php');
-        exit();
-    }
 
     /**
      * Elimina una noticia por su ID.
      *
-     * @param int $id El ID de la noticia a eliminar.
+     * Este método llama al modelo para borrar un registro de la base de datos.
      */
-    private function ctrEliminarNoticia($id)
+    private function ctrEliminarNoticia()
     {
-        $this->modeloNoticia->mdlBorrarNoticia($id);
+        $id = $_POST['id'] ?? null;
+        if ($id) {
+            $respuesta = $this->modeloNoticia->mdlBorrarNoticia($id);
+            $_SESSION['mensaje'] = ['tipo' => $respuesta['exito'] ? 'success' : 'error', 'texto' => $respuesta['mensaje']];
+        } else {
+            $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "ID de noticia no proporcionado."];
+        }
+
         $_SESSION['menu-item'] = 'Noticias';
         header('Location: index.php');
         exit();
@@ -139,17 +151,9 @@ class ControladorNoticia
      */
     private function ctrMostrarAdminNoticias()
     {
-
-
-        // if (!is_dir($dir)) {
-        //   mkdir($dir, 0777, true); // Crea la carpeta con permisos recursivos
-        // }
-        $archivo = __DIR__ . '/logs/SantiagoApp.log';
-        file_put_contents($archivo, 'Entro a Mostrar noticias controlador  /n', FILE_APPEND);
-
-
-
         $noticias = $this->modeloNoticia->mdlObtenerNoticias();
+        $mensaje = $_SESSION['mensaje'] ?? null;
+        unset($_SESSION['mensaje']); // Limpia el mensaje después de usarlo.
         require_once __DIR__ . '/../Vista/noticiaAdministrador.php';
     }
 
@@ -159,6 +163,8 @@ class ControladorNoticia
     private function ctrMostrarNoticiasPublicas()
     {
         $noticias = $this->modeloNoticia->mdlObtenerNoticias();
-        require_once '/../Vista/noticiaUsuario.php';
+        $mensaje = $_SESSION['mensaje'] ?? null;
+        unset($_SESSION['mensaje']); // Limpia el mensaje después de usarlo.
+        require_once __DIR__ . '/../Vista/noticiaUsuario.php';
     }
 }

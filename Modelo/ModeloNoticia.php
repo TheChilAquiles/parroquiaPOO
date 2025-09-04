@@ -11,20 +11,18 @@
  * @package Modelo
  * @category Data Access
  */
-
-
-
 class ModeloNoticia
-
 {
     public function __construct()
     {
         require_once __DIR__ . "/Conexion.php";
     }
+
     /**
      * Crea un nuevo registro de noticia en la base de datos.
      *
      * Este método inserta una nueva noticia en la tabla `noticias` con los datos proporcionados.
+     * Utiliza una transacción para garantizar la integridad de los datos.
      *
      * @param array $datos Un array asociativo que contiene los datos de la noticia:
      * 'id_usuario', 'titulo', 'descripcion', 'imagen'.
@@ -32,15 +30,15 @@ class ModeloNoticia
      */
     public function mdlCrearNoticia($datos)
     {
-        // Obtiene la conexión a la base de datos.
-        $conexion = Conexion::conectar();
-
+        $conexion = null;
         try {
-            // Prepara la consulta SQL para la inserción.
-            $sql = "INSERT INTO `noticias` (`id_usuario`, `titulo`, `descripcion`, `imagen`, `estado_registro`) VALUES (?, ?, ?, ?, NOW())";
+            // Obtiene la conexión a la base de datos.
+            $conexion = Conexion::conectar();
+            $conexion->beginTransaction();
+
+            $sql = "INSERT INTO `noticias` (`id_usuario`, `titulo`, `descripcion`, `imagen`) VALUES (?, ?, ?, ?)";
             $stmt = $conexion->prepare($sql);
 
-            // Vincula los parámetros del array a la consulta.
             $stmt->execute([
                 $datos['id_usuario'],
                 $datos['titulo'],
@@ -50,16 +48,21 @@ class ModeloNoticia
 
             // Comprueba si la inserción fue exitosa.
             if ($stmt->rowCount() > 0) {
+                $conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia creada correctamente."];
             } else {
+                $conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se pudo crear la noticia."];
             }
         } catch (PDOException $e) {
             // Captura errores de PDO y devuelve un mensaje de error.
+            if ($conexion && $conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
             error_log("Error al crear noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al guardar la noticia."];
         } finally {
-            // Cierra la conexión y libera los recursos del statement.
+            // Cierra la conexión y libera los recursos.
             $stmt = null;
             $conexion = null;
         }
@@ -75,11 +78,12 @@ class ModeloNoticia
      */
     public function mdlObtenerNoticias()
     {
-        // Obtiene la conexión a la base de datos.
-        $conexion = Conexion::conectar();
+        $conexion = null;
         $noticias = [];
-
         try {
+            // Obtiene la conexión a la base de datos.
+            $conexion = Conexion::conectar();
+
             // Prepara la consulta SQL.
             $sql = "SELECT * FROM `noticias` ORDER BY `estado_registro` DESC";
             $stmt = $conexion->prepare($sql);
@@ -89,7 +93,6 @@ class ModeloNoticia
 
             // Obtiene todos los resultados como un array asociativo.
             $noticias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
             // Captura errores de PDO.
             error_log("Error al obtener noticias: " . $e->getMessage());
@@ -106,6 +109,7 @@ class ModeloNoticia
      * Actualiza una noticia existente en la base de datos.
      *
      * Este método modifica un registro en la tabla `noticias` basado en su ID.
+     * Utiliza una transacción para garantizar la integridad de los datos.
      *
      * @param int $id El ID de la noticia a actualizar.
      * @param array $datos Array con los datos de la noticia a actualizar:
@@ -114,8 +118,11 @@ class ModeloNoticia
      */
     public function mdlActualizarNoticia($id, $datos)
     {
-        $conexion = Conexion::conectar();
+        $conexion = null;
         try {
+            $conexion = Conexion::conectar();
+            $conexion->beginTransaction();
+
             $sql = "UPDATE `noticias` SET `titulo` = ?, `descripcion` = ?, `imagen` = ? WHERE `id` = ?";
             $stmt = $conexion->prepare($sql);
             $stmt->execute([
@@ -124,13 +131,18 @@ class ModeloNoticia
                 $datos['imagen'],
                 $id
             ]);
-            
+
             if ($stmt->rowCount() > 0) {
+                $conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia actualizada correctamente."];
             } else {
+                $conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se encontró la noticia para actualizar o no se realizaron cambios."];
             }
         } catch (PDOException $e) {
+            if ($conexion && $conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
             error_log("Error al actualizar noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
         } finally {
@@ -143,32 +155,39 @@ class ModeloNoticia
      * Elimina una noticia de la base de datos.
      *
      * Este método borra un registro de la tabla `noticias` basado en su ID.
+     * Utiliza una transacción para garantizar la integridad de los datos.
      *
      * @param int $id El ID de la noticia a eliminar.
      * @return array Un array con un mensaje de éxito o un array con un mensaje de error.
      */
     public function mdlBorrarNoticia($id)
     {
-        // Obtiene la conexión a la base de datos.
-        $conexion = Conexion::conectar();
-
+        $conexion = null;
         try {
+            // Obtiene la conexión a la base de datos.
+            $conexion = Conexion::conectar();
+            $conexion->beginTransaction();
+
             // Prepara la consulta SQL para la eliminación.
             $sql = "DELETE FROM `noticias` WHERE `id` = ?";
             $stmt = $conexion->prepare($sql);
 
             // Vincula el ID a la consulta.
             $stmt->execute([$id]);
-            
+
             // Comprueba si se eliminó algún registro.
             if ($stmt->rowCount() > 0) {
+                $conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia eliminada correctamente."];
             } else {
+                $conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se encontró la noticia para eliminar."];
             }
-
         } catch (PDOException $e) {
             // Captura errores de PDO.
+            if ($conexion && $conexion->inTransaction()) {
+                $conexion->rollBack();
+            }
             error_log("Error al borrar noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al borrar la noticia."];
         } finally {
