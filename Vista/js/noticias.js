@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     // Variables para los modales
     const openModalBtn = document.getElementById('openModalBtn');
     const closeModalBtn = document.getElementById('closeModalBtn');
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Obtener el campo de acción del formulario por su ID
     const actionInput = document.getElementById('actionInput');
-    const editActionHash = '<?= md5("editar") ?>'; // Nota: esta variable se define en el archivo PHP
+    // const editActionHash = '<?= md5("editar") ?>'; // Nota: esta variable ya no se necesita
 
     // Variables para el modal de eliminación
     const deleteConfirmationModal = document.getElementById('deleteConfirmationModal');
@@ -28,29 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('hidden');
         setTimeout(() => {
             modal.classList.remove('opacity-0');
-            modal.querySelector('div').classList.remove('scale-95');
-            modal.querySelector('div').classList.add('scale-100');
+            modal.classList.add('flex', 'opacity-100'); // Añadido 'flex' y 'opacity-100'
         }, 10);
     };
 
     const hideModal = (modal) => {
-        modal.classList.add('opacity-0');
-        modal.querySelector('div').classList.add('scale-95');
-        modal.querySelector('div').classList.remove('scale-100');
-        setTimeout(() => modal.classList.add('hidden'), 300);
+        modal.classList.remove('flex', 'opacity-100'); // Eliminado 'flex' y 'opacity-100'
+        modal.classList.add('hidden', 'opacity-0');
+    };
+    
+    // Función para restablecer el formulario
+    const resetForm = () => {
+        form.reset();
+        noticiaIdInput.value = '';
+        tituloInput.value = '';
+        descripcionInput.value = '';
+        imagenActualInput.value = '';
+        imagenPreview.src = '';
+        imagenPreview.classList.add('hidden');
+        modalTitle.textContent = 'Crear Noticia';
     };
 
     // Manejar clic para abrir el modal de creación
     if (openModalBtn) {
         openModalBtn.addEventListener('click', () => {
-            form.reset();
-            noticiaIdInput.value = '';
-            modalTitle.textContent = 'Crear Noticia';
-            imagenPreview.classList.add('hidden');
+            resetForm();
             showModal(noticiaModal);
         });
     }
-
+    
     // Manejar clic para abrir el modal de edición
     document.querySelectorAll('.open-edit-modal').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -62,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imagenActualInput.value = imagen;
             modalTitle.textContent = 'Editar Noticia';
 
+            // ✅ LÓGICA CORREGIDA PARA LA PREVISUALIZACIÓN DE LA IMAGEN
             if (imagen) {
                 imagenPreview.src = imagen;
                 imagenPreview.classList.remove('hidden');
@@ -69,10 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 imagenPreview.classList.add('hidden');
             }
 
-            // Ahora actualizamos el valor del campo usando su ID
-            if (actionInput) {
-                actionInput.value = editActionHash;
-            }
+            // Ya no es necesario cambiar el valor de actionInput en el cliente
+            // El controlador ya maneja la lógica de crear/editar con el ID
 
             showModal(noticiaModal);
         });
@@ -82,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', () => hideModal(noticiaModal));
     }
-
+    
     // Manejar la vista previa de la imagen
     if (imagenInput) {
         imagenInput.addEventListener('change', () => {
@@ -101,15 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Manejar clic para abrir el modal de confirmación de eliminación
+    // Modal de confirmación para eliminar
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', (e) => {
+            e.preventDefault();
             formToDelete = e.currentTarget.closest('.delete-form');
             showModal(deleteConfirmationModal);
         });
     });
 
-    // Manejar clic para confirmar la eliminación
     if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener('click', () => {
             if (formToDelete) {
@@ -119,8 +124,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Manejar clic para cancelar la eliminación
     if (cancelDeleteBtn) {
         cancelDeleteBtn.addEventListener('click', () => hideModal(deleteConfirmationModal));
     }
+
+    // Cierre del modal con clic fuera
+    window.addEventListener('click', (event) => {
+        if (event.target === noticiaModal) {
+            hideModal(noticiaModal);
+        }
+        if (event.target === deleteConfirmationModal) {
+            hideModal(deleteConfirmationModal);
+        }
+    });
 });
