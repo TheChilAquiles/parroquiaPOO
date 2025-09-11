@@ -1,24 +1,35 @@
 <?php
 
-
 class Conexion
 {
-    static public function conectar()
+    //Propiedad estática para almacenar la única instancia de conexión
+    private static $conexion = null;
+
+    //Constructor privado para evitar instanciación directa
+    private function __construct() {}
+
+    //Método público estático para acceder a la conexión
+    public static function conectar()
     {
+        // Si ya hay una conexión, la retornamos
+        if (self::$conexion !== null) {
+            return self::$conexion;
+        }
+
+        //  Si no existe, la creamos
         try {
-            $link = new PDO(
+            self::$conexion = new PDO(
                 "mysql:host=localhost;dbname=parroquia",
-                "root", // ✅ Usuario de la base de datos
-                "",     // ✅ Contraseña de la base de datos (vacía para XAMPP por defecto)
+                "root",
+                "",
                 array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
             );
-            $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Para manejar errores PDO
-            return $link;
+            self::$conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            // ✅ Es buena práctica loguear el error para depuración
             error_log("Error de conexión a la base de datos: " . $e->getMessage());
-            // ✅ En desarrollo, puedes mostrar el error; en producción, un mensaje genérico.
-            die("Error de conexión a la base de datos: " . $e->getMessage()); // Muestra el mensaje de error en desarrollo
+            die("Error de conexión a la base de datos: " . $e->getMessage());
         }
+
+        return self::$conexion;
     }
 }

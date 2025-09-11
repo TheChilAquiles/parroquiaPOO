@@ -13,9 +13,11 @@
  */
 class ModeloNoticia
 {
+    private $conexion;
+
     public function __construct()
     {
-        require_once __DIR__ . "/Conexion.php";
+        $this->conexion = Conexion::conectar();
     }
 
     /**
@@ -30,14 +32,14 @@ class ModeloNoticia
      */
     public function mdlCrearNoticia($datos)
     {
-        $conexion = null;
+        $this->conexion = null;
         try {
             // Obtiene la conexión a la base de datos.
-            $conexion = Conexion::conectar();
-            $conexion->beginTransaction();
+            $this->conexion = Conexion::conectar();
+            $this->conexion->beginTransaction();
 
             $sql = "INSERT INTO `noticias` (`id_usuario`, `titulo`, `descripcion`, `imagen`) VALUES (?, ?, ?, ?)";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             $stmt->execute([
                 $datos['id_usuario'],
@@ -48,23 +50,23 @@ class ModeloNoticia
 
             // Comprueba si la inserción fue exitosa.
             if ($stmt->rowCount() > 0) {
-                $conexion->commit();
+                $this->conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia creada correctamente."];
             } else {
-                $conexion->rollBack();
+                $this->conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se pudo crear la noticia."];
             }
         } catch (PDOException $e) {
             // Captura errores de PDO y devuelve un mensaje de error.
-            if ($conexion && $conexion->inTransaction()) {
-                $conexion->rollBack();
+            if ($this->conexion && $this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
             }
             error_log("Error al crear noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al guardar la noticia."];
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 
@@ -78,15 +80,15 @@ class ModeloNoticia
      */
     public function mdlObtenerNoticias()
     {
-        $conexion = null;
+        $this->conexion = null;
         $noticias = [];
         try {
             // Obtiene la conexión a la base de datos.
-            $conexion = Conexion::conectar();
+            $this->conexion = Conexion::conectar();
 
             // Prepara la consulta SQL.
             $sql = "SELECT * FROM `noticias` ORDER BY `estado_registro` DESC";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             // Ejecuta la consulta.
             $stmt->execute();
@@ -99,7 +101,7 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
 
         return $noticias;
@@ -118,13 +120,13 @@ class ModeloNoticia
      */
     public function mdlActualizarNoticia($id, $datos)
     {
-        $conexion = null;
+        $this->conexion = null;
         try {
-            $conexion = Conexion::conectar();
-            $conexion->beginTransaction();
+            $this->conexion = Conexion::conectar();
+            $this->conexion->beginTransaction();
 
             $sql = "UPDATE `noticias` SET `titulo` = ?, `descripcion` = ?, `imagen` = ? WHERE `id` = ?";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
             $stmt->execute([
                 $datos['titulo'],
                 $datos['descripcion'],
@@ -133,21 +135,21 @@ class ModeloNoticia
             ]);
 
             if ($stmt->rowCount() > 0) {
-                $conexion->commit();
+                $this->conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia actualizada correctamente."];
             } else {
-                $conexion->rollBack();
+                $this->conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se encontró la noticia para actualizar o no se realizaron cambios."];
             }
         } catch (PDOException $e) {
-            if ($conexion && $conexion->inTransaction()) {
-                $conexion->rollBack();
+            if ($this->conexion && $this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
             }
             error_log("Error al actualizar noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
         } finally {
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 
@@ -162,38 +164,38 @@ class ModeloNoticia
      */
     public function mdlBorrarNoticia($id)
     {
-        $conexion = null;
+        $this->conexion = null;
         try {
             // Obtiene la conexión a la base de datos.
-            $conexion = Conexion::conectar();
-            $conexion->beginTransaction();
+            $this->conexion = Conexion::conectar();
+            $this->conexion->beginTransaction();
 
             // Prepara la consulta SQL para la eliminación.
             $sql = "DELETE FROM `noticias` WHERE `id` = ?";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             // Vincula el ID a la consulta.
             $stmt->execute([$id]);
 
             // Comprueba si se eliminó algún registro.
             if ($stmt->rowCount() > 0) {
-                $conexion->commit();
+                $this->conexion->commit();
                 return ['exito' => true, 'mensaje' => "Noticia eliminada correctamente."];
             } else {
-                $conexion->rollBack();
+                $this->conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se encontró la noticia para eliminar."];
             }
         } catch (PDOException $e) {
             // Captura errores de PDO.
-            if ($conexion && $conexion->inTransaction()) {
-                $conexion->rollBack();
+            if ($this->conexion && $this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
             }
             error_log("Error al borrar noticia: " . $e->getMessage());
             return ['exito' => false, 'mensaje' => "Error interno al borrar la noticia."];
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 }

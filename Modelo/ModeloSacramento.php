@@ -3,14 +3,12 @@
 class ModeloSacramento
 {
     private $nameTable;
-    private $conn;
-
-
     private $libroID;
     private $sacramentoTipo;
     private $tipo;
     private $libroNumero;
     private $numero;
+    private $conexion;
 
 
 
@@ -23,18 +21,10 @@ class ModeloSacramento
 
 
 
-
-
-
     public function __construct($tipo, $numero)
     {
 
-        $archivo = 'logs/app.log'; // Carpeta logs/ debe existir o se crea
-        file_put_contents($archivo, "Contructor" . $numero, FILE_APPEND);
-
-
-        // require_once('../Modelo/Conexion.php');
-        $this->conn = Conexion::conectar();
+        $this->conexion = Conexion::conectar();
         $this->nameTable = 'sacramentos';
         $this->sacramentoTipo = $tipo;
         $this->numero = $numero;
@@ -74,7 +64,7 @@ class ModeloSacramento
             $sqlQuery .= "LIMIT $start, $length ";
         }
 
-        $stmt = $this->conn->prepare($sqlQuery);
+        $stmt = $this->conexion->prepare($sqlQuery);
 
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value, PDO::PARAM_STR);
@@ -83,12 +73,12 @@ class ModeloSacramento
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $stmtTotal = $this->conn->prepare("SELECT COUNT(*) FROM {$this->nameTable}");
+        $stmtTotal = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable}");
         $stmtTotal->execute();
         $recordsTotal = $stmtTotal->fetchColumn();
 
         if (!empty($_POST["search"]["value"])) {
-            $stmtFiltered = $this->conn->prepare("SELECT COUNT(*) FROM {$this->nameTable} {$where}");
+            $stmtFiltered = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable} {$where}");
             foreach ($params as $key => $value) {
                 $stmtFiltered->bindValue($key, $value, PDO::PARAM_STR);
             }
@@ -120,10 +110,6 @@ class ModeloSacramento
 
     public function CrearSacramento($data)
     {
-        $archivo = 'logs/app3.log';
-
-        file_put_contents($archivo, 'setetado : ' . print_r($data, true), FILE_APPEND);
-
         try {
             // Variables con valores reales
             $libro_id = 1;
@@ -132,7 +118,7 @@ class ModeloSacramento
             $folio = 5;
             $fecha_generacion = '2025-08-20';
 
-            $stmt = $this->conn->prepare("
+            $stmt = $this->conexion->prepare("
             INSERT INTO {$this->nameTable}
             (libro_id, tipo_sacramento_id, acta, folio, fecha_generacion)
             VALUES (?, ?, ?, ?, ?)
@@ -149,27 +135,104 @@ class ModeloSacramento
 
 
             // Obtener el ID del nuevo registro
-            $sacramentoID = $this->conn->lastInsertId();
+            $sacramentoID = $this->conexion->lastInsertId();
 
 
+            include_once(__DIR__ . '/../Controlador/ControladorFeligres.php');
+            include_once(__DIR__ . '/../Controlador/ControladorParticipante.php');
 
+
+            $ControladorFeligres = new FeligresController();
             $ControladorParticipantes  = new ControladorParticipante($sacramentoID);
 
 
+            foreach ($data['integrantes'] as $integrante) {
+
+                $datosFeligres = [];
+
+                $datosFeligres['idUser']  = $integrante['usuario_id'] ?? null;
+                $datosFeligres['tipo-doc'] = $integrante['tipoDoc'];
+                $datosFeligres['documento'] = $integrante['numeroDoc'];
+                $datosFeligres['telefono'] = $integrante['telefono']  ?? null;
+                $datosFeligres['direccion'] = $integrante['direccion']  ?? null;
+                $datosFeligres['primer-nombre'] = $integrante['primerNombre'];
+                $datosFeligres['segundo-nombre']  = $integrante['segundoNombre'] ?? '';
+                $datosFeligres['primer-apellido'] = $integrante['primerApellido'];
+                $datosFeligres['segundo-apellido']  = $integrante['segundoApellido'] ?? '';
 
 
-            
+                try {
+
+                    $existe =  $ControladorFeligres->ctrlConsularFeligres($integrante['tipoDoc'], $integrante['numeroDoc']);
+
+
+
+                    if ($existe['status'] == 'success' && $existe['data']) {
+
+
+                        $feligresID  = $existe['data']['id'] ?? null;
+                    } else {
+                        try {
+
+                            $create =  $ControladorFeligres->ctrlCrearFeligres($datosFeligres);
+
+
+                            if ($create['status'] == 'success') {
+
+                                $feligresID =  $this->conexion->lastInsertId();
+                            }
+                        } catch (\Throwable $th) {
+
+                            file_put_contents('logs/app3.log', 'erorr 1  doc : ' . print_r($th, true), FILE_APPEND);
+                        }
+                    }
+
+                    file_put_contents('logs/app3.log', 'creado user :  ' . $feligresID   . 'doc : ' . print_r($create, true), FILE_APPEND);
+                } catch (\Throwable $th) {
+                    file_put_contents('logs/app3.log', 'error  doc : ' . print_r($th, true), FILE_APPEND);
+                }
 
 
 
 
 
 
-            file_put_contents($archivo, "Registro hecho\n id :" .     $sacramentoID, FILE_APPEND);
+
+
+
+                // try {
+
+
+
+
+
+                //                         [rolParticipante] => Bautizado
+                //     [tipoDoc] => 1
+                //     [numeroDoc] => 123
+                //     [primerNombre] => Daniel
+                //     [segundoNombre] => asd
+                //     [primerApellido] => godoy
+                //     [segundoApellido] => duran
+
+
+                //      $ControladorParticipantes->ctrlCrearParticipante()
+
+
+                // } catch (\Throwable $th) {
+                //     //throw $th;
+                // }
+
+
+
+            }
+
+
+
+            file_put_contents('logs/app3.log', "Registro hecho\n id :" .     $sacramentoID, FILE_APPEND);
 
             return $result;
         } catch (\Throwable $th) {
-            file_put_contents($archivo, "Error: " . $th->getMessage() . "\n", FILE_APPEND);
+            file_put_contents('logs/app3.log', "Error: " . $th->getMessage() . "\n", FILE_APPEND);
             return false;
         }
     }
@@ -179,16 +242,10 @@ class ModeloSacramento
 
     public function setLibroID()
     {
-        // $this->libroID = $libroID;
-        $archivo = 'logs/app.log';
-
-        file_put_contents($archivo, 'sacra tipo' . $this->numero, FILE_APPEND);
-
-
         try {
             //code...
 
-            $stmt = $this->conn->prepare("SELECT *  FROM `libros` WHERE `libro_tipo_id` = ? AND `numero` = ?; ");
+            $stmt = $this->conexion->prepare("SELECT *  FROM `libros` WHERE `libro_tipo_id` = ? AND `numero` = ?; ");
 
             $stmt->bindParam(1, $this->sacramentoTipo, PDO::PARAM_INT);
             $stmt->bindParam(2, $this->numero, PDO::PARAM_INT);
@@ -198,17 +255,12 @@ class ModeloSacramento
 
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Carpeta logs/ debe existir o se crea
-
-            file_put_contents($archivo, 'sisas', FILE_APPEND);
-            file_put_contents($archivo, count($data), FILE_APPEND);
-
             if (count($data)) {
                 $this->libroID = $this->libroID = $data[0]['id'];
             };
         } catch (\Throwable $th) {
 
-            file_put_contents($archivo, $th, FILE_APPEND);
+            file_put_contents('logs/app3.log', $th, FILE_APPEND);
             //throw $th;
         }
     }

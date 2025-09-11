@@ -1,66 +1,70 @@
 <?php
 class ModeloUsuario
 {
+
     private $usuarios = [];
+
+
+    private $conexion;
+
+
 
     public function __construct()
     {
-        require_once('Modelo/Conexion.php');
-        // Aquí podrías inicializar la conexión a la base de datos si es necesario
-        // Por ejemplo, podrías crear una conexión a la base de datos
-        // $this->conexion = new Conexion();
+        $this->conexion = Conexion::conectar();
     }
+
 
 
 
     public function mdlRegistrarUsuario($usuario)
-{
-    $conexion = Conexion::conectar(); // Usamos tu clase PDO
+    {
 
-    if (!$conexion) {
-        return false; // No se pudo conectar a la base de datos
-    }
-
-    // Verificar si el email ya existe usando tu método actual
-    $exist = $this->existEmail($usuario['email']);
-
-    if ($exist) {
-        return ['status' => 'error', 'message' => "El email ya existe"];
-    } else {
-        // Insertar usuario con PDO
-        $sql = "INSERT INTO `usuarios`(`usuario_rol_id`, `email`, `contraseña`) 
-                VALUES (1, :email, :password)";
-
-        $stmt = $conexion->prepare($sql);
-        $stmt->bindParam(':email', $usuario['email'], PDO::PARAM_STR);
-        $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
-
-        // Usar md5 como en tu código original
-        $hashedPassword = md5($usuario['password']);
-
-        $stmt->execute();
-
-        if ($stmt->rowCount() <= 0) {
-            return ['status' => 'error', 'message' => "No se pudo registrar el usuario"];
+        if (!$this->conexion) {
+            return false; // No se pudo conectar a la base de datos
         }
 
-        return ['status' => 'success', 'message' => "Usuario registrado correctamente"];
-    }
+        // Verificar si el email ya existe usando tu método actual
+        $exist = $this->existEmail($usuario['email']);
 
-    // Este bloque nunca se ejecuta por la lógica anterior, pero lo dejamos como en el original
-    $this->usuarios[] = $usuario;
-    return false;
-}
+        if ($exist) {
+            return ['status' => 'error', 'message' => "El email ya existe"];
+        } else {
+            // Insertar usuario con PDO
+            $sql = "INSERT INTO `usuarios`(`usuario_rol_id`, `email`, `contraseña`) 
+                VALUES (1, :email, :password)";
+
+            $hashedPassword = md5($usuario['password']);
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bindParam(':email', $usuario['email'], PDO::PARAM_STR);
+            $stmt->bindParam(':password', $hashedPassword, PDO::PARAM_STR);
+
+            // Usar md5 como en tu código original
+
+            $stmt->execute();
+
+            if ($stmt->rowCount() <= 0) {
+                return ['status' => 'error', 'message' => "No se pudo registrar el usuario"];
+            }
+
+            return ['status' => 'success', 'message' => "Usuario registrado correctamente"];
+        }
+
+        // Este bloque nunca se ejecuta por la lógica anterior, pero lo dejamos como en el original
+        $this->usuarios[] = $usuario;
+        return false;
+    }
 
 
 
     public function consultarUsuario($email)
     {
         try {
-            $conexion = Conexion::conectar();
+            $this->conexion = Conexion::conectar();
 
             $sql = "SELECT * FROM usuarios WHERE email = ?";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$email]);
 
             // ✅ CORRECTO para PDO: Usar fetch() para obtener el resultado
@@ -87,9 +91,9 @@ class ModeloUsuario
     //     public function consultarUsuario($email)
     // {
     //     try {
-    //         $conexion = Conexion::conectar(); // Llama al método estático para obtener la conexión PDO
+    //         $this->conexion= Conexion::conectar(); // Llama al método estático para obtener la conexión PDO
 
-    //         $stmt = $conexion->prepare("SELECT * FROM usuarios WHERE email = :email");
+    //         $stmt = $this->conexion->prepare("SELECT * FROM usuarios WHERE email = :email");
     //         $stmt->bindParam(":email", $email, PDO::PARAM_STR);
     //         $stmt->execute();
 
@@ -119,10 +123,10 @@ class ModeloUsuario
     public function existEmail()
     {
 
-        $conexion = Conexion::conectar();
+
 
         $sql = "SELECT * FROM `usuarios` WHERE email = '" . $_POST['email'] . "'";
-        $stmt = $conexion->prepare($sql);
+        $stmt = $this->conexion->prepare($sql);
         $stmt->execute();
         $cantidadRegistros = $stmt->fetchColumn();
         if ($cantidadRegistros > 0) {

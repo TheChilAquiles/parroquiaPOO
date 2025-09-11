@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `certificados` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `usuario_generador_id` bigint(20) DEFAULT NULL,
   `feligres_certificado_id` bigint(20) DEFAULT NULL,
   `fecha_emision` date DEFAULT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `certificados` (
 --
 
 CREATE TABLE `documento_tipos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -71,7 +71,7 @@ INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `feligreses` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint(20) DEFAULT NULL,
   `tipo_documento_id` bigint(20) DEFAULT NULL,
   `numero_documento` varchar(255) DEFAULT NULL,
@@ -98,7 +98,7 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 --
 
 CREATE TABLE `grupos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -117,7 +117,7 @@ INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `grupo_roles` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -129,7 +129,7 @@ CREATE TABLE `grupo_roles` (
 --
 
 CREATE TABLE `libros` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `libro_tipo_id` bigint(20) DEFAULT NULL,
   `numero` int(11) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
@@ -159,7 +159,7 @@ INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `libro_tipo` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -181,7 +181,7 @@ INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `noticias` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `id_usuario` bigint(20) NOT NULL,
   `titulo` varchar(150) NOT NULL,
   `descripcion` longtext NOT NULL,
@@ -196,7 +196,7 @@ CREATE TABLE `noticias` (
 --
 
 CREATE TABLE `pagos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
@@ -211,7 +211,7 @@ CREATE TABLE `pagos` (
 --
 
 CREATE TABLE `parentescos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parentesco` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -245,7 +245,7 @@ INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `parientes` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `parentesco_id` bigint(20) DEFAULT NULL,
   `feligres_sujeto_id` bigint(20) DEFAULT NULL,
   `feligres_pariente_id` bigint(20) DEFAULT NULL,
@@ -259,7 +259,7 @@ CREATE TABLE `parientes` (
 --
 
 CREATE TABLE `participantes` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `feligres_id` bigint(20) DEFAULT NULL,
   `sacramento_id` bigint(20) DEFAULT NULL,
   `rol_participante_id` bigint(20) DEFAULT NULL,
@@ -273,7 +273,7 @@ CREATE TABLE `participantes` (
 --
 
 CREATE TABLE `participantes_rol` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -301,7 +301,7 @@ CREATE TABLE `reportes` (
 --
 
 CREATE TABLE `sacramentos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `libro_id` bigint(20) DEFAULT NULL,
   `tipo_sacramento_id` bigint(20) DEFAULT NULL,
   `acta` int(11) NOT NULL,
@@ -346,7 +346,7 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 --
 
 CREATE TABLE `sacramento_tipo` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -390,7 +390,7 @@ INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
 --
 
 CREATE TABLE `usuarios` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `usuario_rol_id` bigint(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `email_confirmed` tinyint(1) DEFAULT 0,
@@ -417,7 +417,7 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 --
 
 CREATE TABLE `usuario_grupos` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint(20) DEFAULT NULL,
   `grupo_parroquial_id` bigint(20) DEFAULT NULL,
   `grupo_rol_id` bigint(20) DEFAULT NULL,
@@ -431,7 +431,7 @@ CREATE TABLE `usuario_grupos` (
 --
 
 CREATE TABLE `usuario_roles` (
-  `id` bigint(20) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

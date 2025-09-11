@@ -11,18 +11,16 @@ class LoginController
             // Decomentar Despues :
 
 
-            
+
             // if (isset($_SESSION['user-datos']) && $_SESSION['user-datos'] == false && $_SESSION['menu-item'] !== "Perfil" && $_SESSION['menu-item'] !== "Salir") {
             //     $_SESSION['menu-item'] = "Perfil";
             //     header('refresh:0');
             // }
-            
+
             if (!isset($_SESSION['menu-item'])) {
                 $_SESSION['menu-item'] = "Dashboard";
                 header('refresh:0');
             }
-
-
         } else {
 
             if (!isset($_SESSION['menu-item'])) {
@@ -40,7 +38,8 @@ class LoginController
     {
         if (isset($_POST[md5('action')]) && $_POST[md5('action')] == md5('login') && isset($_POST['email']) && isset($_POST['password'])) {
 
-            include_once('Modelo/ModeloUsuario.php');
+            include_once(__DIR__ . '/../Modelo/ModeloUsuario.php');
+
             $usuarioModel = new ModeloUsuario();
             $usuario = $usuarioModel->consultarUsuario($email);
 

@@ -1,6 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../Modelo/Conexion.php';
 require_once __DIR__ . '/../Controlador/ControladorCertificados.php';
 
 $pdo = Conexion::conectar();

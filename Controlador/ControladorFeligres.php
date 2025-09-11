@@ -18,7 +18,6 @@ class FeligresController
     public function __construct()
     {
         require_once('../Modelo/ModeloFeligres.php');
-        require_once('../Modelo/Conexion.php');
     }
 
     /**
@@ -76,9 +75,12 @@ class FeligresController
 
         // Creación de una instancia del modelo de feligres.
         $feligresModel = new ModeloFeligres();
-        
+
         // Se invoca el método del modelo para registrar el feligrés.
         $resultado = $feligresModel->mdlCrearFeligres($datosFeligres);
+
+
+
 
         // Se evalúa el resultado del modelo.
         // Se asume que el modelo devuelve un array con 'status' y 'message' en caso de error.
@@ -104,7 +106,7 @@ class FeligresController
 
         // Creación de una instancia del modelo.
         $feligresModel = new ModeloFeligres();
-        
+
         // Se invoca el método del modelo para actualizar el feligrés.
         $resultado = $feligresModel->mdlUpdateFeligres($datosFeligres);
 

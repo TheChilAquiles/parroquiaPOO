@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Conexion.php';
-
 class ModeloParticipante {
 
     private $conexion;
@@ -13,6 +11,7 @@ class ModeloParticipante {
 
     // Crear participante
     public function crearParticipante($data) {
+
         try {
             $stmt = $this->conexion->prepare("
                 INSERT INTO participantes (nombre, apellido, email)

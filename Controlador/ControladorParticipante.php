@@ -1,6 +1,6 @@
 <?php
 
-require_once 'modelo/ModeloParticipante.php';
+require_once __DIR__ . '/../Modelo/ModeloParticipante.php';
 
 class ControladorParticipante
 {

@@ -21,27 +21,37 @@ class ModeloLibro
      * @return int|array La cantidad de libros si la consulta es exitosa, o un array con
      * un mensaje de error en caso de fallo.
      */
+
+
+
+    private $conexion;
+    
+    public function __construct()
+    {
+        $this->conexion = Conexion::conectar();
+    }
+
+
     public function mdlConsultarCantidadLibros($tipo)
     {
         // Obtiene la conexión a la base de datos a través de la clase 'Conexion'.
-        $conexion = Conexion::conectar();
 
         try {
             // Prepara la consulta SQL para contar registros. El uso de '?' previene la inyección SQL.
             $sql = "SELECT COUNT(*) FROM libros WHERE libro_tipo_id = ?";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             // Ejecuta la consulta con el valor del tipo de libro.
             $stmt->execute([$tipo]);
 
             // Obtiene el resultado de la consulta (la columna única del conteo).
             $resultado = $stmt->fetchColumn();
-            
+
             // Devuelve el resultado del conteo.
             return $resultado;
         } catch (PDOException $e) {
             // Captura errores específicos de PDO.
-            if ($e->getCode() == 23000) { 
+            if ($e->getCode() == 23000) {
                 // Error 23000 indica una violación de unicidad (como en un índice UNIQUE).
                 return ['exito' => false, 'mensaje' => "Error: Ya existe una partida de Bautizo con el mismo N° de Libro, Folio y Acta."];
             }
@@ -51,7 +61,7 @@ class ModeloLibro
         } finally {
             // Cierra la conexión y libera los recursos del statement.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 
@@ -67,14 +77,11 @@ class ModeloLibro
      */
     public function mdlAñadirLibro($tipo, $cantidad)
     {
-        // Obtiene la conexión a la base de datos.
-        $conexion = Conexion::conectar();
-
         try {
             // Prepara la consulta SQL para la inserción.
             // El número del libro es la cantidad actual + 1.
             $sql = "INSERT INTO `libros`(`libro_tipo_id`, `numero`) VALUES (?,?)";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             // Ejecuta la inserción con los valores proporcionados.
             $stmt->execute([$tipo, $cantidad + 1]);
@@ -84,7 +91,7 @@ class ModeloLibro
             // fue exitosa, el método no lanzará una excepción.
             $resultado = $stmt->fetchColumn();
 
-            // Podrías devolver el ID de la última inserción con `$conexion->lastInsertId();`
+            // Podrías devolver el ID de la última inserción con `$this->conexion->lastInsertId();`
             // si fuera necesario.
             return $resultado;
         } catch (PDOException $e) {
@@ -97,7 +104,7 @@ class ModeloLibro
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 }

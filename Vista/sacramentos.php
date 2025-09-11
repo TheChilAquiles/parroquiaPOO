@@ -43,8 +43,6 @@
 
 
 
-
-
             <!-- inputs de navegacion  -->
             <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('DefinirTipolibro') ?>">
             <input type="hidden" name="<?= md5('tipo') ?>" value="<?= $tipo ?>">
@@ -54,9 +52,6 @@
 
             <input type="hidden" name="id" id="id" />
             <input type="hidden" name="Doaction" id="Doaction" value="" />
-
-
-
 
 
 

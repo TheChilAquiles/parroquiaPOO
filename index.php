@@ -8,15 +8,11 @@ session_start();
 
 
 
-
-
-
-
-
-
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['menu-item'])) {
   $_SESSION['menu-item'] = $_POST['menu-item'];
 }
+
+include_once(__DIR__ . '/Modelo/Conexion.php');
 
 include_once('Controlador/ControladorLogin.php');
 $Login = new LoginController();
@@ -292,11 +288,7 @@ switch ($_SESSION['menu-item']) {
       require_once(__DIR__ . '/Controlador/ControladorNoticia.php');
       $noticiaController = new ControladorNoticia();
       $noticiaController->ctrGestionarNoticias();
-
-      
     } catch (\Throwable $th) {
-
-    
     }
 
 
@@ -309,10 +301,10 @@ switch ($_SESSION['menu-item']) {
     $grupoController->ctrlGestionarGrupos();
     break;
 
-    
 
-    case 'Pagos':
-      include_once('Vista/crear_pago.php');
+
+  case 'Pagos':
+    include_once('Vista/crear_pago.php');
     break;
 
 
@@ -326,14 +318,14 @@ switch ($_SESSION['menu-item']) {
     include_once('Vista/dashboard.php');
     break;
 
-  case'Certificados':
+  case 'Certificados':
 
     // -- LINEA PARA TESTEAR EN LOG --
-file_put_contents(__DIR__ . '/logs/SebastianApp.log', 'Entro a  Certificados ' . "\n", FILE_APPEND);
-// -- LINEA PARA TESTEAR EN LOG  --
+    file_put_contents(__DIR__ . '/logs/SebastianApp.log', 'Entro a  Certificados ' . "\n", FILE_APPEND);
+    // -- LINEA PARA TESTEAR EN LOG  --
 
 
-      include_once('Vista/certificados.php');
+    include_once('Vista/certificados.php');
     break;
 
 

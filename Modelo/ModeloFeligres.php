@@ -10,12 +10,14 @@
  * @version 1.0
  * @author Rusbel Godoy
  */
+
+
 class ModeloFeligres
 {
     // Nota: Por estándar, los atributos de clase deberían ir aquí, pero no
     // se han definido en el código original.
     // Ejemplo: private $conexion;
-    
+
     /**
      * Consulta un feligrés en la base de datos por su tipo y número de documento.
      *
@@ -25,19 +27,25 @@ class ModeloFeligres
      * o false si no se encuentra. También puede retornar un array con un mensaje
      * de error en caso de excepción.
      */
+
+    private $conexion;
+    
+    public function __construct()
+    {
+        $this->conexion = Conexion::conectar();
+    }
+
     public function mdlConsultarFeligres($tipoDoc, $documento)
     {
-        // Se establece la conexión a la base de datos.
-        $conexion = Conexion::conectar();
 
         try {
             // Se prepara la consulta SQL usando parámetros para prevenir inyecciones.
             $sql = "SELECT * FROM feligreses WHERE tipo_documento_id = ? AND numero_documento = ?";
-            $stmt = $conexion->prepare($sql);
-            
+            $stmt = $this->conexion->prepare($sql);
+
             // Se ejecuta la consulta con los valores proporcionados.
             $stmt->execute([$tipoDoc, $documento]);
-            
+
             // Se obtiene la primera fila de resultados como un array asociativo.
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -55,7 +63,7 @@ class ModeloFeligres
         } finally {
             // Se cierran el statement y la conexión para liberar recursos.
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 
@@ -67,11 +75,10 @@ class ModeloFeligres
      */
     public function mdlCrearFeligres($datosFeligres)
     {
-        $conexion = Conexion::conectar();
 
         try {
             $sql = "INSERT INTO feligreses (usuario_id, tipo_documento_id, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, numero_documento, telefono, direccion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             // Asignación de variables desde el array de datos, con valores por defecto si no existen.
             $idUser          = $datosFeligres['idUser'] ?? null;
@@ -96,10 +103,10 @@ class ModeloFeligres
                 $telefono,
                 $direccion
             ]);
-            
+
             // Retorna el ID del último registro insertado.
             // Nota: La llamada a `fetchColumn` aquí es incorrecta para una operación INSERT.
-            // Para obtener el último ID insertado, se debería usar `$conexion->lastInsertId()`.
+            // Para obtener el último ID insertado, se debería usar `$this->conexion->lastInsertId()`.
             // La llamada actual probablemente retornará `false` o 0.
             $resultado = $stmt->fetchColumn();
 
@@ -112,7 +119,7 @@ class ModeloFeligres
             return ['exito' => false, 'mensaje' => "Error interno al guardar la partida de Bautizo."];
         } finally {
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 
@@ -124,11 +131,10 @@ class ModeloFeligres
      */
     public function mdlUpdateFeligres($datosFeligres)
     {
-        $conexion = Conexion::conectar();
-
+        
         try {
             $sql = "UPDATE `feligreses` SET `tipo_documento_id` = ? , `numero_documento` = ? , `primer_nombre` = ? , `segundo_nombre` = ? , `primer_apellido` = ? , `segundo_apellido` = ? , `telefono` = ? , `direccion` = ? WHERE `documento` = ?";
-            $stmt = $conexion->prepare($sql);
+            $stmt = $this->conexion->prepare($sql);
 
             $idUser          = $datosFeligres['idUser'] ?? null;
             $tipoDoc         = $datosFeligres['tipo-doc'];
@@ -153,7 +159,7 @@ class ModeloFeligres
                 $direccion,
                 $documento
             ]);
-            
+
             // Nota: La llamada a `fetchColumn` aquí es incorrecta para una operación UPDATE.
             // Se debería usar `$stmt->rowCount()` para obtener el número de filas afectadas.
             $resultado = $stmt->fetchColumn();
@@ -167,7 +173,7 @@ class ModeloFeligres
             return ['exito' => false, 'mensaje' => "Error interno al guardar la partida de Bautizo."];
         } finally {
             $stmt = null;
-            $conexion = null;
+            $this->conexion = null;
         }
     }
 }

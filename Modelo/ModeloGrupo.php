@@ -1,7 +1,5 @@
 <?php
 // Incluir el archivo de conexión
-require_once 'Conexion.php'; 
-
 class ModeloGrupo
 {
     private $conexion;

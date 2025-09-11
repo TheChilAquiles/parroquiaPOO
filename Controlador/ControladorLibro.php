@@ -8,15 +8,17 @@
  * @category Controller
  * @package  Libro
  */
-class LibroController {
-    
+class LibroController
+{
+
     /**
      * Constructor de la clase LibroController.
      */
+
+
     public function __construct()
     {
         require_once('Modelo/ModeloLibro.php');
-        require_once('Modelo/Conexion.php');
     }
 
     /**
@@ -25,7 +27,8 @@ class LibroController {
      * @param string $tipo El tipo de libro a consultar.
      * @return int La cantidad de libros.
      */
-    public function ctrlConsultarCantidadLibros($tipo){
+    public function ctrlConsultarCantidadLibros($tipo)
+    {
         $libros = new ModeloLibro();
         $cantidad = $libros->mdlConsultarCantidadLibros($tipo);
         return $cantidad;
@@ -38,7 +41,8 @@ class LibroController {
      * @param int    $cantidad La cantidad de libros a añadir.
      * @return int La cantidad de libros añadidos.
      */
-    public function ctrlCrearLibro($tipo, $cantidad){
+    public function ctrlCrearLibro($tipo, $cantidad)
+    {
         $libros = new ModeloLibro();
         $cantidad = $libros->mdlAñadirLibro($tipo, $cantidad);
         return $cantidad;
@@ -54,8 +58,9 @@ class LibroController {
  * @category Modelo
  * @package  Records
  */
-class records {
-    
+class records
+{
+
     private $recordsTable = 'usuarios';
     private $conn;
 
@@ -74,7 +79,8 @@ class records {
      *
      * @param mysqli $db La conexión a la base de datos.
      */
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->conn = $db;
     }
 
@@ -83,7 +89,8 @@ class records {
      *
      * @return void Genera una salida en formato JSON.
      */
-    public function listRecords() {
+    public function listRecords()
+    {
         $sqlQuery = "SELECT * FROM {$this->recordsTable} ";
 
         // Funcionalidad de búsqueda.
@@ -119,7 +126,7 @@ class records {
         $stmt = $this->conn->prepare($sqlQuery);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         $stmtTotal = $this->conn->prepare("SELECT * FROM {$this->recordsTable}");
         $stmtTotal->execute();
         $allResult = $stmtTotal->get_result();
@@ -137,8 +144,8 @@ class records {
             $row[] = $record["causaMuerte"];
             $row[] = $record["hijoDe"];
             $row[] = $record["estadoCivil"];
-            $row[] = '<button type="button" name="update" id="'.$record["id"].'" class="btn btn-warning btn-xs update">Actualizar</button>';
-            $row[] = '<button type="button" name="delete" id="'.$record["id"].'" class="btn btn-danger btn-xs delete">Borrar</button>';
+            $row[] = '<button type="button" name="update" id="' . $record["id"] . '" class="btn btn-warning btn-xs update">Actualizar</button>';
+            $row[] = '<button type="button" name="delete" id="' . $record["id"] . '" class="btn btn-danger btn-xs delete">Borrar</button>';
             $records[] = $row;
         }
 
@@ -155,13 +162,15 @@ class records {
      *
      * @return bool Verdadero si tiene éxito, falso si falla.
      */
-    public function addRecord() {
+    public function addRecord()
+    {
         $stmt = $this->conn->prepare("
             INSERT INTO {$this->recordsTable}
             (name, parroquia, fechaFallecimiento, lugarNacimiento, age, causaMuerte, hijoDe, estadoCivil)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("ssssisss",
+        $stmt->bind_param(
+            "ssssisss",
             $this->name,
             $this->parroquia,
             $this->fechaFallecimiento,
@@ -179,7 +188,8 @@ class records {
      *
      * @return void Genera una salida en formato JSON.
      */
-    public function getRecord() {
+    public function getRecord()
+    {
         $stmt = $this->conn->prepare("SELECT * FROM {$this->recordsTable} WHERE id = ?");
         $stmt->bind_param("i", $this->id);
         $stmt->execute();
@@ -192,13 +202,15 @@ class records {
      *
      * @return bool Verdadero si tiene éxito, falso si falla.
      */
-    public function updateRecord() {
+    public function updateRecord()
+    {
         $stmt = $this->conn->prepare("
             UPDATE {$this->recordsTable}
             SET name = ?, parroquia = ?, fechaFallecimiento = ?, lugarNacimiento = ?, age = ?, causaMuerte = ?, hijoDe = ?, estadoCivil = ?
             WHERE id = ?
         ");
-        $stmt->bind_param("ssssisssi",
+        $stmt->bind_param(
+            "ssssisssi",
             $this->name,
             $this->parroquia,
             $this->fechaFallecimiento,
@@ -217,7 +229,8 @@ class records {
      *
      * @return bool Verdadero si tiene éxito, falso si falla.
      */
-    public function deleteRecord() {
+    public function deleteRecord()
+    {
         $stmt = $this->conn->prepare("DELETE FROM {$this->recordsTable} WHERE id = ?");
         $stmt->bind_param("i", $this->id);
         return $stmt->execute();

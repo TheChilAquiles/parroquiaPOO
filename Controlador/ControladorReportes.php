@@ -1,6 +1,6 @@
 <?php
-require_once '../modelo/Conexion.php';
-require_once '../modelo/ModeloReporte.php';
+
+require_once __DIR__ . '/../Modelo/ModeloReporte.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
