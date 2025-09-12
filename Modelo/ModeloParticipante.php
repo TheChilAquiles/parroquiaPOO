@@ -12,15 +12,16 @@ class ModeloParticipante {
     // Crear participante
     public function crearParticipante($data) {
 
+
         try {
             $stmt = $this->conexion->prepare("
-                INSERT INTO participantes (nombre, apellido, email)
-                VALUES (:nombre, :apellido, :email)
+                INSERT INTO participantes (feligres_id, sacramento_id, rol_participante_id)
+                VALUES (:feligresId, :sacramentoId, :participanteId)
             ");
 
-            $stmt->bindParam(':nombre', $data['nombre']);
-            $stmt->bindParam(':apellido', $data['apellido']);
-            $stmt->bindParam(':email', $data['email']);
+            $stmt->bindParam(':feligresId', $data['feligres-id']);
+            $stmt->bindParam(':sacramentoId', $data['sacramento-id']);
+            $stmt->bindParam(':participanteId', $data['participante-id']);
 
             $stmt->execute();
 

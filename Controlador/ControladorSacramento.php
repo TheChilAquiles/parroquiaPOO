@@ -1,7 +1,7 @@
 <?php
-include_once __DIR__ . '/../Modelo/ModeloSacramento.php';
-include_once(__DIR__ . '/../Controlador/ControladorFeligres.php');
-include_once(__DIR__ . '/../Modelo/Conexion.php');
+include_once __DIR__ . '/../Modelo/ModeloSacramento.php' ;
+include_once __DIR__ . '/../Controlador/ControladorFeligres.php' ;
+include_once __DIR__ . '/../Modelo/Conexion.php' ;
 
 
 // $database = new conexion();

@@ -110,9 +110,11 @@ class ModeloSacramento
 
     public function CrearSacramento($data)
     {
+
+        // $Rusbel->debug($data,true); 
+
         try {
             // Variables con valores reales
-            $libro_id = 1;
             $tipo_sacramento_id = 2;
             $acta = 10;
             $folio = 5;
@@ -145,8 +147,18 @@ class ModeloSacramento
             $ControladorFeligres = new FeligresController();
             $ControladorParticipantes  = new ControladorParticipante($sacramentoID);
 
+            file_put_contents('logs/app3.log', "integrantes: " . print_r($data['integrantes'], true), FILE_APPEND);
+
+
+
 
             foreach ($data['integrantes'] as $integrante) {
+
+
+
+                file_put_contents('logs/app3.log', "Procesando integrante: " . print_r($integrante, true), FILE_APPEND);
+
+
 
                 $datosFeligres = [];
 
@@ -159,23 +171,20 @@ class ModeloSacramento
                 $datosFeligres['segundo-nombre']  = $integrante['segundoNombre'] ?? '';
                 $datosFeligres['primer-apellido'] = $integrante['primerApellido'];
                 $datosFeligres['segundo-apellido']  = $integrante['segundoApellido'] ?? '';
+                $dataFeligres['rol-Participante'] =   $dataFeligres['rolParticipante'] ?? null; 
+ 
 
 
                 try {
 
                     $existe =  $ControladorFeligres->ctrlConsularFeligres($integrante['tipoDoc'], $integrante['numeroDoc']);
 
-
-
                     if ($existe['status'] == 'success' && $existe['data']) {
-
-
                         $feligresID  = $existe['data']['id'] ?? null;
                     } else {
                         try {
 
                             $create =  $ControladorFeligres->ctrlCrearFeligres($datosFeligres);
-
 
                             if ($create['status'] == 'success') {
 
@@ -187,6 +196,19 @@ class ModeloSacramento
                         }
                     }
 
+
+
+                    $Partifipante = [
+                        'feligres-id' =>  $feligresID,
+                        'sacramento-id' =>  $sacramentoID,
+                        'participante-id' =>   $dataFeligres['rolParticipante'] ?? null  
+                    ];
+
+                    $resultado =   $ControladorParticipantes->ctrlCrearParticipante(datos: $Partifipante);
+
+
+
+                    file_put_contents('logs/app3.log', 'Participante user : ' . print_r($resultado, true), FILE_APPEND);
                     file_put_contents('logs/app3.log', 'creado user :  ' . $feligresID   . 'doc : ' . print_r($create, true), FILE_APPEND);
                 } catch (\Throwable $th) {
                     file_put_contents('logs/app3.log', 'error  doc : ' . print_r($th, true), FILE_APPEND);
@@ -227,7 +249,6 @@ class ModeloSacramento
             }
 
 
-
             file_put_contents('logs/app3.log', "Registro hecho\n id :" .     $sacramentoID, FILE_APPEND);
 
             return $result;
@@ -256,7 +277,7 @@ class ModeloSacramento
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if (count($data)) {
-                $this->libroID = $this->libroID = $data[0]['id'];
+                $this->libroID = $data[0]['id'];
             };
         } catch (\Throwable $th) {
 

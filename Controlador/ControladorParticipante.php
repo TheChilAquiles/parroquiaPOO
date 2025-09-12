@@ -8,7 +8,7 @@ class ControladorParticipante
     private $sacramentoID;
 
     public function __construct($sacramentoId)
-    {
+    { 
         $this->sacramentoID = $sacramentoId;
         $this->modelo = new ModeloParticipante();
     }

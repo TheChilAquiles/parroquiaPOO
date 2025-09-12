@@ -1,6 +1,7 @@
 <!-- <?php
 
 echo $_POST['action'];
+
 echo $_SESSION['menu-item'];
 
 ?> -->

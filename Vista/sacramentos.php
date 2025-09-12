@@ -246,23 +246,20 @@
                             <?php
 
                             if ($tipo == 1) {
-                                echo '<option value="Bautizado">Bautizado</option>';
+                                echo '<option value='.$tipo.'>Bautizado</option>';
                             } elseif ($tipo == 2) {
-                                echo '<option value="Confirmando">Confirmando</option>';
+                                echo '<option value='.$tipo.'">Confirmando</option>';
                             } elseif ($tipo == 3) {
-                                echo '<option value="Difunto">Difunto</option>';
+                                echo '<option value='.$tipo.'>Difunto</option>';
                             } elseif ($tipo == 4) {
-                                echo '<option value="Esposo">Esposo</option>';
-                                echo '<option value="Esposa">Esposa</option>';
+                                echo '<option value='.$tipo.'>Esposo</option>';
+                                echo '<option value='.$tipo.'>Esposa</option>';
                             }
-
-
                             ?>
-
-
 
                             <option value="Padre">Padre</option>
                             <option value="Madre">Madre</option>
+                            
                             <?php if ($tipo !== 3) {
                                 echo ' <option value="Padrino">Padrino</option>';
                                 echo '<option value="Madrina">Madrina</option>';
@@ -380,19 +377,6 @@
 <script>
     
 
-    Guardar
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     $(document).on('click', '#BuscarUser', function() {
@@ -469,9 +453,9 @@
 
 
                     resaltarCampo('#primerNombre');
-                    resaltarCampo('#segundoNombre');
+         
                     resaltarCampo('#primerApellido');
-                    resaltarCampo('#segundoApellido');
+   
 
 
 

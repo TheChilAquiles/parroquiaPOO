@@ -7,6 +7,16 @@ ob_start();
 session_start();
 
 
+// ---  Para Depuracion ---
+include_once('Controlador/ControladorDebug.php');
+$Rusbel = new DebugController(name:'Rusbel');
+$Samuel = new DebugController(name:'Samuel');
+$Santiago = new DebugController(name:'Santiago');
+$Sebastian = new DebugController(name:'Sebastian');
+// ---  Fin Depuracion ---
+
+
+$Rusbel->debug('los cracks');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['menu-item'])) {
   $_SESSION['menu-item'] = $_POST['menu-item'];
@@ -41,8 +51,6 @@ $Login->isLogged();
 echo "Session" . $_SESSION['menu-item'];
 
 include_once('Vista/componentes/plantillaTop.php');
-
-
 
 
 switch ($_SESSION['menu-item']) {

@@ -61,7 +61,7 @@ class ModeloLibro
         } finally {
             // Cierra la conexión y libera los recursos del statement.
             $stmt = null;
-            $this->conexion = null;
+            
         }
     }
 
@@ -104,7 +104,7 @@ class ModeloLibro
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $this->conexion = null;
+            
         }
     }
 }

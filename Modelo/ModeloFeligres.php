@@ -63,7 +63,6 @@ class ModeloFeligres
         } finally {
             // Se cierran el statement y la conexión para liberar recursos.
             $stmt = null;
-            $this->conexion = null;
         }
     }
 
@@ -119,7 +118,6 @@ class ModeloFeligres
             return ['exito' => false, 'mensaje' => "Error interno al guardar la partida de Bautizo."];
         } finally {
             $stmt = null;
-            $this->conexion = null;
         }
     }
 
@@ -173,7 +171,6 @@ class ModeloFeligres
             return ['exito' => false, 'mensaje' => "Error interno al guardar la partida de Bautizo."];
         } finally {
             $stmt = null;
-            $this->conexion = null;
         }
     }
 }

@@ -11,13 +11,17 @@
  */
 class FeligresController
 {
+    private $feligresModel;
     /**
      * Constructor de la clase.
      * Incluye los archivos necesarios para el funcionamiento del controlador.
      */
+
     public function __construct()
     {
-        require_once('../Modelo/ModeloFeligres.php');
+        require_once(__DIR__.'/../Modelo/ModeloFeligres.php');
+        $this->feligresModel = new ModeloFeligres();
+        
     }
 
     /**
@@ -38,9 +42,8 @@ class FeligresController
         }
 
         // Creación de una instancia del modelo para interactuar con la base de datos.
-        $feligresModel = new ModeloFeligres();
         // Se invoca el método del modelo para consultar al feligrés.
-        $resultado = $feligresModel->mdlConsultarFeligres($tipoDoc, $documento);
+        $resultado = $this->feligresModel->mdlConsultarFeligres($tipoDoc, $documento);
 
         // Se evalúa el resultado de la consulta.
         if ($resultado) {
@@ -73,12 +76,9 @@ class FeligresController
             return ['status' => 'error', 'error' => 'Datos Obligatorios'];
         }
 
-        // Creación de una instancia del modelo de feligres.
-        $feligresModel = new ModeloFeligres();
-
         // Se invoca el método del modelo para registrar el feligrés.
-        $resultado = $feligresModel->mdlCrearFeligres($datosFeligres);
-
+        $resultado = $this->feligresModel->mdlCrearFeligres($datosFeligres);
+        
 
 
 
@@ -104,11 +104,8 @@ class FeligresController
             return ['status' => 'error', 'error' => 'Datos Obligatorios'];
         }
 
-        // Creación de una instancia del modelo.
-        $feligresModel = new ModeloFeligres();
-
         // Se invoca el método del modelo para actualizar el feligrés.
-        $resultado = $feligresModel->mdlUpdateFeligres($datosFeligres);
+        $resultado = $this->feligresModel->mdlUpdateFeligres($datosFeligres);
 
         // Se evalúa el resultado del modelo.
         if (is_array($resultado) && isset($resultado['status']) && $resultado['status'] === 'error') {
