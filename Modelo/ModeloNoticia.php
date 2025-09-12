@@ -32,7 +32,7 @@ class ModeloNoticia
      */
     public function mdlCrearNoticia($datos)
     {
-        $this->conexion = null;
+         
         try {
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
@@ -67,7 +67,7 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $this->conexion = null;
+             
         }
     }
 
@@ -81,7 +81,7 @@ class ModeloNoticia
      */
     public function mdlObtenerNoticias()
     {
-        $this->conexion = null;
+         
         $noticias = [];
         try {
             // Obtiene la conexión a la base de datos.
@@ -102,7 +102,7 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $this->conexion = null;
+             
         }
 
         return $noticias;
@@ -121,7 +121,7 @@ class ModeloNoticia
      */
     public function mdlActualizarNoticia($id, $datos)
     {
-        $this->conexion = null;
+         
         try {
             $this->conexion = Conexion::conectar();
             $this->conexion->beginTransaction();
@@ -150,7 +150,7 @@ class ModeloNoticia
             return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
         } finally {
             $stmt = null;
-            $this->conexion = null;
+             
         }
     }
 
@@ -165,7 +165,7 @@ class ModeloNoticia
      */
     public function mdlBorrarNoticia($id)
     {
-        $this->conexion = null;
+         
         try {
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
@@ -196,7 +196,7 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-            $this->conexion = null;
+             
         }
     }
 }
