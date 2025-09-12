@@ -77,8 +77,7 @@ class ControladorNoticia
         // Obtiene la ruta de la imagen actual del campo oculto del formulario.
         $imagen = $_POST['imagen_actual'] ?? null;
 
-        // ✅ Lógica corregida para la subida de imagen.
-        // Se ejecuta solo si se seleccionó un archivo y no hay errores.
+        // Lógica para la subida de imagen.
         if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_NO_FILE) {
             // Validar que no haya un error de subida real.
             if ($_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
@@ -165,9 +164,9 @@ class ControladorNoticia
     }
 
     /**
-     * Elimina una noticia por su ID.
+     * Elimina una noticia por su ID (borrado lógico).
      *
-     * Este método llama al modelo para borrar un registro de la base de datos.
+     * Este método llama al modelo para marcar un registro como eliminado.
      */
     private function ctrEliminarNoticia()
     {

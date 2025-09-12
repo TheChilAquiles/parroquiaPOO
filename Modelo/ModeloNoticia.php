@@ -38,6 +38,7 @@ class ModeloNoticia
             $this->conexion = Conexion::conectar();
             $this->conexion->beginTransaction();
 
+            // La fecha de publicación se llena automáticamente por el campo DEFAULT en la BD.
             $sql = "INSERT INTO `noticias` (`id_usuario`, `titulo`, `descripcion`, `imagen`) VALUES (?, ?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
 
@@ -71,9 +72,9 @@ class ModeloNoticia
     }
 
     /**
-     * Obtiene todas las noticias de la base de datos.
+     * Obtiene todas las noticias NO ELIMINADAS de la base de datos.
      *
-     * Este método selecciona todos los registros de la tabla `noticias`.
+     * Este método selecciona los registros de la tabla `noticias` donde estado_registro es nulo.
      *
      * @return array Un array de arrays asociativos con los datos de las noticias.
      * Retorna un array vacío si no se encuentran noticias o en caso de error.
@@ -86,8 +87,8 @@ class ModeloNoticia
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
 
-            // Prepara la consulta SQL.
-            $sql = "SELECT * FROM `noticias` ORDER BY `estado_registro` DESC";
+            // Prepara la consulta SQL para obtener solo las noticias activas (no eliminadas lógicamente).
+            $sql = "SELECT * FROM `noticias` WHERE `estado_registro` IS NULL ORDER BY `fecha_publicacion` DESC";
             $stmt = $this->conexion->prepare($sql);
 
             // Ejecuta la consulta.
@@ -154,12 +155,12 @@ class ModeloNoticia
     }
 
     /**
-     * Elimina una noticia de la base de datos.
+     * Marca una noticia como eliminada lógicamente en la base de datos.
      *
-     * Este método borra un registro de la tabla `noticias` basado en su ID.
+     * Este método actualiza el campo `estado_registro` con la fecha y hora de la eliminación.
      * Utiliza una transacción para garantizar la integridad de los datos.
      *
-     * @param int $id El ID de la noticia a eliminar.
+     * @param int $id El ID de la noticia a eliminar lógicamente.
      * @return array Un array con un mensaje de éxito o un array con un mensaje de error.
      */
     public function mdlBorrarNoticia($id)
@@ -170,17 +171,17 @@ class ModeloNoticia
             $this->conexion = Conexion::conectar();
             $this->conexion->beginTransaction();
 
-            // Prepara la consulta SQL para la eliminación.
-            $sql = "DELETE FROM `noticias` WHERE `id` = ?";
+            // Prepara la consulta SQL para el borrado lógico.
+            $sql = "UPDATE `noticias` SET `estado_registro` = ? WHERE `id` = ?";
             $stmt = $this->conexion->prepare($sql);
 
-            // Vincula el ID a la consulta.
-            $stmt->execute([$id]);
+            // Vincula la fecha actual y el ID a la consulta.
+            $stmt->execute([date('Y-m-d H:i:s'), $id]);
 
-            // Comprueba si se eliminó algún registro.
+            // Comprueba si se actualizó algún registro.
             if ($stmt->rowCount() > 0) {
                 $this->conexion->commit();
-                return ['exito' => true, 'mensaje' => "Noticia eliminada correctamente."];
+                return ['exito' => true, 'mensaje' => "Noticia eliminada lógicamente."];
             } else {
                 $this->conexion->rollBack();
                 return ['exito' => false, 'mensaje' => "No se encontró la noticia para eliminar."];

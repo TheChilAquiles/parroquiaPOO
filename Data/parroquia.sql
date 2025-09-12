@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-09-2025 a las 03:15:56
+-- Tiempo de generación: 12-09-2025 a las 02:25:05
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `certificados` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `usuario_generador_id` bigint(20) DEFAULT NULL,
   `feligres_certificado_id` bigint(20) DEFAULT NULL,
   `fecha_emision` date DEFAULT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE `certificados` (
 --
 
 CREATE TABLE `documento_tipos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `tipo` varchar(255) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -71,7 +71,7 @@ INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `feligreses` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `usuario_id` bigint(20) DEFAULT NULL,
   `tipo_documento_id` bigint(20) DEFAULT NULL,
   `numero_documento` varchar(255) DEFAULT NULL,
@@ -98,7 +98,7 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 --
 
 CREATE TABLE `grupos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `nombre` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -117,7 +117,7 @@ INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `grupo_roles` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -129,7 +129,7 @@ CREATE TABLE `grupo_roles` (
 --
 
 CREATE TABLE `libros` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `libro_tipo_id` bigint(20) DEFAULT NULL,
   `numero` int(11) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
@@ -159,7 +159,7 @@ INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `libro_tipo` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -181,13 +181,20 @@ INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `noticias` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `id_usuario` bigint(20) NOT NULL,
   `titulo` varchar(150) NOT NULL,
   `descripcion` longtext NOT NULL,
   `imagen` longtext NOT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `noticias`
+--
+
+INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `estado_registro`) VALUES
+(1, 11, 'Hola', 'Hola', 'assets/img/noticias/68c3683535c1f-Diagrama_Lógico_v11.png', NULL);
 
 -- --------------------------------------------------------
 
@@ -196,7 +203,7 @@ CREATE TABLE `noticias` (
 --
 
 CREATE TABLE `pagos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
@@ -211,7 +218,7 @@ CREATE TABLE `pagos` (
 --
 
 CREATE TABLE `parentescos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `parentesco` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -245,7 +252,7 @@ INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
 --
 
 CREATE TABLE `parientes` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `parentesco_id` bigint(20) DEFAULT NULL,
   `feligres_sujeto_id` bigint(20) DEFAULT NULL,
   `feligres_pariente_id` bigint(20) DEFAULT NULL,
@@ -259,7 +266,7 @@ CREATE TABLE `parientes` (
 --
 
 CREATE TABLE `participantes` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `feligres_id` bigint(20) DEFAULT NULL,
   `sacramento_id` bigint(20) DEFAULT NULL,
   `rol_participante_id` bigint(20) DEFAULT NULL,
@@ -273,7 +280,7 @@ CREATE TABLE `participantes` (
 --
 
 CREATE TABLE `participantes_rol` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -301,7 +308,7 @@ CREATE TABLE `reportes` (
 --
 
 CREATE TABLE `sacramentos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `libro_id` bigint(20) DEFAULT NULL,
   `tipo_sacramento_id` bigint(20) DEFAULT NULL,
   `acta` int(11) NOT NULL,
@@ -346,7 +353,7 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 --
 
 CREATE TABLE `sacramento_tipo` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `tipo` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -390,7 +397,7 @@ INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
 --
 
 CREATE TABLE `usuarios` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `usuario_rol_id` bigint(20) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `email_confirmed` tinyint(1) DEFAULT 0,
@@ -417,7 +424,7 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 --
 
 CREATE TABLE `usuario_grupos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `usuario_id` bigint(20) DEFAULT NULL,
   `grupo_parroquial_id` bigint(20) DEFAULT NULL,
   `grupo_rol_id` bigint(20) DEFAULT NULL,
@@ -431,7 +438,7 @@ CREATE TABLE `usuario_grupos` (
 --
 
 CREATE TABLE `usuario_roles` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL,
   `rol` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -638,6 +645,12 @@ ALTER TABLE `libro_tipo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT de la tabla `noticias`
+--
+ALTER TABLE `noticias`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
@@ -684,6 +697,12 @@ ALTER TABLE `sacramentos`
 --
 ALTER TABLE `sacramento_tipo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `tipos_pago`
+--
+ALTER TABLE `tipos_pago`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
