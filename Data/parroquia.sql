@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-09-2025 a las 02:25:05
+-- Tiempo de generación: 13-09-2025 a las 03:35:28
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -39,6 +39,17 @@ CREATE TABLE `certificados` (
   `estado` varchar(255) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `certificados`
+--
+
+INSERT INTO `certificados` (`id`, `usuario_generador_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_expiracion`, `tipo_certificado`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
+(101, 10, 1, '2024-01-15', '2025-01-15', 'bautizo', 3, '/archivos/cert101.pdf', 'vigente', '0000-00-00 00:00:00'),
+(102, 11, 1, '2023-12-10', '2024-12-10', 'confirmacion', 4, '/archivos/cert102.pdf', 'vigente', '0000-00-00 00:00:00'),
+(103, 12, 1, '2023-11-20', '2024-11-20', 'matrimonio', 5, '/archivos/cert103.pdf', 'vigente', '0000-00-00 00:00:00'),
+(104, 13, 1, '2024-02-05', '2025-02-05', 'bautizo', 6, '/archivos/cert104.pdf', 'vigente', '0000-00-00 00:00:00'),
+(105, 14, 1, '2024-03-10', '2025-03-10', 'confirmacion', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -207,9 +218,18 @@ CREATE TABLE `pagos` (
   `certificado_id` bigint(20) DEFAULT NULL,
   `valor` float DEFAULT NULL,
   `estado` varchar(255) DEFAULT NULL,
-  `estado_registro` datetime DEFAULT NULL,
+  `fecha_pago` datetime DEFAULT NULL,
   `tipo_pago_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`) VALUES
+(3, 103, 1800.75, 'completo', '0000-00-00 00:00:00', 1),
+(4, 104, 3200, 'cancelado', '0000-00-00 00:00:00', 3),
+(5, 105, 2100, 'completo', '0000-00-00 00:00:00', 2);
 
 -- --------------------------------------------------------
 
@@ -606,7 +626,7 @@ ALTER TABLE `usuario_roles`
 -- AUTO_INCREMENT de la tabla `certificados`
 --
 ALTER TABLE `certificados`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT de la tabla `documento_tipos`
@@ -654,7 +674,7 @@ ALTER TABLE `noticias`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `parentescos`

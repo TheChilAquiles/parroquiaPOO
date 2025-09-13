@@ -1,41 +1,24 @@
 <?php
-class CrearPagos {
-    private $conn;
-    private $table = "pagos";
+require_once "Conexion.php";
 
-    public $id;
-    public $certificado_id;
-    public $valor;
-    public $estado;
-    public $metodo_de_pago;
+class ModeloPago {
+    private $db;
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct() {
+        $this->db = Conexion::conectar();
     }
 
-    // Crear pago
-    public function crear() {
-        $query = "INSERT INTO " . $this->table . " 
-                  (certificado_id, valor, estado, metodo_de_pago) 
-                  VALUES (:certificado_id, :valor, :estado, :metodo_de_pago)";
-        
-        $stmt = $this->conn->prepare($query);
+    // ✅ Se llama igual en el controlador
+    public function obtenerPagos() {
+        $query = $this->db->query("SELECT * FROM pagos");
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        // Sanitizar
-        $this->certificado_id = htmlspecialchars(strip_tags($this->certificado_id));
-        $this->valor = htmlspecialchars(strip_tags($this->valor));
-        $this->estado = htmlspecialchars(strip_tags($this->estado));
-        $this->metodo_de_pago = htmlspecialchars(strip_tags($this->metodo_de_pago));
-
-        // Bind
-        $stmt->bindParam(":certificado_id", $this->certificado_id);
-        $stmt->bindParam(":valor", $this->valor);
-        $stmt->bindParam(":estado", $this->estado);
-        $stmt->bindParam(":metodo_de_pago", $this->metodo_de_pago);
-
-        if($stmt->execute()){
-            return true;
-        }
-        return false;
+    // ✅ Se llama igual en el controlador
+    public function insertarPago($certificado_id, $valor, $estado, $estado_registro, $tipo_pago_id) {
+        $sql = "INSERT INTO pagos (certificado_id, valor, estado, estado_registro, tipo_pago_id) 
+                VALUES (?, ?, ?, ?, ?)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$certificado_id, $valor, $estado, $estado_registro, $tipo_pago_id]);
     }
 }

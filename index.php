@@ -312,7 +312,13 @@ switch ($_SESSION['menu-item']) {
 
 
   case 'Pagos':
-    include_once('Vista/crear_pago.php');
+     // -- LINEA PARA TESTEAR EN LOG --
+file_put_contents(__DIR__ . '/logs/SantiagoApp.log', 'Entro a Mostrar pagos controlador ' . "\n", FILE_APPEND);
+// -- LINEA PARA TESTEAR EN LOG  --
+
+           
+
+          include_once('Vista/pagos.php');
     break;
 
 
