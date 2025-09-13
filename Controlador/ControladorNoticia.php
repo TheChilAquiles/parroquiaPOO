@@ -58,6 +58,7 @@ class ControladorNoticia
             }
         } else {
             $this->ctrMostrarNoticiasPublicas();
+            $this->ctrMostrarNoticiasHome();
         }
     }
 
@@ -82,7 +83,7 @@ class ControladorNoticia
             // Validar que no haya un error de subida real.
             if ($_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
                 $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => $this->getUploadErrorMessage($_FILES['imagen']['error'])];
-                header('Location: index.php');
+                header('Location: #');
                 exit();
             }
 
@@ -90,7 +91,7 @@ class ControladorNoticia
             $tipo_archivo = mime_content_type($_FILES['imagen']['tmp_name']);
             if (!in_array($tipo_archivo, ['image/jpeg', 'image/png', 'image/gif'])) {
                 $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "El archivo subido no es una imagen válida."];
-                header('Location: index.php');
+                header('Location: #');
                 exit();
             }
 
@@ -105,7 +106,7 @@ class ControladorNoticia
                 $imagen = 'assets/img/noticias/' . $nombre_archivo;
             } else {
                 $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "Error al mover el archivo de imagen."];
-                header('Location: index.php');
+                header('Location: #');
                 exit();
             }
         }
@@ -121,7 +122,7 @@ class ControladorNoticia
             // Es una nueva noticia.
             if (empty($id_usuario)) {
                 $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "Error: No se encontró la sesión de usuario."];
-                header('Location: index.php');
+                header('Location: #');
                 exit();
             }
             $datos['id_usuario'] = $id_usuario;
@@ -133,7 +134,7 @@ class ControladorNoticia
         
         $_SESSION['mensaje'] = ['tipo' => $respuesta['exito'] ? 'success' : 'error', 'texto' => $respuesta['mensaje']];
         $_SESSION['menu-item'] = 'Noticias';
-        header('Location: index.php');
+        header('Location: #');
         exit();
     }
 
@@ -188,9 +189,14 @@ class ControladorNoticia
      */
     private function ctrMostrarAdminNoticias()
     {
-        $noticias = $this->modeloNoticia->mdlObtenerNoticias();
+        // CAMBIO AQUÍ: Capturamos el término de búsqueda de la solicitud POST.
+        $filtro_busqueda = $_POST['buscar'] ?? '';
+        
+        // Pasamos el filtro al modelo.
+        $noticias = $this->modeloNoticia->mdlObtenerNoticias($filtro_busqueda);
+        
         $mensaje = $_SESSION['mensaje'] ?? null;
-        unset($_SESSION['mensaje']); // Limpia el mensaje después de usarlo.
+        unset($_SESSION['mensaje']);
         require_once __DIR__ . '/../Vista/noticiaAdministrador.php';
     }
 
@@ -203,5 +209,13 @@ class ControladorNoticia
         $mensaje = $_SESSION['mensaje'] ?? null;
         unset($_SESSION['mensaje']); // Limpia el mensaje después de usarlo.
         require_once __DIR__ . '/../Vista/noticiaUsuario.php';
+    }
+
+    private function ctrMostrarNoticiasHome()
+    {
+        $noticias = $this->modeloNoticia->mdlObtenerNoticias();
+        $mensaje = $_SESSION['mensaje'] ?? null;
+        unset($_SESSION['mensaje']);
+        require_once __DIR__ . '/../Vista/home.php';
     }
 }

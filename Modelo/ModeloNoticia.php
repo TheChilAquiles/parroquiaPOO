@@ -32,7 +32,6 @@ class ModeloNoticia
      */
     public function mdlCrearNoticia($datos)
     {
-         
         try {
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
@@ -67,46 +66,60 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-             
         }
     }
 
+
     /**
-     * Obtiene todas las noticias NO ELIMINADAS de la base de datos.
+     * Obtiene todas las noticias NO ELIMINADAS de la base de datos, con opción de filtro.
      *
      * Este método selecciona los registros de la tabla `noticias` donde estado_registro es nulo.
      *
+     * @param string $filtro Un término de búsqueda para filtrar por título o descripción.
      * @return array Un array de arrays asociativos con los datos de las noticias.
      * Retorna un array vacío si no se encuentran noticias o en caso de error.
      */
-    public function mdlObtenerNoticias()
+    public function mdlObtenerNoticias($filtro = '')
     {
-         
         $noticias = [];
         try {
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
-
-            // Prepara la consulta SQL para obtener solo las noticias activas (no eliminadas lógicamente).
-            $sql = "SELECT * FROM `noticias` WHERE `estado_registro` IS NULL ORDER BY `fecha_publicacion` DESC";
+            
+            $sql = "SELECT * FROM `noticias` WHERE `estado_registro` IS NULL";
+            
+            // Si se proporcionó un filtro, añadimos la cláusula WHERE a la consulta.
+            if (!empty($filtro)) {
+                $sql .= " AND (`titulo` LIKE :filtro OR `descripcion` LIKE :filtro)";
+            }
+            
+            $sql .= " ORDER BY `fecha_publicacion` DESC";
+            
             $stmt = $this->conexion->prepare($sql);
-
+            
+            // Si hay un filtro, vinculamos el parámetro para evitar inyección SQL.
+            if (!empty($filtro)) {
+                $stmt->bindValue(':filtro', '%' . $filtro . '%', PDO::PARAM_STR);
+            }
+            
             // Ejecuta la consulta.
             $stmt->execute();
 
             // Obtiene todos los resultados como un array asociativo.
             $noticias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } catch (PDOException $e) {
             // Captura errores de PDO.
             error_log("Error al obtener noticias: " . $e->getMessage());
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-             
         }
 
         return $noticias;
     }
+
+
 
     /**
      * Actualiza una noticia existente en la base de datos.
@@ -121,7 +134,6 @@ class ModeloNoticia
      */
     public function mdlActualizarNoticia($id, $datos)
     {
-         
         try {
             $this->conexion = Conexion::conectar();
             $this->conexion->beginTransaction();
@@ -150,9 +162,9 @@ class ModeloNoticia
             return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
         } finally {
             $stmt = null;
-             
         }
     }
+
 
     /**
      * Marca una noticia como eliminada lógicamente en la base de datos.
@@ -165,7 +177,6 @@ class ModeloNoticia
      */
     public function mdlBorrarNoticia($id)
     {
-         
         try {
             // Obtiene la conexión a la base de datos.
             $this->conexion = Conexion::conectar();
@@ -196,7 +207,6 @@ class ModeloNoticia
         } finally {
             // Cierra la conexión y libera los recursos.
             $stmt = null;
-             
         }
     }
 }

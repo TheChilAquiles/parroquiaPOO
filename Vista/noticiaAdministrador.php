@@ -16,47 +16,61 @@
                 <?= htmlspecialchars($mensaje['texto']) ?>
             </div>
         <?php endif; ?>
-    </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <?php if (!empty($noticias)): ?>
-            <?php foreach ($noticias as $noticiaItem): ?>
-                <div class="bg-white rounded-3xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                    <img src="<?= htmlspecialchars($noticiaItem['imagen']) ?>" alt="Imagen de la noticia" class="w-full h-48 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 truncate mb-2"><?= htmlspecialchars($noticiaItem['titulo']) ?></h3>
-                        <p class="text-gray-600 text-sm line-clamp-3 mb-4"><?= htmlspecialchars($noticiaItem['descripcion']) ?></p>
-                        <?php if (isset($_SESSION['user-id'])): ?>
-                            <div class="flex items-center justify-between space-x-2">
-                                <button class="flex-1 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 open-edit-modal shadow-lg"
-                                    data-id="<?= $noticiaItem['id'] ?>"
-                                    data-titulo="<?= htmlspecialchars($noticiaItem['titulo']) ?>"
-                                    data-descripcion="<?= htmlspecialchars($noticiaItem['descripcion']) ?>"
-                                    data-imagen="<?= htmlspecialchars($noticiaItem['imagen']) ?>">
-                                    Editar
-                                </button>
-                                <form class="flex-1 delete-form" method="POST" action="index.php">
-                                    <input type="hidden" name="id" value="<?= $noticiaItem['id'] ?>">
-                                    <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('eliminar') ?>">
-                                    <input type="hidden" name="menu-item" value="Noticias">
-                                    <button type="button" class="w-full px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 transition duration-300 delete-btn shadow-lg">
-                                        Eliminar
+        <div class="mb-6">
+            <form action="" method="POST" class="flex items-center space-x-2">
+                <input type="text"
+                    name="buscar"
+                    placeholder="Buscar por título o descripción..."
+                    class="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D0B8A8]">
+                <button type="submit"
+                    class="bg-[#D0B8A8] text-[#6f6056] py-2 px-4 rounded-md hover:bg-[#ab876f] hover:text-white transition duration-300">
+                    Buscar
+                </button>
+                <a href='index.php' class="py-2 px-4 text-gray-500 hover:text-gray-700">
+                    Volver
+                </a>
+            </form>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <?php if (!empty($noticias)): ?>
+                <?php foreach ($noticias as $noticiaItem): ?>
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                        <img src="<?= htmlspecialchars($noticiaItem['imagen']) ?>" alt="Imagen de la noticia" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 truncate mb-2"><?= htmlspecialchars($noticiaItem['titulo']) ?></h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4"><?= htmlspecialchars($noticiaItem['descripcion']) ?></p>
+                            <?php if (isset($_SESSION['user-id'])): ?>
+                                <div class="flex items-center justify-between space-x-2">
+                                    <button class="flex-1 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition duration-300 open-edit-modal shadow-lg"
+                                        data-id="<?= $noticiaItem['id'] ?>"
+                                        data-titulo="<?= htmlspecialchars($noticiaItem['titulo']) ?>"
+                                        data-descripcion="<?= htmlspecialchars($noticiaItem['descripcion']) ?>"
+                                        data-imagen="<?= htmlspecialchars($noticiaItem['imagen']) ?>">
+                                        Editar
                                     </button>
-                                </form>
-                            </div>
-                        <?php endif; ?>
+                                    <form class="flex-1 delete-form" method="POST" action="">
+                                        <input type="hidden" name="id" value="<?= $noticiaItem['id'] ?>">
+                                        <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('eliminar') ?>">
+                                        <input type="hidden" name="menu-item" value="Noticias">
+                                        <button type="button" class="w-full px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-full hover:bg-red-700 transition duration-300 delete-btn shadow-lg">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="col-span-full bg-white p-8 rounded-xl shadow-md text-center">
+                    <p class="text-gray-500 font-medium text-lg">No hay noticias para mostrar.</p>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-span-full bg-white p-8 rounded-xl shadow-md text-center">
-                <p class="text-gray-500 font-medium text-lg">No hay noticias para mostrar.</p>
-            </div>
-        <?php endif; ?>
+            <?php endif; ?>
+        </div>
     </div>
-</div>
 
-    <!-- Modal para crear/editar -->
     <?php if (isset($_SESSION['user-id'])): ?>
         <div id="noticiaModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 hidden opacity-0 transition-opacity duration-300">
             <div class="modal-content bg-white rounded-3xl shadow-2xl p-8 w-full max-w-lg mx-4 md:mx-auto">
@@ -98,7 +112,6 @@
         </div>
     <?php endif; ?>
 
-    <!-- Modal de confirmación para eliminar -->
     <div id="deleteConfirmationModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-opacity-60 hidden opacity-0 transition-opacity duration-300">
         <div class="modal-content bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm mx-4 md:mx-auto text-center">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Confirmar Eliminación</h3>
@@ -116,6 +129,5 @@
         window.actionHash = '<?= md5('action') ?>';
         window.editActionHash = '<?= md5('editar') ?>';
     </script>
-    
-    <!-- Enlace al archivo JavaScript externo -->
+
     <script src="Vista/js/noticias.js"></script>
