@@ -179,7 +179,7 @@ class ControladorNoticia
         }
         
         $_SESSION['menu-item'] = 'Noticias';
-        header('Location: index.php');
+        header('refresh:0');
         exit();
     }
 

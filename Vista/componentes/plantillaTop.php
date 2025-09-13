@@ -23,6 +23,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         
 
@@ -32,6 +33,14 @@
 
 
 <body>
+
+<script>Swal.fire({
+  title: '¡Que Hacel Vago!',
+  text: 'tlabaja , tu tiene que tlabaja!',
+  icon: 'error',
+  confirmButtonText: 'Cool'
+})</script>
+
 
 
 

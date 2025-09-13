@@ -1,4 +1,2 @@
-# ignore all logs
-logs/*.log
 assets/img/noticias/*
 indexold
