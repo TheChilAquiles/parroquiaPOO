@@ -246,25 +246,26 @@
                             <?php
 
                             if ($tipo == 1) {
-                                echo '<option value='.$tipo.'>Bautizado</option>';
+                                echo '<option value="10">Abuelo</option>';
+                                echo '<option value="11">Abuela</option>';
+                                echo '<option value="1">Bautizado</option>';
                             } elseif ($tipo == 2) {
-                                echo '<option value='.$tipo.'">Confirmando</option>';
+                                echo '<option value="2">Confirmando</option>';
                             } elseif ($tipo == 3) {
-                                echo '<option value='.$tipo.'>Difunto</option>';
+                                echo '<option value="3">Difunto</option>';
                             } elseif ($tipo == 4) {
-                                echo '<option value='.$tipo.'>Esposo</option>';
-                                echo '<option value='.$tipo.'>Esposa</option>';
+                                echo '<option value="4">Esposo</option>';
+                                echo '<option value="5">Esposa</option>';
                             }
                             ?>
 
-                            <option value="Padre">Padre</option>
-                            <option value="Madre">Madre</option>
-                            
+                            <option value="6">Padre</option>
+                            <option value="7">Madre</option>
+
                             <?php if ($tipo !== 3) {
-                                echo ' <option value="Padrino">Padrino</option>';
-                                echo '<option value="Madrina">Madrina</option>';
+                                echo ' <option value="8">Padrino</option>';
+                                echo '<option value="9">Madrina</option>';
                             }; ?>
-                            <option value="Otro">Otro</option>
                         </select>
                     </div>
 
@@ -375,10 +376,6 @@
 
 
 <script>
-    
-
-
-
     $(document).on('click', '#BuscarUser', function() {
 
         alert('Buscar Usuario');
@@ -453,9 +450,9 @@
 
 
                     resaltarCampo('#primerNombre');
-         
+
                     resaltarCampo('#primerApellido');
-   
+
 
 
 
@@ -556,17 +553,47 @@
 
 
 
+        const roles = {
+            1: 'Bautizo',
+            2: 'Confirmando',
+            3: 'Difunto',
+            4: 'Esposo',
+            5: 'Esposa',
+            6: 'Padre',
+            7: 'Madre',
+            8: 'Padrino',
+            9: 'Madrina',
+            10: 'Abuelo',
+            11: 'Abuela'
+        };
+
+        const colores = {
+            1: 'bg-blue-50',
+            2: 'bg-red-50',
+            3: 'bg-violet-50',
+            4: 'bg-yellow-50',
+            5: 'bg-pink-50',
+            6: 'bg-indigo-50',
+            7: 'bg-lime-50',
+            8: 'bg-cyan-50',
+            9: 'bg-emerald-50',
+            10: 'bg-violet-50',
+            11: 'bg-fuchsia-50'
+        };
+
+        const grupoRol = roles[rolParticipante] || 'Desconocido';
+        const grupoColor = colores[rolParticipante] || 'Desconocido';
 
 
         const li = document.createElement('li');
         li.innerHTML = `
 
 
-        <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-between items-center">
+        <div class="bg-gray-100 border border-gray-300 rounded mb-2 mx-1 flex justify-between items-center">
         
-        <span class="font-bold">${rolParticipante}</span>
+        <span class="font-bold p-2  ${grupoColor}  ">${grupoRol}</span>
 
-        <span class="font-medium">  ${tipoDoc} - ${numeroDoc}  </span>
+        <span class="font-medium">  ${tipoDoc} - ${numeroDoc} - ${numeroDoc}  </span>
         <span class="font-medium">  ${[primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ')}  </span>
    
           <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
@@ -748,7 +775,7 @@
         $.ajax({
             url: "Controlador/ControladorSacramento.php",
             method: "POST",
-            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>'  ,
+            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
             success: function(data) {
 
                 $('#recordForm')[0].reset();
@@ -764,6 +791,4 @@
             }
         })
     });
-
-
 </script>
