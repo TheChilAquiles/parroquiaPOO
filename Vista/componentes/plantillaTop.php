@@ -37,12 +37,7 @@
 
 <script>
 
-Swal.fire({
-  title: '¡Que Hacel Vago!',
-  text: 'tlabaja , tu tiene que tlabaja!',
-  icon: 'error',
-  confirmButtonText: 'Cool'
-})
+
 
 </script>
 

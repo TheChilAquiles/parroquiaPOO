@@ -249,22 +249,49 @@
                                 echo '<option value="10">Abuelo</option>';
                                 echo '<option value="11">Abuela</option>';
                                 echo '<option value="1">Bautizado</option>';
+
+
+                                echo  '<script> const rolesObligatorios = [ "Bautizado", "Padrino" , "Madrina" ] </script>';
                             } elseif ($tipo == 2) {
+
                                 echo '<option value="2">Confirmando</option>';
+
+                                echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
+
                             } elseif ($tipo == 3) {
+
                                 echo '<option value="3">Difunto</option>';
+
+                                echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
+
+
                             } elseif ($tipo == 4) {
+
                                 echo '<option value="4">Esposo</option>';
                                 echo '<option value="5">Esposa</option>';
+
+                                echo '<option value="12">Esposo Padrino</option>';
+                                echo '<option value="13">Esposo Madrina</option>';
+                                echo '<option value="14">Esposa Padrino</option>';
+                                echo '<option value="15">Esposa Madrina</option>';
+                                
+
+                                 echo  '<script> const rolesObligatorios = [ "Esposo", "Esposa" , "Esposo Padrino" , "Esposo Madrina" , "Esposa Padrino" , "Esposa Madrina" ] </script>';
+
+
                             }
                             ?>
 
                             <option value="6">Padre</option>
                             <option value="7">Madre</option>
 
-                            <?php if ($tipo !== 3) {
+                            <?php if ($tipo !== 3 &&  $tipo !== 4 ) {
+
                                 echo ' <option value="8">Padrino</option>';
                                 echo '<option value="9">Madrina</option>';
+
+                            
+
                             }; ?>
                         </select>
                     </div>
@@ -588,21 +615,6 @@
 
 
 
-
-        const roles = {
-            1: 'Bautizo',
-            2: 'Confirmando',
-            3: 'Difunto',
-            4: 'Esposo',
-            5: 'Esposa',
-            6: 'Padre',
-            7: 'Madre',
-            8: 'Padrino',
-            9: 'Madrina',
-            10: 'Abuelo',
-            11: 'Abuela'
-        };
-
         const colores = {
             1: 'bg-blue-50',
             2: 'bg-red-50',
@@ -844,16 +856,24 @@
 
 
 
-
-
-        const rolesObligatorios = ["Abuelo", "Coordinador"];
-
-
         // Verificar que cada rol obligatorio esté presente
         let faltantes = rolesObligatorios.filter(rol => !rolesActuales.includes(rol));
 
         if (faltantes.length > 0) {
+
+
+
+            Toast.fire({
+                icon: "warning",
+                title: "\n Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- ") ,
+                timer: 100000,
+            });
+
+
             alert("Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "));
+
+
+
             return; // No se envía el formulario
         }
 
