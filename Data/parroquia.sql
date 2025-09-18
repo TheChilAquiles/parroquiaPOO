@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-09-2025 a las 02:32:04
+-- Tiempo de generación: 18-09-2025 a las 03:58:54
 -- Versión del servidor: 11.8.3-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -206,8 +206,8 @@ CREATE TABLE `noticias` (
 -- Volcado de datos para la tabla `noticias`
 --
 
-INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `estado_registro`) VALUES
-(1, 11, 'Hola', 'Hola', 'assets/img/noticias/68c3683535c1f-Diagrama_Lógico_v11.png', NULL);
+INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `fecha_publicacion`, `estado_registro`) VALUES
+(1, 11, 'Hola', 'Hola', 'assets/img/noticias/68c3683535c1f-Diagrama_Lógico_v11.png', '2025-09-18 00:28:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -295,6 +295,13 @@ CREATE TABLE `participantes` (
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `participantes`
+--
+
+INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
+(9, 1, 33, 10, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -322,7 +329,11 @@ INSERT INTO `participantes_rol` (`id`, `rol`, `estado_registro`) VALUES
 (8, 'Padrino', NULL),
 (9, 'Madrina', NULL),
 (10, 'Abuelo', NULL),
-(11, 'Abuela', NULL);
+(11, 'Abuela', NULL),
+(12, 'Esposo Padrino', NULL),
+(13, 'Esposo Madrina', NULL),
+(14, 'Esposa Padrino', NULL),
+(15, 'Esposa Madrina', NULL);
 
 -- --------------------------------------------------------
 
@@ -390,7 +401,11 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 (29, 2, 1, 10, 5, '2025-08-20', NULL),
 (30, 2, 1, 10, 5, '2025-08-20', NULL),
 (31, 2, 1, 10, 5, '2025-08-20', NULL),
-(32, 2, 1, 10, 5, '2025-08-20', NULL);
+(32, 2, 1, 10, 5, '2025-08-20', NULL),
+(33, 2, 1, 10, 5, '2025-08-20', NULL),
+(34, 2, 1, 10, 5, '2025-08-20', NULL),
+(35, 2, 1, 10, 5, '2025-08-20', NULL),
+(36, 2, 1, 10, 5, '2025-08-20', NULL);
 
 -- --------------------------------------------------------
 
@@ -691,12 +706,6 @@ ALTER TABLE `libro_tipo`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT de la tabla `noticias`
---
-ALTER TABLE `noticias`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
@@ -718,13 +727,13 @@ ALTER TABLE `parientes`
 -- AUTO_INCREMENT de la tabla `participantes`
 --
 ALTER TABLE `participantes`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `participantes_rol`
 --
 ALTER TABLE `participantes_rol`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `reportes`
@@ -736,7 +745,7 @@ ALTER TABLE `reportes`
 -- AUTO_INCREMENT de la tabla `sacramentos`
 --
 ALTER TABLE `sacramentos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `sacramento_tipo`
@@ -791,12 +800,6 @@ ALTER TABLE `feligreses`
 --
 ALTER TABLE `libros`
   ADD CONSTRAINT `libros_ibfk_1` FOREIGN KEY (`libro_tipo_id`) REFERENCES `libro_tipo` (`id`);
-
---
--- Filtros para la tabla `noticias`
---
-ALTER TABLE `noticias`
-  ADD CONSTRAINT `noticias_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `pagos`
