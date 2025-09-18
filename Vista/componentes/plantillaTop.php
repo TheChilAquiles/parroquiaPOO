@@ -26,6 +26,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         
+<script src="Vista/js/alert.js" ></script>
 
 
 
@@ -34,12 +35,16 @@
 
 <body>
 
-<script>Swal.fire({
+<script>
+
+Swal.fire({
   title: '¡Que Hacel Vago!',
   text: 'tlabaja , tu tiene que tlabaja!',
   icon: 'error',
   confirmButtonText: 'Cool'
-})</script>
+})
+
+</script>
 
 
 

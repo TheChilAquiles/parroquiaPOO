@@ -49,6 +49,7 @@ class LoginController
 
             $_SESSION['user-id'] = $usuario['id'];
             $_SESSION['user-datos'] = $usuario['datos_completos'];
+            $_SESSION["user-rol"] =  $usuario['datos_completos']; ; 
             $_SESSION["logged"] = true;
 
             // var_dump($usuario);

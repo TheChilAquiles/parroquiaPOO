@@ -520,9 +520,12 @@
         if (!tipoDoc || !numeroDoc || !rolParticipante || !primerNombre || !primerApellido) {
 
             resaltarCampo('#primerNombre');
-            resaltarCampo('#segundoNombre');
             resaltarCampo('#primerApellido');
+            resaltarCampo('#segundoNombre');
             resaltarCampo('#segundoApellido');
+            resaltarCampo('#tipo-doc');
+            resaltarCampo('#numero-doc');
+            resaltarCampo('#rolParticipante');
 
 
 
@@ -534,7 +537,17 @@
                 }, 5000);
 
 
-            alert('Por favor, completa los datos antes de añadir.');
+
+
+
+
+
+            Toast.fire({
+                icon: "warning",
+                title: "Inserta Datos Para Continuar"
+            });
+
+
 
             return;
 
@@ -542,6 +555,19 @@
         }
 
         const existe = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]')).some(input => input.value === rolParticipante);
+
+        const existedoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
+            const tipo = li.querySelector('input[name$="[tipoDoc]"]')?.value;
+            const numero = li.querySelector('input[name$="[numeroDoc]"]')?.value;
+            return tipo == tipoDoc && numero == numeroDoc;
+        });
+
+        if (existedoc) {
+            alert('ya hay un participante con ese Documento.');
+            return;
+        }
+
+
         if (existe) {
             alert('Este participante ya ha sido añadido.');
             return;
@@ -549,6 +575,16 @@
 
 
         contador++;
+
+
+        const tiposDocs = {
+            1: "Cedula Ciudadania",
+            2: "Tarjeta Identidad",
+            3: "Cedula Extranjeria",
+            4: "Registro Civil",
+            5: "Permiso Especial",
+            6: "Numero Identificación Tributaria"
+        };
 
 
 
@@ -584,6 +620,7 @@
         const grupoRol = roles[rolParticipante] || 'Desconocido';
         const grupoColor = colores[rolParticipante] || 'Desconocido';
 
+        const tipDoc = tiposDocs[tipoDoc] || 'Desconocido';
 
         const li = document.createElement('li');
         li.innerHTML = `
@@ -593,7 +630,7 @@
         
         <span class="font-bold p-2  ${grupoColor}  ">${grupoRol}</span>
 
-        <span class="font-medium">  ${tipoDoc} - ${numeroDoc} - ${numeroDoc}  </span>
+        <span class="font-medium">  ${tipDoc} - ${numeroDoc}  </span>
         <span class="font-medium">  ${[primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ')}  </span>
    
           <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
@@ -769,9 +806,66 @@
 
     $("#recordModal").on('submit', '#recordForm', function(event) {
         event.preventDefault();
+
+
+
+
+        let rolesActuales = [];
+
+
+        const roles = {
+            1: 'Bautizo',
+            2: 'Confirmando',
+            3: 'Difunto',
+            4: 'Esposo',
+            5: 'Esposa',
+            6: 'Padre',
+            7: 'Madre',
+            8: 'Padrino',
+            9: 'Madrina',
+            10: 'Abuelo',
+            11: 'Abuela'
+        };
+
+
+        // Aqui vamos Rusbelll :D 
+        const libroTipo = <?= json_encode($libroTipo) ?>;
+
+
+
+        $('input[name^="integrantes"][name$="[rolParticipante]"]').each(function() {
+            let rol = roles[$(this).val().trim()] || 'Desconocido';;
+            if (rol !== '') {
+                rolesActuales.push(rol);
+            }
+        });
+
+
+
+
+
+
+
+        const rolesObligatorios = ["Abuelo", "Coordinador"];
+
+
+        // Verificar que cada rol obligatorio esté presente
+        let faltantes = rolesObligatorios.filter(rol => !rolesActuales.includes(rol));
+
+        if (faltantes.length > 0) {
+            alert("Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "));
+            return; // No se envía el formulario
+        }
+
+
+
         var formData = $(this).serialize();
         //  $('#Guardar').attr('disabled','disabled');
         // alert('fformData: ' + formData);
+
+
+
+
         $.ajax({
             url: "Controlador/ControladorSacramento.php",
             method: "POST",
@@ -790,5 +884,8 @@
 
             }
         })
+
+
+
     });
 </script>

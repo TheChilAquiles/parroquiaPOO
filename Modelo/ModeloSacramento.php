@@ -171,7 +171,7 @@ class ModeloSacramento
                 $datosFeligres['segundo-nombre']  = $integrante['segundoNombre'] ?? '';
                 $datosFeligres['primer-apellido'] = $integrante['primerApellido'];
                 $datosFeligres['segundo-apellido']  = $integrante['segundoApellido'] ?? '';
-                $dataFeligres['rol-Participante'] =   $dataFeligres['rolParticipante'] ?? null; 
+                $dataFeligres['rol-Participante'] =   $integrante['rolParticipante'] ?? null; 
  
 
 
@@ -184,7 +184,7 @@ class ModeloSacramento
                     } else {
                         try {
 
-                            $create =  $ControladorFeligres->ctrlCrearFeligres($datosFeligres);
+                            $create =  $ControladorFeligres->ctrlCrearFeligres( $datosFeligres);
 
                             if ($create['status'] == 'success') {
 
@@ -201,7 +201,7 @@ class ModeloSacramento
                     $Partifipante = [
                         'feligres-id' =>  $feligresID,
                         'sacramento-id' =>  $sacramentoID,
-                        'participante-id' =>   $dataFeligres['rolParticipante'] ?? null  
+                        'participante-id' =>   $integrante['rolParticipante'] ?? null  
                     ];
 
                     $resultado =   $ControladorParticipantes->ctrlCrearParticipante(datos: $Partifipante);
