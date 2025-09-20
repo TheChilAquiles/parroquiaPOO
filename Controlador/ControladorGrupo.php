@@ -45,8 +45,12 @@ class GrupoController
                 $this->eliminarMiembro();
                 break;
 
-            case 'actualizar_rol':
-                $this->actualizarRolMiembro();
+            case 'restaurar':
+                $this->restaurarGrupo();
+                break;
+
+            case 'historial':
+                $this->verHistorialEliminados();
                 break;
 
             default:
@@ -255,15 +259,20 @@ class GrupoController
      */
     private function eliminarMiembro()
     {
-        if (!isset($_GET['grupo_id'], $_GET['usuario_id']) || 
-            !is_numeric($_GET['grupo_id']) || !is_numeric($_GET['usuario_id'])) {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->redirigirConMensaje('Método no permitido.', 'error');
+            return;
+        }
+
+        if (!isset($_POST['grupo_id'], $_POST['usuario_id']) || 
+            !is_numeric($_POST['grupo_id']) || !is_numeric($_POST['usuario_id'])) {
             $this->redirigirConMensaje('Parámetros inválidos.', 'error');
             return;
         }
 
         try {
-            $grupo_id = (int)$_GET['grupo_id'];
-            $usuario_id = (int)$_GET['usuario_id'];
+            $grupo_id = (int)$_POST['grupo_id'];
+            $usuario_id = (int)$_POST['usuario_id'];
 
             $resultado = $this->modeloGrupo->mdlEliminarMiembro($grupo_id, $usuario_id);
             
@@ -372,15 +381,44 @@ class GrupoController
     }
 
     /**
-     * Método para obtener usuarios disponibles (AJAX)
+     * Maneja la restauración de un grupo eliminado
      */
-    public function ctrlObtenerUsuariosDisponibles()
+    private function restaurarGrupo()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            $this->redirigirConMensaje('Método no permitido.', 'error');
+            return;
+        }
+
+        if (!isset($_POST['grupo_id']) || !is_numeric($_POST['grupo_id'])) {
+            $this->redirigirConMensaje('ID de grupo inválido.', 'error');
+            return;
+        }
+
+        try {
+            $grupo_id = (int)$_POST['grupo_id'];
+            $resultado = $this->modeloGrupo->mdlRestaurarGrupo($grupo_id);
+            
+            if ($resultado) {
+                $this->redirigirConMensaje('Grupo restaurado con éxito.', 'success');
+            } else {
+                $this->redirigirConMensaje('Error al restaurar el grupo.', 'error');
+            }
+        } catch (Exception $e) {
+            $this->manejarError("Error al restaurar grupo: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Muestra el historial de grupos eliminados
+     */
+    private function verHistorialEliminados()
     {
         try {
-            $usuarios = $this->modeloGrupo->mdlListarUsuariosDisponibles();
-            echo json_encode($usuarios);
+            $gruposEliminados = $this->modeloGrupo->mdlListarGruposEliminados();
+            include_once(__DIR__ . '/../Vista/gruposHistorial.php');
         } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al obtener usuarios']);
+            $this->manejarError("Error al cargar el historial: " . $e->getMessage());
         }
     }
 }

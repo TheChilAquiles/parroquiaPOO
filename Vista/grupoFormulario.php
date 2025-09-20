@@ -80,17 +80,11 @@ if (isset($_SESSION['mensaje'])) {
             <?php if ($esEdicion): ?>
                 <div class="bg-gray-50 rounded-lg p-4">
                     <h3 class="text-sm font-medium text-gray-900 mb-2">Información del Grupo</h3>
-                    <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div class="grid grid-cols-1 gap-4 text-sm">
                         <div>
                             <span class="text-gray-500">Miembros:</span>
                             <span class="font-medium text-gray-900"><?php echo $grupo['total_miembros']; ?></span>
                         </div>
-                        <?php if ($grupo['estado_registro']): ?>
-                            <div>
-                                <span class="text-gray-500">Creado:</span>
-                                <span class="font-medium text-gray-900"><?php echo date('d/m/Y', strtotime($grupo['estado_registro'])); ?></span>
-                            </div>
-                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>

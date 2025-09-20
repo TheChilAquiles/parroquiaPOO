@@ -10,7 +10,7 @@ class ModeloGrupo
     }
 
     /**
-     * @return array Retorna todos los grupos parroquiales con información adicional.
+     * @return array Retorna todos los grupos parroquiales activos con información adicional.
      */
     public function mdlListarGrupos()
     {
@@ -18,11 +18,11 @@ class ModeloGrupo
             $sql = "SELECT 
                         g.id, 
                         g.nombre,
-                        COUNT(ug.usuario_id) as total_miembros,
-                        g.estado_registro
+                        COUNT(CASE WHEN ug.estado_registro IS NULL THEN 1 END) as total_miembros
                     FROM grupos g 
                     LEFT JOIN usuario_grupos ug ON g.id = ug.grupo_parroquial_id
-                    GROUP BY g.id, g.nombre, g.estado_registro
+                    WHERE g.estado_registro IS NULL
+                    GROUP BY g.id, g.nombre
                     ORDER BY g.nombre ASC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
@@ -35,7 +35,7 @@ class ModeloGrupo
 
     /**
      * @param int $grupo_id
-     * @return array|null Retorna la información de un grupo específico con total de miembros.
+     * @return array|null Retorna la información de un grupo específico activo con total de miembros.
      */
     public function mdlObtenerGrupoPorId($grupo_id)
     {
@@ -48,12 +48,11 @@ class ModeloGrupo
             $sql = "SELECT 
                         g.id, 
                         g.nombre,
-                        COUNT(ug.usuario_id) as total_miembros,
-                        g.estado_registro
+                        COUNT(CASE WHEN ug.estado_registro IS NULL THEN 1 END) as total_miembros
                     FROM grupos g 
                     LEFT JOIN usuario_grupos ug ON g.id = ug.grupo_parroquial_id
-                    WHERE g.id = ?
-                    GROUP BY g.id, g.nombre, g.estado_registro";
+                    WHERE g.id = ? AND g.estado_registro IS NULL
+                    GROUP BY g.id, g.nombre";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$grupo_id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
@@ -65,7 +64,7 @@ class ModeloGrupo
 
     /**
      * @param int $grupo_id
-     * @return array Retorna la lista de miembros de un grupo con información completa.
+     * @return array Retorna la lista de miembros activos de un grupo con información completa.
      */
     public function mdlListarMiembrosGrupo($grupo_id)
     {
@@ -86,14 +85,13 @@ class ModeloGrupo
                             u.email
                         ) as nombre_completo,
                         f.telefono,
-                        ur.rol as rol_usuario,
-                        ug.estado_registro as fecha_ingreso
+                        ur.rol as rol_usuario
                     FROM usuario_grupos ug 
                     JOIN usuarios u ON ug.usuario_id = u.id 
                     LEFT JOIN grupo_roles gr ON ug.grupo_rol_id = gr.id 
                     LEFT JOIN feligreses f ON u.id = f.usuario_id
                     LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id
-                    WHERE ug.grupo_parroquial_id = ?
+                    WHERE ug.grupo_parroquial_id = ? AND ug.estado_registro IS NULL
                     ORDER BY gr.rol DESC, f.primer_nombre ASC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$grupo_id]);
@@ -120,15 +118,15 @@ class ModeloGrupo
                 return false;
             }
 
-            // Verificar si el usuario ya está en el grupo
+            // Verificar si el usuario ya está en el grupo (y activo)
             if ($this->mdlUsuarioEnGrupo($grupo_id, $usuario_id)) {
                 error_log("El usuario ya está en el grupo");
                 return false;
             }
 
-            // Verificar que el grupo existe
+            // Verificar que el grupo existe y está activo
             if (!$this->mdlObtenerGrupoPorId($grupo_id)) {
-                error_log("El grupo no existe");
+                error_log("El grupo no existe o está eliminado");
                 return false;
             }
 
@@ -139,7 +137,7 @@ class ModeloGrupo
             }
 
             $sql = "INSERT INTO usuario_grupos (grupo_parroquial_id, usuario_id, grupo_rol_id, estado_registro) 
-                    VALUES (?, ?, ?, NOW())";
+                    VALUES (?, ?, ?, NULL)";
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$grupo_id, $usuario_id, $grupo_rol_id]);
         } catch (PDOException $e) {
@@ -162,9 +160,16 @@ class ModeloGrupo
                 return false;
             }
 
-            $sql = "DELETE FROM usuario_grupos WHERE grupo_parroquial_id = ? AND usuario_id = ?";
+            $sql = "UPDATE usuario_grupos 
+                    SET estado_registro = NOW() 
+                    WHERE grupo_parroquial_id = ? AND usuario_id = ? AND estado_registro IS NULL";
             $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$grupo_id, $usuario_id]);
+            $resultado = $stmt->execute([$grupo_id, $usuario_id]);
+            
+            // Log para depuración
+            error_log("Eliminando miembro - Grupo: $grupo_id, Usuario: $usuario_id, Filas afectadas: " . $stmt->rowCount());
+            
+            return $resultado && $stmt->rowCount() > 0;
         } catch (PDOException $e) {
             error_log("Error al eliminar miembro: " . $e->getMessage());
             return false;
@@ -185,13 +190,13 @@ class ModeloGrupo
 
             $nombre_grupo = trim($nombre_grupo);
 
-            // Verificar que no existe un grupo con el mismo nombre
+            // Verificar que no existe un grupo activo con el mismo nombre
             if ($this->mdlGrupoExistePorNombre($nombre_grupo)) {
-                error_log("Ya existe un grupo con ese nombre");
+                error_log("Ya existe un grupo activo con ese nombre");
                 return false;
             }
 
-            $sql = "INSERT INTO grupos (nombre, estado_registro) VALUES (?, NOW())";
+            $sql = "INSERT INTO grupos (nombre, estado_registro) VALUES (?, NULL)";
             $stmt = $this->conexion->prepare($sql);
             
             if ($stmt->execute([$nombre_grupo])) {
@@ -242,7 +247,7 @@ class ModeloGrupo
 
     /**
      * @param int $grupo_id
-     * @return bool Retorna true si se eliminó el grupo, false en caso contrario.
+     * @return bool Retorna true si se eliminó el grupo lógicamente, false en caso contrario.
      */
     public function mdlEliminarGrupo($grupo_id)
     {
@@ -252,28 +257,41 @@ class ModeloGrupo
                 return false;
             }
 
-            // Iniciar transacción para eliminar primero los miembros y luego el grupo
+            // Verificar que el grupo existe y está activo
+            $grupo = $this->mdlObtenerGrupoPorId($grupo_id);
+            if (!$grupo) {
+                return false;
+            }
+
+            // Iniciar transacción para borrado lógico
             $this->conexion->beginTransaction();
 
             try {
-                // Primero eliminar todos los miembros del grupo
-                $sql1 = "DELETE FROM usuario_grupos WHERE grupo_parroquial_id = ?";
+                // Primero eliminar logicamente las relaciones usuario_grupos
+                $sql1 = "UPDATE usuario_grupos 
+                        SET estado_registro = NOW() 
+                        WHERE grupo_parroquial_id = ? AND estado_registro IS NULL";
                 $stmt1 = $this->conexion->prepare($sql1);
                 $stmt1->execute([$grupo_id]);
 
-                // Luego eliminar el grupo
-                $sql2 = "DELETE FROM grupos WHERE id = ?";
+                // Luego realizar borrado lógico del grupo (poner fecha de eliminación)
+                $sql2 = "UPDATE grupos SET estado_registro = NOW() WHERE id = ?";
                 $stmt2 = $this->conexion->prepare($sql2);
-                $stmt2->execute([$grupo_id]);
+                $result = $stmt2->execute([$grupo_id]);
 
-                $this->conexion->commit();
-                return true;
+                if ($result) {
+                    $this->conexion->commit();
+                    return true;
+                } else {
+                    $this->conexion->rollback();
+                    return false;
+                }
             } catch (PDOException $e) {
                 $this->conexion->rollback();
                 throw $e;
             }
         } catch (PDOException $e) {
-            error_log("Error al eliminar grupo: " . $e->getMessage());
+            error_log("Error al eliminar grupo lógicamente: " . $e->getMessage());
             return false;
         }
     }
@@ -284,7 +302,7 @@ class ModeloGrupo
     public function mdlListarRolesGrupo()
     {
         try {
-            $sql = "SELECT id, rol FROM grupo_roles ORDER BY id ASC";
+            $sql = "SELECT id, rol FROM grupo_roles WHERE estado_registro IS NULL ORDER BY id ASC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -322,17 +340,117 @@ class ModeloGrupo
         }
     }
 
+    /**
+     * @return array Retorna el historial de grupos eliminados
+     */
+    public function mdlListarGruposEliminados()
+    {
+        try {
+            $sql = "SELECT 
+                        g.id, 
+                        g.nombre,
+                        g.estado_registro as fecha_eliminacion
+                    FROM grupos g 
+                    WHERE g.estado_registro IS NOT NULL
+                    ORDER BY g.estado_registro DESC";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar grupos eliminados: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * @param int $grupo_id
+     * @return bool Restaurar un grupo eliminado lógicamente
+     */
+    public function mdlRestaurarGrupo($grupo_id)
+    {
+        try {
+            if (!is_numeric($grupo_id) || $grupo_id <= 0) {
+                return false;
+            }
+
+            // Verificar que el grupo existe y está eliminado
+            $sql_verificar = "SELECT nombre FROM grupos WHERE id = ? AND estado_registro IS NOT NULL";
+            $stmt_verificar = $this->conexion->prepare($sql_verificar);
+            $stmt_verificar->execute([$grupo_id]);
+            $grupo_eliminado = $stmt_verificar->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$grupo_eliminado) {
+                return false; // El grupo no existe o no está eliminado
+            }
+
+            // Verificar que no haya otro grupo activo con el mismo nombre
+            if ($this->mdlGrupoExistePorNombre($grupo_eliminado['nombre'])) {
+                error_log("Ya existe un grupo activo con ese nombre, no se puede restaurar");
+                return false;
+            }
+
+            // Restaurar el grupo (cambiar estado_registro a NULL)
+            $sql = "UPDATE grupos SET estado_registro = NULL WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$grupo_id]);
+        } catch (PDOException $e) {
+            error_log("Error al restaurar grupo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * MÉTODO DE DEPURACIÓN - Retorna TODOS los miembros de un grupo (activos e inactivos)
+     * @param int $grupo_id
+     * @return array Para debugging - muestra el estado de todos los registros
+     */
+    public function mdlListarTodosMiembrosGrupo($grupo_id)
+    {
+        try {
+            if (!is_numeric($grupo_id) || $grupo_id <= 0) {
+                return [];
+            }
+
+            $sql = "SELECT 
+                        u.id as usuario_id,
+                        u.email, 
+                        COALESCE(gr.rol, 'Sin rol') as rol,
+                        COALESCE(
+                            CONCAT(f.primer_nombre, ' ', f.primer_apellido), 
+                            u.email
+                        ) as nombre_completo,
+                        ug.estado_registro,
+                        CASE 
+                            WHEN ug.estado_registro IS NULL THEN 'ACTIVO' 
+                            ELSE 'ELIMINADO' 
+                        END as estado
+                    FROM usuario_grupos ug 
+                    JOIN usuarios u ON ug.usuario_id = u.id 
+                    LEFT JOIN grupo_roles gr ON ug.grupo_rol_id = gr.id 
+                    LEFT JOIN feligreses f ON u.id = f.usuario_id
+                    WHERE ug.grupo_parroquial_id = ?
+                    ORDER BY ug.estado_registro ASC, f.primer_nombre ASC";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$grupo_id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar todos los miembros: " . $e->getMessage());
+            return [];
+        }
+    }
+
     // Métodos auxiliares privados
 
     /**
      * @param int $grupo_id
      * @param int $usuario_id
-     * @return bool Verifica si un usuario ya está en un grupo.
+     * @return bool Verifica si un usuario ya está en un grupo (y activo).
      */
     private function mdlUsuarioEnGrupo($grupo_id, $usuario_id)
     {
         try {
-            $sql = "SELECT COUNT(*) FROM usuario_grupos WHERE grupo_parroquial_id = ? AND usuario_id = ?";
+            $sql = "SELECT COUNT(*) FROM usuario_grupos 
+                    WHERE grupo_parroquial_id = ? AND usuario_id = ? AND estado_registro IS NULL";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$grupo_id, $usuario_id]);
             return $stmt->fetchColumn() > 0;
@@ -361,12 +479,12 @@ class ModeloGrupo
 
     /**
      * @param string $nombre_grupo
-     * @return array|false Verifica si existe un grupo con ese nombre.
+     * @return array|false Verifica si existe un grupo activo con ese nombre.
      */
     private function mdlGrupoExistePorNombre($nombre_grupo)
     {
         try {
-            $sql = "SELECT id, nombre FROM grupos WHERE LOWER(nombre) = LOWER(?)";
+            $sql = "SELECT id, nombre FROM grupos WHERE LOWER(nombre) = LOWER(?) AND estado_registro IS NULL";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$nombre_grupo]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
