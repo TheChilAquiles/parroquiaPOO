@@ -80,8 +80,8 @@ class ModeloGrupo
                         COALESCE(gr.rol, 'Sin rol') as rol,
                         COALESCE(
                             CONCAT(f.primer_nombre, ' ', 
-                                  CASE WHEN f.segundo_nombre != '' THEN CONCAT(f.segundo_nombre, ' ') ELSE '' END,
-                                  f.primer_apellido, ' ', f.segundo_apellido), 
+                                    CASE WHEN f.segundo_nombre != '' THEN CONCAT(f.segundo_nombre, ' ') ELSE '' END,
+                                    f.primer_apellido, ' ', f.segundo_apellido), 
                             u.email
                         ) as nombre_completo,
                         f.telefono,

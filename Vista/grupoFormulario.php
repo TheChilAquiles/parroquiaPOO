@@ -2,7 +2,6 @@
 // Determinar si estamos editando o creando
 $esEdicion = isset($grupo) && $grupo;
 $titulo = $esEdicion ? 'Editar Grupo' : 'Crear Nuevo Grupo';
-$accion = $esEdicion ? 'editar' : 'crear';
 $textoBoton = $esEdicion ? 'Actualizar Grupo' : 'Crear Grupo';
 $valorNombre = $esEdicion ? htmlspecialchars($grupo['nombre']) : '';
 
@@ -18,18 +17,25 @@ if (isset($_SESSION['mensaje'])) {
 <main class="mx-auto max-w-2xl px-4 py-8">
     <!-- Header con navegación -->
     <div class="flex items-center justify-between mb-8">
-        <a href="?menu-item=Grupos" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition duration-200">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver a Grupos
-        </a>
+        <form method="POST" action="index.php" style="display: inline;">
+            <input type="hidden" name="menu-item" value="Grupos">
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition duration-200">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Volver a Grupos
+            </button>
+        </form>
 
         <?php if ($esEdicion): ?>
-            <a href="?menu-item=Grupos&action=ver&id=<?php echo $grupo['id']; ?>"
-                class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition duration-200">
-                Ver Detalles
-            </a>
+            <form method="POST" action="index.php" style="display: inline;">
+                <input type="hidden" name="menu-item" value="Grupos">
+                <input type="hidden" name="action" value="ver">
+                <input type="hidden" name="grupo_id" value="<?php echo $grupo['id']; ?>">
+                <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition duration-200">
+                    Ver Detalles
+                </button>
+            </form>
         <?php endif; ?>
     </div>
 
@@ -47,8 +53,12 @@ if (isset($_SESSION['mensaje'])) {
             </p>
         </div>
 
-        <form action="?menu-item=Grupos&action=<?php echo $accion; ?><?php echo $esEdicion ? '&id=' . $grupo['id'] : ''; ?>"
-            method="POST" class="space-y-6">
+        <form action="index.php" method="POST" class="space-y-6">
+            <input type="hidden" name="menu-item" value="Grupos">
+            <input type="hidden" name="action" value="<?php echo $esEdicion ? 'editar' : 'crear'; ?>">
+            <?php if ($esEdicion): ?>
+                <input type="hidden" name="grupo_id" value="<?php echo $grupo['id']; ?>">
+            <?php endif; ?>
 
             <!-- Nombre del grupo -->
             <div>
@@ -99,13 +109,29 @@ if (isset($_SESSION['mensaje'])) {
                     <?php echo $textoBoton; ?>
                 </button>
 
-                <a href="<?php echo $esEdicion ? '?menu-item=Grupos&action=ver&id=' . $grupo['id'] : '?menu-item=Grupos'; ?>"
-                    class="flex-1 flex justify-center items-center px-6 py-3 bg-gray-300 text-gray-800 font-medium rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    Cancelar
-                </a>
+                <?php if ($esEdicion): ?>
+                    <form method="POST" action="index.php" class="flex-1">
+                        <input type="hidden" name="menu-item" value="Grupos">
+                        <input type="hidden" name="action" value="ver">
+                        <input type="hidden" name="grupo_id" value="<?php echo $grupo['id']; ?>">
+                        <button type="submit" class="w-full flex justify-center items-center px-6 py-3 bg-gray-300 text-gray-800 font-medium rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancelar
+                        </button>
+                    </form>
+                <?php else: ?>
+                    <form method="POST" action="index.php" class="flex-1">
+                        <input type="hidden" name="menu-item" value="Grupos">
+                        <button type="submit" class="w-full flex justify-center items-center px-6 py-3 bg-gray-300 text-gray-800 font-medium rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancelar
+                        </button>
+                    </form>
+                <?php endif; ?>
             </div>
 
             <!-- Nota legal -->
@@ -136,7 +162,37 @@ if (isset($_SESSION['mensaje'])) {
         <script>
             function confirmarEliminacion() {
                 if (confirm('⚠️ ¿Estás seguro de que deseas eliminar este grupo?\n\nEsta acción eliminará el grupo y todos sus miembros de forma permanente y no se puede deshacer.')) {
-                    window.location.href = '?menu-item=Grupos&action=eliminar&id=<?php echo $grupo['id']; ?>';
+                    // Crear formulario para envío POST
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = 'index.php';
+
+                    const inputMenuItem = document.createElement('input');
+                    inputMenuItem.type = 'hidden';
+                    inputMenuItem.name = 'menu-item';
+                    inputMenuItem.value = 'Grupos';
+
+                    const inputAction = document.createElement('input');
+                    inputAction.type = 'hidden';
+                    inputAction.name = 'action';
+                    inputAction.value = 'eliminar';
+
+                    const inputGrupoId = document.createElement('input');
+                    inputGrupoId.type = 'hidden';
+                    inputGrupoId.name = 'grupo_id';
+                    inputGrupoId.value = '<?php echo $grupo['id']; ?>';
+
+                    const inputConfirmar = document.createElement('input');
+                    inputConfirmar.type = 'hidden';
+                    inputConfirmar.name = 'confirmar_eliminacion';
+                    inputConfirmar.value = '1';
+
+                    form.appendChild(inputMenuItem);
+                    form.appendChild(inputAction);
+                    form.appendChild(inputGrupoId);
+                    form.appendChild(inputConfirmar);
+                    document.body.appendChild(form);
+                    form.submit();
                 }
             }
         </script>

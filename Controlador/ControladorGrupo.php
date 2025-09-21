@@ -17,8 +17,18 @@ class GrupoController
     // Método principal que gestiona todas las acciones de los grupos
     public function ctrlGestionarGrupos()
     {
-        // Obtener la acción de la URL, si existe
-        $action = isset($_GET['action']) ? $_GET['action'] : null;
+        // Obtener la acción solo de POST, GET solo para navegación básica
+        $action = null;
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+            $action = $_POST['action'];
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
+            // Solo permitir acciones de visualización por GET
+            $allowedGetActions = ['ver', 'crear', 'editar', 'eliminar'];
+            if (in_array($_GET['action'], $allowedGetActions)) {
+                $action = $_GET['action'];
+            }
+        }
 
         switch ($action) {
             case 'ver':
@@ -43,6 +53,10 @@ class GrupoController
                 
             case 'eliminar_miembro':
                 $this->eliminarMiembro();
+                break;
+
+            case 'actualizar_rol':
+                $this->actualizarRolMiembro();
                 break;
 
             case 'restaurar':
@@ -78,13 +92,21 @@ class GrupoController
      */
     private function verDetalle()
     {
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+        $grupo_id = null;
+        
+        // Obtener ID desde POST o GET (para navegación)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['grupo_id'])) {
+            $grupo_id = (int)$_POST['grupo_id'];
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+            $grupo_id = (int)$_GET['id'];
+        }
+        
+        if (!$grupo_id || $grupo_id <= 0) {
             $this->redirigirConMensaje('ID de grupo inválido.', 'error');
             return;
         }
 
         try {
-            $grupo_id = (int)$_GET['id'];
             $grupo = $this->modeloGrupo->mdlObtenerGrupoPorId($grupo_id);
             
             if (!$grupo) {
@@ -137,16 +159,23 @@ class GrupoController
      */
     private function editarGrupo()
     {
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+        $grupo_id = null;
+        
+        // Obtener ID desde POST o GET
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['grupo_id'])) {
+            $grupo_id = (int)$_POST['grupo_id'];
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+            $grupo_id = (int)$_GET['id'];
+        }
+        
+        if (!$grupo_id || $grupo_id <= 0) {
             $this->redirigirConMensaje('ID de grupo inválido.', 'error');
             return;
         }
 
-        $grupo_id = (int)$_GET['id'];
-
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['nombre_grupo'])) {
             // Procesar la edición
-            if (!isset($_POST['nombre_grupo']) || empty(trim($_POST['nombre_grupo']))) {
+            if (empty(trim($_POST['nombre_grupo']))) {
                 $this->redirigirConMensaje('El nombre del grupo es obligatorio.', 'error');
                 return;
             }
@@ -183,14 +212,21 @@ class GrupoController
      */
     private function eliminarGrupo()
     {
-        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+        $grupo_id = null;
+        
+        // Obtener ID desde POST o GET
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['grupo_id'])) {
+            $grupo_id = (int)$_POST['grupo_id'];
+        } elseif ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['id'])) {
+            $grupo_id = (int)$_GET['id'];
+        }
+        
+        if (!$grupo_id || $grupo_id <= 0) {
             $this->redirigirConMensaje('ID de grupo inválido.', 'error');
             return;
         }
 
         try {
-            $grupo_id = (int)$_GET['id'];
-            
             // Verificar que el grupo existe antes de eliminarlo
             $grupo = $this->modeloGrupo->mdlObtenerGrupoPorId($grupo_id);
             if (!$grupo) {
@@ -199,7 +235,7 @@ class GrupoController
             }
 
             // Confirmar eliminación si viene por POST
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirmar_eliminacion'])) {
                 $resultado = $this->modeloGrupo->mdlEliminarGrupo($grupo_id);
                 
                 if ($resultado) {
@@ -238,16 +274,16 @@ class GrupoController
 
             // Validaciones
             if ($grupo_id <= 0 || $usuario_id <= 0 || $rol_id <= 0) {
-                $this->redirigirConMensaje('IDs inválidos.', 'error', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('IDs inválidos.', 'error', $grupo_id);
                 return;
             }
 
             $resultado = $this->modeloGrupo->mdlAgregarMiembro($grupo_id, $usuario_id, $rol_id);
             
             if ($resultado) {
-                $this->redirigirConMensaje('Miembro agregado con éxito.', 'success', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('Miembro agregado con éxito.', 'success', $grupo_id);
             } else {
-                $this->redirigirConMensaje('Error al agregar miembro. Es posible que ya esté en el grupo.', 'error', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('Error al agregar miembro. Es posible que ya esté en el grupo.', 'error', $grupo_id);
             }
         } catch (Exception $e) {
             $this->manejarError("Error al agregar miembro: " . $e->getMessage());
@@ -277,9 +313,9 @@ class GrupoController
             $resultado = $this->modeloGrupo->mdlEliminarMiembro($grupo_id, $usuario_id);
             
             if ($resultado) {
-                $this->redirigirConMensaje('Miembro eliminado con éxito.', 'success', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('Miembro eliminado con éxito.', 'success', $grupo_id);
             } else {
-                $this->redirigirConMensaje('Error al eliminar miembro.', 'error', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('Error al eliminar miembro.', 'error', $grupo_id);
             }
         } catch (Exception $e) {
             $this->manejarError("Error al eliminar miembro: " . $e->getMessage());
@@ -312,71 +348,15 @@ class GrupoController
                 $resultado = $this->modeloGrupo->mdlAgregarMiembro($grupo_id, $usuario_id, $nuevo_rol_id);
                 
                 if ($resultado) {
-                    $this->redirigirConMensaje('Rol actualizado con éxito.', 'success', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                    $this->redirigirConMensajeConGrupo('Rol actualizado con éxito.', 'success', $grupo_id);
                 } else {
-                    $this->redirigirConMensaje('Error al actualizar el rol.', 'error', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                    $this->redirigirConMensajeConGrupo('Error al actualizar el rol.', 'error', $grupo_id);
                 }
             } else {
-                $this->redirigirConMensaje('Error al actualizar el rol.', 'error', "index.php?menu-item=Grupos&action=ver&id=$grupo_id");
+                $this->redirigirConMensajeConGrupo('Error al actualizar el rol.', 'error', $grupo_id);
             }
         } catch (Exception $e) {
             $this->manejarError("Error al actualizar rol: " . $e->getMessage());
-        }
-    }
-
-    /**
-     * Método auxiliar para manejar errores
-     */
-    private function manejarError($mensaje)
-    {
-        error_log($mensaje);
-        $this->redirigirConMensaje('Ha ocurrido un error interno. Por favor, inténtelo más tarde.', 'error');
-    }
-
-    /**
-     * Método auxiliar para redireccionar con mensajes
-     */
-    private function redirigirConMensaje($mensaje, $tipo = 'info', $url = null)
-    {
-        // Guardar mensaje en sesión si está disponible
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-        $_SESSION['mensaje'] = $mensaje;
-        $_SESSION['tipo_mensaje'] = $tipo;
-
-        // Determinar URL de redirección
-        if ($url === null) {
-            $url = 'index.php?menu-item=Grupos';
-        }
-
-        header("Location: $url");
-        exit();
-    }
-
-    /**
-     * Método para obtener datos necesarios para las vistas (AJAX)
-     */
-    public function ctrlObtenerDatosGrupo()
-    {
-        if (!isset($_GET['grupo_id']) || !is_numeric($_GET['grupo_id'])) {
-            echo json_encode(['error' => 'ID inválido']);
-            return;
-        }
-
-        try {
-            $grupo_id = (int)$_GET['grupo_id'];
-            $grupo = $this->modeloGrupo->mdlObtenerGrupoPorId($grupo_id);
-            $miembros = $this->modeloGrupo->mdlListarMiembrosGrupo($grupo_id);
-            $roles = $this->modeloGrupo->mdlListarRolesGrupo();
-
-            echo json_encode([
-                'grupo' => $grupo,
-                'miembros' => $miembros,
-                'roles' => $roles
-            ]);
-        } catch (Exception $e) {
-            echo json_encode(['error' => 'Error al obtener datos del grupo']);
         }
     }
 
@@ -419,6 +399,87 @@ class GrupoController
             include_once(__DIR__ . '/../Vista/gruposHistorial.php');
         } catch (Exception $e) {
             $this->manejarError("Error al cargar el historial: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Método auxiliar para manejar errores
+     */
+    private function manejarError($mensaje)
+    {
+        error_log($mensaje);
+        $this->redirigirConMensaje('Ha ocurrido un error interno. Por favor, inténtelo más tarde.', 'error');
+    }
+
+    /**
+     * Método auxiliar para redireccionar con mensajes a la lista principal
+     */
+    private function redirigirConMensaje($mensaje, $tipo = 'info')
+    {
+        // Guardar mensaje en sesión si está disponible
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['mensaje'] = $mensaje;
+        $_SESSION['tipo_mensaje'] = $tipo;
+
+        // Crear redirección con formulario POST para mantener URLs limpias
+        echo '<form id="redirect-form" method="POST" action="index.php" style="display: none;">
+                <input type="hidden" name="menu-item" value="Grupos">
+                </form>
+                <script>
+                document.getElementById("redirect-form").submit();
+                </script>';
+        exit();
+    }
+
+    /**
+     * Método auxiliar para redireccionar con mensajes al detalle de un grupo
+     */
+    private function redirigirConMensajeConGrupo($mensaje, $grupo_id, $tipo = 'info')
+    {
+        // Guardar mensaje en sesión si está disponible
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION['mensaje'] = $mensaje;
+        $_SESSION['tipo_mensaje'] = $tipo;
+
+        // Crear redirección con formulario POST para mantener URLs limpias
+        echo '<form id="redirect-form" method="POST" action="index.php" style="display: none;">
+                <input type="hidden" name="menu-item" value="Grupos">
+                <input type="hidden" name="action" value="ver">
+                <input type="hidden" name="grupo_id" value="' . $grupo_id . '">
+                </form>
+                <script>
+                document.getElementById("redirect-form").submit();
+                </script>';
+        exit();
+    }
+
+    /**
+     * Método para obtener datos necesarios para las vistas (AJAX)
+     */
+    public function ctrlObtenerDatosGrupo()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST' || !isset($_POST['grupo_id']) || !is_numeric($_POST['grupo_id'])) {
+            echo json_encode(['error' => 'ID inválido']);
+            return;
+        }
+
+        try {
+            $grupo_id = (int)$_POST['grupo_id'];
+            $grupo = $this->modeloGrupo->mdlObtenerGrupoPorId($grupo_id);
+            $miembros = $this->modeloGrupo->mdlListarMiembrosGrupo($grupo_id);
+            $roles = $this->modeloGrupo->mdlListarRolesGrupo();
+
+            echo json_encode([
+                'grupo' => $grupo,
+                'miembros' => $miembros,
+                'roles' => $roles
+            ]);
+        } catch (Exception $e) {
+            echo json_encode(['error' => 'Error al obtener datos del grupo']);
         }
     }
 }
