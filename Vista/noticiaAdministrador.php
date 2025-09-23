@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto p-8">
+<div class="max-w-7xl mx-auto p-8 flex-1">
     <div class="bg-white p-6 rounded-3xl shadow-2xl mb-8">
         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
             <h2 class="text-3xl font-extrabold text-gray-800">
@@ -17,20 +17,26 @@
             </div>
         <?php endif; ?>
 
-        <div class="mb-6">
-            <form action="" method="POST" class="flex items-center space-x-2">
+        <div class="mb-6 flex">
+            <form action="" method="POST" class="flex items-center space-x-2 w-full">
                 <input type="text"
                     name="buscar"
                     placeholder="Buscar por título o descripción..."
-                    class="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D0B8A8]">
+                    class="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D0B8A8]" value="<?= $_POST['buscar'] ?? '' ?>">
                 <button type="submit"
                     class="bg-[#D0B8A8] text-[#6f6056] py-2 px-4 rounded-md hover:bg-[#ab876f] hover:text-white transition duration-300">
                     Buscar
                 </button>
-                <a href='index.php' class="py-2 px-4 text-gray-500 hover:text-gray-700">
-                    Volver
-                </a>
+            
             </form>
+
+                <form action=""  method="POST" >
+                    <input name="" type="hidden">
+                    <button class="py-2 px-4 text-gray-500 hover:text-gray-700"> Borrar </button>
+                </form>
+
+
+
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

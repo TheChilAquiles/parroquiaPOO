@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Clase ControladorNoticia
  *
@@ -53,12 +54,15 @@ class ControladorNoticia
                     $this->ctrEliminarNoticia();
                     break;
                 default:
-                    $this->ctrMostrarAdminNoticias();
+                    if ($_SESSION['user-rol'] == 'Feligres') {
+                        $this->ctrMostrarNoticiasPublicas();
+                    } else {
+                        $this->ctrMostrarAdminNoticias();
+                    }
                     break;
             }
         } else {
             $this->ctrMostrarNoticiasPublicas();
-            $this->ctrMostrarNoticiasHome();
         }
     }
 
@@ -97,7 +101,7 @@ class ControladorNoticia
 
             $nombre_archivo = uniqid() . '-' . basename($_FILES['imagen']['name']);
             $directorio_destino = __DIR__ . '/../assets/img/noticias/' . $nombre_archivo;
-            
+
             if (!is_dir(dirname($directorio_destino))) {
                 mkdir(dirname($directorio_destino), 0777, true);
             }
@@ -110,7 +114,7 @@ class ControladorNoticia
                 exit();
             }
         }
-        
+
         // Prepara los datos para el modelo.
         $datos = [
             'titulo' => $titulo,
@@ -131,7 +135,7 @@ class ControladorNoticia
             // Es una actualización.
             $respuesta = $this->modeloNoticia->mdlActualizarNoticia($id, $datos);
         }
-        
+
         $_SESSION['mensaje'] = ['tipo' => $respuesta['exito'] ? 'success' : 'error', 'texto' => $respuesta['mensaje']];
         $_SESSION['menu-item'] = 'Noticias';
         header('Location: #');
@@ -143,7 +147,8 @@ class ControladorNoticia
      * @param int $errorCode El código de error de PHP.
      * @return string El mensaje de error correspondiente.
      */
-    private function getUploadErrorMessage($errorCode) {
+    private function getUploadErrorMessage($errorCode)
+    {
         switch ($errorCode) {
             case UPLOAD_ERR_INI_SIZE:
                 return "El archivo es demasiado grande (excede upload_max_filesize).";
@@ -178,7 +183,7 @@ class ControladorNoticia
         } else {
             $_SESSION['mensaje'] = ['tipo' => 'error', 'texto' => "ID de noticia no proporcionado."];
         }
-        
+
         $_SESSION['menu-item'] = 'Noticias';
         header('refresh:0');
         exit();
@@ -191,14 +196,17 @@ class ControladorNoticia
     {
         // CAMBIO AQUÍ: Capturamos el término de búsqueda de la solicitud POST.
         $filtro_busqueda = $_POST['buscar'] ?? '';
-        
+
         // Pasamos el filtro al modelo.
         $noticias = $this->modeloNoticia->mdlObtenerNoticias($filtro_busqueda);
-        
+
         $mensaje = $_SESSION['mensaje'] ?? null;
         unset($_SESSION['mensaje']);
         require_once __DIR__ . '/../Vista/noticiaAdministrador.php';
     }
+
+
+
 
     /**
      * Muestra la vista pública de noticias.
@@ -211,11 +219,7 @@ class ControladorNoticia
         require_once __DIR__ . '/../Vista/noticiaUsuario.php';
     }
 
-    private function ctrMostrarNoticiasHome()
-    {
-        $noticias = $this->modeloNoticia->mdlObtenerNoticias();
-        $mensaje = $_SESSION['mensaje'] ?? null;
-        unset($_SESSION['mensaje']);
-        require_once __DIR__ . '/../Vista/home.php';
-    }
+    /**
+     * Muestra la vista del home con las últimas noticias
+     */
 }

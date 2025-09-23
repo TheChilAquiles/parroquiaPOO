@@ -9,10 +9,10 @@ session_start();
 
 // ---  Para Depuracion ---
 include_once('Controlador/ControladorDebug.php');
-$Rusbel = new DebugController(name:'Rusbel');
-$Samuel = new DebugController(name:'Samuel');
-$Santiago = new DebugController(name:'Santiago');
-$Sebastian = new DebugController(name:'Sebastian');
+$Rusbel = new DebugController(name: 'Rusbel');
+$Samuel = new DebugController(name: 'Samuel');
+$Santiago = new DebugController(name: 'Santiago');
+$Sebastian = new DebugController(name: 'Sebastian');
 // ---  Fin Depuracion ---
 
 
@@ -312,13 +312,13 @@ switch ($_SESSION['menu-item']) {
 
 
   case 'Pagos':
-     // -- LINEA PARA TESTEAR EN LOG --
-file_put_contents(__DIR__ . '/logs/SantiagoApp.log', 'Entro a Mostrar pagos controlador ' . "\n", FILE_APPEND);
-// -- LINEA PARA TESTEAR EN LOG  --
+    // -- LINEA PARA TESTEAR EN LOG --
+    file_put_contents(__DIR__ . '/logs/SantiagoApp.log', 'Entro a Mostrar pagos controlador ' . "\n", FILE_APPEND);
+    // -- LINEA PARA TESTEAR EN LOG  --
 
-           
 
-          include_once('Vista/pagos.php');
+
+    include_once('Vista/pagos.php');
     break;
 
 

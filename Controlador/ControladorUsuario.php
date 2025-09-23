@@ -5,7 +5,7 @@ class UsuarioController
     public function __construct()
     {
         
-         require_once __DIR__ . '/../Modelo/ModeloUsuario.php';
+            require_once __DIR__ . '/../Modelo/ModeloUsuario.php';
     }
 
 

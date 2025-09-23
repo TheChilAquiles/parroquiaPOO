@@ -119,8 +119,6 @@ class ModeloNoticia
         return $noticias;
     }
 
-
-
     /**
      * Actualiza una noticia existente en la base de datos.
      *
