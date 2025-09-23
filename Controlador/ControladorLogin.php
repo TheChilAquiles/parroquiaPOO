@@ -49,7 +49,7 @@ class LoginController
 
             $_SESSION['user-id'] = $usuario['id'];
             $_SESSION['user-datos'] = $usuario['datos_completos'];
-            $_SESSION["user-rol"] =  $usuario['datos_completos']; ; 
+            $_SESSION["user-rol"] =  $usuario['rol'];
             $_SESSION["logged"] = true;
 
             // var_dump($usuario);
@@ -66,6 +66,8 @@ class LoginController
         unset($_SESSION["logged"]);
         unset($_SESSION['user-id']);
         unset($_SESSION['user-datos']);
+        unset($_SESSION["user-rol"]);
+
         session_destroy();
     }
 }

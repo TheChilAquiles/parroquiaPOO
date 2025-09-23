@@ -63,7 +63,10 @@ class ModeloUsuario
         try {
             $this->conexion = Conexion::conectar();
 
-            $sql = "SELECT * FROM usuarios WHERE email = ?";
+            $sql = "SELECT usuarios.*, usuario_roles.rol as rol
+                    FROM usuarios
+                    INNER JOIN usuario_roles ON usuarios.usuario_rol_id = usuario_roles.id 
+                    WHERE usuarios.email = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$email]);
 

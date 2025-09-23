@@ -257,14 +257,11 @@
                                 echo '<option value="2">Confirmando</option>';
 
                                 echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
-
                             } elseif ($tipo == 3) {
 
                                 echo '<option value="3">Difunto</option>';
 
                                 echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
-
-
                             } elseif ($tipo == 4) {
 
                                 echo '<option value="4">Esposo</option>';
@@ -274,24 +271,19 @@
                                 echo '<option value="13">Esposo Madrina</option>';
                                 echo '<option value="14">Esposa Padrino</option>';
                                 echo '<option value="15">Esposa Madrina</option>';
-                                
-
-                                 echo  '<script> const rolesObligatorios = [ "Esposo", "Esposa" , "Esposo Padrino" , "Esposo Madrina" , "Esposa Padrino" , "Esposa Madrina" ] </script>';
 
 
+                                echo  '<script> const rolesObligatorios = [ "Esposo", "Esposa" , "Esposo Padrino" , "Esposo Madrina" , "Esposa Padrino" , "Esposa Madrina" ] </script>';
                             }
                             ?>
 
                             <option value="6">Padre</option>
                             <option value="7">Madre</option>
 
-                            <?php if ($tipo !== 3 &&  $tipo !== 4 ) {
+                            <?php if ($tipo !== 3 &&  $tipo !== 4) {
 
                                 echo ' <option value="8">Padrino</option>';
                                 echo '<option value="9">Madrina</option>';
-
-                            
-
                             }; ?>
                         </select>
                     </div>
@@ -477,7 +469,6 @@
 
 
                     resaltarCampo('#primerNombre');
-
                     resaltarCampo('#primerApellido');
 
 
@@ -521,13 +512,14 @@
 
 
     function resaltarCampo(idCampo) {
-        if ($(idCampo).val() === '') {
-            $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
-            setTimeout(function() {
-                $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
-            }, 5000);
-        }
+
+        $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
+        setTimeout(function() {
+            $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
+        }, 5000);
+
     }
+
 
 
     function agregarIntegrante() {
@@ -581,7 +573,12 @@
 
         }
 
-        const existe = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]')).some(input => input.value === rolParticipante);
+        const inputs = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]'));
+
+        const inputEncontrado = inputs.find(input => input.value === rolParticipante);
+
+
+        const existe = !!inputEncontrado; // true o false
 
         const existedoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
             const tipo = li.querySelector('input[name$="[tipoDoc]"]')?.value;
@@ -590,13 +587,28 @@
         });
 
         if (existedoc) {
-            alert('ya hay un participante con ese Documento.');
+
+            resaltarCampo('#tipo-doc');
+            resaltarCampo('#numero-doc');
+
+
+            alert('ya hay un participanteas con ese Documento. ');
+
             return;
         }
 
 
         if (existe) {
-            alert('Este participante ya ha sido añadido.');
+            const idDelInput = inputEncontrado ? inputEncontrado.id : null;
+
+            resaltarCampo('#rolParticipante');
+            
+            const select = document.getElementById('rolParticipante'); 
+            const textoSeleccionado = select.options[select.selectedIndex].text;
+            
+            resaltarCampo('#'+textoSeleccionado+'-rol');
+
+            alert('Este ROL ya ha sido añadido.' + textoSeleccionado );
             return;
         }
 
@@ -614,6 +626,19 @@
         };
 
 
+        const roles = {
+            1: 'Bautizo',
+            2: 'Confirmando',
+            3: 'Difunto',
+            4: 'Esposo',
+            5: 'Esposa',
+            6: 'Padre',
+            7: 'Madre',
+            8: 'Padrino',
+            9: 'Madrina',
+            10: 'Abuelo',
+            11: 'Abuela'
+        };
 
         const colores = {
             1: 'bg-blue-50',
@@ -640,7 +665,7 @@
 
         <div class="bg-gray-100 border border-gray-300 rounded mb-2 mx-1 flex justify-between items-center">
         
-        <span class="font-bold p-2  ${grupoColor}  ">${grupoRol}</span>
+        <span class="font-bold p-2  ${grupoColor} " id="${grupoRol}-rol" >${grupoRol}</span>
 
         <span class="font-medium">  ${tipDoc} - ${numeroDoc}  </span>
         <span class="font-medium">  ${[primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ')}  </span>
@@ -865,7 +890,7 @@
 
             Toast.fire({
                 icon: "warning",
-                title: "\n Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- ") ,
+                title: "\n Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "),
                 timer: 100000,
             });
 
