@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-09-2025 a las 03:58:54
--- Versión del servidor: 11.8.3-MariaDB
--- Versión de PHP: 8.0.30
+-- Tiempo de generación: 25-09-2025 a las 03:19:58
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -231,7 +231,10 @@ CREATE TABLE `pagos` (
 INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`) VALUES
 (3, 103, 1800.75, 'completo', '0000-00-00 00:00:00', 1),
 (4, 104, 3200, 'cancelado', '0000-00-00 00:00:00', 3),
-(5, 105, 2100, 'completo', '0000-00-00 00:00:00', 2);
+(5, 105, 2100, 'completo', '0000-00-00 00:00:00', 2),
+(7, 103, 1800.75, 'completo', '0000-00-00 00:00:00', 1),
+(8, 104, 3200, 'cancelado', '0000-00-00 00:00:00', 3),
+(9, 105, 2100, 'completo', '0000-00-00 00:00:00', 2);
 
 -- --------------------------------------------------------
 
@@ -350,6 +353,18 @@ CREATE TABLE `reportes` (
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `reportes`
+--
+
+INSERT INTO `reportes` (`id`, `id_pagos`, `titulo`, `descripcion`, `categoria`, `fecha`, `estado_registro`) VALUES
+(1, 3, 'Pago completo certificado 103', 'Pago recibido por valor de 1800.75', 'Finanzas', '2025-09-01 05:00:00', '0000-00-00 00:00:00'),
+(2, 4, 'Pago cancelado certificado 104', 'Se canceló el pago de 3200', 'Administración', '2025-09-02 05:00:00', '0000-00-00 00:00:00'),
+(3, 5, 'Pago completo certificado 105', 'Pago recibido por valor de 2100', 'Finanzas', '2025-09-03 05:00:00', '0000-00-00 00:00:00'),
+(4, 7, 'Pago duplicado certificado 103', 'Pago duplicado detectado por 1800.75', 'Auditoría', '2025-09-04 05:00:00', '0000-00-00 00:00:00'),
+(5, 8, 'Intento de pago cancelado', 'Segundo intento de pago cancelado por 3200', 'Administración', '2025-09-05 05:00:00', '0000-00-00 00:00:00'),
+(6, 9, 'Pago final certificado 105', 'Pago final recibido por 2100', 'Finanzas', '2025-09-06 05:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -476,7 +491,7 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 (11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
 (12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
 (13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(14, 1, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
+(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -709,7 +724,7 @@ ALTER TABLE `libro_tipo`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `parentescos`
@@ -739,7 +754,7 @@ ALTER TABLE `participantes_rol`
 -- AUTO_INCREMENT de la tabla `reportes`
 --
 ALTER TABLE `reportes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `sacramentos`

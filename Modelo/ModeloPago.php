@@ -22,3 +22,4 @@ class ModeloPago {
         return $stmt->execute([$certificado_id, $valor, $estado, $estado_registro, $tipo_pago_id]);
     }
 }
+
