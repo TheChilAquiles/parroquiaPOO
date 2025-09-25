@@ -18,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['tipo_pago_id']
         ]);
 
-        // ✅ Redirige al listado principal después de insertar
-        header("Location: /ParroquiaPOO/");
+        // ✅ Redirige al sistema de pagos después de insertar
+        header("Location: /ParroquiaPOO/parroquiaPOO/index.php?menu-item=Pagos");
         exit();
 
     } catch (PDOException $e) {
@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -45,11 +46,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" class="space-y-5">
             <!-- Certificado -->
-            <div>
-                <label class="block text-gray-700 font-semibold mb-1">Certificado ID:</label>
-                <input type="number" name="certificado_id" required
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
+            <!-- Certificado -->
+<div>
+    <label class="block text-gray-700 font-semibold mb-1">Certificado:</label>
+    <select name="certificado_id" required
+            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+        <?php
+        $conexion = Conexion::conectar();
+        $certificados = $conexion->query("SELECT id FROM certificados ORDER BY id");
+        foreach ($certificados as $cert) {
+            echo "<option value='{$cert['id']}'>Certificado #{$cert['id']}</option>";
+        }
+        ?>
+    </select>
+</div>
 
             <!-- Valor -->
             <div>
@@ -70,17 +80,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <!-- Tipo de pago -->
-            <div>
-                <label class="block text-gray-700 font-semibold mb-1">Tipo Pago ID:</label>
-                <input type="number" name="tipo_pago_id" required
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
-            </div>
+            <!-- Tipo de pago -->
+<div>
+    <label class="block text-gray-700 font-semibold mb-1">Tipo de Pago:</label>
+    <select name="tipo_pago_id" required
+            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+        <option value="1">Efectivo</option>
+        <option value="2">Tarjeta Crédito</option>
+        <option value="3">Tarjeta Débito</option>
+        <option value="4">Transferencia</option>
+        <option value="5">Cheque</option>
+    </select>
+</div>
 
             <!-- Botones -->
-            <div class="flex justify-between items-center pt-4">
-                <a href="/ParroquiaPOO/" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">
-                    Cancelar
-                </a>
+           <a href="/ParroquiaPOO/parroquiaPOO/index.php?menu-item=Pagos" 
+   class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">
+    Cancelar
+</a>
 
                 <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow font-semibold">
                     Guardar Pago

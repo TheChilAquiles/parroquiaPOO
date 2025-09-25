@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 25-09-2025 a las 03:19:58
+-- Tiempo de generación: 25-09-2025 a las 23:49:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -49,7 +49,8 @@ INSERT INTO `certificados` (`id`, `usuario_generador_id`, `feligres_certificado_
 (102, 11, 1, '2023-12-10', '2024-12-10', 'confirmacion', 4, '/archivos/cert102.pdf', 'vigente', '0000-00-00 00:00:00'),
 (103, 12, 1, '2023-11-20', '2024-11-20', 'matrimonio', 5, '/archivos/cert103.pdf', 'vigente', '0000-00-00 00:00:00'),
 (104, 13, 1, '2024-02-05', '2025-02-05', 'bautizo', 6, '/archivos/cert104.pdf', 'vigente', '0000-00-00 00:00:00'),
-(105, 14, 1, '2024-03-10', '2025-03-10', 'confirmacion', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00');
+(105, 14, 1, '2024-03-10', '2025-03-10', 'confirmacion', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00'),
+(106, 15, 1, '2024-04-15', '2025-04-15', 'bautizo', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -229,12 +230,12 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`) VALUES
-(3, 103, 1800.75, 'completo', '0000-00-00 00:00:00', 1),
-(4, 104, 3200, 'cancelado', '0000-00-00 00:00:00', 3),
-(5, 105, 2100, 'completo', '0000-00-00 00:00:00', 2),
-(7, 103, 1800.75, 'completo', '0000-00-00 00:00:00', 1),
-(8, 104, 3200, 'cancelado', '0000-00-00 00:00:00', 3),
-(9, 105, 2100, 'completo', '0000-00-00 00:00:00', 2);
+(3, 103, 1800.75, 'completo', '2025-09-03 16:34:45', 1),
+(4, 104, 3200, 'cancelado', NULL, 3),
+(5, 105, 2100, 'completo', NULL, 2),
+(7, 103, 1800.75, 'completo', NULL, 1),
+(17, 104, 255, 'PAGADO', '2025-09-25 16:37:11', 3),
+(21, 106, 2500, 'PAGADO', '2025-09-25 16:48:37', 3);
 
 -- --------------------------------------------------------
 
@@ -362,9 +363,7 @@ INSERT INTO `reportes` (`id`, `id_pagos`, `titulo`, `descripcion`, `categoria`, 
 (1, 3, 'Pago completo certificado 103', 'Pago recibido por valor de 1800.75', 'Finanzas', '2025-09-01 05:00:00', '0000-00-00 00:00:00'),
 (2, 4, 'Pago cancelado certificado 104', 'Se canceló el pago de 3200', 'Administración', '2025-09-02 05:00:00', '0000-00-00 00:00:00'),
 (3, 5, 'Pago completo certificado 105', 'Pago recibido por valor de 2100', 'Finanzas', '2025-09-03 05:00:00', '0000-00-00 00:00:00'),
-(4, 7, 'Pago duplicado certificado 103', 'Pago duplicado detectado por 1800.75', 'Auditoría', '2025-09-04 05:00:00', '0000-00-00 00:00:00'),
-(5, 8, 'Intento de pago cancelado', 'Segundo intento de pago cancelado por 3200', 'Administración', '2025-09-05 05:00:00', '0000-00-00 00:00:00'),
-(6, 9, 'Pago final certificado 105', 'Pago final recibido por 2100', 'Finanzas', '2025-09-06 05:00:00', '0000-00-00 00:00:00');
+(4, 7, 'Pago duplicado certificado 103', 'Pago duplicado detectado por 1800.75', 'Auditoría', '2025-09-04 05:00:00', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -491,7 +490,12 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 (11, 1, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
 (12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
 (13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
+(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL),
+(15, 1, 'nuevo.usuario1@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(16, 2, 'otro.usuario2@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(17, 1, 'tercer.usuario3@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
+(18, 2, 'cuarto.usuario4@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL),
+(19, 1, 'quinto.usuario5@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -682,7 +686,7 @@ ALTER TABLE `usuario_roles`
 -- AUTO_INCREMENT de la tabla `certificados`
 --
 ALTER TABLE `certificados`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT de la tabla `documento_tipos`
@@ -724,7 +728,7 @@ ALTER TABLE `libro_tipo`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `parentescos`
@@ -778,7 +782,7 @@ ALTER TABLE `tipos_pago`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`

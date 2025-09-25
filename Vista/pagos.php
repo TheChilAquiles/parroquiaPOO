@@ -3,6 +3,15 @@ require_once __DIR__ . "/../Modelo/Conexion.php";
 
 $mensaje = "";
 
+// Mapeo de tipos de pago (para mostrar nombres sin JOIN)
+$tiposPago = [
+    1 => 'Efectivo',
+    2 => 'Tarjeta Crédito',
+    3 => 'Tarjeta Débito',
+    4 => 'Transferencia',
+    5 => 'Cheque'
+];
+
 try {
     $conexion = Conexion::conectar();
 
@@ -11,31 +20,42 @@ try {
         $id = intval($_POST['id'] ?? 0);
 
         if ($id > 0) {
-            $check = $conexion->prepare("SELECT id FROM pagos WHERE id = ?");
-            $check->execute([$id]);
+            try {
+                // 1. Verificar si el pago existe
+                $check = $conexion->prepare("SELECT id FROM pagos WHERE id = ?");
+                $check->execute([$id]);
 
-            if ($check->fetch()) {
-                $del = $conexion->prepare("DELETE FROM pagos WHERE id = ?");
-                $del->execute([$id]);
-                $mensaje = "Pago con ID {$id} eliminado correctamente.";
-            } else {
-                $mensaje = "No se encontró pago con ID {$id}.";
+                if ($check->fetch()) {
+                    // 2. Eliminar reportes relacionados (si existen)
+                    try {
+                        $delReportes = $conexion->prepare("DELETE FROM reportes WHERE id_pagos = ?");
+                        $delReportes->execute([$id]);
+                    } catch (PDOException $e) {
+                        // Ignorar si la tabla reportes no existe o no hay datos
+                    }
+                    
+                    // 3. Eliminar el pago
+                    $del = $conexion->prepare("DELETE FROM pagos WHERE id = ?");
+                    $del->execute([$id]);
+                    $mensaje = "Pago con ID {$id} eliminado correctamente.";
+                } else {
+                    $mensaje = "No se encontró pago con ID {$id}.";
+                }
+                
+            } catch (PDOException $e) {
+                $mensaje = "Error al eliminar: " . $e->getMessage();
             }
         } else {
             $mensaje = "ID inválido.";
         }
 
-        // Redirigir para evitar reenvío
-        $redirect = strtok($_SERVER['REQUEST_URI'], '?');
-        header("Location: $redirect");
+        header("Location: " . $_SERVER['PHP_SELF']);
         exit();
     }
 
     // ====== LISTADO ======
-    $sql = "SELECT p.*, t.descripcion as tipo_pago_nombre 
-        FROM pagos p 
-        LEFT JOIN tipos_pago t ON p.tipo_pago_id = t.id 
-        ORDER BY p.fecha_pago DESC, p.id DESC";
+    // ✅ CONSULTA SIN JOIN (para evitar conflictos)
+    $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -272,21 +292,26 @@ try {
                                             </td>
 
                                             <!-- Fecha -->
-                                            <td class="px-8 py-6 text-center hidden sm:table-cell">
-                                                <?php if ($pago['fecha_pago']): ?>
-                                                    <div class="text-lg font-bold text-gray-800"><?= date('d/m/Y', strtotime($pago['fecha_pago'])) ?></div>
-                                                    <div class="text-sm text-gray-600 font-medium"><?= date('H:i', strtotime($pago['fecha_pago'])) ?></div>
-                                                <?php else: ?>
-                                                    <span class="text-gray-400 font-medium">Sin fecha</span>
-                                                <?php endif; ?>
-                                            </td>
+                                           <!-- Fecha -->
+<!-- Fecha -->
+<td class="px-8 py-6 text-center hidden sm:table-cell">
+    <?php 
+    $fecha = $pago['fecha_pago'];
+    $esFechaValida = $fecha && $fecha !== '0000-00-00 00:00:00' && $fecha !== '0000-00-00' && strtotime($fecha) > 0;
+    
+    if ($esFechaValida): 
+    ?>
+        <div class="text-lg font-bold text-gray-800"><?= date('d/m/Y', strtotime($fecha)) ?></div>
+        <div class="text-sm text-gray-600 font-medium"><?= date('H:i', strtotime($fecha)) ?></div>
+    <?php else: ?>
+        <span class="text-gray-400 font-medium">Sin fecha</span>
+    <?php endif; ?>
+</td>
 
                                             <!-- Tipo -->
-                                            <!-- Tipo -->
-<!-- Tipo -->
 <td class="px-3 py-6 text-center hidden md:table-cell whitespace-nowrap">
     <span class="inline-block px-3 py-1 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300">
-        <?= htmlspecialchars($pago['tipo_pago_nombre']) ?>
+        <?= htmlspecialchars($tiposPago[$pago['tipo_pago_id']] ?? 'Tipo ' . $pago['tipo_pago_id']) ?>
     </span>
 </td>
 
