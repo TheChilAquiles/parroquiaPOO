@@ -1,61 +1,61 @@
 <?php
-class Certificado {
-    private $pdo;
+// ModeloCertificados.php
+// Modelo de acceso a datos para certificados usando PDO y POO.
+// Comentarios explicativos incluidos.
 
-    public function __construct($pdo) {
-        $this->pdo = $pdo;
+// Requiere un archivo de conexión que devuelva una instancia PDO.
+// Asegúrese de que Conexion.php defina una clase Conexion con método conectar() estático.
+require_once __DIR__ . "/Conexion.php";
+class Certificados
+{
+    private $db; // PDO instance
+
+    public function __construct(PDO $pdo = null)
+    {
+        // Permite inyección de dependencia para pruebas.
+        if ($pdo !== null) {
+            $this->db = $pdo;
+        } else {
+            // Intentar obtener la conexión desde Conexion::conectar()
+            if (!class_exists('Conexion')) {
+                throw new Exception('Falta la clase Conexion. Cree Conexion.php que devuelva PDO.');
+            }
+            $this->db = Conexion::conectar();
+        }
     }
 
-    // Listar todos
-    public function obtenerTodos() {
-        $stmt = $this->pdo->query("SELECT * FROM certificados");
+    // Obtiene todos los certificados (ejemplo simple).
+    public function obtenerTodos()
+    {
+        $sql = "SELECT * FROM certificados ORDER BY id DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtener uno por ID
-    public function obtenerPorId($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM certificado WHERE id = ?");
-        $stmt->execute([$id]);
+    // Obtiene un certificado por id
+    public function obtenerPorId($id)
+    {
+        $sql = "SELECT * FROM certificados WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Insertar
-    public function crear($data) {
-        $sql = "INSERT INTO certificado (usuario_generador_id, feligres_certificado_id, fecha_emision, fecha_expiracion, tipo_certificado, sacramento_id, ruta_archivo, estado) 
-                VALUES (?,?,?,?,?,?,?,?)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['usuario_generador_id'],
-            $data['feligres_certificado_id'],
-            $data['fecha_emision'],
-            $data['fecha_expiracion'],
-            $data['tipo_certificado'],
-            $data['sacramento_id'],
-            $data['ruta_archivo'],
-            $data['estado']
-        ]);
-    }
-
-    // Actualizar
-    public function actualizar($id, $data) {
-        $sql = "UPDATE certificado SET usuario_generador_id=?, feligres_certificado_id=?, fecha_emision=?, fecha_expiracion=?, tipo_certificado=?, sacramento_id=?, ruta_archivo=?, estado=? WHERE id=?";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            $data['usuario_generador_id'],
-            $data['feligres_certificado_id'],
-            $data['fecha_emision'],
-            $data['fecha_expiracion'],
-            $data['tipo_certificado'],
-            $data['sacramento_id'],
-            $data['ruta_archivo'],
-            $data['estado'],
-            $id
-        ]);
-    }
-
-    // Eliminar
-    public function eliminar($id) {
-        $stmt = $this->pdo->prepare("DELETE FROM certificado WHERE id=?");
-        return $stmt->execute([$id]);
+    // Inserta un nuevo registro de certificado
+    public function crear($data)
+    {
+        $sql = "INSERT INTO certificados (usuario_id, feligres_id, sacramento, fecha_realizacion, lugar, observaciones, creado_en)
+                VALUES (:usuario_id, :feligres_id, :sacramento, :fecha_realizacion, :lugar, :observaciones, NOW())";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':usuario_id', $data['usuario_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':feligres_id', $data['feligres_id'], PDO::PARAM_INT);
+        $stmt->bindValue(':sacramento', $data['sacramento'], PDO::PARAM_STR);
+        $stmt->bindValue(':fecha_realizacion', $data['fecha_realizacion'], PDO::PARAM_STR);
+        $stmt->bindValue(':lugar', $data['lugar'], PDO::PARAM_STR);
+        $stmt->bindValue(':observaciones', $data['observaciones'], PDO::PARAM_STR);
+        $stmt->execute();
+        return $this->db->lastInsertId();
     }
 }
