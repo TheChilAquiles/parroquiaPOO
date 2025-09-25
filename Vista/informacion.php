@@ -1,711 +1,283 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información Parroquial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        .parallax-bg {
-            background-attachment: fixed;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
-        
-        .timeline-item {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease;
-        }
-        
-        .timeline-item.animate {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .ministry-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .ministry-card:hover {
-            transform: translateY(-8px) scale(1.02);
-        }
-        
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .pulse-glow {
-            animation: pulseGlow 2s infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(208, 184, 168, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(208, 184, 168, 0.7); }
-        }
-        
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-        
-        .scroll-reveal.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
-
-<!-- Hero Section with Parallax -->
-<section class="relative h-screen parallax-bg bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 bg-black/40"></div>
-    
-    <!-- Floating Elements -->
-    <div class="absolute top-20 left-10 floating-animation">
-        <div class="w-20 h-20 bg-white/10 rounded-full glass-effect"></div>
-    </div>
-    <div class="absolute bottom-32 right-16 floating-animation" style="animation-delay: -2s">
-        <div class="w-16 h-16 bg-white/10 rounded-full glass-effect"></div>
-    </div>
-    <div class="absolute top-1/2 left-1/4 floating-animation" style="animation-delay: -4s">
-        <div class="w-12 h-12 bg-white/10 rounded-full glass-effect"></div>
-    </div>
-    
-    <div class="relative text-center text-white px-4 max-w-4xl">
-        <h1 class="text-6xl md:text-7xl font-bold mb-6 drop-shadow-2xl">
-            San Francisco de Asís
-        </h1>
-        <p class="text-2xl md:text-3xl mb-8 opacity-90 font-light">
-            Descubre nuestra historia, ministerios y comunidad
-        </p>
-        <div class="pulse-glow inline-block">
-            <button onclick="scrollToSection('historia')" class="bg-white text-[#ab876f] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300 shadow-2xl">
-                Explorar Nuestra Historia
-            </button>
+<main class="min-h-screen">
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] text-white">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="relative mx-auto max-w-7xl px-4 py-24">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
+                    Parroquia San José
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto font-light">
+                    Un lugar de fe, esperanza y amor donde cada corazón encuentra su hogar espiritual
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#horarios" class="bg-white text-[#ab876f] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 shadow-lg">
+                        Ver Horarios de Misa
+                    </a>
+                    <a href="#contacto" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#ab876f] transition duration-300">
+                        Contáctanos
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <!-- Scroll Indicator -->
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-        <span class="material-icons text-4xl">keyboard_arrow_down</span>
-    </div>
-</section>
+        <!-- Decorative wave -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-12 fill-white">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+            </svg>
+        </div>
+    </section>
 
-<!-- Historia Timeline -->
-<section id="historia" class="py-20 bg-white overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16 scroll-reveal">
-            <h2 class="text-5xl font-bold text-gray-900 mb-6">Nuestra Historia</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Un viaje de fe que comenzó hace 27 años y continúa transformando vidas
+    <!-- Sobre Nosotros -->
+    <section class="py-16 bg-white">
+        <div class="mx-auto max-w-7xl px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestra Parroquia</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Desde hace más de 50 años, hemos sido un faro de fe y esperanza para nuestra comunidad,
+                    acompañando a las familias en su caminar espiritual.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Nuestra Misión</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        Somos una comunidad católica comprometida con el anuncio del Evangelio,
+                        la celebración de los sacramentos y el servicio a los más necesitados.
+                        Buscamos ser instrumentos de la misericordia de Dios en nuestro barrio y ciudad.
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-[#D0B8A8] rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">Celebración de la Eucaristía</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-[#D0B8A8] rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">Catequesis y formación</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-[#D0B8A8] rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">Obras de caridad</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-[#D0B8A8] rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span class="text-gray-700">Acompañamiento pastoral</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-2xl p-8 text-white shadow-xl">
+                        <svg class="w-16 h-16 mb-6 opacity-80" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <h4 class="text-2xl font-bold mb-4">50+ Años</h4>
+                        <p class="text-lg">De servicio continuo a la comunidad, siendo testigos del amor de Cristo en cada momento de la vida.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Horarios de Misa -->
+    <section id="horarios" class="py-16 bg-gray-50">
+        <div class="mx-auto max-w-7xl px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Horarios de Celebración</h2>
+                <p class="text-lg text-gray-600">Te esperamos en cada celebración para compartir juntos la fe</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition duration-300">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Lunes a Sábado</h3>
+                    <div class="space-y-2">
+                        <p class="text-2xl font-bold text-[#ab876f]">7:00 AM</p>
+                        <p class="text-2xl font-bold text-[#ab876f]">7:00 PM</p>
+                    </div>
+                    <p class="text-gray-600 mt-4">Misas diarias</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition duration-300">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Domingos</h3>
+                    <div class="space-y-2">
+                        <p class="text-lg font-bold text-[#ab876f]">8:00 AM</p>
+                        <p class="text-lg font-bold text-[#ab876f]">11:00 AM</p>
+                        <p class="text-lg font-bold text-[#ab876f]">6:00 PM</p>
+                    </div>
+                    <p class="text-gray-600 mt-4">Celebración dominical</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition duration-300">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Confesiones</h3>
+                    <p class="text-xl font-bold text-[#ab876f] mb-2">30 minutos</p>
+                    <p class="text-gray-600">antes de cada misa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section class="py-16 bg-white">
+        <div class="mx-auto max-w-7xl px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
+                <p class="text-lg text-gray-600">Acompañamos a las familias en los momentos más importantes de la vida</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition duration-300">
+                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Bautizos</h3>
+                    <p class="text-gray-600">Preparación y celebración del sacramento del bautismo para niños y adultos</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition duration-300">
+                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Confirmaciones</h3>
+                    <p class="text-gray-600">Programa de preparación para jóvenes y adultos que desean confirmar su fe</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition duration-300">
+                        <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Matrimonios</h3>
+                    <p class="text-gray-600">Preparación matrimonial y celebración de bodas con acompañamiento pastoral</p>
+                </div>
+
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition duration-300">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Catequesis</h3>
+                    <p class="text-gray-600">Programas de formación religiosa para niños, jóvenes y adultos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Noticias -->
+    <section class="py-16 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-white">
+        <div class="mx-auto max-w-4xl px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Mantente Informado</h2>
+            <p class="text-xl mb-8 opacity-90">
+                Descubre todas las actividades, eventos y noticias de nuestra parroquia
             </p>
+
+
+
+
+
+
+
+
+
+            <form action="" method="POST" class="inline-flex items-center bg-white text-[#ab876f] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 shadow-lg">
+                <input type="hidden" name="menu-item" value="Noticias">
+
+                <button class="flex py-2 px-2 hover:bg-[#DFD3C3] cursor-pointer rounded " type="submit">
+
+
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+
+
+                    Ver Todas las Noticias </button>
+
+
+
+            </form>
         </div>
-        
-        <div class="relative">
-            <!-- Timeline Line -->
-            <div class="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-[#D0B8A8] to-[#ab876f]"></div>
-            
-            <!-- Timeline Items -->
-            <div class="space-y-16">
-                <div class="timeline-item flex items-center">
-                    <div class="w-1/2 pr-8 text-right">
-                        <div class="bg-gradient-to-l from-[#D0B8A8] to-[#ab876f] p-8 rounded-2xl text-white shadow-2xl">
-                            <h3 class="text-2xl font-bold mb-4">1996 - Los Inicios</h3>
-                            <p class="text-lg opacity-90">
-                                Se construyó una capilla en la vereda "San José - Bosa", atendida por sacerdotes 
-                                de las parroquias María Inmaculada y Santa María de Caná
-                            </p>
-                        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto" class="py-16 bg-gray-50">
+        <div class="mx-auto max-w-7xl px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Visítanos</h2>
+                <p class="text-lg text-gray-600">Estamos aquí para acompañarte en tu camino de fe</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
                     </div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white border-4 border-[#D0B8A8] rounded-full pulse-glow"></div>
-                    <div class="w-1/2 pl-8"></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Dirección</h3>
+                    <p class="text-gray-600"> <b>DESPACHO</b> Calle 85A sur # 78 79 INT 120<br>Bogotá, Colombia</p>
+                    <p class="text-gray-600"> <b>PARROQUIA</b> Calle 86 sur # 80I 23<br>Bogotá, Colombia</p>
+
                 </div>
-                
-                <div class="timeline-item flex items-center">
-                    <div class="w-1/2 pr-8"></div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white border-4 border-[#ab876f] rounded-full pulse-glow"></div>
-                    <div class="w-1/2 pl-8">
-                        <div class="bg-gradient-to-r from-[#ab876f] to-[#D0B8A8] p-8 rounded-2xl text-white shadow-2xl">
-                            <h3 class="text-2xl font-bold mb-4">2015 - Decreto Oficial</h3>
-                            <p class="text-lg opacity-90">
-                                El 21 de marzo, mediante el decreto N° 358, Monseñor Daniel Caro Borda 
-                                oficializa la creación de nuestra parroquia
-                            </p>
-                        </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
                     </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Teléfono</h3>
+                    <p class="text-gray-600"><br><b>Tel:</b> (601) 402 30-26</p>
                 </div>
-                
-                <div class="timeline-item flex items-center">
-                    <div class="w-1/2 pr-8 text-right">
-                        <div class="bg-gradient-to-l from-[#D0B8A8] to-[#ab876f] p-8 rounded-2xl text-white shadow-2xl">
-                            <h3 class="text-2xl font-bold mb-4">2023 - Presente</h3>
-                            <p class="text-lg opacity-90">
-                                Hoy somos una comunidad vibrante que sirve a cientos de familias 
-                                con amor y dedicación franciscana
-                            </p>
-                        </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
+                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
                     </div>
-                    <div class="absolute left-1/2 transform -translate-x-1/2 w-6 h-6 bg-white border-4 border-[#D0B8A8] rounded-full pulse-glow"></div>
-                    <div class="w-1/2 pl-8"></div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Email</h3>
+                    <p class="text-gray-600">parroquiasanfrancisco.soacha@gmail.com<br></p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Arquitectura del Templo -->
-<section class="py-20 bg-gradient-to-br from-gray-50 to-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16 scroll-reveal">
-            <h2 class="text-5xl font-bold text-gray-900 mb-6">Nuestro Templo</h2>
-            <p class="text-xl text-gray-600">Cada rincón cuenta una historia de fe y devoción</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="ministry-card bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer" onclick="openArchitectureModal('altar')">
-                <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <span class="material-icons text-3xl text-white">church</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-4">Altar Mayor</h3>
-                <p class="text-gray-600 text-center">Centro de nuestras celebraciones eucarísticas</p>
-            </div>
-            
-            <div class="ministry-card bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer" onclick="openArchitectureModal('baptistery')">
-                <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <span class="material-icons text-3xl text-white">water_drop</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-4">Baptisterio</h3>
-                <p class="text-gray-600 text-center">Donde nacemos a la vida cristiana</p>
-            </div>
-            
-            <div class="ministry-card bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl cursor-pointer" onclick="openArchitectureModal('virgin')">
-                <div class="w-20 h-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mb-6 mx-auto">
-                    <span class="material-icons text-3xl text-white">favorite</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-4">Altar de la Virgen</h3>
-                <p class="text-gray-600 text-center">Espacio de oración mariana y devoción</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Ministerios Dinámicos -->
-<section id="ministerios" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16 scroll-reveal">
-            <h2 class="text-5xl font-bold text-gray-900 mb-6">Ministerios Parroquiales</h2>
-            <p class="text-xl text-gray-600 mb-8">Encuentra tu lugar en nuestra comunidad de fe</p>
-            
-            <!-- Filtros -->
-            <div class="flex flex-wrap justify-center gap-4 mb-12">
-                <button class="filter-btn active bg-[#D0B8A8] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#ab876f] transition duration-300" data-filter="all">
-                    Todos los Ministerios
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="liturgico">
-                    Litúrgicos
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="pastoral">
-                    Pastorales
-                </button>
-                <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="formacion">
-                    Formación
-                </button>
-            </div>
-        </div>
-        
-        <div id="ministries-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Legión de María -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral" onclick="openMinistryModal('legion')">
-                <div class="relative mb-6">
-                    <img src="https://i.pinimg.com/originals/90/c9/30/90c930833a634c3ee26925ebdded25cf.png" alt="Legión de María" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">group</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Legión de María</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Apostolado mariano dedicado a la santificación y evangelización</p>
-                <div class="flex items-center justify-center text-sm text-blue-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Sábados • 4:00 PM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span>
-                </div>
-            </div>
-            
-            <!-- Monaguillos -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('monaguillos')">
-                <div class="relative mb-6">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMc6kqE_oMj4Rpwazy6dHq8iLnjb_7hLPcXg&s" alt="Monaguillos" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">child_care</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Monaguillos</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Jóvenes servidores del altar en las celebraciones litúrgicas</p>
-                <div class="flex items-center justify-center text-sm text-green-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Viernes • 4:00 PM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                </div>
-            </div>
-            
-            <!-- Lectores -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('lectores')">
-                <div class="relative mb-6">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0cLzgMrZVQLhFurSO7MqGfUeBGaPWEt6eqA&s" alt="Lectores" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">menu_book</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Lectores</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Proclamadores de la Palabra de Dios en la liturgia</p>
-                <div class="flex items-center justify-center text-sm text-purple-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Viernes • 4:30 PM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                </div>
-            </div>
-            
-            <!-- Coro -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('coro')">
-                <div class="relative mb-6">
-                    <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center border-4 border-white shadow-lg">
-                        <span class="material-icons text-white text-3xl">music_note</span>
-                    </div>
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">queue_music</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Coro Parroquial</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Alabanza y música sacra en nuestras celebraciones</p>
-                <div class="flex items-center justify-center text-sm text-orange-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Jueves • 7:00 PM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                </div>
-            </div>
-            
-            <!-- Catequistas -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="formacion" onclick="openMinistryModal('catequistas')">
-                <div class="relative mb-6">
-                    <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center border-4 border-white shadow-lg">
-                        <span class="material-icons text-white text-3xl">school</span>
-                    </div>
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">people</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Catequistas</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Formación cristiana para niños, jóvenes y adultos</p>
-                <div class="flex items-center justify-center text-sm text-red-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Domingos • 9:00 AM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Formación</span>
-                </div>
-            </div>
-            
-            <!-- Pastoral Social -->
-            <div class="ministry-card ministry-item bg-gradient-to-br from-teal-50 to-teal-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral" onclick="openMinistryModal('social')">
-                <div class="relative mb-6">
-                    <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center border-4 border-white shadow-lg">
-                        <span class="material-icons text-white text-3xl">volunteer_activism</span>
-                    </div>
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
-                        <span class="material-icons text-white text-sm">favorite</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Pastoral Social</h3>
-                <p class="text-gray-600 text-center mb-4 text-sm">Servicio a los más necesitados de nuestra comunidad</p>
-                <div class="flex items-center justify-center text-sm text-teal-600 font-semibold">
-                    <span class="material-icons mr-1 text-lg">schedule</span>
-                    Sábados • 2:00 PM
-                </div>
-                <div class="mt-4 flex justify-center">
-                    <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Centro de Recursos -->
-<section class="py-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] text-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16 scroll-reveal">
-            <h2 class="text-5xl font-bold mb-6">Centro de Recursos</h2>
-            <p class="text-xl opacity-90">Todo lo que necesitas para fortalecer tu vida espiritual</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="bg-white/10 glass-effect p-8 rounded-2xl text-center hover:bg-white/20 transition duration-300 cursor-pointer">
-                <span class="material-icons text-5xl mb-4 block">auto_stories</span>
-                <h3 class="text-xl font-bold mb-3">Oraciones</h3>
-                <p class="opacity-80">Colección de oraciones para cada momento</p>
-            </div>
-            
-            <div class="bg-white/10 glass-effect p-8 rounded-2xl text-center hover:bg-white/20 transition duration-300 cursor-pointer">
-                <span class="material-icons text-5xl mb-4 block">music_note</span>
-                <h3 class="text-xl font-bold mb-3">Cantos</h3>
-                <p class="opacity-80">Repertorio de música litúrgica y devocional</p>
-            </div>
-            
-            <div class="bg-white/10 glass-effect p-8 rounded-2xl text-center hover:bg-white/20 transition duration-300 cursor-pointer">
-                <span class="material-icons text-5xl mb-4 block">calendar_month</span>
-                <h3 class="text-xl font-bold mb-3">Calendario</h3>
-                <p class="opacity-80">Fechas importantes y celebraciones</p>
-            </div>
-            
-            <div class="bg-white/10 glass-effect p-8 rounded-2xl text-center hover:bg-white/20 transition duration-300 cursor-pointer">
-                <span class="material-icons text-5xl mb-4 block">article</span>
-                <h3 class="text-xl font-bold mb-3">Documentos</h3>
-                <p class="opacity-80">Formularios y recursos pastorales</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Directorio de Contactos -->
-<section class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="text-center mb-16 scroll-reveal">
-            <h2 class="text-5xl font-bold text-gray-900 mb-6">Nuestro Equipo</h2>
-            <p class="text-xl text-gray-600">Conoce a quienes sirven con amor en nuestra comunidad</p>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-xl text-center">
-                <div class="w-32 h-32 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span class="material-icons text-white text-4xl">person</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Padre José García</h3>
-                <p class="text-[#ab876f] font-semibold mb-3">Párroco</p>
-                <p class="text-gray-600 text-sm mb-4">Guía espiritual de nuestra comunidad</p>
-                <div class="flex justify-center space-x-3">
-                    <span class="material-icons text-gray-400">phone</span>
-                    <span class="material-icons text-gray-400">email</span>
-                </div>
-            </div>
-            
-            <div class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-xl text-center">
-                <div class="w-32 h-32 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span class="material-icons text-white text-4xl">person</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">María González</h3>
-                <p class="text-[#ab876f] font-semibold mb-3">Coordinadora Pastoral</p>
-                <p class="text-gray-600 text-sm mb-4">Coordinación de ministerios y actividades</p>
-                <div class="flex justify-center space-x-3">
-                    <span class="material-icons text-gray-400">phone</span>
-                    <span class="material-icons text-gray-400">email</span>
-                </div>
-            </div>
-            
-            <div class="bg-gradient-to-br from-gray-50 to-white p-8 rounded-2xl shadow-xl text-center">
-                <div class="w-32 h-32 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full mx-auto mb-6 flex items-center justify-center">
-                    <span class="material-icons text-white text-4xl">person</span>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Carlos Rodríguez</h3>
-                <p class="text-[#ab876f] font-semibold mb-3">Coordinador de Liturgia</p>
-                <p class="text-gray-600 text-sm mb-4">Responsable de las celebraciones litúrgicas</p>
-                <div class="flex justify-center space-x-3">
-                    <span class="material-icons text-gray-400">phone</span>
-                    <span class="material-icons text-gray-400">email</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Modal para Ministerios -->
-<div id="ministry-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-        <div class="sticky top-0 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-white p-8 rounded-t-3xl">
-            <div class="flex justify-between items-center">
-                <h2 id="modal-title" class="text-3xl font-bold"></h2>
-                <button onclick="closeModal('ministry-modal')" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition duration-300">
-                    <span class="material-icons text-white">close</span>
-                </button>
-            </div>
-            <p id="modal-subtitle" class="text-xl opacity-90 mt-2"></p>
-        </div>
-        
-        <div class="p-8">
-            <div class="flex items-center justify-center mb-6">
-                <img id="modal-image" src="" alt="" class="w-24 h-24 rounded-full object-cover shadow-lg">
-            </div>
-            
-            <div class="space-y-6">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center">
-                        <span class="material-icons mr-2 text-[#ab876f]">info</span>
-                        ¿Qué hacemos?
-                    </h3>
-                    <p id="modal-description" class="text-gray-700 leading-relaxed"></p>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center">
-                        <span class="material-icons mr-2 text-[#ab876f]">schedule</span>
-                        Horarios y Reuniones
-                    </h3>
-                    <p id="modal-schedule" class="text-gray-700"></p>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3 flex items-center">
-                        <span class="material-icons mr-2 text-[#ab876f]">person_add</span>
-                        ¿Cómo participar?
-                    </h3>
-                    <p id="modal-participation" class="text-gray-700"></p>
-                </div>
-            </div>
-            
-            <div class="mt-8 flex justify-center">
-                <button class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-lg transition duration-300">
-                    Quiero Participar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Arquitectura -->
-<div id="architecture-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full shadow-2xl">
-        <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-white p-8 rounded-t-3xl">
-            <div class="flex justify-between items-center">
-                <h2 id="arch-modal-title" class="text-3xl font-bold"></h2>
-                <button onclick="closeModal('architecture-modal')" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition duration-300">
-                    <span class="material-icons text-white">close</span>
-                </button>
-            </div>
-        </div>
-        
-        <div class="p-8">
-            <div class="text-center mb-6">
-                <div class="w-24 h-24 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span id="arch-modal-icon" class="material-icons text-3xl text-white"></span>
-                </div>
-            </div>
-            
-            <p id="arch-modal-description" class="text-gray-700 text-lg leading-relaxed text-center"></p>
-        </div>
-    </div>
-</div>
-
-<script>
-// Scroll animations
-function handleScrollAnimations() {
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    const scrollReveals = document.querySelectorAll('.scroll-reveal');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('animate', 'revealed');
-            }
-        });
-    }, {
-        threshold: 0.2,
-        rootMargin: '0px 0px -50px 0px'
-    });
-    
-    timelineItems.forEach(item => observer.observe(item));
-    scrollReveals.forEach(item => observer.observe(item));
-}
-
-// Smooth scroll
-function scrollToSection(sectionId) {
-    document.getElementById(sectionId).scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-    });
-}
-
-// Filter functionality
-function initializeFilters() {
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const ministryItems = document.querySelectorAll('.ministry-item');
-    
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Update active button
-            filterButtons.forEach(b => {
-                b.classList.remove('active', 'bg-[#D0B8A8]', 'text-white');
-                b.classList.add('bg-gray-200', 'text-gray-700');
-            });
-            btn.classList.add('active', 'bg-[#D0B8A8]', 'text-white');
-            btn.classList.remove('bg-gray-200', 'text-gray-700');
-            
-            const filter = btn.getAttribute('data-filter');
-            
-            ministryItems.forEach(item => {
-                if (filter === 'all' || item.getAttribute('data-category') === filter) {
-                    item.style.display = 'block';
-                    item.style.opacity = '0';
-                    setTimeout(() => {
-                        item.style.opacity = '1';
-                    }, 100);
-                } else {
-                    item.style.opacity = '0';
-                    setTimeout(() => {
-                        item.style.display = 'none';
-                    }, 300);
-                }
-            });
-        });
-    });
-}
-
-// Ministry Modal Data
-const ministryData = {
-    'legion': {
-        title: 'Legión de María',
-        subtitle: 'Apostolado Mariano',
-        image: 'https://i.pinimg.com/originals/90/c9/30/90c930833a634c3ee26925ebdded25cf.png',
-        description: 'La Legión de María es una asociación de laicos católicos que busca la gloria de Dios a través de la santificación personal y el apostolado activo bajo la dirección de la Santísima Virgen María. Nos dedicamos a la oración, el estudio de la fe católica y las obras de misericordia espiritual y corporal.',
-        schedule: 'Reuniones todos los sábados a las 4:00 PM en el salón parroquial. Duración aproximada de 1.5 horas.',
-        participation: 'Abierto a todos los católicos mayores de 16 años. Se requiere compromiso semanal y participación en las actividades apostólicas asignadas.'
-    },
-    'monaguillos': {
-        title: 'Monaguillos',
-        subtitle: 'Servidores del Altar',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMc6kqE_oMj4Rpwazy6dHq8iLnjb_7hLPcXg&s',
-        description: 'Los monaguillos son jóvenes que asisten al sacerdote durante las celebraciones litúrgicas, especialmente en la Santa Misa. Su servicio incluye llevar objetos litúrgicos, encender velas, ayudar en la preparación del altar y participar activamente en la liturgia.',
-        schedule: 'Ensayos los viernes a las 4:00 PM. Servicio en misas dominicales y festividades especiales.',
-        participation: 'Niños y jóvenes de 8 a 17 años. Se proporciona formación litúrgica básica y el vestuario necesario.'
-    },
-    'lectores': {
-        title: 'Lectores',
-        subtitle: 'Proclamadores de la Palabra',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0cLzgMrZVQLhFurSO7MqGfUeBGaPWEt6eqA&s',
-        description: 'Los lectores proclaman la Palabra de Dios durante las celebraciones litúrgicas, comunicando las lecturas bíblicas del Antiguo y Nuevo Testamento, así como el Salmo Responsorial. Su ministerio ayuda a que la comunidad reciba y medite la Palabra divina.',
-        schedule: 'Formación y ensayos los viernes a las 4:30 PM. Servicio rotativo en todas las misas.',
-        participation: 'Jóvenes y adultos con buena dicción y capacidad de lectura en público. Formación bíblica y litúrgica incluida.'
-    },
-    'coro': {
-        title: 'Coro Parroquial',
-        subtitle: 'Ministerio de Música Sacra',
-        image: '',
-        description: 'El coro parroquial anima las celebraciones litúrgicas con cantos sagrados, himnos y música que eleva el espíritu y facilita la oración comunitaria. Contribuimos a crear un ambiente de reverencia y alegría en las celebraciones.',
-        schedule: 'Ensayos los jueves a las 7:00 PM. Participación en misas dominicales y celebraciones especiales.',
-        participation: 'Abierto a personas con o sin experiencia musical. Proporcionamos formación vocal y conocimiento del repertorio litúrgico.'
-    },
-    'catequistas': {
-        title: 'Catequistas',
-        subtitle: 'Formadores en la Fe',
-        image: '',
-        description: 'Los catequistas acompañan a niños, jóvenes y adultos en su formación cristiana, preparándolos para recibir los sacramentos y crecer en el conocimiento y amor de Jesucristo. Transmiten la doctrina católica con amor y paciencia.',
-        schedule: 'Clases los domingos a las 9:00 AM. Reuniones de formación mensual para catequistas.',
-        participation: 'Adultos comprometidos con la fe católica. Se proporciona formación catequética y material didáctico.'
-    },
-    'social': {
-        title: 'Pastoral Social',
-        subtitle: 'Servicio a los Necesitados',
-        image: '',
-        description: 'La Pastoral Social se dedica a servir a los más vulnerables de nuestra comunidad, siguiendo el ejemplo de Cristo. Organizamos colectas, visitas a enfermos, apoyo a familias necesitadas y programas de asistencia social.',
-        schedule: 'Reuniones los sábados a las 2:00 PM. Actividades de servicio según necesidades de la comunidad.',
-        participation: 'Abierto a todos los que deseen servir al prójimo. Espíritu de servicio y disponibilidad de tiempo requeridos.'
-    }
-};
-
-// Architecture Modal Data
-const architectureData = {
-    'altar': {
-        title: 'Altar Mayor',
-        icon: 'church',
-        description: 'El altar mayor es el corazón de nuestro templo, donde se celebra diariamente el Santo Sacrificio de la Misa. Construido en mármol con detalles en bronce, representa la mesa del banquete celestial donde Cristo se hace presente en la Eucaristía para alimentar a su pueblo.'
-    },
-    'baptistery': {
-        title: 'Baptisterio',
-        icon: 'water_drop',
-        description: 'Nuestro baptisterio es el lugar sagrado donde los nuevos cristianos nacen a la vida de la gracia. La pila bautismal, tallada en piedra natural, simboliza el sepulcro místico donde morimos al pecado y resucitamos como hijos de Dios.'
-    },
-    'virgin': {
-        title: 'Altar de la Virgen',
-        icon: 'favorite',
-        description: 'Este altar lateral está dedicado a la Santísima Virgen María, Madre de Dios y Madre nuestra. Es un espacio de recogimiento y oración mariana, donde los fieles acuden para pedir la intercesión de la Madre celestial y ofrecer sus peticiones.'
-    }
-};
-
-// Modal functions
-function openMinistryModal(ministry) {
-    const data = ministryData[ministry];
-    if (data) {
-        document.getElementById('modal-title').textContent = data.title;
-        document.getElementById('modal-subtitle').textContent = data.subtitle;
-        document.getElementById('modal-image').src = data.image;
-        document.getElementById('modal-description').textContent = data.description;
-        document.getElementById('modal-schedule').textContent = data.schedule;
-        document.getElementById('modal-participation').textContent = data.participation;
-        document.getElementById('ministry-modal').classList.remove('hidden');
-        document.getElementById('ministry-modal').classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function openArchitectureModal(architecture) {
-    const data = architectureData[architecture];
-    if (data) {
-        document.getElementById('arch-modal-title').textContent = data.title;
-        document.getElementById('arch-modal-icon').textContent = data.icon;
-        document.getElementById('arch-modal-description').textContent = data.description;
-        document.getElementById('architecture-modal').classList.remove('hidden');
-        document.getElementById('architecture-modal').classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-    document.getElementById(modalId).classList.remove('flex');
-    document.body.style.overflow = 'auto';
-}
-
-// Initialize everything when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    handleScrollAnimations();
-    initializeFilters();
-    
-    // Close modals when clicking outside
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('fixed') && e.target.classList.contains('inset-0')) {
-            closeModal(e.target.id);
-        }
-    });
-    
-    // Close modals with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModal('ministry-modal');
-            closeModal('architecture-modal');
-        }
-    });
-});
-</script>
-
-</body>
-</html>
+    </section>
+</main>

@@ -1,0 +1,366 @@
+/* ================================
+   ESTILOS PERSONALIZADOS PARA LA PARROQUIA
+   ================================ */
+
+/* Parallax Background */
+.parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+/* Timeline Animations */
+.timeline-item {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Ministry Cards Hover Effects */
+.ministry-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.ministry-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(208, 184, 168, 0.3), transparent);
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ministry-card:hover::before {
+    opacity: 1;
+}
+
+.ministry-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Floating Animation */
+.floating-animation {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+    }
+    33% { 
+        transform: translateY(-20px) rotate(2deg);
+    }
+    66% { 
+        transform: translateY(-10px) rotate(-2deg);
+    }
+}
+
+/* Pulse Glow Effect */
+.pulse-glow {
+    animation: pulseGlow 3s infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(208, 184, 168, 0.4);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 40px rgba(208, 184, 168, 0.8);
+        transform: scale(1.02);
+    }
+}
+
+/* Glass Effect */
+.glass-effect {
+    backdrop-filter: blur(15px) saturate(180%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Scroll Reveal Animation */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Custom Gradient Backgrounds */
+.gradient-bg-1 {
+    background: linear-gradient(135deg, #D0B8A8 0%, #b5a394 50%, #ab876f 100%);
+}
+
+.gradient-bg-2 {
+    background: linear-gradient(135deg, #ab876f 0%, #D0B8A8 100%);
+}
+
+/* Filter Button Active State */
+.filter-btn.active {
+    background: linear-gradient(135deg, #D0B8A8, #ab876f);
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(208, 184, 168, 0.4);
+}
+
+.filter-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Animations */
+.modal-enter {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-exit {
+    animation: modalFadeOut 0.3s ease-in;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #D0B8A8, #ab876f);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #ab876f, #D0B8A8);
+}
+
+/* Statistics Counter Animation */
+.counter-number {
+    animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ministry Grid Transitions */
+.ministry-item {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ministry-item.fade-out {
+    opacity: 0;
+    transform: scale(0.9);
+    pointer-events: none;
+}
+
+.ministry-item.fade-in {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Team Card Hover Effect */
+.team-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.team-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.team-card:hover::after {
+    left: 100%;
+}
+
+.team-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+/* Resource Cards Ripple Effect */
+.resource-card {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.resource-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.resource-card:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Timeline Pulse Effect */
+.timeline-pulse {
+    position: relative;
+}
+
+.timeline-pulse::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: rgba(208, 184, 168, 0.3);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .parallax-bg {
+        background-attachment: scroll;
+    }
+    
+    .ministry-card:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    .floating-animation {
+        animation-duration: 8s;
+    }
+}
+
+@media (max-width: 640px) {
+    .timeline-item {
+        transform: translateX(-20px);
+    }
+    
+    .timeline-item.animate {
+        transform: translateX(0);
+    }
+}
+
+/* Accessibility Improvements */
+.focus\:outline-custom:focus {
+    outline: 2px solid #D0B8A8;
+    outline-offset: 2px;
+}
+
+/* Reduced Motion for Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .floating-animation,
+    .pulse-glow,
+    .timeline-item,
+    .ministry-card,
+    .scroll-reveal {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .ministry-card:hover {
+        transform: none !important;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .fixed,
+    .floating-animation,
+    .pulse-glow {
+        display: none !important;
+    }
+    
+    .parallax-bg {
+        background: #D0B8A8 !important;
+    }
+}
+
+/* Dark Mode Support (Optional) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --parroquia-primary: #D0B8A8;
+        --parroquia-secondary: #ab876f;
+        --parroquia-accent: #b5a394;
+    }
+}
