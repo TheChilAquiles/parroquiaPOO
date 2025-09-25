@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         // ✅ Redirige al listado principal después de insertar
-        header("Location: 0");
+        header("Location: /ParroquiaPOO/");
         exit();
 
     } catch (PDOException $e) {
@@ -76,13 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
             </div>
 
-
             <!-- Botones -->
             <div class="flex justify-between items-center pt-4">
                 <a href="/ParroquiaPOO/" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">
                     Cancelar
                 </a>
-               
 
                 <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow font-semibold">
                     Guardar Pago
@@ -92,5 +90,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
-
-

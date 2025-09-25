@@ -35,6 +35,6 @@ class PagosController {
         }
 
         // Siempre carga la vista después de procesar
-        include_once(__DIR__ . '/../Vista/crear_pago.php');
+        include_once(__DIR__ . '/../Vista/agregar_pago.php');
     }
 }

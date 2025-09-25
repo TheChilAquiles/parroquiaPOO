@@ -1,41 +1,60 @@
 <?php
-require_once "../Modelo/ModeloPago.php";
+require_once __DIR__ . "/../Modelo/Conexion.php";
 
-class ControladorPago {
-    private $modelo;
+class ControladorPagos {
 
-    public function __construct() {
-        $this->modelo = new ModeloPago();
-    }
-
-    // Mostrar lista de pagos
     public function index() {
-        $pagos = $this->modelo->obtenerPagos();  // ✅ método existe en ModeloPago
-        include "../Vista/Pagos.php";            // se manda $pagos a la vista
-    }
+        $conexion = Conexion::conectar();
+        $mensaje = "";
 
-    // Guardar un nuevo pago
-    public function guardar($data) {
-        if (!empty($data)) {
-            $this->modelo->insertarPago(         // ✅ método existe en ModeloPago
-                $data['certificado_id'],
-                $data['valor'],
-                $data['estado'],
-                $data['fecha_registro'],
-                $data['tipo_pago_id']
-            );
+        // Manejo de borrado
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
+            $id = intval($_POST['id'] ?? 0);
+
+            if ($id > 0) {
+                // Verificar si el pago existe
+                $check = $conexion->prepare("SELECT id FROM pagos WHERE id = ?");
+                $check->execute([$id]);
+
+                if ($check->fetch()) {
+                    // Verificar si el pago tiene reportes asociados
+                    $checkReportes = $conexion->prepare("SELECT COUNT(*) FROM reportes WHERE id_pagos = ?");
+                    $checkReportes->execute([$id]);
+                    $tieneReportes = $checkReportes->fetchColumn();
+
+                    if ($tieneReportes > 0) {
+                        $mensaje = "❌ No se puede eliminar el pago con ID {$id} porque tiene reportes asociados.";
+                    } else {
+                        $del = $conexion->prepare("DELETE FROM pagos WHERE id = ?");
+                        $del->execute([$id]);
+                        $mensaje = "✅ Pago con ID {$id} eliminado correctamente.";
+                    }
+                } else {
+                    $mensaje = "⚠️ No se encontró pago con ID {$id}.";
+                }
+            } else {
+                $mensaje = "⚠️ ID inválido.";
+            }
         }
-        header("Location: ControladorPago.php?accion=index");
-        exit;
+
+        // Listado
+        $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
+        $stmt = $conexion->prepare($sql);
+        $stmt->execute();
+        $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Estadísticas
+        $totalPagos = count($pagos);
+        $pagosCompletados = count(array_filter($pagos, function($p) { 
+            return strtolower($p['estado']) === 'pagado'; 
+        }));
+        $valorTotal = array_sum(array_column($pagos, 'valor'));
+
+        // Pasar datos a la vista
+        require __DIR__ . "/../Vista/pagos.php";
     }
-}
 
-// -------- RUTEO --------
-$controlador = new ControladorPago();
-$accion = $_GET['accion'] ?? 'index';
-
-if ($accion === 'guardar') {
-    $controlador->guardar($_POST);
-} else {
-    $controlador->index();
+    public function nuevo() {
+        require __DIR__ . "/../Vista/agregar_pago.php";
+    }
 }

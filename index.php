@@ -317,21 +317,45 @@ switch ($_SESSION['menu-item']) {
     // -- LINEA PARA TESTEAR EN LOG  --
 
 
+$c = $_GET['c'] ?? 'pagos';   // Controlador
+$a = $_GET['a'] ?? 'index';   // Acción
 
-    include_once('Vista/pagos.php');
+if ($c === 'pagos') {
+    require_once __DIR__ . "/Controlador/ControladorPagos.php";
+    $controller = new ControladorPagos();
+
+    if (method_exists($controller, $a)) {
+        $controller->$a();
+    } else {
+        echo "Acción no encontrada";
+    }
+}
+    break;
+
+    
+  case 'Actualizar_pago':
+    include_once('Vista/actualizar_pago.php');
+    break;
+
+
+    
+case 'Reportes':
+    require_once(__DIR__ . '/Controlador/ReporteController.php');
+    $reporteController = new ReporteController();
+    $reporteController->index();
     break;
 
 
 
-
-  case 'Reportes':
-    include_once(__DIR__ . '/Vista/reportes.php');
-
-    break;
+  
+  
   case 'Dashboard':
-    include_once('Vista/dashboard.php');
+    require_once(__DIR__ . "/Controlador/DashboardController.php");
+    $controlador = new DashboardController();
+    $controlador->mostrarDashboard();
     break;
 
+  
   case 'Certificados':
 
     // -- LINEA PARA TESTEAR EN LOG --

@@ -32,7 +32,10 @@ try {
     }
 
     // ====== LISTADO ======
-    $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
+    $sql = "SELECT p.*, t.descripcion as tipo_pago_nombre 
+        FROM pagos p 
+        LEFT JOIN tipos_pago t ON p.tipo_pago_id = t.id 
+        ORDER BY p.fecha_pago DESC, p.id DESC";
     $stmt = $conexion->prepare($sql);
     $stmt->execute();
     $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -209,7 +212,7 @@ try {
                     </div>
 
                     <!-- Botón agregar premium -->
-                    <a href="/ParroquiaPOO/Vista/agregar_pago.php" 
+                    <a href="/ParroquiaPOO/parroquiaPOO/Vista/agregar_pago.php" 
                        class="shimmer inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-800 font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105">
                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
@@ -279,16 +282,18 @@ try {
                                             </td>
 
                                             <!-- Tipo -->
-                                            <td class="px-8 py-6 text-center hidden md:table-cell">
-                                                <span class="px-3 py-2 rounded-xl text-sm font-bold bg-gray-100 text-gray-700 border border-gray-300">
-                                                    Tipo <?= htmlspecialchars($pago['tipo_pago_id']) ?>
-                                                </span>
-                                            </td>
+                                            <!-- Tipo -->
+<!-- Tipo -->
+<td class="px-3 py-6 text-center hidden md:table-cell whitespace-nowrap">
+    <span class="inline-block px-3 py-1 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300">
+        <?= htmlspecialchars($pago['tipo_pago_nombre']) ?>
+    </span>
+</td>
 
                                             <!-- Acciones -->
                                             <td class="px-8 py-6 text-center">
                                                 <div class="flex items-center justify-center space-x-3">
-                                                    <a href="actualizar_pago.php?id=<?= htmlspecialchars($pago['id']) ?>" 
+                                                    <a href="/ParroquiaPOO/parroquiaPOO/Vista/actualizar_pago.php?id=<?= htmlspecialchars($pago['id']) ?>" 
                                                        class="px-4 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-gray-800 text-sm font-bold rounded-xl hover:scale-110 transition-transform shadow-lg">
                                                         Editar
                                                     </a>

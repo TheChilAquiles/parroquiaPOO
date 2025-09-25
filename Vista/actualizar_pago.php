@@ -6,7 +6,6 @@ require_once __DIR__ . "/../Modelo/Conexion.php";
 $mensaje = "";
 $conexion = Conexion::conectar();
 $pago = null;
-$baseUrl = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
 
 // Cargar datos si viene id por GET
 if (isset($_GET['id'])) {
@@ -41,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ]);
 
         $_SESSION['mensaje'] = "Pago actualizado correctamente.";
-        header("Location: {$baseUrl}/pagos.php");
+        // ✅ Redirigir SIEMPRE a la ruta real de pagos.php
+        header("Location: /ParroquiaPOO/parroquiaPOO/index.php?menu-item=Pagos");
         exit();
 
     } catch (PDOException $e) {
@@ -90,14 +90,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div>
-          <label class="block text-gray-700 font-semibold mb-1">Tipo de Pago (ID):</label>
-          <input type="number" name="tipo_pago_id" required value="<?= htmlspecialchars($pago['tipo_pago_id']) ?>"
-                 class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
-        </div>
+    <label class="block text-gray-700 font-semibold mb-1">Tipo de Pago:</label>
+    <select name="tipo_pago_id" required class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+        <?php
+        $tipos = $conexion->query("SELECT * FROM tipos_pago");
+        foreach ($tipos as $tipo) {
+            $selected = ($pago['tipo_pago_id'] == $tipo['id']) ? 'selected' : '';
+            echo "<option value='{$tipo['id']}' $selected>{$tipo['descripcion']}</option>";
+        }
+        ?>
+    </select>
+</div>
 
         <div class="flex justify-between items-center pt-4">
-          <a href="<?= $baseUrl ?>/pagos.php" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">Cancelar</a>
-          <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg shadow font-semibold">Actualizar Pago</button>
+          <!-- ✅ Cancelar regresa a la vista correcta -->
+          <button type="button" 
+        onclick="window.history.back()"
+        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow">
+    Cancelar
+</button>
+          <button type="submit" 
+                  class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg shadow font-semibold">
+                  Actualizar Pago
+          </button>
         </div>
       </form>
     <?php endif; ?>
