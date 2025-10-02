@@ -33,80 +33,209 @@ class ModeloSacramento
 
 
 
+    public function getParticipantes($sacramentoId)
+    {
+        try {
+            $stmt = $this->conexion->prepare("
+            SELECT 
+                pr.rol AS rol,
+                CONCAT(f.primer_nombre, ' ', f.segundo_nombre, ' ', f.primer_apellido, ' ', f.segundo_apellido) AS nombre
+            FROM participantes p
+            JOIN feligreses f ON f.id = p.feligres_id
+            JOIN participantes_rol pr ON pr.id = p.rol_participante_id
+            WHERE p.sacramento_id = :sacramentoId
+        ");
+
+            $stmt->bindParam(':sacramentoId', $sacramentoId, PDO::PARAM_INT);
+            $stmt->execute();
+            $participantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            header('Content-Type: application/json');
+            echo json_encode($participantes);
+        } catch (\Throwable $th) {
+            http_response_code(500);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error al obtener participantes',
+                'debug' => $th->getMessage()
+            ]);
+        }
+    }
+
+
     public function listRecords()
     {
-        $sqlQuery = "SELECT * FROM {$this->nameTable} ";
-        $where = "";
+        $tipo = $_POST['Tipo'];
+        $numero = $_POST['Numero'];
+        $draw = intval($_POST['draw']);
+        $start = intval($_POST['start']);
+        $length = intval($_POST['length']);
+        $searchValue = $_POST['search']['value'];
+
+        // Filtros SQL seguros usando prepared statements
         $params = [];
-
-        if (!empty($_POST["search"]["value"])) {
-            $where .= " WHERE (
-            id LIKE :search
-        ) ";
-            $params[':search'] = "%" . $_POST["search"]["value"] . "%";
+        $tipoFilter = '';
+        if ($tipo !== 'Todos' && is_numeric($tipo)) {
+            $tipoFilter = "AND st.id = :tipo";
+            $params[':tipo'] = $tipo;
         }
 
-        $sqlQuery .= $where . " "; // <- Asegura el espacio antes de ORDER
-
-        $columns = ["id"];
-        if (!empty($_POST["order"])) {
-            $colIndex = intval($_POST["order"][0]["column"]);
-            $orderDir = $_POST["order"][0]["dir"] === "desc" ? "DESC" : "ASC";
-            $orderColumn = $columns[$colIndex] ?? "id";
-            $sqlQuery .= "ORDER BY {$orderColumn} {$orderDir} ";
-        } else {
-            $sqlQuery .= "ORDER BY id DESC ";
+        $numeroFilter = '';
+        if ($numero !== '') {
+            $numeroFilter = "AND l.numero = :numero";
+            $params[':numero'] = $numero;
         }
 
-        if ($_POST["length"] != -1) {
-            $start = intval($_POST["start"]);
-            $length = intval($_POST["length"]);
-            $sqlQuery .= "LIMIT $start, $length ";
+        $searchQuery = '';
+        if ($searchValue != '') {
+            $searchQuery = " AND (
+            CONCAT(f.primer_nombre, ' ', f.segundo_nombre, ' ', f.primer_apellido, ' ', f.segundo_apellido) LIKE :search OR
+            st.tipo LIKE :search
+        )";
+            $params[':search'] = "%$searchValue%";
         }
 
-        $stmt = $this->conexion->prepare($sqlQuery);
+        // Query total sin filtro
+        $totalRecordsQuery = "SELECT COUNT(*) AS total FROM sacramentos s
+        JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+        JOIN libros l ON s.libro_id = l.id
+        LEFT JOIN participantes p ON p.sacramento_id = s.id AND p.rol_participante_id IN (1, 2, 3, 4, 5)
+        LEFT JOIN feligreses f ON f.id = p.feligres_id
+        WHERE 1 $tipoFilter $numeroFilter";
 
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        $stmtTotal = $this->conexion->prepare($totalRecordsQuery);
+        $paramsForTotal = $params;
+        unset($paramsForTotal[':search']);
+        $stmtTotal->execute($paramsForTotal);
+        $totalRecords = $stmtTotal->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Query total filtrado
+        $filteredRecordsQuery = $totalRecordsQuery . $searchQuery;
+        $stmtFiltered = $this->conexion->prepare($filteredRecordsQuery);
+        $stmtFiltered->execute($params);
+        $totalFiltered = $stmtFiltered->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Query paginada
+        $dataQuery = "SELECT 
+        s.id AS sacramento_id,
+        st.tipo AS sacramento_tipo,
+        s.fecha_generacion,
+        CONCAT(f.primer_nombre, ' ', f.segundo_nombre, ' ', f.primer_apellido, ' ', f.segundo_apellido ) AS participante_principal,
+        td.tipo AS tipo_documento,
+        f.numero_documento,
+        CASE WHEN c.id IS NULL THEN 'No' ELSE 'Sí' END AS tiene_certificado
+        FROM sacramentos s
+        JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+        JOIN libros l ON s.libro_id = l.id
+        LEFT JOIN certificados c ON c.sacramento_id = s.id
+        LEFT JOIN participantes p ON p.sacramento_id = s.id AND p.rol_participante_id IN (1, 2, 3, 4, 5)
+        LEFT JOIN feligreses f ON f.id = p.feligres_id
+        LEFT JOIN documento_tipos td ON td.id = f.tipo_documento_id
+        WHERE 1 $tipoFilter $numeroFilter $searchQuery
+        ORDER BY s.fecha_generacion DESC
+        LIMIT :start, :length";
+
+        // Bind para start y length deben ser enteros y usar bindValue con tipo PDO::PARAM_INT
+        $stmtData = $this->conexion->prepare($dataQuery);
+
+        // Bind de parámetros normales
+        foreach ($params as $key => $val) {
+            $stmtData->bindValue($key, $val);
         }
+        $stmtData->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmtData->bindValue(':length', $length, PDO::PARAM_INT);
 
-        $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $stmtTotal = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable}");
-        $stmtTotal->execute();
-        $recordsTotal = $stmtTotal->fetchColumn();
-
-        if (!empty($_POST["search"]["value"])) {
-            $stmtFiltered = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable} {$where}");
-            foreach ($params as $key => $value) {
-                $stmtFiltered->bindValue($key, $value, PDO::PARAM_STR);
-            }
-            $stmtFiltered->execute();
-            $recordsFiltered = $stmtFiltered->fetchColumn();
-        } else {
-            $recordsFiltered = $recordsTotal;
-        }
-
-        $records = [];
-        foreach ($result as $record) {
-            $row = [];
-            foreach ($columns as $col) {
-                $row[] = $record[$col] ?? null;
-            }
-            $records[] = $row;
-        }
-
-        $response = [
-            "draw" => intval($_POST["draw"]),
-            "recordsTotal" => $recordsTotal,
-            "recordsFiltered" => $recordsFiltered,
-            "data" => $records
-        ];
+        $stmtData->execute();
+        $data = $stmtData->fetchAll(PDO::FETCH_ASSOC);
 
         header('Content-Type: application/json');
-        echo json_encode($response);
+        echo json_encode([
+            "draw" => $draw,
+            "recordsTotal" => $totalRecords,
+            "recordsFiltered" => $totalFiltered,
+            "data" => $data
+        ]);
     }
+
+
+
+
+
+
+    // public function listRecords()
+    // {
+    //     $sqlQuery = "SELECT * FROM {$this->nameTable} ";
+    //     $where = "";
+    //     $params = [];
+
+    //     if (!empty($_POST["search"]["value"])) {
+    //         $where .= " WHERE (
+    //         id LIKE :search
+    //     ) ";
+    //         $params[':search'] = "%" . $_POST["search"]["value"] . "%";
+    //     }
+
+    //     $sqlQuery .= $where . " "; // <- Asegura el espacio antes de ORDER
+
+    //     $columns = ["id",""];
+    //     if (!empty($_POST["order"])) {
+    //         $colIndex = intval($_POST["order"][0]["column"]);
+    //         $orderDir = $_POST["order"][0]["dir"] === "desc" ? "DESC" : "ASC";
+    //         $orderColumn = $columns[$colIndex] ?? "id";
+    //         $sqlQuery .= "ORDER BY {$orderColumn} {$orderDir} ";
+    //     } else {
+    //         $sqlQuery .= "ORDER BY id DESC ";
+    //     }
+
+    //     if ($_POST["length"] != -1) {
+    //         $start = intval($_POST["start"]);
+    //         $length = intval($_POST["length"]);
+    //         $sqlQuery .= "LIMIT $start, $length ";
+    //     }
+
+    //     $stmt = $this->conexion->prepare($sqlQuery);
+
+    //     foreach ($params as $key => $value) {
+    //         $stmt->bindValue($key, $value, PDO::PARAM_STR);
+    //     }
+
+    //     $stmt->execute();
+    //     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    //     $stmtTotal = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable}");
+    //     $stmtTotal->execute();
+    //     $recordsTotal = $stmtTotal->fetchColumn();
+
+    //     if (!empty($_POST["search"]["value"])) {
+    //         $stmtFiltered = $this->conexion->prepare("SELECT COUNT(*) FROM {$this->nameTable} {$where}");
+    //         foreach ($params as $key => $value) {
+    //             $stmtFiltered->bindValue($key, $value, PDO::PARAM_STR);
+    //         }
+    //         $stmtFiltered->execute();
+    //         $recordsFiltered = $stmtFiltered->fetchColumn();
+    //     } else {
+    //         $recordsFiltered = $recordsTotal;
+    //     }
+
+    //     $records = [];
+    //     foreach ($result as $record) {
+    //         $row = [];
+    //         foreach ($columns as $col) {
+    //             $row[] = $record[$col] ?? null;
+    //         }
+    //         $records[] = $row;
+    //     }
+
+    //     $response = [
+    //         "draw" => intval($_POST["draw"]),
+    //         "recordsTotal" => $recordsTotal,
+    //         "recordsFiltered" => $recordsFiltered,
+    //         "data" => $records
+    //     ];
+
+    //     header('Content-Type: application/json');
+    //     echo json_encode($response);
+    // }
 
     public function CrearSacramento($data)
     {
@@ -171,8 +300,7 @@ class ModeloSacramento
                 $datosFeligres['segundo-nombre']  = $integrante['segundoNombre'] ?? '';
                 $datosFeligres['primer-apellido'] = $integrante['primerApellido'];
                 $datosFeligres['segundo-apellido']  = $integrante['segundoApellido'] ?? '';
-                $dataFeligres['rol-Participante'] =   $integrante['rolParticipante'] ?? null; 
- 
+                $dataFeligres['rol-Participante'] =   $integrante['rolParticipante'] ?? null;
 
 
                 try {
@@ -184,7 +312,7 @@ class ModeloSacramento
                     } else {
                         try {
 
-                            $create =  $ControladorFeligres->ctrlCrearFeligres( $datosFeligres);
+                            $create =  $ControladorFeligres->ctrlCrearFeligres($datosFeligres);
 
                             if ($create['status'] == 'success') {
 
@@ -201,7 +329,7 @@ class ModeloSacramento
                     $Partifipante = [
                         'feligres-id' =>  $feligresID,
                         'sacramento-id' =>  $sacramentoID,
-                        'participante-id' =>   $integrante['rolParticipante'] ?? null  
+                        'participante-id' =>   $integrante['rolParticipante'] ?? null
                     ];
 
                     $resultado =   $ControladorParticipantes->ctrlCrearParticipante(datos: $Partifipante);

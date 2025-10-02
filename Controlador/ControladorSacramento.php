@@ -1,7 +1,7 @@
 <?php
-include_once __DIR__ . '/../Modelo/ModeloSacramento.php' ;
-include_once __DIR__ . '/../Controlador/ControladorFeligres.php' ;
-include_once __DIR__ . '/../Modelo/Conexion.php' ;
+include_once __DIR__ . '/../Modelo/ModeloSacramento.php';
+include_once __DIR__ . '/../Controlador/ControladorFeligres.php';
+include_once __DIR__ . '/../Modelo/Conexion.php';
 
 
 // $database = new conexion();
@@ -24,9 +24,14 @@ if (!empty($_POST['Doaction'])) {
   switch ($_POST['Doaction']) {
 
     case 'listRecords':
-
-      return $record->listRecords();
+      $record->listRecords(); // ya hace echo adentro del método
       break;
+
+
+    case 'getParticipantes':
+    $sacramentoId = intval($_POST['sacramento_id']);
+    $record->getParticipantes($sacramentoId);
+    break;
 
     case 'addRecord':
 

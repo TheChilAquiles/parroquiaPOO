@@ -1,6 +1,6 @@
 <!-- Contenedor principal -->
-<div class="min-h-[500px] px-4 py-8 ">
-    <div class="max-w-7xl mx-auto bg-red-500">
+<div class="min-h-[500px] px-4 py-8 flex-1 ">
+    <div class="max-w-7xl mx-auto bg-white/60 rounded p-5">
 
         <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= $libroTipo . " " . $_POST['numero-libro'] ?> </h2>
 
@@ -16,16 +16,24 @@
             <table id="recordListing" class="min-w-full text-sm text-left text-gray-700 border border-gray-300">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-3 py-2 border">#</th>
+                        <th></th> 
+                        <th>Participante Principal</th>
+                        <th>Tipo Documento</th>
+                        <th>Numero Doc</th>
+                        <th>Fecha</th>
+                        <th>Certificado</th>
                     </tr>
                 </thead>
+
                 <tbody></tbody>
             </table>
         </div>
+
+
+
+
     </div>
 </div>
-
-<?= "Solae : " . $tipo ?>
 
 
 
@@ -135,64 +143,31 @@
 
 
                             <div id="BuscarUser" class="p-2 rounded bg-green-500">
-                                <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="#616161">
-                                        <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
-                                        <circle cx="20" cy="20" r="16" />
-                                    </g>
-                                    <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
-                                    <circle fill="#64B5F6" cx="20" cy="20" r="13" />
-                                    <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
+
+
+
+                                <svg class="w-6" viewBox="0 0 64 64" id="Layer_1" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                                    <style>
+                                        .st2 {
+                                            fill: #d2f0ea
+                                        }
+                                    </style>
+                                    <path class="st2" d="m37.24 40.04 2.87-2.94c2.38-3.05 3.67-6.89 3.82-11.06.33-9.51-7.81-17.67-18-18-9.94-.32-18 8.06-18 18s8.06 18 18 18c4.28 0 8.22-1.5 11.31-4" />
+                                    <circle cx="25.93" cy="26.04" r="13.76" style="fill:#fff" />
+                                    <path class="st2" d="M16.16 27.04c-.55 0-1-.45-1-1 0-5.94 4.83-10.76 10.76-10.76.55 0 1 .45 1 1s-.45 1-1 1c-4.83 0-8.76 3.93-8.76 8.76 0 .56-.45 1-1 1" />
+                                    <path d="M54.46 48.03 42.33 37.96l-.68.68-1.54-1.54-2.87 2.94 1.51 1.51-.68.68 10.08 12.12a4.49 4.49 0 0 0 6.62.31 4.5 4.5 0 0 0-.31-6.63" style="fill:#7c64bd" />
+                                    <path d="M25.93 39.81c-7.59 0-13.76-6.17-13.76-13.76v11.59c3.3 3.92 8.24 6.41 13.76 6.41 4.29 0 8.22-1.5 11.31-4.01l2.45-2.51V26.04c0 7.59-6.17 13.77-13.76 13.77" style="fill:#b4e6dd" />
                                 </svg>
+
+
+
+
                             </div>
-
-
 
                         </div>
 
 
 
-
-
-
-
-
-                        <!-- <div class="flex space-x-2 w-full justify-evenly flex-1">
-                            <label for="tipo-doc" class="block font-medium flex-1">Tipo Documento</label>
-
-                            <label for="numero-doc" class="block font-medium flex-1 ">Numero De Documento</label>
-
-                        </div>
-
-
-
-                        <div class="flex space-x-2 w-full justify-between mb-4 flex-1">
-
-
-                            <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center " name="tipo-doc" id="tipo-doc">
-                                <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
-                                <option value="1">CC</option>
-                                <option value="2">Ti</option>
-                            </select>
-
-
-                            <input class="border border-gray-300 rounded  w-full placeholder:text-center " type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-
-
-                            <div id="BuscarUser" class="p-2 rounded bg-green-500">
-                                <svg class="w-6" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
-                                    <g fill="#616161">
-                                        <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
-                                        <circle cx="20" cy="20" r="16" />
-                                    </g>
-                                    <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
-                                    <circle fill="#64B5F6" cx="20" cy="20" r="13" />
-                                    <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
-                                </svg>
-                            </div>
-
-
-                        </div> -->
 
                     </div>
 
@@ -602,13 +577,13 @@
             const idDelInput = inputEncontrado ? inputEncontrado.id : null;
 
             resaltarCampo('#rolParticipante');
-            
-            const select = document.getElementById('rolParticipante'); 
-            const textoSeleccionado = select.options[select.selectedIndex].text;
-            
-            resaltarCampo('#'+textoSeleccionado+'-rol');
 
-            alert('Este ROL ya ha sido añadido.' + textoSeleccionado );
+            const select = document.getElementById('rolParticipante');
+            const textoSeleccionado = select.options[select.selectedIndex].text;
+
+            resaltarCampo('#' + textoSeleccionado + '-rol');
+
+            alert('Este ROL ya ha sido añadido.' + textoSeleccionado);
             return;
         }
 
@@ -627,7 +602,7 @@
 
 
         const roles = {
-            1: 'Bautizo',
+            1: 'Bautizado',
             2: 'Confirmando',
             3: 'Difunto',
             4: 'Esposo',
@@ -798,9 +773,7 @@
         // $('#save').val('Adicionar');
     });
 
-
     const table = new DataTable('#recordListing', {
-
         processing: true,
         serverSide: true,
         serverMethod: 'post',
@@ -825,19 +798,97 @@
             type: "POST",
             data: {
                 Doaction: 'listRecords',
-
                 Tipo: <?php echo json_encode($tipo); ?>,
                 Numero: <?php echo json_encode($_POST['numero-libro']); ?>
             },
             dataType: "json"
         },
-        columnDefs: [{
-            // targets: [0, 6, 7],
-            orderable: false,
-        }, ],
+        columns: [{
+                className: 'details-control',
+                orderable: false,
+                data: null,
+                defaultContent: '<span class="toggle-icon pl-2">➕</span>',
+                width: "10px"
+            },
+            {
+                data: 'participante_principal',
+                title: 'Participante Principal'
+            },
+            {
+                data: 'tipo_documento',
+                title: 'Tipo Documento' // Te recomiendo poner título para que se vea bien
+            },
+            {
+                data: 'numero_documento',
+                title: 'Número Documento' // Lo mismo aquí
+            },
+            {
+                data: 'fecha_generacion',
+                title: 'Fecha'
+            },
+            {
+                data: 'tiene_certificado',
+                title: 'Certificado'
+            }
+        ],
         pageLength: 10
-
     });
+
+    $('#recordListing tbody').on('click', 'td.details-control', function() {
+        const tr = $(this).closest('tr');
+        const row = table.row(tr);
+        const icon = tr.find('span.toggle-icon');
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+            icon.text('➕');
+        } else {
+            const sacramentoId = row.data().sacramento_id;
+
+            $.ajax({
+                url: 'Controlador/ControladorSacramento.php',
+                type: 'POST',
+                data: {
+                    Doaction: 'getParticipantes',
+                    Tipo: <?php echo json_encode($tipo); ?>,
+                    Numero: <?php echo json_encode($_POST['numero-libro']); ?>,
+                    sacramento_id: sacramentoId
+                },
+                dataType: 'json',
+                success: function(data) {
+                    let html = '';
+                    if (data.length > 0) {
+                        html = '<ul style="margin:0;padding-left:15px">';
+                        data.forEach(p => {
+                            html += `<li><strong>${p.rol}</strong>: ${p.nombre}</li>`;
+                        });
+                        html += '</ul>';
+                    } else {
+                        html = '<em>No hay participantes adicionales</em>';
+                    }
+
+                    row.child(html).show();
+                    tr.addClass('shown');
+                    icon.text('➖');
+                },
+                error: function() {
+                    row.child('<em>Error al cargar participantes</em>').show();
+                    tr.addClass('shown');
+                    icon.text('➖');
+                }
+            });
+        }
+    });
+
+
+
+
+
+
+
+
+
 
 
 
@@ -851,7 +902,7 @@
 
 
         const roles = {
-            1: 'Bautizo',
+            1: 'Bautizado',
             2: 'Confirmando',
             3: 'Difunto',
             4: 'Esposo',
