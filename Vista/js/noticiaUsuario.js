@@ -1,6 +1,7 @@
 /**
  * @file noticiaUsuario.js
  * @version 1.0
+ * @author Samuel Bedoya
  * @brief Script de interactividad para la vista pública de noticias
  * 
  * Este archivo maneja la funcionalidad del lado del cliente para usuarios finales,

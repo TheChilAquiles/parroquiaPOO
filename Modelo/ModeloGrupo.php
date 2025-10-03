@@ -1,20 +1,73 @@
 <?php
-// Incluir el archivo de conexión
+
+/**
+ * @file ModeloGrupo.php
+ * @version 2.0
+ * @author Samuel Bedoya
+ * @brief Modelo de datos para gestión de grupos parroquiales
+ * 
+ * Implementa el patrón DAO para gestionar grupos parroquiales, sus miembros,
+ * roles y relaciones. Incluye funcionalidades de auditoría con borrado lógico.
+ * 
+ * @architecture
+ * - Patrón DAO (Data Access Object)
+ * - Soft Delete para auditoría
+ * - Validaciones robustas de datos
+ * - Transacciones para operaciones complejas
+ * 
+ * @security
+ * - Prepared Statements (prevención SQL Injection)
+ * - Validación de tipos de datos
+ * - Logging de errores sin exponer información sensible
+ * - Verificaciones de integridad referencial
+ * 
+ * @package Modelo
+ * @dependency Conexion.php - Clase que maneja la conexión PDO
+ */
+
 class ModeloGrupo
 {
+    /**
+     * Conexión PDO a la base de datos.
+     * 
+     * @var PDO
+     */
     private $conexion;
 
+    /**
+     * Constructor de la clase.
+     * Inicializa la conexión a la base de datos.
+     */
     public function __construct()
     {
         $this->conexion = Conexion::conectar();
     }
 
+    // ========================================================================
+    // OPERACIONES CRUD DE GRUPOS
+    // ========================================================================
+
     /**
-     * @return array Retorna todos los grupos parroquiales activos con información adicional.
+     * Lista todos los grupos parroquiales activos con información estadística.
+     * 
+     * Obtiene los grupos no eliminados junto con el conteo de miembros activos.
+     * Utiliza LEFT JOIN para incluir grupos sin miembros.
+     * 
+     * @return array Lista de grupos con estructura:
+     *               - id: ID del grupo
+     *               - nombre: Nombre del grupo
+     *               - total_miembros: Cantidad de miembros activos
+     * 
+     * @example
+     * [
+     *   ['id' => 1, 'nombre' => 'Coro Juvenil', 'total_miembros' => 15],
+     *   ['id' => 2, 'nombre' => 'Catequesis', 'total_miembros' => 30]
+     * ]
      */
     public function mdlListarGrupos()
     {
         try {
+            // Query optimizada con conteo condicional para solo miembros activos
             $sql = "SELECT 
                         g.id, 
                         g.nombre,
@@ -34,13 +87,18 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $grupo_id
-     * @return array|null Retorna la información de un grupo específico activo con total de miembros.
+     * Obtiene información detallada de un grupo específico.
+     * 
+     * @param int $grupo_id ID del grupo a consultar
+     * 
+     * @return array|null Información del grupo o null si no existe/está eliminado
+     * 
+     * @security Valida que el ID sea numérico positivo
      */
     public function mdlObtenerGrupoPorId($grupo_id)
     {
         try {
-            // Validar que el ID sea un número válido
+            // Validación de seguridad: prevenir IDs inválidos
             if (!is_numeric($grupo_id) || $grupo_id <= 0) {
                 return null;
             }
@@ -63,17 +121,181 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $grupo_id
-     * @return array Retorna la lista de miembros activos de un grupo con información completa.
+     * Crea un nuevo grupo parroquial.
+     * 
+     * Valida unicidad del nombre entre grupos activos antes de crear.
+     * 
+     * @param string $nombre_grupo Nombre del nuevo grupo
+     * 
+     * @return bool|int ID del grupo creado si es exitoso, false en caso contrario
+     * 
+     * @validations
+     * - Nombre no vacío
+     * - Nombre único entre grupos activos
+     */
+    public function mdlCrearGrupo($nombre_grupo)
+    {
+        try {
+            // Validar que el nombre no esté vacío
+            if (empty(trim($nombre_grupo))) {
+                return false;
+            }
+
+            $nombre_grupo = trim($nombre_grupo);
+
+            // Verificar unicidad del nombre entre grupos activos
+            if ($this->mdlGrupoExistePorNombre($nombre_grupo)) {
+                error_log("Ya existe un grupo activo con ese nombre");
+                return false;
+            }
+
+            $sql = "INSERT INTO grupos (nombre, estado_registro) VALUES (?, NULL)";
+            $stmt = $this->conexion->prepare($sql);
+            
+            if ($stmt->execute([$nombre_grupo])) {
+                return $this->conexion->lastInsertId();
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Error al crear grupo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Actualiza el nombre de un grupo existente.
+     * 
+     * @param int $grupo_id ID del grupo a actualizar
+     * @param string $nombre_grupo Nuevo nombre
+     * 
+     * @return bool true si se actualizó correctamente, false en caso contrario
+     * 
+     * @validations
+     * - Grupo existe y está activo
+     * - Nombre no vacío
+     * - Nombre único (excepto el mismo grupo)
+     */
+    public function mdlActualizarGrupo($grupo_id, $nombre_grupo)
+    {
+        try {
+            // Validaciones básicas
+            if (!is_numeric($grupo_id) || $grupo_id <= 0 || empty(trim($nombre_grupo))) {
+                return false;
+            }
+
+            $nombre_grupo = trim($nombre_grupo);
+
+            // Verificar existencia del grupo
+            if (!$this->mdlObtenerGrupoPorId($grupo_id)) {
+                return false;
+            }
+
+            // Verificar unicidad: permitir el mismo nombre solo para el mismo grupo
+            $grupoExistente = $this->mdlGrupoExistePorNombre($nombre_grupo);
+            if ($grupoExistente && $grupoExistente['id'] != $grupo_id) {
+                error_log("Ya existe otro grupo con ese nombre");
+                return false;
+            }
+
+            $sql = "UPDATE grupos SET nombre = ? WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$nombre_grupo, $grupo_id]);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar grupo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Realiza borrado lógico de un grupo y sus relaciones.
+     * 
+     * Utiliza transacción para garantizar atomicidad:
+     * 1. Elimina lógicamente las relaciones usuario-grupo
+     * 2. Elimina lógicamente el grupo
+     * 
+     * @param int $grupo_id ID del grupo a eliminar
+     * 
+     * @return bool true si se eliminó correctamente, false en caso contrario
+     * 
+     * @pattern Soft Delete con transacción
+     * @note Los datos no se borran físicamente, solo se marca fecha de eliminación
+     */
+    public function mdlEliminarGrupo($grupo_id)
+    {
+        try {
+            // Validación de ID
+            if (!is_numeric($grupo_id) || $grupo_id <= 0) {
+                return false;
+            }
+
+            // Verificar que el grupo existe y está activo
+            $grupo = $this->mdlObtenerGrupoPorId($grupo_id);
+            if (!$grupo) {
+                return false;
+            }
+
+            // Iniciar transacción para operación atómica
+            $this->conexion->beginTransaction();
+
+            try {
+                // Paso 1: Eliminar lógicamente las relaciones usuario-grupo
+                $sql1 = "UPDATE usuario_grupos 
+                        SET estado_registro = NOW() 
+                        WHERE grupo_parroquial_id = ? AND estado_registro IS NULL";
+                $stmt1 = $this->conexion->prepare($sql1);
+                $stmt1->execute([$grupo_id]);
+
+                // Paso 2: Eliminar lógicamente el grupo
+                $sql2 = "UPDATE grupos SET estado_registro = NOW() WHERE id = ?";
+                $stmt2 = $this->conexion->prepare($sql2);
+                $result = $stmt2->execute([$grupo_id]);
+
+                if ($result) {
+                    $this->conexion->commit();
+                    return true;
+                } else {
+                    $this->conexion->rollback();
+                    return false;
+                }
+            } catch (PDOException $e) {
+                $this->conexion->rollback();
+                throw $e;
+            }
+        } catch (PDOException $e) {
+            error_log("Error al eliminar grupo lógicamente: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // ========================================================================
+    // GESTIÓN DE MIEMBROS
+    // ========================================================================
+
+    /**
+     * Lista todos los miembros activos de un grupo con información completa.
+     * 
+     * Incluye datos del usuario, rol en el grupo, información del feligrés
+     * y rol general del usuario en el sistema.
+     * 
+     * @param int $grupo_id ID del grupo
+     * 
+     * @return array Lista de miembros con estructura completa:
+     *               - usuario_id
+     *               - email
+     *               - rol (en el grupo)
+     *               - nombre_completo
+     *               - telefono
+     *               - rol_usuario (rol general en el sistema)
      */
     public function mdlListarMiembrosGrupo($grupo_id)
     {
         try {
-            // Validar que el ID sea un número válido
+            // Validación de seguridad
             if (!is_numeric($grupo_id) || $grupo_id <= 0) {
                 return [];
             }
 
+            // Query con múltiples JOINs para información completa
             $sql = "SELECT 
                         u.id as usuario_id,
                         u.email, 
@@ -103,22 +325,31 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $grupo_id
-     * @param int $usuario_id
-     * @param int $grupo_rol_id El ID del rol en el grupo (ej. 1 para Miembro, 2 para Líder).
-     * @return bool Retorna true si se añadió el miembro, false en caso contrario.
+     * Agrega un miembro a un grupo con un rol específico.
+     * 
+     * Realiza múltiples validaciones antes de agregar:
+     * - IDs válidos
+     * - Usuario no está ya en el grupo
+     * - Grupo existe y está activo
+     * - Usuario existe
+     * 
+     * @param int $grupo_id ID del grupo
+     * @param int $usuario_id ID del usuario
+     * @param int $grupo_rol_id ID del rol en el grupo (ej: 1=Miembro, 2=Líder)
+     * 
+     * @return bool true si se agregó correctamente, false en caso contrario
      */
     public function mdlAgregarMiembro($grupo_id, $usuario_id, $grupo_rol_id)
     {
         try {
-            // Validaciones
+            // Validaciones de tipo y rango
             if (!is_numeric($grupo_id) || $grupo_id <= 0 ||
                 !is_numeric($usuario_id) || $usuario_id <= 0 ||
                 !is_numeric($grupo_rol_id) || $grupo_rol_id <= 0) {
                 return false;
             }
 
-            // Verificar si el usuario ya está en el grupo (y activo)
+            // Verificar que el usuario no esté ya en el grupo (activo)
             if ($this->mdlUsuarioEnGrupo($grupo_id, $usuario_id)) {
                 error_log("El usuario ya está en el grupo");
                 return false;
@@ -147,9 +378,14 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $grupo_id
-     * @param int $usuario_id
-     * @return bool Retorna true si se eliminó el miembro, false en caso contrario.
+     * Elimina lógicamente un miembro de un grupo.
+     * 
+     * @param int $grupo_id ID del grupo
+     * @param int $usuario_id ID del usuario
+     * 
+     * @return bool true si se eliminó correctamente, false en caso contrario
+     * 
+     * @pattern Soft Delete
      */
     public function mdlEliminarMiembro($grupo_id, $usuario_id)
     {
@@ -166,7 +402,7 @@ class ModeloGrupo
             $stmt = $this->conexion->prepare($sql);
             $resultado = $stmt->execute([$grupo_id, $usuario_id]);
             
-            // Log para depuración
+            // Log para depuración y auditoría
             error_log("Eliminando miembro - Grupo: $grupo_id, Usuario: $usuario_id, Filas afectadas: " . $stmt->rowCount());
             
             return $resultado && $stmt->rowCount() > 0;
@@ -175,129 +411,15 @@ class ModeloGrupo
             return false;
         }
     }
-    
-    /**
-     * @param string $nombre_grupo
-     * @return bool|int Retorna el ID del grupo creado si es exitoso, false en caso contrario.
-     */
-    public function mdlCrearGrupo($nombre_grupo)
-    {
-        try {
-            // Validar que el nombre no esté vacío
-            if (empty(trim($nombre_grupo))) {
-                return false;
-            }
 
-            $nombre_grupo = trim($nombre_grupo);
-
-            // Verificar que no existe un grupo activo con el mismo nombre
-            if ($this->mdlGrupoExistePorNombre($nombre_grupo)) {
-                error_log("Ya existe un grupo activo con ese nombre");
-                return false;
-            }
-
-            $sql = "INSERT INTO grupos (nombre, estado_registro) VALUES (?, NULL)";
-            $stmt = $this->conexion->prepare($sql);
-            
-            if ($stmt->execute([$nombre_grupo])) {
-                return $this->conexion->lastInsertId();
-            }
-            return false;
-        } catch (PDOException $e) {
-            error_log("Error al crear grupo: " . $e->getMessage());
-            return false;
-        }
-    }
+    // ========================================================================
+    // GESTIÓN DE ROLES Y USUARIOS
+    // ========================================================================
 
     /**
-     * @param int $grupo_id
-     * @param string $nombre_grupo
-     * @return bool Retorna true si se actualizó el grupo, false en caso contrario.
-     */
-    public function mdlActualizarGrupo($grupo_id, $nombre_grupo)
-    {
-        try {
-            // Validaciones
-            if (!is_numeric($grupo_id) || $grupo_id <= 0 || empty(trim($nombre_grupo))) {
-                return false;
-            }
-
-            $nombre_grupo = trim($nombre_grupo);
-
-            // Verificar que el grupo existe
-            if (!$this->mdlObtenerGrupoPorId($grupo_id)) {
-                return false;
-            }
-
-            // Verificar que no existe otro grupo con el mismo nombre
-            $grupoExistente = $this->mdlGrupoExistePorNombre($nombre_grupo);
-            if ($grupoExistente && $grupoExistente['id'] != $grupo_id) {
-                error_log("Ya existe otro grupo con ese nombre");
-                return false;
-            }
-
-            $sql = "UPDATE grupos SET nombre = ? WHERE id = ?";
-            $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$nombre_grupo, $grupo_id]);
-        } catch (PDOException $e) {
-            error_log("Error al actualizar grupo: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * @param int $grupo_id
-     * @return bool Retorna true si se eliminó el grupo lógicamente, false en caso contrario.
-     */
-    public function mdlEliminarGrupo($grupo_id)
-    {
-        try {
-            // Validar que el ID sea un número válido
-            if (!is_numeric($grupo_id) || $grupo_id <= 0) {
-                return false;
-            }
-
-            // Verificar que el grupo existe y está activo
-            $grupo = $this->mdlObtenerGrupoPorId($grupo_id);
-            if (!$grupo) {
-                return false;
-            }
-
-            // Iniciar transacción para borrado lógico
-            $this->conexion->beginTransaction();
-
-            try {
-                // Primero eliminar logicamente las relaciones usuario_grupos
-                $sql1 = "UPDATE usuario_grupos 
-                        SET estado_registro = NOW() 
-                        WHERE grupo_parroquial_id = ? AND estado_registro IS NULL";
-                $stmt1 = $this->conexion->prepare($sql1);
-                $stmt1->execute([$grupo_id]);
-
-                // Luego realizar borrado lógico del grupo (poner fecha de eliminación)
-                $sql2 = "UPDATE grupos SET estado_registro = NOW() WHERE id = ?";
-                $stmt2 = $this->conexion->prepare($sql2);
-                $result = $stmt2->execute([$grupo_id]);
-
-                if ($result) {
-                    $this->conexion->commit();
-                    return true;
-                } else {
-                    $this->conexion->rollback();
-                    return false;
-                }
-            } catch (PDOException $e) {
-                $this->conexion->rollback();
-                throw $e;
-            }
-        } catch (PDOException $e) {
-            error_log("Error al eliminar grupo lógicamente: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    /**
-     * @return array Retorna todos los roles disponibles para grupos.
+     * Lista todos los roles disponibles para asignar en grupos.
+     * 
+     * @return array Lista de roles con id y nombre
      */
     public function mdlListarRolesGrupo()
     {
@@ -313,7 +435,15 @@ class ModeloGrupo
     }
 
     /**
-     * @return array Retorna todos los usuarios disponibles para agregar a grupos.
+     * Lista todos los usuarios disponibles para agregar a grupos.
+     * 
+     * Incluye usuarios confirmados y con información de feligrés si existe.
+     * 
+     * @return array Lista de usuarios disponibles con:
+     *               - id
+     *               - email
+     *               - nombre_completo
+     *               - tipo_usuario (rol en el sistema)
      */
     public function mdlListarUsuariosDisponibles()
     {
@@ -340,8 +470,16 @@ class ModeloGrupo
         }
     }
 
+    // ========================================================================
+    // AUDITORÍA Y RECUPERACIÓN
+    // ========================================================================
+
     /**
-     * @return array Retorna el historial de grupos eliminados
+     * Lista todos los grupos eliminados lógicamente (historial).
+     * 
+     * Útil para auditoría y posible restauración.
+     * 
+     * @return array Lista de grupos eliminados con fecha de eliminación
      */
     public function mdlListarGruposEliminados()
     {
@@ -363,8 +501,15 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $grupo_id
-     * @return bool Restaurar un grupo eliminado lógicamente
+     * Restaura un grupo eliminado lógicamente.
+     * 
+     * Valida que:
+     * - El grupo existe y está eliminado
+     * - No haya otro grupo activo con el mismo nombre
+     * 
+     * @param int $grupo_id ID del grupo a restaurar
+     * 
+     * @return bool true si se restauró correctamente, false en caso contrario
      */
     public function mdlRestaurarGrupo($grupo_id)
     {
@@ -380,10 +525,10 @@ class ModeloGrupo
             $grupo_eliminado = $stmt_verificar->fetch(PDO::FETCH_ASSOC);
             
             if (!$grupo_eliminado) {
-                return false; // El grupo no existe o no está eliminado
+                return false; // No existe o no está eliminado
             }
 
-            // Verificar que no haya otro grupo activo con el mismo nombre
+            // Verificar unicidad del nombre entre grupos activos
             if ($this->mdlGrupoExistePorNombre($grupo_eliminado['nombre'])) {
                 error_log("Ya existe un grupo activo con ese nombre, no se puede restaurar");
                 return false;
@@ -400,9 +545,15 @@ class ModeloGrupo
     }
 
     /**
-     * MÉTODO DE DEPURACIÓN - Retorna TODOS los miembros de un grupo (activos e inactivos)
-     * @param int $grupo_id
-     * @return array Para debugging - muestra el estado de todos los registros
+     * MÉTODO DE DEPURACIÓN - Lista TODOS los miembros (activos e inactivos).
+     * 
+     * Útil para debugging y auditoría. Muestra el estado real de todos los registros.
+     * 
+     * @param int $grupo_id ID del grupo
+     * 
+     * @return array Lista completa de miembros con estado
+     * 
+     * @note Solo para uso interno/debugging
      */
     public function mdlListarTodosMiembrosGrupo($grupo_id)
     {
@@ -439,12 +590,20 @@ class ModeloGrupo
         }
     }
 
-    // Métodos auxiliares privados
+    // ========================================================================
+    // MÉTODOS AUXILIARES PRIVADOS
+    // Validaciones y verificaciones internas
+    // ========================================================================
 
     /**
-     * @param int $grupo_id
-     * @param int $usuario_id
-     * @return bool Verifica si un usuario ya está en un grupo (y activo).
+     * Verifica si un usuario ya está en un grupo (y activo).
+     * 
+     * @param int $grupo_id ID del grupo
+     * @param int $usuario_id ID del usuario
+     * 
+     * @return bool true si está en el grupo, false en caso contrario
+     * 
+     * @access private
      */
     private function mdlUsuarioEnGrupo($grupo_id, $usuario_id)
     {
@@ -461,8 +620,13 @@ class ModeloGrupo
     }
 
     /**
-     * @param int $usuario_id
-     * @return bool Verifica si un usuario existe.
+     * Verifica si un usuario existe en el sistema.
+     * 
+     * @param int $usuario_id ID del usuario
+     * 
+     * @return bool true si existe, false en caso contrario
+     * 
+     * @access private
      */
     private function mdlUsuarioExiste($usuario_id)
     {
@@ -478,8 +642,15 @@ class ModeloGrupo
     }
 
     /**
-     * @param string $nombre_grupo
-     * @return array|false Verifica si existe un grupo activo con ese nombre.
+     * Verifica si existe un grupo activo con un nombre específico.
+     * 
+     * La búsqueda es case-insensitive para evitar duplicados con diferentes mayúsculas.
+     * 
+     * @param string $nombre_grupo Nombre a verificar
+     * 
+     * @return array|false Datos del grupo si existe, false en caso contrario
+     * 
+     * @access private
      */
     private function mdlGrupoExistePorNombre($nombre_grupo)
     {

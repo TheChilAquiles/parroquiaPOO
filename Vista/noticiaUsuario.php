@@ -1,3 +1,19 @@
+<!-- /**
+ * @file noticiaUsuario.php
+ * @version 2.3 (Versión final con encabezado completo y comentarios por bloque)
+ * @author Samuel Bedoya
+ * @date 2025-10-01
+ * @brief Vista para la gestión completa de noticias (CRUD: Crear, Leer, Actualizar, Eliminar).
+ *
+ * Esta vista renderiza la interfaz de usuario para mostrar una lista de noticias.
+ * Permite a los usuarios autenticados crear, editar y eliminar noticias a través de modales
+ * interactivos manejados con JavaScript y peticiones AJAX.
+ *
+ * @dependency noticias.php - El controlador principal que carga esta vista e inicializa la sesión.
+ * @dependency Vista/js/noticiaAdministrador.js - Script que maneja la interactividad del frontend.
+ * @dependency TailwindCSS - Framework de CSS para el diseño de la interfaz.
+ */ -->
+
 <!-- ============================================================================
         VISTA PRINCIPAL DE NOTICIAS - VERSIÓN USUARIO
         Interfaz pública para visualizar noticias parroquiales con diseño moderno

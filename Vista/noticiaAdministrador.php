@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @file vistaNoticias.php
- * @version 1.2 (Versión final con encabezado completo y comentarios por bloque)
- * @author Tu Nombre (tu.email@example.com)
+ * @file noticiaAdministrador
+ * @version 2.5 (Versión final con encabezado completo y comentarios por bloque)
+ * @author Samuel Bedoya
  * @date 2025-10-01
  * @brief Vista para la gestión completa de noticias (CRUD: Crear, Leer, Actualizar, Eliminar).
  *
@@ -20,7 +20,6 @@
 // VALIDACIÓN DE SESIÓN
 // ============================================================================
 // Es crucial que la sesión se inicie en el archivo principal que carga esta vista.
-// Por ejemplo, en 'noticias.php' debería haber un session_start(); al principio.
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -56,29 +55,29 @@
 <body class="bg-slate-100 font-sans">
 
     <!-- ========================================================================
-         OVERLAY DE CARGA
-         Indicador visual que se muestra durante operaciones asíncronas
+            OVERLAY DE CARGA
+            Indicador visual que se muestra durante operaciones asíncronas
     ========================================================================= -->
     <div id="loadingOverlay" class="fixed inset-0 z-[101] flex items-center justify-center bg-black bg-opacity-50 hidden">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
     </div>
 
     <!-- ========================================================================
-         CONTENEDOR DE NOTIFICACIONES
-         Área donde se renderizan mensajes de feedback al usuario
+            CONTENEDOR DE NOTIFICACIONES
+            Área donde se renderizan mensajes de feedback al usuario
     ========================================================================= -->
     <div id="feedback-container" class="fixed top-5 right-5 z-[100] w-full max-w-sm"></div>
 
 
     <!-- ========================================================================
-         SECCIÓN PRINCIPAL: GESTIÓN DE NOTICIAS
+            SECCIÓN PRINCIPAL: GESTIÓN DE NOTICIAS
     ========================================================================= -->
     <div class="max-w-7xl mx-auto p-4 sm:p-8 flex-1">
         <div class="bg-white p-6 rounded-3xl shadow-2xl mb-8">
 
             <!-- ================================================================
-                 ENCABEZADO CON TÍTULO Y BOTÓN DE CREACIÓN
-                 El botón solo es visible para usuarios autenticados
+                    ENCABEZADO CON TÍTULO Y BOTÓN DE CREACIÓN
+                    El botón solo es visible para usuarios autenticados
             ================================================================= -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                 <div>
@@ -100,8 +99,8 @@
             </div>
 
             <!-- ================================================================
-                 MENSAJES DE FEEDBACK DEL SERVIDOR
-                 Muestra notificaciones de éxito o error después de operaciones
+                    MENSAJES DE FEEDBACK DEL SERVIDOR
+                    Muestra notificaciones de éxito o error después de operaciones
             ================================================================= -->
             <?php if (isset($mensaje['texto'])): ?>
                 <div class="mb-4 p-4 rounded-xl font-medium <?= $mensaje['tipo'] === 'success' ? 'bg-green-50 text-green-800 border-l-4 border-green-400' : 'bg-red-50 text-red-800 border-l-4 border-red-400' ?> shadow-sm">
@@ -110,8 +109,8 @@
             <?php endif; ?>
 
             <!-- ================================================================
-                 BARRA DE BÚSQUEDA Y FILTRADO
-                 Permite buscar noticias por título o descripción
+                    BARRA DE BÚSQUEDA Y FILTRADO
+                    Permite buscar noticias por título o descripción
             ================================================================= -->
             <div class="mb-6 flex items-center gap-4">
                 <form action="noticias.php" method="POST" class="flex-grow relative">
@@ -130,16 +129,16 @@
             </div>
 
             <!-- ================================================================
-                 GRID DE NOTICIAS
-                 Renderiza las tarjetas de noticias en layout responsive
+                    GRID DE NOTICIAS
+                    Renderiza las tarjetas de noticias en layout responsive
             ================================================================= -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 <?php if (!empty($noticias)): ?>
                     <?php foreach ($noticias as $noticiaItem): ?>
 
                         <!-- ====================================================
-                             TARJETA INDIVIDUAL DE NOTICIA
-                             Muestra imagen, título, descripción y acciones
+                                TARJETA INDIVIDUAL DE NOTICIA
+                                Muestra imagen, título, descripción y acciones
                         ===================================================== -->
                         <div class="bg-white rounded-3xl shadow-lg overflow-hidden transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 group">
 
@@ -162,8 +161,8 @@
                                 <p class="text-gray-600 text-sm line-clamp-3 mb-4"><?= htmlspecialchars($noticiaItem['descripcion']) ?></p>
 
                                 <!-- ============================================
-                                     ACCIONES DE ADMINISTRACIÓN
-                                     Botones de editar y eliminar (solo usuarios autenticados)
+                                        ACCIONES DE ADMINISTRACIÓN
+                                        Botones de editar y eliminar (solo usuarios autenticados)
                                 ============================================= -->
                                 <?php if (isset($_SESSION['user-id'])): ?>
                                     <div class="flex items-center justify-between space-x-2 pt-4 border-t border-gray-100">
