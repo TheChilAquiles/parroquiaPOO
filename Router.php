@@ -4,15 +4,16 @@
  * 
  * Componente refactorizado para generar enlaces del menú
  * Adaptado para trabajar con el nuevo sistema de rutas
- * Usa Tailwind CSS
  */
 ?>
 
 <?php
 // Variables que deben estar disponibles:
+// $route - ruta actual (ej: 'noticias')
 // $item - nombre del item del menú (ej: 'Noticias')
+// $current_route - ruta actual para comparación
 
-if (!isset($item)) {
+if (!isset($route) || !isset($item)) {
     return;
 }
 
@@ -40,10 +41,10 @@ $routes_map = [
 $menu_route = $routes_map[$item] ?? strtolower($item);
 $current_route = $_GET['route'] ?? 'inicio';
 $is_active = (strpos($current_route, $menu_route) === 0);
-$active_class = $is_active ? 'bg-[#DFD3C3] text-gray-900' : 'text-gray-700 hover:bg-[#E8DFD5]';
+$active_class = $is_active ? 'bg-[#DFD3C3]' : '';
 ?>
 
 <a href="?route=<?php echo htmlspecialchars($menu_route, ENT_QUOTES, 'UTF-8'); ?>" 
-   class="py-2 px-4 cursor-pointer rounded transition-colors duration-200 <?php echo $active_class; ?>">
+   class="py-2 px-4 hover:bg-[#DFD3C3] cursor-pointer rounded transition-colors duration-200 <?php echo $active_class; ?>">
     <?php echo htmlspecialchars($item, ENT_QUOTES, 'UTF-8'); ?>
 </a>

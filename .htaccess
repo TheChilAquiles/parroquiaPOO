@@ -1,0 +1,60 @@
+# ============================================================================
+# CONFIGURACIÓN PARA APLICACIÓN MVC SIMPLE
+# ============================================================================
+
+RewriteEngine On
+RewriteBase /
+
+# ============================================================================
+# EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
+# ============================================================================
+
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ============================================================================
+# BLOQUEAR ACCESO A CARPETAS SENSIBLES (Alternativa válida en .htaccess)
+# ============================================================================
+RewriteRule ^(Modelo|Controlador|logs)/ - [F,L]
+
+# ============================================================================
+# BLOQUEAR ARCHIVOS SENSIBLES
+# ============================================================================
+<FilesMatch "\.(env|config|inc|sql)$">
+    Require all denied
+</FilesMatch>
+
+# ============================================================================
+# REESCRITURA PRINCIPAL
+# ============================================================================
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+
+# ============================================================================
+# SEGURIDAD ADICIONAL
+# ============================================================================
+Options -Indexes
+
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# ============================================================================
+# COMPRESIÓN GZIP
+# ============================================================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript
+</IfModule>
+
+# ============================================================================
+# CACHÉ DE NAVEGADOR
+# ============================================================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
