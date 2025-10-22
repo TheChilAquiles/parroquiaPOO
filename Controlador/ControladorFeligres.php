@@ -1,117 +1,109 @@
 <?php
 
 /**
- * Clase que actúa como controlador para la gestión de feligreses.
- *
- * Se encarga de recibir las peticiones de la vista, invocar la lógica
- * de negocio en el modelo y devolver la respuesta adecuada.
- *
- * @version 1.0
- * @author Rusbel Godoy
+ * ControladorFeligres.php - REFACTORIZADO
+ * 
+ * Controlador para gestión de feligreses
+ * Actúa como intermediario entre vistas y modelos
  */
+
 class FeligresController
 {
     private $feligresModel;
-    /**
-     * Constructor de la clase.
-     * Incluye los archivos necesarios para el funcionamiento del controlador.
-     */
 
     public function __construct()
     {
-        require_once(__DIR__.'/../Modelo/ModeloFeligres.php');
+        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
         $this->feligresModel = new ModeloFeligres();
-        
     }
 
     /**
-     * Controlador para consultar un feligrés por tipo y número de documento.
-     *
-     * @param string $tipoDoc   El tipo de documento del feligrés.
-     * @param string $documento El número de documento del feligrés.
-     * @return array            Un array con el estado de la operación, un mensaje y los datos si la consulta es exitosa.
+     * Consulta un feligrés por tipo y número de documento
+     * Retorna array con estructura estándar
      */
     public function ctrlConsularFeligres($tipoDoc, $documento)
     {
-        // Validación de datos obligatorios en la capa del controlador.
+        // Validación de datos obligatorios
         if (empty($tipoDoc) || empty($documento)) {
             return [
                 'status' => 'error',
-                'error'  => 'Datos obligatorios'
+                'error' => 'Tipo y número de documento son obligatorios'
             ];
         }
 
-        // Creación de una instancia del modelo para interactuar con la base de datos.
-        // Se invoca el método del modelo para consultar al feligrés.
-        $resultado = $this->feligresModel->mdlConsultarFeligres($tipoDoc, $documento);
+        try {
+            $resultado = $this->feligresModel->mdlConsultarFeligres($tipoDoc, $documento);
 
-        // Se evalúa el resultado de la consulta.
-        if ($resultado) {
-            // Si se encuentra el feligrés, se devuelve un mensaje de éxito y los datos.
-            return [
-                'status' => 'success',
-                'message' => "Feligres consultado correctamente",
-                'data' => $resultado,
-                'numero_documento' => $resultado['numero_documento']
-            ];
-        } else {
-            // Si no se encuentra, se devuelve un mensaje de error.
+            if ($resultado) {
+                return [
+                    'status' => 'success',
+                    'message' => 'Feligres encontrado',
+                    'data' => $resultado,
+                    'numero_documento' => $resultado['numero_documento']
+                ];
+            } else {
+                return [
+                    'status' => 'error',
+                    'error' => 'Feligres no encontrado'
+                ];
+            }
+        } catch (Exception $e) {
             return [
                 'status' => 'error',
-                'error' => 'No se encontró el feligrés'
+                'error' => 'Error al consultar feligrés'
             ];
         }
     }
 
     /**
-     * Controlador para crear un nuevo feligrés.
-     *
-     * @param array $datosFeligres Un array con los datos del feligrés a registrar.
-     * @return array               Un array con el estado y un mensaje de la operación.
+     * Crea un nuevo feligrés
      */
     public function ctrlCrearFeligres($datosFeligres)
     {
-        // Validación de datos obligatorios.
-        if (!isset($datosFeligres['tipo-doc']) || !isset($datosFeligres['documento'])) {
-            return ['status' => 'error', 'error' => 'Datos Obligatorios'];
+        // Validación de datos obligatorios
+        if (empty($datosFeligres['tipo-doc']) || empty($datosFeligres['documento'])) {
+            return ['status' => 'error', 'error' => 'Datos obligatorios faltantes'];
         }
 
-        // Se invoca el método del modelo para registrar el feligrés.
-        $resultado = $this->feligresModel->mdlCrearFeligres($datosFeligres);
-        
-
-
-
-        // Se evalúa el resultado del modelo.
-        // Se asume que el modelo devuelve un array con 'status' y 'message' en caso de error.
-        if (is_array($resultado) && isset($resultado['status']) && $resultado['status'] === 'error') {
-            return ['status' => 'error', 'error' => $resultado['message']]; // El feligrés ya existe u otro error del modelo.
-        } else {
-            return ['status' => 'success', 'message' => "Feligres registrado correctamente"];
+        try {
+            $resultado = $this->feligresModel->mdlCrearFeligres($datosFeligres);
+            return $resultado;
+        } catch (Exception $e) {
+            return ['status' => 'error', 'error' => 'Error al crear feligrés'];
         }
     }
 
     /**
-     * Controlador para actualizar los datos de un feligrés existente.
-     *
-     * @param array $datosFeligres Un array con los datos del feligrés a actualizar.
-     * @return array               Un array con el estado y un mensaje de la operación.
+     * Actualiza los datos de un feligrés
      */
     public function ctrlActualizarFeligres($datosFeligres)
     {
-        // Validación de datos obligatorios.
-        if (!isset($datosFeligres['tipo-doc']) || !isset($datosFeligres['documento'])) {
-            return ['status' => 'error', 'error' => 'Datos Obligatorios'];
+        // Validación de datos obligatorios
+        if (empty($datosFeligres['tipo-doc']) || empty($datosFeligres['documento'])) {
+            return ['status' => 'error', 'error' => 'Datos obligatorios faltantes'];
         }
 
-        // Se invoca el método del modelo para actualizar el feligrés.
-        $resultado = $this->feligresModel->mdlUpdateFeligres($datosFeligres);
+        try {
+            $resultado = $this->feligresModel->mdlUpdateFeligres($datosFeligres);
+            return $resultado;
+        } catch (Exception $e) {
+            return ['status' => 'error', 'error' => 'Error al actualizar feligrés'];
+        }
+    }
 
-        // Se evalúa el resultado del modelo.
-        if (is_array($resultado) && isset($resultado['status']) && $resultado['status'] === 'error') {
-            return ['status' => 'error', 'error' => $resultado['message']];
-        } else {
-            return ['status' => 'success', 'message' => "Feligres actualizado correctamente"];
+    /**
+     * Obtiene un feligrés por ID
+     */
+    public function ctrlObtenerPorId($id)
+    {
+        if (empty($id) || !is_numeric($id)) {
+            return null;
+        }
+
+        try {
+            return $this->feligresModel->mdlObtenerPorId($id);
+        } catch (Exception $e) {
+            return null;
         }
     }
 }

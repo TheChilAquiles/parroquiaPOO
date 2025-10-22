@@ -12,7 +12,7 @@ class ControladorCertificados
 
     public function __construct($modelo = null)
     {
-        $this->modelo = $modelo ?: new Certificados();
+        $this->modelo = $modelo ?: new ModeloCertificados();
     }
 
     // Muestra formulario (view)
