@@ -1,23 +1,62 @@
 <?php
 /**
- * Router.php
+ * Router.php - v2.1
  * 
- * Clase simple para gestionar el enrutamiento de la aplicación.
- * Centraliza toda la lógica de mapeo de rutas a controladores y acciones.
+ * Gestiona el enrutamiento de la aplicación con soporte para:
+ * - URLs amigables RESTful (/ruta/accion/id)
+ * - Parámetros GET (?id=5, ?action=delete)
+ * - Seguridad y autenticación
+ * 
+ * @version 2.1
+ * @updated 2024
  */
 
 class Router
 {
     private $route;
     private $controllers = [];
+    private $params = [];
 
     public function __construct()
     {
         // Obtener la ruta del .htaccess
         $this->route = $_GET['route'] ?? 'inicio';
         
+        // Capturar parámetros GET adicionales
+        $this->captureParams();
+        
         // Inicializar mapa de rutas
         $this->initializeRoutes();
+    }
+
+    /**
+     * Captura parámetros GET (especialmente 'id')
+     */
+    private function captureParams()
+    {
+        // Capturar ID si viene en la URL
+        if (isset($_GET['id'])) {
+            $this->params['id'] = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
+        }
+        
+        // Capturar otros parámetros comunes
+        $commonParams = ['search', 'page', 'sort', 'order', 'filter', 'action'];
+        foreach ($commonParams as $param) {
+            if (isset($_GET[$param])) {
+                $this->params[$param] = htmlspecialchars($_GET[$param], ENT_QUOTES, 'UTF-8');
+            }
+        }
+    }
+
+    /**
+     * Obtiene un parámetro capturado
+     * @param string $key Nombre del parámetro
+     * @param mixed $default Valor por defecto
+     * @return mixed El valor del parámetro o default
+     */
+    public function getParam($key, $default = null)
+    {
+        return $this->params[$key] ?? $default;
     }
 
     /**
@@ -27,34 +66,61 @@ class Router
     private function initializeRoutes()
     {
         $this->controllers = [
+            // ================================================================
+            // RUTAS PÚBLICAS
+            // ================================================================
             'inicio' => ['controlador' => 'HomeController', 'accion' => 'index'],
             'login' => ['controlador' => 'LoginController', 'accion' => 'mostrarFormulario'],
             'login/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesar'],
             'salir' => ['controlador' => 'LoginController', 'accion' => 'salir'],
             'registro' => ['controlador' => 'RegistroController', 'accion' => 'mostrarFormulario'],
             'registro/procesar' => ['controlador' => 'RegistroController', 'accion' => 'procesar'],
-            
+            'contacto' => ['controlador' => 'ContactoController', 'accion' => 'mostrar'],
+            'informacion' => ['controlador' => 'InformacionController', 'accion' => 'mostrar'],
+
+            // ================================================================
+            // RUTAS AUTENTICADAS - PERFIL
+            // ================================================================
             'perfil' => ['controlador' => 'PerfilController', 'accion' => 'mostrar'],
             'perfil/buscar' => ['controlador' => 'PerfilController', 'accion' => 'buscar'],
             'perfil/actualizar' => ['controlador' => 'PerfilController', 'accion' => 'actualizar'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - DASHBOARD
+            // ================================================================
             'dashboard' => ['controlador' => 'DashboardController', 'accion' => 'mostrar'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - LIBROS
+            // ================================================================
             'libros' => ['controlador' => 'LibrosController', 'accion' => 'index'],
             'libros/seleccionar-tipo' => ['controlador' => 'LibrosController', 'accion' => 'seleccionarTipo'],
             'libros/crear' => ['controlador' => 'LibrosController', 'accion' => 'crear'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - SACRAMENTOS
+            // ================================================================
             'sacramentos' => ['controlador' => 'SacramentosController', 'accion' => 'index'],
             'sacramentos/crear' => ['controlador' => 'SacramentosController', 'accion' => 'crear'],
             'sacramentos/buscar-usuario' => ['controlador' => 'SacramentosController', 'accion' => 'buscarUsuario'],
+            'sacramentos/participantes' => ['controlador' => 'SacramentosController', 'accion' => 'getParticipantes'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - CERTIFICADOS
+            // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - NOTICIAS
+            // ================================================================
             'noticias' => ['controlador' => 'NoticiasController', 'accion' => 'index'],
             'noticias/guardar' => ['controlador' => 'NoticiasController', 'accion' => 'guardar'],
             'noticias/eliminar' => ['controlador' => 'NoticiasController', 'accion' => 'eliminar'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - GRUPOS
+            // ================================================================
             'grupos' => ['controlador' => 'GruposController', 'accion' => 'index'],
             'grupos/ver' => ['controlador' => 'GruposController', 'accion' => 'ver'],
             'grupos/crear' => ['controlador' => 'GruposController', 'accion' => 'crear'],
@@ -64,13 +130,16 @@ class Router
             'grupos/eliminar-miembro' => ['controlador' => 'GruposController', 'accion' => 'eliminarMiembro'],
             'grupos/actualizar-rol' => ['controlador' => 'GruposController', 'accion' => 'actualizarRol'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - PAGOS
+            // ================================================================
             'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
             'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
             
+            // ================================================================
+            // RUTAS AUTENTICADAS - REPORTES
+            // ================================================================
             'reportes' => ['controlador' => 'ReportesController', 'accion' => 'index'],
-            
-            'contacto' => ['controlador' => 'ContactoController', 'accion' => 'mostrar'],
-            'informacion' => ['controlador' => 'InformacionController', 'accion' => 'mostrar'],
         ];
     }
 
@@ -191,3 +260,4 @@ class Router
         exit();
     }
 }
+?>

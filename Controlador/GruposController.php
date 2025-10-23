@@ -1,7 +1,7 @@
 <?php
 
 // ============================================================================
-// GruposController.php
+// GruposController.php - ACTUALIZADO PARA URLs AMIGABLES
 // ============================================================================
 
 class GruposController
@@ -27,7 +27,9 @@ class GruposController
 
     public function ver()
     {
-        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        // Obtener ID de URL amigable: /grupos/ver/5 o parámetro GET
+        global $router;
+        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
             $_SESSION['error'] = 'ID de grupo inválido.';
@@ -73,7 +75,7 @@ class GruposController
 
                 if ($resultado) {
                     $_SESSION['success'] = 'Grupo creado exitosamente.';
-                    header('Location: ?route=grupos');
+                    header('Location: /grupos');
                     exit();
                 } else {
                     $_SESSION['error'] = 'El grupo ya existe.';
@@ -90,11 +92,12 @@ class GruposController
 
     public function editar()
     {
-        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        global $router;
+        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
             $_SESSION['error'] = 'ID de grupo inválido.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -114,7 +117,7 @@ class GruposController
 
                 if ($resultado) {
                     $_SESSION['success'] = 'Grupo actualizado exitosamente.';
-                    header('Location: ?route=grupos');
+                    header('Location: /grupos');
                     exit();
                 } else {
                     $_SESSION['error'] = 'El grupo ya existe o no se puede actualizar.';
@@ -130,14 +133,14 @@ class GruposController
 
                 if (!$grupo) {
                     $_SESSION['error'] = 'Grupo no encontrado.';
-                    header('Location: ?route=grupos');
+                    header('Location: /grupos');
                     exit();
                 }
 
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             } catch (Exception $e) {
                 $_SESSION['error'] = 'Error al cargar el grupo.';
-                header('Location: ?route=grupos');
+                header('Location: /grupos');
                 exit();
             }
         }
@@ -145,11 +148,12 @@ class GruposController
 
     public function eliminar()
     {
-        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        global $router;
+        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
             $_SESSION['error'] = 'ID de grupo inválido.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -160,7 +164,7 @@ class GruposController
 
             if (!$grupo) {
                 $_SESSION['error'] = 'Grupo no encontrado.';
-                header('Location: ?route=grupos');
+                header('Location: /grupos');
                 exit();
             }
 
@@ -169,7 +173,7 @@ class GruposController
 
                 if ($resultado) {
                     $_SESSION['success'] = 'Grupo eliminado exitosamente.';
-                    header('Location: ?route=grupos');
+                    header('Location: /grupos');
                     exit();
                 } else {
                     $_SESSION['error'] = 'Error al eliminar el grupo.';
@@ -180,7 +184,7 @@ class GruposController
             }
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error al procesar eliminación.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
     }
@@ -190,7 +194,7 @@ class GruposController
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(400);
             $_SESSION['error'] = 'Método no permitido.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -201,7 +205,7 @@ class GruposController
         if (empty($grupo_id) || empty($usuario_id) || empty($rol_id) ||
             !is_numeric($grupo_id) || !is_numeric($usuario_id) || !is_numeric($rol_id)) {
             $_SESSION['error'] = 'Datos incompletos o inválidos.';
-            header('Location: ?route=grupos&id=' . $grupo_id);
+            header('Location: /grupos/ver?id=' . $grupo_id);
             exit();
         }
 
@@ -217,7 +221,7 @@ class GruposController
             $_SESSION['error'] = 'Error al agregar miembro.';
         }
 
-        header('Location: ?route=grupos/ver&id=' . $grupo_id);
+        header('Location: /grupos/ver?id=' . $grupo_id);
         exit();
     }
 
@@ -225,7 +229,7 @@ class GruposController
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $_SESSION['error'] = 'Método no permitido.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -234,7 +238,7 @@ class GruposController
 
         if (empty($grupo_id) || empty($usuario_id) || !is_numeric($grupo_id) || !is_numeric($usuario_id)) {
             $_SESSION['error'] = 'Parámetros inválidos.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -250,7 +254,7 @@ class GruposController
             $_SESSION['error'] = 'Error al eliminar miembro.';
         }
 
-        header('Location: ?route=grupos/ver&id=' . $grupo_id);
+        header('Location: /grupos/ver?id=' . $grupo_id);
         exit();
     }
 
@@ -258,7 +262,7 @@ class GruposController
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $_SESSION['error'] = 'Método no permitido.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -269,7 +273,7 @@ class GruposController
         if (empty($grupo_id) || empty($usuario_id) || empty($nuevo_rol_id) ||
             !is_numeric($grupo_id) || !is_numeric($usuario_id) || !is_numeric($nuevo_rol_id)) {
             $_SESSION['error'] = 'Datos incompletos o inválidos.';
-            header('Location: ?route=grupos');
+            header('Location: /grupos');
             exit();
         }
 
@@ -291,7 +295,7 @@ class GruposController
             $_SESSION['error'] = 'Error al actualizar rol.';
         }
 
-        header('Location: ?route=grupos/ver&id=' . $grupo_id);
+        header('Location: /grupos/ver?id=' . $grupo_id);
         exit();
     }
 }
