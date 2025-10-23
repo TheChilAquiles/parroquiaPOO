@@ -1,15 +1,22 @@
 <?php
-require_once __DIR__ . "/../Modelo/Modelodashboard.php";
 
-class DashboardController {
+// ============================================================================
+// DashboardController.php
+// ============================================================================
+
+class DashboardController
+{
     private $modelo;
 
-    public function __construct() {
+    public function __construct()
+    {
+        require_once __DIR__ . '/../Modelo/Modelodashboard.php';
         $this->modelo = new DashboardModel();
     }
 
-    public function mostrarDashboard() {
+    public function mostrar()
+    {
         $estadisticas = $this->modelo->obtenerEstadisticas();
-        require __DIR__ . "/../Vista/dashboard.php";
+        include_once __DIR__ . '/../Vista/dashboard.php';
     }
 }

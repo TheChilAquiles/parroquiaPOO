@@ -1,13 +1,13 @@
 <?php
 
 // ============================================================================
-// HomeController.php
+// InformacionController.php
 // ============================================================================
 
-class HomeController
+class InformacionController
 {
-    public function index()
+    public function mostrar()
     {
-        include_once __DIR__ . '/../Vista/home.php';
+        include __DIR__ . '/../Vista/informacion.php';
     }
 }

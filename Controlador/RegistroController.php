@@ -1,11 +1,9 @@
 <?php
-
-
 // ============================================================================
-// UsuarioController.php
+// RegistroController.php
 // ============================================================================
 
-class UsuarioController
+class RegistroController
 {
     private $modelo;
 
@@ -15,10 +13,15 @@ class UsuarioController
         $this->modelo = new ModeloUsuario();
     }
 
-    public function crear()
+    public function mostrarFormulario()
+    {
+        include_once __DIR__ . '/../Vista/register.php';
+    }
+
+    public function procesar()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            include __DIR__ . '/../Vista/crear-usuario.php';
+            $this->mostrarFormulario();
             return;
         }
 
@@ -28,13 +31,19 @@ class UsuarioController
 
         if (empty($email) || empty($password) || empty($passwordConfirm)) {
             $_SESSION['error'] = 'Todos los campos son obligatorios.';
-            include __DIR__ . '/../Vista/crear-usuario.php';
+            $this->mostrarFormulario();
             return;
         }
 
         if ($password !== $passwordConfirm) {
             $_SESSION['error'] = 'Las contraseñas no coinciden.';
-            include __DIR__ . '/../Vista/crear-usuario.php';
+            $this->mostrarFormulario();
+            return;
+        }
+
+        if (strlen($password) < 6) {
+            $_SESSION['error'] = 'La contraseña debe tener al menos 6 caracteres.';
+            $this->mostrarFormulario();
             return;
         }
 
@@ -46,41 +55,11 @@ class UsuarioController
 
         if (isset($resultado['status']) && $resultado['status'] === 'error') {
             $_SESSION['error'] = $resultado['message'];
-            include __DIR__ . '/../Vista/crear-usuario.php';
+            $this->mostrarFormulario();
             return;
         }
 
-        $_SESSION['success'] = 'Usuario creado correctamente.';
-        header('Location: ?route=dashboard');
-        exit();
-    }
-
-    public function obtenerPorId()
-    {
-        $id = $_GET['id'] ?? null;
-
-        if (empty($id) || !is_numeric($id)) {
-            http_response_code(400);
-            echo json_encode(['error' => 'ID inválido']);
-            exit();
-        }
-
-        try {
-            $usuario = $this->modelo->obtenerUsuarioPorId((int)$id);
-
-            if (!$usuario) {
-                http_response_code(404);
-                echo json_encode(['error' => 'Usuario no encontrado']);
-                exit();
-            }
-
-            header('Content-Type: application/json');
-            echo json_encode($usuario);
-            exit();
-        } catch (Exception $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Error al obtener usuario']);
-            exit();
-        }
+        $_SESSION['success'] = 'Registro completado. Por favor inicia sesión.';
+        include_once __DIR__ . '/../Vista/registroCompleto.php';
     }
 }
