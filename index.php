@@ -1,13 +1,15 @@
 <?php
 /**
- * index.php
+ * index.php - PUNTO DE ENTRADA ÚNICO
  * 
- * Punto de entrada único de la aplicación.
- * Se encarga únicamente de:
+ * Se encarga de:
  * 1. Inicializar sesiones
  * 2. Cargar dependencias básicas
- * 3. Ejecutar el router
- * 4. Mostrar la plantilla HTML
+ * 3. Crear instancia del router (disponible globalmente)
+ * 4. Ejecutar el router
+ * 5. Mostrar la plantilla HTML
+ * 
+ * @version 2.1
  */
 
 // ============================================================================
@@ -38,14 +40,23 @@ require_once __DIR__ . '/Modelo/Conexion.php';
 require_once __DIR__ . '/Router.php';
 
 // ============================================================================
-// INICIALIZAR PLANTILLA Y ROUTER
+// INICIALIZAR ROUTER Y HACERLO DISPONIBLE GLOBALMENTE
+// ============================================================================
+
+// Crear instancia del router
+$router = new Router();
+
+// Hacer el router disponible como variable global para los controladores
+$GLOBALS['router'] = $router;
+
+// ============================================================================
+// INICIALIZAR PLANTILLA Y EJECUTAR
 // ============================================================================
 
 // Mostrar cabecera HTML
 include_once __DIR__ . '/Vista/componentes/plantillaTop.php';
 
-// Crear instancia del router y ejecutar
-$router = new Router();
+// Ejecutar el router
 $router->dispatch();
 
 // Mostrar pie de página HTML

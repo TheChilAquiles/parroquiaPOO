@@ -3,7 +3,7 @@
 # ============================================================================
 
 RewriteEngine On
-RewriteBase /parroquiaPOO/
+RewriteBase /
 
 # ============================================================================
 # EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
