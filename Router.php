@@ -21,10 +21,10 @@ class Router
     {
         // Obtener la ruta del .htaccess
         $this->route = $_GET['route'] ?? 'inicio';
-        
+
         // Capturar parámetros GET adicionales
         $this->captureParams();
-        
+
         // Inicializar mapa de rutas
         $this->initializeRoutes();
     }
@@ -38,7 +38,7 @@ class Router
         if (isset($_GET['id'])) {
             $this->params['id'] = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
         }
-        
+
         // Capturar otros parámetros comunes
         $commonParams = ['search', 'page', 'sort', 'order', 'filter', 'action'];
         foreach ($commonParams as $param) {
@@ -84,19 +84,19 @@ class Router
             'perfil' => ['controlador' => 'PerfilController', 'accion' => 'mostrar'],
             'perfil/buscar' => ['controlador' => 'PerfilController', 'accion' => 'buscar'],
             'perfil/actualizar' => ['controlador' => 'PerfilController', 'accion' => 'actualizar'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - DASHBOARD
             // ================================================================
             'dashboard' => ['controlador' => 'DashboardController', 'accion' => 'mostrar'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - LIBROS
             // ================================================================
             'libros' => ['controlador' => 'LibrosController', 'accion' => 'index'],
             'libros/seleccionar-tipo' => ['controlador' => 'LibrosController', 'accion' => 'seleccionarTipo'],
             'libros/crear' => ['controlador' => 'LibrosController', 'accion' => 'crear'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - SACRAMENTOS
             // ================================================================
@@ -104,20 +104,21 @@ class Router
             'sacramentos/crear' => ['controlador' => 'SacramentosController', 'accion' => 'crear'],
             'sacramentos/buscar-usuario' => ['controlador' => 'SacramentosController', 'accion' => 'buscarUsuario'],
             'sacramentos/participantes' => ['controlador' => 'SacramentosController', 'accion' => 'getParticipantes'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - CERTIFICADOS
             // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
-            
+
             // ================================================================
-            // RUTAS AUTENTICADAS - NOTICIAS
+            // RUTAS AUTENTICADAS - NOTICIAS (ACTUALIZADO)
             // ================================================================
             'noticias' => ['controlador' => 'NoticiasController', 'accion' => 'index'],
-            'noticias/guardar' => ['controlador' => 'NoticiasController', 'accion' => 'guardar'],
+            'noticias/crear' => ['controlador' => 'NoticiasController', 'accion' => 'crear'],
+            'noticias/actualizar' => ['controlador' => 'NoticiasController', 'accion' => 'actualizar'],
             'noticias/eliminar' => ['controlador' => 'NoticiasController', 'accion' => 'eliminar'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - GRUPOS
             // ================================================================
@@ -129,13 +130,13 @@ class Router
             'grupos/agregar-miembro' => ['controlador' => 'GruposController', 'accion' => 'agregarMiembro'],
             'grupos/eliminar-miembro' => ['controlador' => 'GruposController', 'accion' => 'eliminarMiembro'],
             'grupos/actualizar-rol' => ['controlador' => 'GruposController', 'accion' => 'actualizarRol'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - PAGOS
             // ================================================================
             'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
             'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
-            
+
             // ================================================================
             // RUTAS AUTENTICADAS - REPORTES
             // ================================================================
@@ -149,7 +150,7 @@ class Router
     public function dispatch()
     {
         $route = trim($this->route, '/');
-        
+
         // Buscar si la ruta existe en el mapeo
         if (!isset($this->controllers[$route])) {
             $this->notFound();
@@ -209,12 +210,12 @@ class Router
     private function requiresAuth($route)
     {
         $publicRoutes = [
-            'inicio', 
-            'login', 
-            'login/procesar', 
-            'registro', 
-            'registro/procesar', 
-            'contacto', 
+            'inicio',
+            'login',
+            'login/procesar',
+            'registro',
+            'registro/procesar',
+            'contacto',
             'informacion'
         ];
         return !in_array($route, $publicRoutes);
@@ -237,24 +238,29 @@ class Router
         ?>
         <!DOCTYPE html>
         <html lang="es">
+
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>404 - Página no encontrada</title>
             <script src="https://cdn.tailwindcss.com"></script>
         </head>
+
         <body class="bg-[#F8EDE3]">
             <div class="min-h-screen flex items-center justify-center">
                 <div class="text-center">
                     <h1 class="text-6xl font-bold text-gray-900 mb-4">404</h1>
                     <p class="text-2xl text-gray-700 mb-6">Página no encontrada</p>
-                    <p class="text-gray-600 mb-8">La ruta "<strong><?php echo htmlspecialchars($_GET['route'] ?? 'desconocida'); ?></strong>" no existe</p>
-                    <a href="?route=inicio" class="px-6 py-3 bg-[#DFD3C3] text-gray-900 font-semibold rounded hover:bg-[#D0C3B3] transition-colors">
+                    <p class="text-gray-600 mb-8">La ruta
+                        "<strong><?php echo htmlspecialchars($_GET['route'] ?? 'desconocida'); ?></strong>" no existe</p>
+                    <a href="?route=inicio"
+                        class="px-6 py-3 bg-[#DFD3C3] text-gray-900 font-semibold rounded hover:bg-[#D0C3B3] transition-colors">
                         Volver al inicio
                     </a>
                 </div>
             </div>
         </body>
+
         </html>
         <?php
         exit();

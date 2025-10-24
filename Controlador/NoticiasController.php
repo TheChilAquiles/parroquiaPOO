@@ -1,7 +1,7 @@
 <?php
 
 // ============================================================================
-// NoticiasController.php - REFACTORIZADO
+// NoticiasController.php - CON DEBUG PARA AJAX
 // ============================================================================
 
 class NoticiasController
@@ -15,12 +15,10 @@ class NoticiasController
     }
 
     /**
-     * Muestra la lista de noticias según el rol del usuario
+     * Muestra la lista de noticias (vista unificada)
      */
     public function index()
     {
-        $rol = $_SESSION['user-rol'] ?? 'Feligres';
-        
         // Obtener mensajes de sesión
         $mensaje = null;
         if (isset($_SESSION['mensaje'])) {
@@ -34,29 +32,31 @@ class NoticiasController
         // Obtener noticias desde el modelo
         $noticias = $this->modelo->mdlObtenerNoticias($filtro);
 
-        // Decidir qué vista cargar según el rol
-        if ($rol === 'Administrador' || $rol === 'Secretario') {
-            include_once __DIR__ . '/../Vista/noticiaAdministrador.php';
-        } else {
-            include_once __DIR__ . '/../Vista/noticiaUsuario.php';
-        }
+        // Cargar vista unificada
+        include_once __DIR__ . '/../Vista/noticias.php';
     }
 
     /**
-     * Crea una nueva noticia (solo administradores)
+     * Crea una nueva noticia
      */
     public function crear()
     {
+        // 🔥 DEBUG: Loguear información de la petición
+        error_log("========== CREAR NOTICIA DEBUG ==========");
+        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
+        error_log("X-Requested-With: " . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'NO DEFINIDO'));
+        error_log("Método: " . $_SERVER['REQUEST_METHOD']);
+        error_log("POST: " . print_r($_POST, true));
+        error_log("=========================================");
+
         // Verificar permisos
-        if (!isset($_SESSION['user-rol']) || 
-            ($_SESSION['user-rol'] !== 'Administrador' && $_SESSION['user-rol'] !== 'Secretario')) {
-            $_SESSION['error'] = 'No tienes permisos para realizar esta acción.';
-            header('Location: ?route=noticias');
-            exit();
+        if (!$this->tienePermisos()) {
+            $this->responderError('No tienes permisos para realizar esta acción.');
+            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?route=noticias');
+            $this->responderError('Método no permitido');
             return;
         }
 
@@ -65,12 +65,8 @@ class NoticiasController
 
         // Validar campos requeridos
         if (empty($titulo) || empty($descripcion)) {
-            $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => 'Título y descripción son obligatorios.'
-            ];
-            header('Location: ?route=noticias');
-            exit();
+            $this->responderError('Título y descripción son obligatorios.');
+            return;
         }
 
         // Sanitizar datos
@@ -78,21 +74,14 @@ class NoticiasController
         $descripcion = htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8');
 
         // Procesar imagen
-        $imagen = null;
+        $imagen = 'assets/img/noticias/default.jpg';
         try {
             if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
                 $imagen = $this->procesarImagen($_FILES['imagen']);
-            } else {
-                // Imagen por defecto si no se subió ninguna
-                $imagen = 'assets/img/noticias/default.jpg';
             }
         } catch (Exception $e) {
-            $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => $e->getMessage()
-            ];
-            header('Location: ?route=noticias');
-            exit();
+            $this->responderError($e->getMessage());
+            return;
         }
 
         // Crear noticia
@@ -105,13 +94,12 @@ class NoticiasController
 
         $respuesta = $this->modelo->mdlCrearNoticia($datos);
 
-        $_SESSION['mensaje'] = [
-            'tipo' => $respuesta['exito'] ? 'success' : 'error',
-            'texto' => $respuesta['mensaje']
-        ];
-
-        header('Location: ?route=noticias');
-        exit();
+        // Responder
+        if ($respuesta['exito']) {
+            $this->responderExito($respuesta['mensaje']);
+        } else {
+            $this->responderError($respuesta['mensaje']);
+        }
     }
 
     /**
@@ -119,16 +107,18 @@ class NoticiasController
      */
     public function actualizar()
     {
-        // Verificar permisos
-        if (!isset($_SESSION['user-rol']) || 
-            ($_SESSION['user-rol'] !== 'Administrador' && $_SESSION['user-rol'] !== 'Secretario')) {
-            $_SESSION['error'] = 'No tienes permisos para realizar esta acción.';
-            header('Location: ?route=noticias');
-            exit();
+        // 🔥 DEBUG
+        error_log("========== ACTUALIZAR NOTICIA DEBUG ==========");
+        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
+        error_log("=============================================");
+
+        if (!$this->tienePermisos()) {
+            $this->responderError('No tienes permisos para realizar esta acción.');
+            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?route=noticias');
+            $this->responderError('Método no permitido');
             return;
         }
 
@@ -138,41 +128,29 @@ class NoticiasController
 
         // Validar ID
         if (empty($id) || !is_numeric($id)) {
-            $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => 'ID de noticia inválido.'
-            ];
-            header('Location: ?route=noticias');
-            exit();
+            $this->responderError('ID de noticia inválido.');
+            return;
         }
 
         // Validar campos requeridos
         if (empty($titulo) || empty($descripcion)) {
-            $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => 'Título y descripción son obligatorios.'
-            ];
-            header('Location: ?route=noticias');
-            exit();
+            $this->responderError('Título y descripción son obligatorios.');
+            return;
         }
 
         // Sanitizar datos
         $titulo = htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8');
         $descripcion = htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8');
 
-        // Procesar imagen (mantener la actual si no se sube nueva)
-        $imagen = $_POST['imagen_actual'] ?? null;
+        // Procesar imagen
+        $imagen = $_POST['imagen_actual'] ?? 'assets/img/noticias/default.jpg';
         try {
             if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
                 $imagen = $this->procesarImagen($_FILES['imagen']);
             }
         } catch (Exception $e) {
-            $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => $e->getMessage()
-            ];
-            header('Location: ?route=noticias');
-            exit();
+            $this->responderError($e->getMessage());
+            return;
         }
 
         // Actualizar noticia
@@ -184,13 +162,11 @@ class NoticiasController
 
         $respuesta = $this->modelo->mdlActualizarNoticia($id, $datos);
 
-        $_SESSION['mensaje'] = [
-            'tipo' => $respuesta['exito'] ? 'success' : 'error',
-            'texto' => $respuesta['mensaje']
-        ];
-
-        header('Location: ?route=noticias');
-        exit();
+        if ($respuesta['exito']) {
+            $this->responderExito($respuesta['mensaje']);
+        } else {
+            $this->responderError($respuesta['mensaje']);
+        }
     }
 
     /**
@@ -198,16 +174,18 @@ class NoticiasController
      */
     public function eliminar()
     {
-        // Verificar permisos
-        if (!isset($_SESSION['user-rol']) || 
-            ($_SESSION['user-rol'] !== 'Administrador' && $_SESSION['user-rol'] !== 'Secretario')) {
-            $_SESSION['error'] = 'No tienes permisos para realizar esta acción.';
-            header('Location: ?route=noticias');
-            exit();
+        // 🔥 DEBUG
+        error_log("========== ELIMINAR NOTICIA DEBUG ==========");
+        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
+        error_log("===========================================");
+
+        if (!$this->tienePermisos()) {
+            $this->responderError('No tienes permisos para realizar esta acción.');
+            return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?route=noticias');
+            $this->responderError('Método no permitido');
             return;
         }
 
@@ -215,39 +193,116 @@ class NoticiasController
 
         // Validar ID
         if (empty($id) || !is_numeric($id)) {
+            $this->responderError('ID de noticia inválido.');
+            return;
+        }
+
+        // Eliminar noticia
+        $respuesta = $this->modelo->mdlBorrarNoticia($id);
+
+        if ($respuesta['exito']) {
+            $this->responderExito($respuesta['mensaje']);
+        } else {
+            $this->responderError($respuesta['mensaje']);
+        }
+    }
+
+    // ========================================================================
+    // MÉTODOS PRIVADOS AUXILIARES
+    // ========================================================================
+
+    /**
+     * Verifica si el usuario tiene permisos de administración
+     */
+    private function tienePermisos()
+    {
+        return isset($_SESSION['user-rol']) && 
+               ($_SESSION['user-rol'] === 'Administrador' || $_SESSION['user-rol'] === 'Secretario');
+    }
+
+    /**
+     * Detecta si la petición es AJAX
+     */
+    private function esAjax()
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+    }
+
+    /**
+     * Responde con éxito (JSON si es AJAX, redirect si no)
+     */
+    private function responderExito($mensaje)
+    {
+        if ($this->esAjax()) {
+            // 🔥 IMPORTANTE: Limpiar cualquier output buffer antes
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode([
+                'exito' => true,
+                'status' => 'success',
+                'mensaje' => $mensaje,
+                'message' => $mensaje
+            ], JSON_UNESCAPED_UNICODE);
+            exit(); // ← CRÍTICO: Terminar ejecución aquí
+        } else {
             $_SESSION['mensaje'] = [
-                'tipo' => 'error',
-                'texto' => 'ID de noticia inválido.'
+                'tipo' => 'success',
+                'texto' => $mensaje
             ];
             header('Location: ?route=noticias');
             exit();
         }
+    }
 
-        // Eliminar noticia (soft delete)
-        $respuesta = $this->modelo->mdlBorrarNoticia($id);
-
-        $_SESSION['mensaje'] = [
-            'tipo' => $respuesta['exito'] ? 'success' : 'error',
-            'texto' => $respuesta['mensaje']
-        ];
-
-        header('Location: ?route=noticias');
-        exit();
+    /**
+     * Responde con error (JSON si es AJAX, redirect si no)
+     */
+    private function responderError($mensaje)
+    {
+        if ($this->esAjax()) {
+            // 🔥 IMPORTANTE: Limpiar output buffer
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
+            
+            header('Content-Type: application/json; charset=utf-8');
+            http_response_code(400);
+            echo json_encode([
+                'exito' => false,
+                'status' => 'error',
+                'mensaje' => $mensaje,
+                'message' => $mensaje
+            ], JSON_UNESCAPED_UNICODE);
+            exit(); // ← CRÍTICO
+        } else {
+            $_SESSION['mensaje'] = [
+                'tipo' => 'error',
+                'texto' => $mensaje
+            ];
+            header('Location: ?route=noticias');
+            exit();
+        }
     }
 
     /**
      * Procesa y valida la imagen subida
-     * 
-     * @param array $file Array del archivo subido ($_FILES['imagen'])
-     * @return string Ruta de la imagen guardada
-     * @throws Exception Si hay error en la validación o guardado
      */
     private function procesarImagen($file)
     {
         // Validar tipo de archivo
         $tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $tipoArchivo = mime_content_type($file['tmp_name']);
+        
+        // Usar getimagesize en lugar de mime_content_type (más confiable)
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            throw new Exception('El archivo no es una imagen válida.');
+        }
 
+        $tipoArchivo = $imageInfo['mime'];
         if (!in_array($tipoArchivo, $tiposPermitidos)) {
             throw new Exception('Tipo de archivo no permitido. Solo JPG, PNG, GIF o WEBP.');
         }
@@ -257,9 +312,9 @@ class NoticiasController
             throw new Exception('Archivo demasiado grande. Máximo 5MB.');
         }
 
-        // Generar nombre único para evitar sobrescrituras
+        // Generar nombre único
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $nombreArchivo = uniqid('noticia_', true) . '.' . $extension;
+        $nombreArchivo = uniqid('noticia_', true) . '.' . strtolower($extension);
 
         // Directorio de destino
         $directorioDestino = __DIR__ . '/../assets/img/noticias/';
@@ -278,21 +333,7 @@ class NoticiasController
             throw new Exception('Error al guardar la imagen.');
         }
 
-        // Retornar ruta relativa para guardar en BD
+        // Retornar ruta relativa
         return 'assets/img/noticias/' . $nombreArchivo;
-    }
-
-    /**
-     * Método auxiliar para obtener una noticia por ID (para futuras funcionalidades)
-     */
-    public function obtener($id)
-    {
-        if (!is_numeric($id)) {
-            return null;
-        }
-
-        // Este método requeriría agregar mdlObtenerNoticiaPorId() en el modelo
-        // Por ahora retornamos null
-        return null;
     }
 }
