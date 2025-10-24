@@ -12,7 +12,7 @@ class CertificadosController
     public function __construct()
     {
         require_once __DIR__ . '/../Modelo/ModeloCertificados.php';
-        $this->modelo = new Certificados();
+        $this->modelo = new ModeloCertificados();
     }
 
     public function mostrar()

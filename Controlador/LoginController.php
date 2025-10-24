@@ -1,6 +1,6 @@
 <?php
 // ============================================================================
-// LoginController.php
+// LoginController.php - REFACTORIZADO
 // ============================================================================
 
 class LoginController
@@ -28,16 +28,26 @@ class LoginController
         $email = $_POST['email'] ?? null;
         $password = $_POST['password'] ?? null;
 
+        // Validar que vengan los datos
         if (empty($email) || empty($password)) {
-            $_SESSION['error'] = 'Email y contraseña son requeridos.';
+            $_SESSION['error_login'] = 'Email y contraseña son requeridos.';
             $this->mostrarFormulario();
             return;
         }
 
+        // Validar formato de email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error_login'] = 'El formato del correo electrónico es inválido.';
+            $this->mostrarFormulario();
+            return;
+        }
+
+        // Consultar usuario
         $usuario = $this->modelo->consultarUsuario($email);
 
+        // Verificar credenciales
         if (!$usuario || $usuario['contraseña'] !== md5($password)) {
-            $_SESSION['error'] = 'Email o contraseña incorrectos.';
+            $_SESSION['error_login'] = 'Email o contraseña incorrectos.';
             $this->mostrarFormulario();
             return;
         }
@@ -45,8 +55,9 @@ class LoginController
         // Login exitoso
         $_SESSION['logged'] = true;
         $_SESSION['user-id'] = $usuario['id'];
-        $_SESSION['user-datos'] = $usuario['datos_completos'];
+        $_SESSION['user-datos'] = $usuario['datos_completos'] ?? false;
         $_SESSION['user-rol'] = $usuario['rol'];
+        $_SESSION['success'] = '¡Bienvenido!';
 
         header('Location: ?route=dashboard');
         exit();
