@@ -1,11 +1,10 @@
-
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2efefbfcd7358b9e58604980516fc55c",
+    "content-hash": "677142eb217bf132b72e70d1cd54b99c",
     "packages": [
         {
             "name": "dompdf/dompdf",
@@ -230,86 +229,61 @@
             "time": "2025-07-25T09:04:22+00:00"
         },
         {
-            "name": "phpmailer/phpmailer",
-            "version": "v7.0.0",
+            "name": "phpmailer/dkimvalidator",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "c7111310c6116ba508a6a170a89eaaed2129bd42"
+                "url": "https://github.com/PHPMailer/DKIMValidator.git",
+                "reference": "ce691bdbb8a2f122cdfa315169bc0e1cd1965b77"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/c7111310c6116ba508a6a170a89eaaed2129bd42",
-                "reference": "c7111310c6116ba508a6a170a89eaaed2129bd42",
+                "url": "https://api.github.com/repos/PHPMailer/DKIMValidator/zipball/ce691bdbb8a2f122cdfa315169bc0e1cd1965b77",
+                "reference": "ce691bdbb8a2f122cdfa315169bc0e1cd1965b77",
                 "shasum": ""
             },
             "require": {
-                "ext-ctype": "*",
-                "ext-filter": "*",
                 "ext-hash": "*",
-                "php": ">=5.5.0"
+                "ext-mbstring": "*",
+                "ext-openssl": "*",
+                "php": ">=7.2.0"
             },
             "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-                "doctrine/annotations": "^1.2.6 || ^1.13.3",
-                "php-parallel-lint/php-console-highlighter": "^1.0.0",
-                "php-parallel-lint/php-parallel-lint": "^1.3.2",
-                "phpcompatibility/php-compatibility": "^9.3.5",
-                "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.7.2",
-                "yoast/phpunit-polyfills": "^1.0.4"
-            },
-            "suggest": {
-                "decomplexity/SendOauth2": "Adapter for using XOAUTH2 authentication",
-                "ext-imap": "Needed to support advanced email address parsing according to RFC822",
-                "ext-mbstring": "Needed to send email in multibyte encoding charset or decode encoded addresses",
-                "ext-openssl": "Needed for secure SMTP sending and DKIM signing",
-                "greew/oauth2-azure-provider": "Needed for Microsoft Azure XOAUTH2 authentication",
-                "hayageek/oauth2-yahoo": "Needed for Yahoo XOAUTH2 authentication",
-                "league/oauth2-google": "Needed for Google XOAUTH2 authentication",
-                "psr/log": "For optional PSR-3 debug logging",
-                "symfony/polyfill-mbstring": "To support UTF-8 if the Mbstring PHP extension is not enabled (^1.2)",
-                "thenetworg/oauth2-azure": "Needed for Microsoft XOAUTH2 authentication"
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "nunomaduro/phpinsights": "^v1.9.0",
+                "phpunit/phpunit": "8.4.1",
+                "roave/security-advisories": "dev-master"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "PHPMailer\\PHPMailer\\": "src/"
+                    "PHPMailer\\DKIMValidator\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "LGPL-2.1-only"
+                "MIT"
             ],
             "authors": [
                 {
+                    "name": "angrychimp",
+                    "email": "rk@angrychimp.net"
+                },
+                {
+                    "name": "Teon d.o.o. - Bostjan Skufca",
+                    "email": "bostjan@teon.si"
+                },
+                {
                     "name": "Marcus Bointon",
                     "email": "phpmailer@synchromedia.co.uk"
-                },
-                {
-                    "name": "Jim Jagielski",
-                    "email": "jimjag@gmail.com"
-                },
-                {
-                    "name": "Andy Prevost",
-                    "email": "codeworxtech@users.sourceforge.net"
-                },
-                {
-                    "name": "Brent R. Matzelle"
                 }
             ],
-            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "description": "A DKIM signature validator in PHP.",
             "support": {
-                "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.0"
+                "issues": "https://github.com/PHPMailer/DKIMValidator/issues",
+                "source": "https://github.com/PHPMailer/DKIMValidator/tree/v0.3.1"
             },
-            "funding": [
-                {
-                    "url": "https://github.com/Synchro",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-10-15T16:40:02+00:00"
+            "time": "2025-10-09T12:29:49+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",
@@ -386,5 +360,8 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
+    "platform-overrides": {
+        "php": "8.2.0"
+    },
     "plugin-api-version": "2.6.0"
 }
