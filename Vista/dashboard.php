@@ -111,7 +111,7 @@ try {
         }
         
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #D0B8A8 0%, #ab876f 100%);
         }
         
         .chart-container {

@@ -32,7 +32,7 @@ ob_start();
 // ============================================================================
 // CARGAR DEPENDENCIAS BÁSICAS
 // ============================================================================
-
+require_once __DIR__ . '/vendor/autoload.php';
 // Conexión a base de datos
 require_once __DIR__ . '/Modelo/Conexion.php';
 

@@ -1,7 +1,7 @@
 <?php
 
 // ============================================================================
-// GruposController.php - ACTUALIZADO PARA URLs AMIGABLES
+// GruposController.php - REFACTORIZADO PARA MVC
 // ============================================================================
 
 class GruposController
@@ -14,6 +14,9 @@ class GruposController
         $this->modelo = new ModeloGrupo();
     }
 
+    /**
+     * Lista todos los grupos
+     */
     public function index()
     {
         try {
@@ -21,18 +24,22 @@ class GruposController
             include_once __DIR__ . '/../Vista/grupos.php';
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error al cargar los grupos.';
+            error_log("Error en GruposController::index - " . $e->getMessage());
             include_once __DIR__ . '/../Vista/grupos.php';
         }
     }
 
+    /**
+     * Muestra detalles de un grupo específico
+     */
     public function ver()
     {
-        // Obtener ID de URL amigable: /grupos/ver/5 o parámetro GET
-        global $router;
-        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        // Obtener ID desde GET
+        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
-            $_SESSION['error'] = 'ID de grupo inválido.';
+            $_SESSION['mensaje'] = 'ID de grupo inválido.';
+            $_SESSION['tipo_mensaje'] = 'error';
             header('Location: ?route=grupos');
             exit();
         }
@@ -42,7 +49,8 @@ class GruposController
             $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
 
             if (!$grupo) {
-                $_SESSION['error'] = 'Grupo no encontrado.';
+                $_SESSION['mensaje'] = 'Grupo no encontrado.';
+                $_SESSION['tipo_mensaje'] = 'error';
                 header('Location: ?route=grupos');
                 exit();
             }
@@ -53,19 +61,26 @@ class GruposController
 
             include_once __DIR__ . '/../Vista/grupoDetalle.php';
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al cargar el grupo.';
+            $_SESSION['mensaje'] = 'Error al cargar el grupo.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            error_log("Error en GruposController::ver - " . $e->getMessage());
             header('Location: ?route=grupos');
             exit();
         }
     }
 
+    /**
+     * Crea un nuevo grupo
+     */
     public function crear()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nombre = trim($_POST['nombre_grupo'] ?? '');
 
             if (empty($nombre)) {
-                $_SESSION['error'] = 'El nombre del grupo es obligatorio.';
+                $_SESSION['mensaje'] = 'El nombre del grupo es obligatorio.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                $grupo = null;
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
                 return;
             }
@@ -74,41 +89,59 @@ class GruposController
                 $resultado = $this->modelo->mdlCrearGrupo($nombre);
 
                 if ($resultado) {
-                    $_SESSION['success'] = 'Grupo creado exitosamente.';
-                    header('Location: /grupos');
+                    $_SESSION['mensaje'] = 'Grupo creado exitosamente.';
+                    $_SESSION['tipo_mensaje'] = 'success';
+                    header('Location: ?route=grupos');
                     exit();
                 } else {
-                    $_SESSION['error'] = 'El grupo ya existe.';
+                    $_SESSION['mensaje'] = 'El grupo ya existe.';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    $grupo = null;
                     include_once __DIR__ . '/../Vista/grupoFormulario.php';
                 }
             } catch (Exception $e) {
-                $_SESSION['error'] = 'Error al crear el grupo.';
+                $_SESSION['mensaje'] = 'Error al crear el grupo.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                error_log("Error en GruposController::crear - " . $e->getMessage());
+                $grupo = null;
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             }
         } else {
+            // Mostrar formulario vacío
+            $grupo = null;
             include_once __DIR__ . '/../Vista/grupoFormulario.php';
         }
     }
 
+    /**
+     * Edita un grupo existente
+     */
     public function editar()
     {
-        global $router;
-        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
-            $_SESSION['error'] = 'ID de grupo inválido.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'ID de grupo inválido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
         $grupo_id = (int)$grupo_id;
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre_grupo'])) {
             $nombre = trim($_POST['nombre_grupo'] ?? '');
 
             if (empty($nombre)) {
-                $_SESSION['error'] = 'El nombre del grupo es obligatorio.';
-                include_once __DIR__ . '/../Vista/grupoFormulario.php';
+                $_SESSION['mensaje'] = 'El nombre del grupo es obligatorio.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                try {
+                    $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
+                    include_once __DIR__ . '/../Vista/grupoFormulario.php';
+                } catch (Exception $e) {
+                    header('Location: ?route=grupos');
+                    exit();
+                }
                 return;
             }
 
@@ -116,44 +149,57 @@ class GruposController
                 $resultado = $this->modelo->mdlActualizarGrupo($grupo_id, $nombre);
 
                 if ($resultado) {
-                    $_SESSION['success'] = 'Grupo actualizado exitosamente.';
-                    header('Location: /grupos');
+                    $_SESSION['mensaje'] = 'Grupo actualizado exitosamente.';
+                    $_SESSION['tipo_mensaje'] = 'success';
+                    header('Location: ?route=grupos');
                     exit();
                 } else {
-                    $_SESSION['error'] = 'El grupo ya existe o no se puede actualizar.';
+                    $_SESSION['mensaje'] = 'El grupo ya existe o no se puede actualizar.';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
                     include_once __DIR__ . '/../Vista/grupoFormulario.php';
                 }
             } catch (Exception $e) {
-                $_SESSION['error'] = 'Error al actualizar el grupo.';
+                $_SESSION['mensaje'] = 'Error al actualizar el grupo.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                error_log("Error en GruposController::editar - " . $e->getMessage());
+                $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             }
         } else {
+            // Mostrar formulario con datos del grupo
             try {
                 $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
 
                 if (!$grupo) {
-                    $_SESSION['error'] = 'Grupo no encontrado.';
-                    header('Location: /grupos');
+                    $_SESSION['mensaje'] = 'Grupo no encontrado.';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    header('Location: ?route=grupos');
                     exit();
                 }
 
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             } catch (Exception $e) {
-                $_SESSION['error'] = 'Error al cargar el grupo.';
-                header('Location: /grupos');
+                $_SESSION['mensaje'] = 'Error al cargar el grupo.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                error_log("Error en GruposController::editar GET - " . $e->getMessage());
+                header('Location: ?route=grupos');
                 exit();
             }
         }
     }
 
+    /**
+     * Elimina un grupo (confirmación y ejecución)
+     */
     public function eliminar()
     {
-        global $router;
-        $grupo_id = $router->getParam('id') ?? $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
 
         if (empty($grupo_id) || !is_numeric($grupo_id)) {
-            $_SESSION['error'] = 'ID de grupo inválido.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'ID de grupo inválido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
@@ -163,38 +209,51 @@ class GruposController
             $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
 
             if (!$grupo) {
-                $_SESSION['error'] = 'Grupo no encontrado.';
-                header('Location: /grupos');
+                $_SESSION['mensaje'] = 'Grupo no encontrado.';
+                $_SESSION['tipo_mensaje'] = 'error';
+                header('Location: ?route=grupos');
                 exit();
             }
 
+            // Si viene confirmación, eliminar
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirmar_eliminacion'])) {
                 $resultado = $this->modelo->mdlEliminarGrupo($grupo_id);
 
                 if ($resultado) {
-                    $_SESSION['success'] = 'Grupo eliminado exitosamente.';
-                    header('Location: /grupos');
+                    $_SESSION['mensaje'] = 'Grupo eliminado exitosamente.';
+                    $_SESSION['tipo_mensaje'] = 'success';
+                    header('Location: ?route=grupos');
                     exit();
                 } else {
-                    $_SESSION['error'] = 'Error al eliminar el grupo.';
+                    $_SESSION['mensaje'] = 'Error al eliminar el grupo.';
+                    $_SESSION['tipo_mensaje'] = 'error';
+                    $miembros = $this->modelo->mdlListarMiembrosGrupo($grupo_id);
                     include_once __DIR__ . '/../Vista/grupoConfirmarEliminacion.php';
                 }
             } else {
+                // Mostrar página de confirmación
+                $miembros = $this->modelo->mdlListarMiembrosGrupo($grupo_id);
                 include_once __DIR__ . '/../Vista/grupoConfirmarEliminacion.php';
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al procesar eliminación.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'Error al procesar eliminación.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            error_log("Error en GruposController::eliminar - " . $e->getMessage());
+            header('Location: ?route=grupos');
             exit();
         }
     }
 
+    /**
+     * Agrega un miembro a un grupo
+     */
     public function agregarMiembro()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(400);
-            $_SESSION['error'] = 'Método no permitido.';
-            header('Location: /grupos');
+            http_response_code(405);
+            $_SESSION['mensaje'] = 'Método no permitido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
@@ -204,8 +263,9 @@ class GruposController
 
         if (empty($grupo_id) || empty($usuario_id) || empty($rol_id) ||
             !is_numeric($grupo_id) || !is_numeric($usuario_id) || !is_numeric($rol_id)) {
-            $_SESSION['error'] = 'Datos incompletos o inválidos.';
-            header('Location: /grupos/ver?id=' . $grupo_id);
+            $_SESSION['mensaje'] = 'Datos incompletos o inválidos.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos/ver&id=' . ($grupo_id ?? ''));
             exit();
         }
 
@@ -213,23 +273,31 @@ class GruposController
             $resultado = $this->modelo->mdlAgregarMiembro((int)$grupo_id, (int)$usuario_id, (int)$rol_id);
 
             if ($resultado) {
-                $_SESSION['success'] = 'Miembro agregado exitosamente.';
+                $_SESSION['mensaje'] = 'Miembro agregado exitosamente.';
+                $_SESSION['tipo_mensaje'] = 'success';
             } else {
-                $_SESSION['error'] = 'El miembro ya existe en el grupo.';
+                $_SESSION['mensaje'] = 'El miembro ya existe en el grupo.';
+                $_SESSION['tipo_mensaje'] = 'error';
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al agregar miembro.';
+            $_SESSION['mensaje'] = 'Error al agregar miembro.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            error_log("Error en GruposController::agregarMiembro - " . $e->getMessage());
         }
 
-        header('Location: /grupos/ver?id=' . $grupo_id);
+        header('Location: ?route=grupos/ver&id=' . $grupo_id);
         exit();
     }
 
+    /**
+     * Elimina un miembro de un grupo
+     */
     public function eliminarMiembro()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $_SESSION['error'] = 'Método no permitido.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'Método no permitido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
@@ -237,8 +305,9 @@ class GruposController
         $usuario_id = $_POST['usuario_id'] ?? null;
 
         if (empty($grupo_id) || empty($usuario_id) || !is_numeric($grupo_id) || !is_numeric($usuario_id)) {
-            $_SESSION['error'] = 'Parámetros inválidos.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'Parámetros inválidos.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
@@ -246,23 +315,31 @@ class GruposController
             $resultado = $this->modelo->mdlEliminarMiembro((int)$grupo_id, (int)$usuario_id);
 
             if ($resultado) {
-                $_SESSION['success'] = 'Miembro eliminado exitosamente.';
+                $_SESSION['mensaje'] = 'Miembro eliminado exitosamente.';
+                $_SESSION['tipo_mensaje'] = 'success';
             } else {
-                $_SESSION['error'] = 'Error al eliminar miembro.';
+                $_SESSION['mensaje'] = 'Error al eliminar miembro.';
+                $_SESSION['tipo_mensaje'] = 'error';
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al eliminar miembro.';
+            $_SESSION['mensaje'] = 'Error al eliminar miembro.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            error_log("Error en GruposController::eliminarMiembro - " . $e->getMessage());
         }
 
-        header('Location: /grupos/ver?id=' . $grupo_id);
+        header('Location: ?route=grupos/ver&id=' . $grupo_id);
         exit();
     }
 
+    /**
+     * Actualiza el rol de un miembro en el grupo
+     */
     public function actualizarRol()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $_SESSION['error'] = 'Método no permitido.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'Método no permitido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
@@ -272,30 +349,38 @@ class GruposController
 
         if (empty($grupo_id) || empty($usuario_id) || empty($nuevo_rol_id) ||
             !is_numeric($grupo_id) || !is_numeric($usuario_id) || !is_numeric($nuevo_rol_id)) {
-            $_SESSION['error'] = 'Datos incompletos o inválidos.';
-            header('Location: /grupos');
+            $_SESSION['mensaje'] = 'Datos incompletos o inválidos.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
             exit();
         }
 
         try {
+            // Eliminar miembro con rol antiguo
             $elimino = $this->modelo->mdlEliminarMiembro((int)$grupo_id, (int)$usuario_id);
 
             if ($elimino) {
+                // Agregar con nuevo rol
                 $resultado = $this->modelo->mdlAgregarMiembro((int)$grupo_id, (int)$usuario_id, (int)$nuevo_rol_id);
 
                 if ($resultado) {
-                    $_SESSION['success'] = 'Rol actualizado exitosamente.';
+                    $_SESSION['mensaje'] = 'Rol actualizado exitosamente.';
+                    $_SESSION['tipo_mensaje'] = 'success';
                 } else {
-                    $_SESSION['error'] = 'Error al actualizar rol.';
+                    $_SESSION['mensaje'] = 'Error al actualizar rol.';
+                    $_SESSION['tipo_mensaje'] = 'error';
                 }
             } else {
-                $_SESSION['error'] = 'Error al actualizar rol.';
+                $_SESSION['mensaje'] = 'Error al actualizar rol.';
+                $_SESSION['tipo_mensaje'] = 'error';
             }
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al actualizar rol.';
+            $_SESSION['mensaje'] = 'Error al actualizar rol.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            error_log("Error en GruposController::actualizarRol - " . $e->getMessage());
         }
 
-        header('Location: /grupos/ver?id=' . $grupo_id);
+        header('Location: ?route=grupos/ver&id=' . $grupo_id);
         exit();
     }
 }

@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-09-2025 a las 02:29:22
--- Versión del servidor: 11.7.2-MariaDB
+-- Tiempo de generación: 28-10-2025 a las 02:48:22
+-- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -210,7 +210,12 @@ CREATE TABLE `noticias` (
 INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `fecha_publicacion`, `estado_registro`) VALUES
 (1, 11, 'Hola5', 'Hola Hola Hola Hola Hola Hola Hola', 'assets/img/noticias/68d9814e7604e-Diagrama_Lógico_v11.png', '2025-09-18 00:28:46', '2025-09-28 23:40:09'),
 (2, 11, 'sadasd', 'asdas', 'assets/img/noticias/noticia_68d9bef0721ae5.27953340-MerParroquiav9.png', '2025-09-28 18:04:16', '2025-09-29 01:17:45'),
-(3, 11, 'dsfsf', 'dfsdf', 'assets/img/noticias/noticia_68d9c1d7d61ed6.49839548-Diagrama_Lógico_v11.png', '2025-09-28 18:16:39', NULL);
+(3, 11, 'dsfsf', 'dfsdf asdasd asd', 'assets/img/noticias/noticia_68d9c1d7d61ed6.49839548-Diagrama_Lógico_v11.png', '2025-09-28 18:16:39', '2025-10-24 03:29:02'),
+(4, 20, 'asdsad', 'asdasd  sadasd asdas d asd asda sdad sd', 'assets/img/noticias/noticia_68fad44ea36a88.56064286.png', '2025-10-23 20:20:14', NULL),
+(5, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad496ab18f5.58084807.png', '2025-10-23 20:21:26', NULL),
+(6, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad5a2923111.00968383.png', '2025-10-23 20:25:54', NULL),
+(7, 20, 'asdsad', 'asdasd asd sad sads adas d', 'assets/img/noticias/noticia_68fad5bf7c0e54.83656461.png', '2025-10-23 20:26:23', NULL),
+(8, 20, 'asdasdasdasd', 'asd asda sda sasdasdasd', 'assets/img/noticias/noticia_68fad63cb9e9c2.26316607.png', '2025-10-23 20:28:28', NULL);
 
 -- --------------------------------------------------------
 
@@ -480,24 +485,28 @@ CREATE TABLE `usuarios` (
   `email_confirmed` tinyint(1) DEFAULT 0,
   `contraseña` varchar(255) DEFAULT NULL,
   `datos_completos` tinyint(1) DEFAULT 0,
-  `estado_registro` datetime DEFAULT NULL
+  `estado_registro` datetime DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_token_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`) VALUES
-(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(11, 2, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL),
-(15, 1, 'nuevo.usuario1@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(16, 2, 'otro.usuario2@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(17, 1, 'tercer.usuario3@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL),
-(18, 2, 'cuarto.usuario4@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL),
-(19, 1, 'quinto.usuario5@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL);
+INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
+(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(11, 2, 'jrobgal@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(13, 1, 'admin@beehive.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+(15, 1, 'nuevo.usuario1@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(16, 2, 'otro.usuario2@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(17, 1, 'tercer.usuario3@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+(18, 2, 'cuarto.usuario4@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+(19, 1, 'quinto.usuario5@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+(20, 2, 'jose@example.com', 0, 'ed2b1f468c5f915f3f1cf75d7068baae', 0, NULL, NULL, NULL),
+(21, 1, 'aquilesbedoya37@gmail.com', 0, '$2y$10$DYuEGC.Xvj1g/9B9ejZ2Oe5pSZWzGvULNtJ9JfKoZB75vzLeRRw9C', 0, NULL, 'ee33cc42317b671cb18a56ddd00d814e702ef1e2361bff3229b5ae6d69e9efd7', '2025-10-28 03:45:43');
 
 -- --------------------------------------------------------
 
@@ -730,7 +739,7 @@ ALTER TABLE `libro_tipo`
 -- AUTO_INCREMENT de la tabla `noticias`
 --
 ALTER TABLE `noticias`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
@@ -790,7 +799,7 @@ ALTER TABLE `tipos_pago`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario_grupos`

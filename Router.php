@@ -73,6 +73,10 @@ class Router
             'login' => ['controlador' => 'LoginController', 'accion' => 'mostrarFormulario'],
             'login/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesar'],
             'salir' => ['controlador' => 'LoginController', 'accion' => 'salir'],
+            'olvido' => ['controlador' => 'LoginController', 'accion' => 'mostrarFormularioOlvido'],
+            'olvido/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesarSolicitudOlvido'],
+            'resetear' => ['controlador' => 'LoginController', 'accion' => 'mostrarFormularioReseteo'],
+            'resetear/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesarReseteo'],
             'registro' => ['controlador' => 'RegistroController', 'accion' => 'mostrarFormulario'],
             'registro/procesar' => ['controlador' => 'RegistroController', 'accion' => 'procesar'],
             'contacto' => ['controlador' => 'ContactoController', 'accion' => 'mostrar'],
@@ -185,7 +189,7 @@ class Router
             die("Error: Controlador no encontrado - $controllerClass en " . $controllerFile);
         }
 
-        require_once $controllerFile;
+        //require_once $controllerFile;
 
         if (!class_exists($controllerClass)) {
             die("Error: Clase $controllerClass no encontrada en $controllerFile");
@@ -216,7 +220,11 @@ class Router
             'registro',
             'registro/procesar',
             'contacto',
-            'informacion'
+            'informacion',
+            'olvido',
+            'olvido/procesar',
+            'resetear',
+            'resetear/procesar'
         ];
         return !in_array($route, $publicRoutes);
     }

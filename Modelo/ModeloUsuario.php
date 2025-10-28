@@ -1,6 +1,6 @@
 <?php
 // ============================================================================
-// ModeloUsuario.php - REFACTORIZADO
+// ModeloUsuario.php - REFACTORIZADO Y SEGURO
 // ============================================================================
 
 class ModeloUsuario
@@ -13,7 +13,7 @@ class ModeloUsuario
     }
 
     /**
-     * Registra un nuevo usuario en el sistema
+     * Registra un nuevo usuario en el sistema (CON HASH SEGURO)
      */
     public function mdlRegistrarUsuario($usuario)
     {
@@ -30,7 +30,9 @@ class ModeloUsuario
             $sql = "INSERT INTO usuarios (usuario_rol_id, email, contraseña) 
                     VALUES (?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
-            $hashedPassword = md5($usuario['password']);
+
+            // ¡CORRECCIÓN DE SEGURIDAD! Usar password_hash() en lugar de md5()
+            $hashedPassword = password_hash($usuario['password'], PASSWORD_DEFAULT);
             
             $stmt->execute([1, $usuario['email'], $hashedPassword]);
 
@@ -40,6 +42,24 @@ class ModeloUsuario
             return ['status' => 'error', 'message' => 'Error al registrar usuario'];
         }
     }
+
+    /**
+     * Verifica el login de un usuario (NUEVO MÉTODO REQUERIDO)
+     */
+    public function mdlVerificarLogin($email, $password)
+    {
+        $usuario = $this->consultarUsuario($email);
+
+        if ($usuario && password_verify($password, $usuario['contraseña'])) {
+            // La contraseña es correcta
+            unset($usuario['contraseña']); // No guardar la contraseña en la sesión
+            return $usuario;
+        } else {
+            // Email no existe o contraseña incorrecta
+            return null;
+        }
+    }
+
 
     /**
      * Consulta un usuario por email
@@ -83,6 +103,7 @@ class ModeloUsuario
      */
     public function obtenerUsuarioPorId($id)
     {
+        // (Tu código original está bien)
         try {
             $sql = "SELECT u.*, ur.rol 
                     FROM usuarios u
@@ -102,6 +123,7 @@ class ModeloUsuario
      */
     public function obtenerUsuarios()
     {
+        // (Tu código original está bien)
         try {
             $sql = "SELECT u.*, ur.rol 
                     FROM usuarios u
@@ -115,16 +137,62 @@ class ModeloUsuario
             return [];
         }
     }
+
+    // ========================================================================
+    // MÉTODOS NUEVOS PARA RECUPERAR CONTRASEÑA
+    // ========================================================================
+
+    /**
+     * Guarda el token de reseteo y su expiración en la BD
+     */
+    public function mdlGuardarTokenReset($email, $token, $expires)
+    {
+        try {
+            $sql = "UPDATE usuarios 
+                    SET reset_token = ?, reset_token_expires = ?
+                    WHERE email = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$token, $expires, $email]);
+        } catch (PDOException $e) {
+            error_log("Error al guardar token de reseteo: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Busca un usuario por un token de reseteo VÁLIDO (no expirado)
+     */
+    public function mdlBuscarUsuarioPorToken($token)
+    {
+        try {
+            $sql = "SELECT * FROM usuarios 
+                    WHERE reset_token = ? AND reset_token_expires > NOW()";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$token]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al buscar por token: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Actualiza la contraseña del usuario y limpia el token
+     */
+    public function mdlActualizarContrasenaPorToken($token, $nuevaPassword)
+    {
+        try {
+            // Hashear la nueva contraseña
+            $hashedPassword = password_hash($nuevaPassword, PASSWORD_DEFAULT);
+
+            $sql = "UPDATE usuarios 
+                    SET contraseña = ?, reset_token = NULL, reset_token_expires = NULL 
+                    WHERE reset_token = ?";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([$hashedPassword, $token]);
+        } catch (PDOException $e) {
+            error_log("Error al actualizar contraseña: " . $e->getMessage());
+            return false;
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-

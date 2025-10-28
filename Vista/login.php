@@ -43,6 +43,16 @@
                 Entrar
             </button>
         </form>
+        </button>
+    </form>
+
+    <div class="mt-4 text-center">
+        <a href="?route=olvido" class="text-sm text-blue-600 hover:underline">
+            ¿Olvidaste tu contraseña?
+        </a>
+    </div>
+    </div>
+</div>
 
     </div>
 </div>
