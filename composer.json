@@ -1,6 +1,12 @@
 {
     "require": {
-        "phpmailer/dkimvalidator": "^0.3.1",
+        "phpmailer/phpmailer": "^6.9",
         "dompdf/dompdf": "^3.1"
+    },
+    "autoload": {
+        "classmap": [
+            "Controlador/",
+            "Modelo/"
+        ]
     }
 }

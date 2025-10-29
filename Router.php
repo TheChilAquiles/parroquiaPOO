@@ -113,7 +113,8 @@ class Router
             // RUTAS AUTENTICADAS - CERTIFICADOS
             // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
-            'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
+            'certificados/generar' => ['cont
+            rolador' => 'CertificadosController', 'accion' => 'generar'],
 
             // ================================================================
             // RUTAS AUTENTICADAS - NOTICIAS (ACTUALIZADO)
