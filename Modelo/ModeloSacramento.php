@@ -21,29 +21,42 @@ class ModeloSacramento
         }
     }
 
+
+    
+
+
+
     /**
      * Obtiene los participantes de un sacramento
      */
     public function getParticipantes($sacramentoId)
-    {
-        try {
-            $sql = "SELECT 
-                        pr.rol,
-                        CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ', 
-                               f.primer_apellido, ' ', COALESCE(f.segundo_apellido, '')) AS nombre
-                    FROM participantes p
-                    JOIN feligreses f ON f.id = p.feligres_id
-                    JOIN participantes_rol pr ON pr.id = p.rol_participante_id
-                    WHERE p.sacramento_id = ?";
-            
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->execute([$sacramentoId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            error_log("Error al obtener participantes: " . $e->getMessage());
-            return [];
-        }
+{
+    // ✅ AGREGAR ESTAS LÍNEAS
+    if (!is_numeric($sacramentoId) || $sacramentoId <= 0) {
+        error_log("ID de sacramento inválido: " . $sacramentoId);
+        return [];
     }
+    
+    $sacramentoId = (int)$sacramentoId; // Cast explícito
+    
+    try {
+        $sql = "SELECT 
+                    pr.rol,
+                    CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ', 
+                           f.primer_apellido, ' ', COALESCE(f.segundo_apellido, '')) AS nombre
+                FROM participantes p
+                JOIN feligreses f ON f.id = p.feligres_id
+                JOIN participantes_rol pr ON pr.id = p.rol_participante_id
+                WHERE p.sacramento_id = ?";
+        
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->execute([$sacramentoId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error al obtener participantes: " . $e->getMessage());
+        return [];
+    }
+}
 
     /**
      * Establece el ID del libro

@@ -32,7 +32,7 @@
                 <label name="numeroDocumento-error" class="text-red-500 hidden">Corrije Este Campo </label>
             </div>
 
-            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('Buscar') ?>">
+            <input type="hidden" name="Buscar" value="Buscar">
 
             <div class="mt-6 h-full space-x-2">
                 <button class="cursor-pointer ml-3 w-10 h-10 bg-lime-50 border border-lime-500 p-2 rounded " type="submit"><svg class="w-full" viewBox="0 0 24 24" data-name="Line Color" xmlns="http://www.w3.org/2000/svg" class="icon line-color"><path style="fill:none;stroke:#2ca9bc;stroke-linecap:round;stroke-linejoin:round;stroke-width:2" d="m21 21-6-6"/><circle cx="10" cy="10" r="7" style="fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2"/></svg></button>
@@ -108,7 +108,7 @@
 
             <input type="hidden" name="tipoDocumento" id="hiddenTipo" value="<?php if (isset($_POST['tipoDocumento'])) echo $_POST['tipoDocumento']; ?>">
             <input type="hidden" name="numeroDocumento" id="hiddenDoc" value="<?php if (isset($_POST['numeroDocumento'])) echo $_POST['numeroDocumento']; ?>">
-            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('Añadir') ?>">
+            <input type="hidden" name="Añadir" value="Añadir">
 
             <button class="cursor-pointer bg-[#E3FFCD] p-4 rounded w-[10svw] self-center border border-emerald-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-700 mt-4" type="submit">Entrar</button>
 

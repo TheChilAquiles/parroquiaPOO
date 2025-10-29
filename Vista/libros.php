@@ -9,11 +9,9 @@
 
                 <form class="" method="POST">
 
-                <!-- <?=  $libroTipo ?> -->
-
-                    <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('DefinirTipolibro') ?>">
-                    <input type="hidden" name="<?= md5('tipo') ?>" value="<?= md5($libroTipo) ?>">
-                    <input type="hidden" name="<?= md5('sub-action') ?>" value="<?= md5('RegistrosLibro') ?>">
+                    <input type="hidden" name="action" value="DefinirTipolibro">
+                    <input type="hidden" name="tipo" value="<?= $libroTipo ?>">
+                    <input type="hidden" name="sub-action" value="RegistrosLibro">
                     <input type="hidden" name="numero-libro" value="<?= $i ?>">
 
 
@@ -26,7 +24,7 @@
                             <path d="M5 1a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h2v-1H5.5a1.5 1.5 0 0 1 0-3H19a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#16a085" />
                             <path d="M8 1v18h11a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#1abc9c" />
                         </svg>
-                        <span class=" absolute inset-x-0 top-6 text-white font-bold text-2xl text-center "><?= $libroTipo ?> </span>
+                       <span class="absolute"><?= htmlspecialchars($libroTipo, ENT_QUOTES, 'UTF-8') ?></span>
                         <span class=" absolute inset-x-0 top-17 text-white font-bold text-8xl text-center "><?= $i ?></span>
                     </button>
                 </form>
@@ -38,9 +36,9 @@
 
         <form class="" method="POST">
 
-            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('DefinirTipolibro') ?>">
-            <input type="hidden" name="<?= md5('tipo') ?>" value="<?= md5($libroTipo) ?>">
-            <input type="hidden" name="<?= md5('sub-action') ?>" value="<?= md5('NuevoLibro') ?>">
+            <input type="hidden" name="action" value="DefinirTipolibro">
+            <input type="hidden" name="tipo" value="<?= $libroTipo ?>">
+            <input type="hidden" name="sub-action" value="NuevoLibro">
 
 
             <button type="submit" class="w-full cursor-pointer relative flex justify-center items-center p-2 rounded-md border border-gray-500/50 hover:bg-emerald-100 group">

@@ -2,10 +2,11 @@
 <div class="min-h-[500px] px-4 py-8 flex-1 ">
     <div class="max-w-7xl mx-auto bg-white/60 rounded p-5">
 
-        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= $libroTipo . " " . $_POST['numero-libro'] ?> </h2>
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= htmlspecialchars($libroTipo ?? 'Desconocido') . " " . htmlspecialchars($_POST['numero-libro'] ?? '') ?> </h2>
 
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium"></h3>
+            
             <button id="addRecord" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
                 Agregar nuevo Bautizado
             </button>
@@ -52,9 +53,9 @@
 
 
             <!-- inputs de navegacion  -->
-            <input type="hidden" name="<?= md5('action') ?>" value="<?= md5('DefinirTipolibro') ?>">
-            <input type="hidden" name="<?= md5('tipo') ?>" value="<?= $tipo ?>">
-            <input type="hidden" name="<?= md5('sub-action') ?>" value="<?= md5('RegistrosLibro') ?>">
+            <input type="hidden" name="action" value="DefinirTipolibro">
+            <input type="hidden" name="tipo" value="<?= $tipo ?>">
+            <input type="hidden" name="sub-action" value="RegistrosLibro">
             <input type="hidden" name="numero-libro" value="<?= $_POST['numero-libro'] ?>">
             <!-- Fin inputs de navegacion  -->
 
@@ -400,7 +401,7 @@
 
 
         $.ajax({
-            url: "Controlador/ControladorSacramento.php",
+            url: "?route=sacramentos/buscar-usuario",
             method: "POST",
             dataType: "json",
             data: {
@@ -608,7 +609,7 @@
             4: 'Esposo',
             5: 'Esposa',
             6: 'Padre',
-            7: 'Madre',
+               7: 'Madre',
             8: 'Padrino',
             9: 'Madrina',
             10: 'Abuelo',

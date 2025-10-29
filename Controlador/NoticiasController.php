@@ -52,11 +52,7 @@ class NoticiasController
         error_log("POST: " . print_r($_POST, true));
         error_log("=========================================");
 
-        // Verificar permisos
-        if (!$this->tienePermisos()) {
-            $this->responderError('No tienes permisos para realizar esta acción.');
-            return;
-        }
+    
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->responderError('Método no permitido');

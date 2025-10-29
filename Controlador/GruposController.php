@@ -28,20 +28,31 @@ class GruposController
         }
     }
 
+    private function obtenerGrupoId()
+{
+    $id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
+    
+    if (empty($id) || !is_numeric($id)) {
+        return null;
+    }
+    
+    return (int)$id;
+}
+
     /**
      * Muestra detalles de un grupo específico
      */
     public function ver()
     {
         // Obtener ID desde GET
-        $grupo_id = $_GET['id'] ?? $_POST['grupo_id'] ?? null;
-
-        if (empty($grupo_id) || !is_numeric($grupo_id)) {
-            $_SESSION['mensaje'] = 'ID de grupo inválido.';
-            $_SESSION['tipo_mensaje'] = 'error';
-            header('Location: ?route=grupos');
-            exit();
-        }
+        $grupo_id = $this->obtenerGrupoId(); // ✅ Usar método auxiliar
+    
+    if ($grupo_id === null) {
+        $_SESSION['mensaje'] = 'ID de grupo inválido.';
+        $_SESSION['tipo_mensaje'] = 'error';
+        header('Location: ?route=grupos');
+        exit();
+    }
 
         try {
             $grupo_id = (int)$grupo_id;

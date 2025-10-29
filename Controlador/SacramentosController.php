@@ -20,16 +20,17 @@ class SacramentosController
 
     public function index()
     {
+        $rolesDisponibles = $this->obtenerRolesPorTipo($tipo);
+        $rolesObligatorios = $this->obtenerRolesObligatorios($tipo);
         include_once __DIR__ . '/../Vista/sacramentos.php';
-    }
-
+    }   
 
     private function buscarFeligres($tipoDoc, $numeroDoc)
-{
-    require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
-    $modelo = new ModeloFeligres();
-    return $modelo->mdlConsultarFeligres($tipoDoc, $numeroDoc);
-}
+    {
+        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
+        $modelo = new ModeloFeligres();
+        return $modelo->mdlConsultarFeligres($tipoDoc, $numeroDoc);
+    }
 
 
     public function crear()
@@ -110,10 +111,12 @@ class SacramentosController
         }
 
         $sacramento = new ModeloSacramento();
-        $participantes = $sacramento->getParticipantes((int)$sacramentoId);
+        $participantes = $sacramento->getParticipantes((int) $sacramentoId);
 
         header('Content-Type: application/json');
         echo json_encode($participantes);
         exit();
     }
+
+
 }
