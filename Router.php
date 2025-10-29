@@ -190,7 +190,7 @@ class Router
             die("Error: Controlador no encontrado - $controllerClass en " . $controllerFile);
         }
 
-        //require_once $controllerFile;
+        require_once $controllerFile;
 
         if (!class_exists($controllerClass)) {
             die("Error: Clase $controllerClass no encontrada en $controllerFile");

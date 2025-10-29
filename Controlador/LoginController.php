@@ -15,7 +15,6 @@ class LoginController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloUsuario.php';
         $this->modelo = new ModeloUsuario();
     }
 

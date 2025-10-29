@@ -11,7 +11,6 @@ class CertificadosController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloCertificados.php';
         $this->modelo = new ModeloCertificados();
     }
 

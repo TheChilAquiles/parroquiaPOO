@@ -10,7 +10,6 @@ class GruposController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloGrupo.php';
         $this->modelo = new ModeloGrupo();
     }
 

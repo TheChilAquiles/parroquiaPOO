@@ -8,7 +8,6 @@ class DashboardController {
     private $modelo;
 
     public function __construct() {
-        require_once __DIR__ . '/../Modelo/Modelodashboard.php';
         $this->modelo = new DashboardModel();
     }
 

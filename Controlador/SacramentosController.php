@@ -14,13 +14,23 @@ class SacramentosController
         require_once __DIR__ . '/../Modelo/ModeloSacramento.php';
         require_once __DIR__ . '/../Controlador/ControladorFeligres.php';
         $this->modeloSacramento = new ModeloSacramento();
-        $this->modeloFeligres = new FeligresController();
+        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
+        $this->modeloFeligres = new ModeloFeligres(); // En línea 15
     }
 
     public function index()
     {
         include_once __DIR__ . '/../Vista/sacramentos.php';
     }
+
+
+    private function buscarFeligres($tipoDoc, $numeroDoc)
+{
+    require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
+    $modelo = new ModeloFeligres();
+    return $modelo->mdlConsultarFeligres($tipoDoc, $numeroDoc);
+}
+
 
     public function crear()
     {

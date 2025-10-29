@@ -33,7 +33,7 @@ class ModeloUsuario
 
             // ¡CORRECCIÓN DE SEGURIDAD! Usar password_hash() en lugar de md5()
             $hashedPassword = password_hash($usuario['password'], PASSWORD_DEFAULT);
-            
+
             $stmt->execute([1, $usuario['email'], $hashedPassword]);
 
             return ['status' => 'success', 'message' => 'Usuario registrado correctamente'];
@@ -46,18 +46,34 @@ class ModeloUsuario
     /**
      * Verifica el login de un usuario (NUEVO MÉTODO REQUERIDO)
      */
+    // En ModeloUsuario.php, método mdlVerificarLogin
     public function mdlVerificarLogin($email, $password)
     {
         $usuario = $this->consultarUsuario($email);
 
-        if ($usuario && password_verify($password, $usuario['contraseña'])) {
-            // La contraseña es correcta
-            unset($usuario['contraseña']); // No guardar la contraseña en la sesión
-            return $usuario;
-        } else {
-            // Email no existe o contraseña incorrecta
+        if (!$usuario) {
             return null;
         }
+
+        // 1. Verificar si es bcrypt (nuevo)
+        if (password_verify($password, $usuario['contraseña'])) {
+            unset($usuario['contraseña']);
+            return $usuario;
+        }
+
+        // 2. Verificar si es MD5 (antiguo) y migrar
+        if (md5($password) === $usuario['contraseña']) {
+            // Migrar a bcrypt
+            $nuevoHash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "UPDATE usuarios SET contraseña = ? WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$nuevoHash, $usuario['id']]);
+
+            unset($usuario['contraseña']);
+            return $usuario;
+        }
+
+        return null;
     }
 
 
@@ -73,7 +89,7 @@ class ModeloUsuario
                     WHERE u.email = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$email]);
-            
+
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             return $usuario ?: null;
         } catch (PDOException $e) {
@@ -195,4 +211,8 @@ class ModeloUsuario
             return false;
         }
     }
+
+
+
+
 }

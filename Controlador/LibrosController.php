@@ -10,7 +10,6 @@ class LibrosController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloLibro.php';
         $this->modelo = new ModeloLibro();
     }
 

@@ -7,10 +7,10 @@
 class NoticiasController
 {
     private $modelo;
+    use PermisosHelper;
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloNoticia.php';
         $this->modelo = new ModeloNoticia();
     }
 
@@ -41,6 +41,9 @@ class NoticiasController
      */
     public function crear()
     {
+
+        $this->requiereAdmin();
+
         // 🔥 DEBUG: Loguear información de la petición
         error_log("========== CREAR NOTICIA DEBUG ==========");
         error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));

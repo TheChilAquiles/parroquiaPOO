@@ -10,9 +10,7 @@ class PerfilController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
-        require_once __DIR__ . '/../Modelo/ModeloUsuario.php';
-        $this->modeloFeligres = new FeligresController();
+        $this->modeloFeligres = new ModeloFeligres(); // ✅
         $this->modeloUsuario = new ModeloUsuario();
     }
 

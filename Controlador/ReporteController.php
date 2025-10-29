@@ -10,7 +10,6 @@ class ReportesController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ReporteModelo.php';
         $this->modelo = new ReporteModelo();
     }
 
