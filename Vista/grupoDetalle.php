@@ -173,7 +173,7 @@ if (isset($_SESSION['mensaje'])) {
 </main>
 
 <!-- MODAL: AGREGAR MIEMBRO -->
-<div id="modalAgregarMiembro" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+<div id="modalAgregarMiembro" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50">
     <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Agregar Nuevo Miembro</h3>

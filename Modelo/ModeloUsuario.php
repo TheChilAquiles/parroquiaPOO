@@ -211,8 +211,4 @@ class ModeloUsuario
             return false;
         }
     }
-
-
-
-
 }
