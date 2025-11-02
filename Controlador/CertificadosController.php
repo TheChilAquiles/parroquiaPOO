@@ -54,21 +54,45 @@ class CertificadosController
             $safeName = trim(str_replace(' ', '_', $safeName));
             $filename = "certificado_{$safeName}.pdf";
 
-            // Generar PDF
-            require_once __DIR__ . '/../Vista/fpdf.php';
-            $pdf = new FPDF();
-            $pdf->AddPage();
-            $pdf->SetFont('Arial', 'B', 16);
-            $pdf->Cell(0, 10, utf8_decode('Certificado de ' . $data['sacramento']), 0, 1, 'C');
-            $pdf->Ln(6);
-            $pdf->SetFont('Arial', '', 12);
+            // Generar PDF con DomPDF
+            require_once __DIR__ . '/../vendor/autoload.php';
 
-            $content = "Se certifica que " . $_POST['nombre_feligres'] . " ha recibido el sacramento de " . 
-                       $data['sacramento'] . " en fecha " . $data['fecha_realizacion'] . " en " . $data['lugar'] . ".";
-            
-            $pdf->MultiCell(0, 8, utf8_decode($content));
-            $pdf->Ln(10);
-            $pdf->Cell(0, 8, utf8_decode('Firmado por la parroquia'), 0, 1, 'R');
+            use Dompdf\Dompdf;
+            use Dompdf\Options;
+
+            $options = new Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', true);
+
+            $dompdf = new Dompdf($options);
+
+            // Construir HTML del certificado
+            $html = '
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 40px; text-align: center; }
+                    h1 { color: #333; font-size: 24px; margin-bottom: 30px; }
+                    .content { font-size: 16px; line-height: 1.8; text-align: justify; margin: 30px 0; }
+                    .firma { text-align: right; margin-top: 60px; font-style: italic; }
+                </style>
+            </head>
+            <body>
+                <h1>Certificado de ' . htmlspecialchars($data['sacramento']) . '</h1>
+                <div class="content">
+                    Se certifica que ' . htmlspecialchars($_POST['nombre_feligres']) . ' ha recibido el sacramento de ' .
+                    htmlspecialchars($data['sacramento']) . ' en fecha ' . htmlspecialchars($data['fecha_realizacion']) .
+                    ' en ' . htmlspecialchars($data['lugar']) . '.
+                </div>
+                <div class="firma">Firmado por la parroquia</div>
+            </body>
+            </html>';
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
 
             // Guardar PDF
             $outDir = __DIR__ . '/certificados_files';
@@ -76,7 +100,7 @@ class CertificadosController
                 mkdir($outDir, 0755, true);
             }
             $outPath = $outDir . '/' . $filename;
-            $pdf->Output('F', $outPath);
+            file_put_contents($outPath, $dompdf->output());
 
             // Descargar
             header('Content-Type: application/pdf');
