@@ -75,12 +75,17 @@ class ModeloFeligres
     public function mdlUpdateFeligres($datos)
     {
         try {
-            $sql = "UPDATE feligreses 
-                    SET tipo_documento_id = ?, numero_documento = ?, 
-                        primer_nombre = ?, segundo_nombre = ?, 
-                        primer_apellido = ?, segundo_apellido = ?, 
-                        telefono = ?, direccion = ? 
-                    WHERE numero_documento = ?";
+            // Verificar que el ID esté presente
+            if (empty($datos['id'])) {
+                return ['status' => 'error', 'message' => 'ID de feligrés requerido'];
+            }
+
+            $sql = "UPDATE feligreses
+                    SET tipo_documento_id = ?, numero_documento = ?,
+                        primer_nombre = ?, segundo_nombre = ?,
+                        primer_apellido = ?, segundo_apellido = ?,
+                        telefono = ?, direccion = ?
+                    WHERE id = ?";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->execute([
@@ -92,7 +97,7 @@ class ModeloFeligres
                 $datos['segundo-apellido'] ?? '',
                 $datos['telefono'] ?? '',
                 $datos['direccion'],
-                $datos['documento']
+                $datos['id']  // Usar ID en vez de documento
             ]);
 
             if ($stmt->rowCount() > 0) {

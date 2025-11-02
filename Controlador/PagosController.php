@@ -7,10 +7,14 @@
 class PagosController extends BaseController
 {
     private $modelo;
+    private $modeloSolicitud;
+    private $controladorCertificados;
 
     public function __construct()
     {
         $this->modelo = new ModeloPago();
+        $this->modeloSolicitud = new ModeloSolicitudCertificado();
+        $this->controladorCertificados = new CertificadosController();
     }
 
     /**
@@ -187,6 +191,268 @@ class PagosController extends BaseController
             $_SESSION['success'] = $resultado['mensaje'];
         } else {
             $_SESSION['error'] = $resultado['mensaje'];
+        }
+    }
+
+    /**
+     * Muestra la página de pago para un certificado específico
+     */
+    public function pagarCertificado()
+    {
+        // Verificar autenticación
+        $this->requiereAutenticacion();
+
+        $certificadoId = $_GET['id'] ?? null;
+
+        if (empty($certificadoId) || !is_numeric($certificadoId)) {
+            $_SESSION['error'] = 'ID de certificado inválido.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Obtener certificado
+        $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+        if (!$certificado) {
+            $_SESSION['error'] = 'Certificado no encontrado.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Validar que esté pendiente de pago
+        if ($certificado['estado'] !== 'pendiente_pago') {
+            $_SESSION['error'] = 'Este certificado ya fue pagado o procesado.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Validar que el usuario sea el solicitante
+        $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+        if ($certificado['solicitante_id'] != $feligresId) {
+            $_SESSION['error'] = 'No tiene permiso para pagar este certificado.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Mostrar vista de pago
+        include_once __DIR__ . '/../Vista/pagar-certificado.php';
+    }
+
+    /**
+     * Procesa el pago online de un certificado
+     * En un entorno real, esto redirigiría a la pasarela de pago
+     */
+    public function procesarPagoOnline()
+    {
+        // Verificar autenticación
+        $this->requiereAutenticacion();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        $certificadoId = $_POST['certificado_id'] ?? null;
+        $metodoPago = $_POST['metodo_pago'] ?? 'online';
+
+        if (empty($certificadoId) || !is_numeric($certificadoId)) {
+            $_SESSION['error'] = 'ID de certificado inválido.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Obtener certificado
+        $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+        if (!$certificado || $certificado['estado'] !== 'pendiente_pago') {
+            $_SESSION['error'] = 'Certificado no válido para pago.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // Validar que el usuario sea el solicitante
+        $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+        if ($certificado['solicitante_id'] != $feligresId) {
+            $_SESSION['error'] = 'No tiene permiso para pagar este certificado.';
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        }
+
+        // TODO: Aquí iría la integración con pasarela de pago real
+        // Por ahora, simularemos pago exitoso para desarrollo
+
+        // Crear registro de pago
+        $resultadoPago = $this->modelo->mdlCrear([
+            'certificado_id' => $certificadoId,
+            'valor' => 10.00, // Valor fijo por ahora
+            'estado' => 'pagado',
+            'metodo_de_pago' => $metodoPago
+        ]);
+
+        if ($resultadoPago['exito']) {
+            // Marcar certificado como pagado
+            $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+            // Generar PDF automáticamente
+            $pdfGenerado = $this->controladorCertificados->generarAutomatico($certificadoId);
+
+            if ($pdfGenerado) {
+                $_SESSION['success'] = 'Pago procesado exitosamente. Su certificado está listo para descargar.';
+            } else {
+                $_SESSION['success'] = 'Pago procesado. El certificado se está generando.';
+            }
+
+            header('Location: ?route=certificados/mis-solicitudes');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Error al procesar el pago. Intente nuevamente.';
+            header('Location: ?route=pagos/pagar-certificado&id=' . $certificadoId);
+            exit;
+        }
+    }
+
+    /**
+     * Webhook para confirmar pagos online
+     * Este endpoint sería llamado por la pasarela de pago
+     */
+    public function webhookConfirmacion()
+    {
+        // Deshabilitar output por defecto
+        header('Content-Type: application/json');
+
+        try {
+            // Obtener datos del webhook
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+
+            // Validar datos (ejemplo simple)
+            if (empty($data['certificado_id']) || empty($data['estado'])) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'Datos inválidos']);
+                exit;
+            }
+
+            $certificadoId = $data['certificado_id'];
+            $estado = $data['estado'];
+
+            // Solo procesar si el pago fue exitoso
+            if ($estado !== 'pagado') {
+                http_response_code(200);
+                echo json_encode(['status' => 'received', 'message' => 'Pago no exitoso']);
+                exit;
+            }
+
+            // Marcar certificado como pagado
+            $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+            // Generar PDF automáticamente
+            $pdfGenerado = $this->controladorCertificados->generarAutomatico($certificadoId);
+
+            if ($pdfGenerado) {
+                http_response_code(200);
+                echo json_encode(['status' => 'success', 'message' => 'Certificado generado']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['status' => 'error', 'message' => 'Error al generar certificado']);
+            }
+            exit;
+
+        } catch (Exception $e) {
+            error_log("Error en webhook: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Error interno']);
+            exit;
+        }
+    }
+
+    /**
+     * Registra un pago en efectivo (solo Secretario/Admin)
+     */
+    public function registrarPagoEfectivo()
+    {
+        // Verificar que sea Secretario o Admin
+        if (!isset($_SESSION['user-rol']) || !in_array($_SESSION['user-rol'], ['Secretario', 'Administrador'])) {
+            $_SESSION['error'] = 'No tiene permisos para realizar esta acción.';
+            header('Location: ?route=dashboard');
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?route=pagos');
+            exit;
+        }
+
+        $certificadoId = $_POST['certificado_id'] ?? null;
+        $valor = $_POST['valor'] ?? null;
+
+        if (empty($certificadoId) || !is_numeric($certificadoId)) {
+            $_SESSION['error'] = 'ID de certificado inválido.';
+            header('Location: ?route=pagos');
+            exit;
+        }
+
+        if (empty($valor) || !is_numeric($valor) || $valor <= 0) {
+            $_SESSION['error'] = 'Valor de pago inválido.';
+            header('Location: ?route=pagos');
+            exit;
+        }
+
+        // Obtener certificado
+        $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+        if (!$certificado || $certificado['estado'] !== 'pendiente_pago') {
+            $_SESSION['error'] = 'Certificado no válido para pago.';
+            header('Location: ?route=pagos');
+            exit;
+        }
+
+        // Registrar pago en efectivo
+        $resultadoPago = $this->modelo->mdlCrear([
+            'certificado_id' => $certificadoId,
+            'valor' => (float)$valor,
+            'estado' => 'pagado',
+            'metodo_de_pago' => 'efectivo'
+        ]);
+
+        if ($resultadoPago['exito']) {
+            // Marcar certificado como pagado
+            $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+            // Generar PDF automáticamente
+            $pdfGenerado = $this->controladorCertificados->generarAutomatico($certificadoId);
+
+            if ($pdfGenerado) {
+                $_SESSION['success'] = 'Pago en efectivo registrado. Certificado generado exitosamente.';
+            } else {
+                $_SESSION['success'] = 'Pago registrado. Error al generar certificado (revisar logs).';
+            }
+
+            header('Location: ?route=pagos');
+            exit;
+        } else {
+            $_SESSION['error'] = 'Error al registrar el pago.';
+            header('Location: ?route=pagos');
+            exit;
+        }
+    }
+
+    /**
+     * Obtiene el ID del feligrés asociado a un usuario
+     * @param int $usuarioId ID del usuario
+     * @return int|null ID del feligrés o null
+     */
+    private function obtenerFeligresIdUsuario($usuarioId)
+    {
+        try {
+            $conexion = Conexion::conectar();
+            $sql = "SELECT id FROM feligreses WHERE usuario_id = ? AND estado_registro IS NULL LIMIT 1";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? $resultado['id'] : null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener feligrés por usuario: " . $e->getMessage());
+            return null;
         }
     }
 }

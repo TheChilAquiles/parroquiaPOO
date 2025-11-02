@@ -68,7 +68,7 @@ class PerfilController
         ];
 
         // Validar campos requeridos
-        if (empty($datosFeligres['tipo-doc']) || empty($datosFeligres['documento']) || 
+        if (empty($datosFeligres['tipo-doc']) || empty($datosFeligres['documento']) ||
             empty($datosFeligres['primer-nombre']) || empty($datosFeligres['primer-apellido']) ||
             empty($datosFeligres['fecha-nacimiento']) || empty($datosFeligres['direccion'])) {
             $_SESSION['error'] = 'Completa todos los campos requeridos.';
@@ -80,6 +80,11 @@ class PerfilController
         if ($_SESSION['user-datos'] == false) {
             $status = $this->modeloFeligres->mdlCrearFeligres($datosFeligres);
         } else {
+            // Obtener ID del feligrés por usuario_id
+            $feligres = $this->modeloFeligres->mdlConsultarFeligres($datosFeligres['tipo-doc'], $datosFeligres['documento']);
+            if ($feligres) {
+                $datosFeligres['id'] = $feligres['id'];
+            }
             $status = $this->modeloFeligres->mdlUpdateFeligres($datosFeligres);
         }
 

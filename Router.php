@@ -105,6 +105,8 @@ class Router
             // RUTAS AUTENTICADAS - SACRAMENTOS
             // ================================================================
             'sacramentos' => ['controlador' => 'SacramentosController', 'accion' => 'index'],
+            'sacramentos/libro' => ['controlador' => 'SacramentosController', 'accion' => 'verLibro'],
+            'sacramentos/listar' => ['controlador' => 'SacramentosController', 'accion' => 'listar'],
             'sacramentos/crear' => ['controlador' => 'SacramentosController', 'accion' => 'crear'],
             'sacramentos/buscar-usuario' => ['controlador' => 'SacramentosController', 'accion' => 'buscarUsuario'],
             'sacramentos/participantes' => ['controlador' => 'SacramentosController', 'accion' => 'getParticipantes'],
@@ -114,6 +116,13 @@ class Router
             // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
+
+            // Solicitudes de certificados (Feligrés)
+            'certificados/solicitar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'mostrarFormulario'],
+            'certificados/crear' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'crear'],
+            'certificados/buscar-sacramentos-familiar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'buscarSacramentosFamiliar'],
+            'certificados/mis-solicitudes' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'misSolicitudes'],
+            'certificados/descargar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'descargar'],
 
             // ================================================================
             // RUTAS AUTENTICADAS - NOTICIAS (ACTUALIZADO)
@@ -140,6 +149,16 @@ class Router
             // ================================================================
             'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
             'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
+            'pagos/actualizar' => ['controlador' => 'PagosController', 'accion' => 'actualizar'],
+            'pagos/eliminar' => ['controlador' => 'PagosController', 'accion' => 'eliminar'],
+
+            // Pagos de certificados
+            'pagos/pagar-certificado' => ['controlador' => 'PagosController', 'accion' => 'pagarCertificado'],
+            'pagos/procesar-pago-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
+            'pagos/registrar-pago-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],
+
+            // Webhook para confirmación de pagos externos (PÚBLICA)
+            'pagos/webhook-confirmacion' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
 
             // ================================================================
             // RUTAS AUTENTICADAS - REPORTES
@@ -224,7 +243,8 @@ class Router
             'olvido',
             'olvido/procesar',
             'resetear',
-            'resetear/procesar'
+            'resetear/procesar',
+            'pagos/webhook-confirmacion' // Webhook para pasarela de pago externa
         ];
         return !in_array($route, $publicRoutes);
     }

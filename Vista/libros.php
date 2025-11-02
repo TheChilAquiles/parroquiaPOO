@@ -7,12 +7,10 @@
 
             <?php for ($i = 1; $i <= $cantidad; $i++): ?>
 
-                <form class="" method="POST">
-
-                    <input type="hidden" name="action" value="DefinirTipolibro">
-                    <input type="hidden" name="tipo" value="<?= $libroTipo ?>">
-                    <input type="hidden" name="sub-action" value="RegistrosLibro">
-                    <input type="hidden" name="numero-libro" value="<?= $i ?>">
+                <form action="?route=sacramentos/libro" method="GET">
+                    <input type="hidden" name="route" value="sacramentos/libro">
+                    <input type="hidden" name="tipo" value="<?= $tipoId ?>">
+                    <input type="hidden" name="numero" value="<?= $i ?>">
 
 
                     <button type="submit" class="w-full cursor-pointer relative flex justify-center items-center p-2 rounded-md border border-gray-500/50 hover:bg-emerald-100">
@@ -34,11 +32,8 @@
         <?php endif; ?>
 
 
-        <form class="" method="POST">
-
-            <input type="hidden" name="action" value="DefinirTipolibro">
-            <input type="hidden" name="tipo" value="<?= $libroTipo ?>">
-            <input type="hidden" name="sub-action" value="NuevoLibro">
+        <form action="?route=libros/crear" method="POST">
+            <input type="hidden" name="tipo" value="<?= $tipoId ?>">
 
 
             <button type="submit" class="w-full cursor-pointer relative flex justify-center items-center p-2 rounded-md border border-gray-500/50 hover:bg-emerald-100 group">

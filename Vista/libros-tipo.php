@@ -6,8 +6,7 @@
     <div class="grid grid-cols-2 bg-white w-full h-full p-4 rounded-md gap-4 border border-gray-300 shadow-xl shadow-amber-100 ">
 
         <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" action="?route=libros/seleccionar-tipo" method="POST">
-            <input type="hidden" name="action" value="DefinirTipolibro">
-            <input type="hidden" name="tipo" value="Bautizos">
+            <input type="hidden" name="tipo" value="1">
             <button type="submit" class="w-full cursor-pointer relative flex flex-col justify-between items-center p-2 rounded-md">
                 <span class="font-bold text-2xl text-center group-hover:text-emerald-600">Bautizos</span>
                 <svg class="w-60" xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox="0 0 512 512">
@@ -16,9 +15,8 @@
             </button>
         </form>
 
-        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" method="POST">
-            <input type="hidden" name="action" value="DefinirTipolibro">
-            <input type="hidden" name="tipo" value="Confirmaciones">
+        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" action="?route=libros/seleccionar-tipo" method="POST">
+            <input type="hidden" name="tipo" value="2">
             <button type="submit" class="w-full cursor-pointer relative flex flex-col justify-between items-center p-2 rounded-md">
                 <span class="font-bold text-2xl text-center group-hover:text-emerald-600">Confirmaciones</span>
                 <svg class="w-60" xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">
@@ -31,9 +29,8 @@
             </button>
         </form>
 
-        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" method="POST">
-            <input type="hidden" name="action" value="DefinirTipolibro">
-            <input type="hidden" name="tipo" value="Defunciones">
+        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" action="?route=libros/seleccionar-tipo" method="POST">
+            <input type="hidden" name="tipo" value="3">
             <button type="submit" class="w-full cursor-pointer relative flex flex-col justify-between items-center p-2 rounded-md">
                 <span class="font-bold text-2xl text-center group-hover:text-emerald-600">Defunciones</span>
                 <svg class="w-60" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" xmlns="http://www.w3.org/2000/svg">
@@ -46,9 +43,8 @@
             </button>
         </form>
 
-        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" method="POST">
-            <input type="hidden" name="action" value="DefinirTipolibro">
-            <input type="hidden" name="tipo" value="Matrimonios">
+        <form class="border border-gray-500 rounded bg-gray-100 hover:bg-emerald-100 hover:border-emerald-500 group" action="?route=libros/seleccionar-tipo" method="POST">
+            <input type="hidden" name="tipo" value="4">
             <button type="submit" class="w-full cursor-pointer relative flex flex-col justify-between items-center p-2 rounded-md">
                 <span class="font-bold text-2xl text-center group-hover:text-emerald-600">Matrimonios</span>
                 <svg class="w-60" xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">

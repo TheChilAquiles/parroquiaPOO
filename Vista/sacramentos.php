@@ -2,7 +2,7 @@
 <div class="min-h-[500px] px-4 py-8 flex-1 ">
     <div class="max-w-7xl mx-auto bg-white/60 rounded p-5">
 
-        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= htmlspecialchars($libroTipo ?? 'Desconocido') . " " . htmlspecialchars($_POST['numero-libro'] ?? '') ?> </h2>
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= htmlspecialchars($libroTipo ?? 'Desconocido') . " " . htmlspecialchars($numeroLibro ?? '') ?> </h2>
 
         <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-medium"></h3>
@@ -53,10 +53,8 @@
 
 
             <!-- inputs de navegacion  -->
-            <input type="hidden" name="action" value="DefinirTipolibro">
             <input type="hidden" name="tipo" value="<?= $tipo ?>">
-            <input type="hidden" name="sub-action" value="RegistrosLibro">
-            <input type="hidden" name="numero-libro" value="<?= $_POST['numero-libro'] ?>">
+            <input type="hidden" name="numero" value="<?= $numeroLibro ?>">
             <!-- Fin inputs de navegacion  -->
 
             <input type="hidden" name="id" id="id" />
@@ -408,8 +406,8 @@
                 Doaction: 'buscarUsuario',
                 numeroDoc: $numeroDoc,
                 tipoDoc: $tipoDoc,
-                Tipo: <?php echo json_encode($tipo); ?>,
-                Numero: <?php echo json_encode($_POST['numero-libro']); ?>
+                tipo: <?php echo json_encode($tipo); ?>,
+                numero: <?php echo json_encode($numeroLibro); ?>
             },
             success: function(usuario) {
 
@@ -769,7 +767,7 @@
     $(document).on('click', '#addRecord', function() {
         $('#recordModal').removeClass('hidden');
         $('#recordForm')[0].reset();
-        $('.modal-title').html("<i class='fa fa-plus'></i> Añadir Sacramento En <?php echo $libroTipo  . " " . $_POST['numero-libro'] ?>  ");
+        $('.modal-title').html("<i class='fa fa-plus'></i> Añadir Sacramento En <?php echo $libroTipo  . " " . $numeroLibro ?>  ");
         $('#Doaction').val('addRecord');
         // $('#save').val('Adicionar');
     });
@@ -795,12 +793,11 @@
             sProcessing: "Procesando...",
         },
         ajax: {
-            url: "Controlador/ControladorSacramento.php",
+            url: "?route=sacramentos/listar",
             type: "POST",
             data: {
-                Doaction: 'listRecords',
-                Tipo: <?php echo json_encode($tipo); ?>,
-                Numero: <?php echo json_encode($_POST['numero-libro']); ?>
+                tipo: <?php echo json_encode($tipo); ?>,
+                numero: <?php echo json_encode($numeroLibro); ?>
             },
             dataType: "json"
         },
@@ -848,12 +845,9 @@
             const sacramentoId = row.data().sacramento_id;
 
             $.ajax({
-                url: 'Controlador/ControladorSacramento.php',
+                url: '?route=sacramentos/participantes',
                 type: 'POST',
                 data: {
-                    Doaction: 'getParticipantes',
-                    Tipo: <?php echo json_encode($tipo); ?>,
-                    Numero: <?php echo json_encode($_POST['numero-libro']); ?>,
                     sacramento_id: sacramentoId
                 },
                 dataType: 'json',
@@ -964,9 +958,9 @@
 
 
         $.ajax({
-            url: "Controlador/ControladorSacramento.php",
+            url: "?route=sacramentos/crear",
             method: "POST",
-            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $_POST["numero-libro"]; ?>',
+            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $numeroLibro; ?>',
             success: function(data) {
 
                 $('#recordForm')[0].reset();
