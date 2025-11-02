@@ -4,10 +4,9 @@
 // NoticiasController.php - CON DEBUG PARA AJAX
 // ============================================================================
 
-class NoticiasController
+class NoticiasController extends BaseController
 {
     private $modelo;
-    use PermisosHelper;
 
     public function __construct()
     {

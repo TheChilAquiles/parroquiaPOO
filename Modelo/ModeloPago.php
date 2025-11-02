@@ -18,7 +18,7 @@ class ModeloPago
     /**
      * Obtiene todos los pagos
      */
-    public function obtenerTodos()
+    public function mdlObtenerTodos()
     {
         try {
             $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
@@ -34,7 +34,7 @@ class ModeloPago
     /**
      * Obtiene un pago por ID
      */
-    public function obtenerPorId($id)
+    public function mdlObtenerPorId($id)
     {
         try {
             $sql = "SELECT * FROM pagos WHERE id = ?";
@@ -50,13 +50,13 @@ class ModeloPago
     /**
      * Crea un nuevo pago
      */
-    public function crear($data)
+    public function mdlCrear($data)
     {
         try {
             $sql = "INSERT INTO pagos (certificado_id, valor, estado, metodo_de_pago, fecha_pago)
                     VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->conexion->prepare($sql);
-            
+
             $stmt->execute([
                 $data['certificado_id'],
                 $data['valor'],
@@ -77,12 +77,12 @@ class ModeloPago
     /**
      * Actualiza un pago
      */
-    public function actualizar($id, $data)
+    public function mdlActualizar($id, $data)
     {
         try {
             $sql = "UPDATE pagos SET estado = ?, metodo_de_pago = ? WHERE id = ?";
             $stmt = $this->conexion->prepare($sql);
-            
+
             $stmt->execute([
                 $data['estado'],
                 $data['metodo_de_pago'],
@@ -102,7 +102,7 @@ class ModeloPago
     /**
      * Elimina un pago (pero verifica dependencias primero)
      */
-    public function eliminar($id)
+    public function mdlEliminar($id)
     {
         try {
             // Verificar si hay reportes asociados
@@ -133,10 +133,10 @@ class ModeloPago
     /**
      * Obtiene estadísticas de pagos
      */
-    public function obtenerEstadisticas()
+    public function mdlObtenerEstadisticas()
     {
         try {
-            $sql = "SELECT 
+            $sql = "SELECT
                         COUNT(*) as total,
                         SUM(CASE WHEN LOWER(estado) = 'pagado' THEN 1 ELSE 0 END) as completados,
                         SUM(valor) as valor_total,
@@ -148,6 +148,22 @@ class ModeloPago
         } catch (PDOException $e) {
             error_log("Error al obtener estadísticas: " . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Obtiene lista de certificados para select
+     */
+    public function mdlObtenerCertificados()
+    {
+        try {
+            $sql = "SELECT id FROM certificados ORDER BY id DESC";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener certificados: " . $e->getMessage());
+            return [];
         }
     }
 }

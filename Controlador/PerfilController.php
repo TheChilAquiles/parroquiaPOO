@@ -35,7 +35,7 @@ class PerfilController
             return;
         }
 
-        $feligres = $this->modeloFeligres->ctrlConsularFeligres($tipoDoc, $numeroDoc);
+        $feligres = $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
 
         if ($feligres['status'] === 'error') {
             $_SESSION['error'] = $feligres['error'];
@@ -78,9 +78,9 @@ class PerfilController
 
         // Crear o actualizar feligres
         if ($_SESSION['user-datos'] == false) {
-            $status = $this->modeloFeligres->ctrlCrearFeligres($datosFeligres);
+            $status = $this->modeloFeligres->mdlCrearFeligres($datosFeligres);
         } else {
-            $status = $this->modeloFeligres->ctrlActualizarFeligres($datosFeligres);
+            $status = $this->modeloFeligres->mdlUpdateFeligres($datosFeligres);
         }
 
         if ($status['status'] === 'error') {

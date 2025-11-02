@@ -11,25 +11,21 @@ class SacramentosController
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/ModeloSacramento.php';
-        require_once __DIR__ . '/../Controlador/ControladorFeligres.php';
+        // El autoload.php ya carga las clases automáticamente
         $this->modeloSacramento = new ModeloSacramento();
-        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
-        $this->modeloFeligres = new ModeloFeligres(); // En línea 15
+        $this->modeloFeligres = new ModeloFeligres();
     }
 
     public function index()
     {
-        $rolesDisponibles = $this->obtenerRolesPorTipo($tipo);
-        $rolesObligatorios = $this->obtenerRolesObligatorios($tipo);
+        // Mostrar vista de sacramentos
         include_once __DIR__ . '/../Vista/sacramentos.php';
     }   
 
     private function buscarFeligres($tipoDoc, $numeroDoc)
     {
-        require_once __DIR__ . '/../Modelo/ModeloFeligres.php';
-        $modelo = new ModeloFeligres();
-        return $modelo->mdlConsultarFeligres($tipoDoc, $numeroDoc);
+        // Usar la instancia ya creada en el constructor
+        return $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
     }
 
 
@@ -88,7 +84,7 @@ class SacramentosController
             return;
         }
 
-        $feligres = $this->modeloFeligres->ctrlConsularFeligres($tipoDoc, $numeroDoc);
+        $feligres = $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
         header('Content-Type: application/json');
         echo json_encode($feligres);
         exit();

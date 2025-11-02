@@ -1,112 +1,192 @@
 <?php
 
 // ============================================================================
-// PagosController.php
+// PagosController.php - Refactorizado para usar ModeloPago
 // ============================================================================
 
-class PagosController
+class PagosController extends BaseController
 {
-    private $conexion;
+    private $modelo;
 
     public function __construct()
     {
-        require_once __DIR__ . '/../Modelo/Conexion.php';
-        $this->conexion = Conexion::conectar();
+        $this->modelo = new ModeloPago();
     }
 
+    /**
+     * Lista todos los pagos
+     */
     public function index()
     {
-        $mensaje = "";
+        // Verificar autenticación
+        $this->requiereAutenticacion();
 
-        // Manejo de eliminación
+        // Procesar eliminación si viene por POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
-            $id = intval($_POST['id'] ?? 0);
-
-            if ($id > 0) {
-                try {
-                    $check = $this->conexion->prepare("SELECT id FROM pagos WHERE id = ?");
-                    $check->execute([$id]);
-
-                    if ($check->fetch()) {
-                        // Verificar si el pago tiene reportes asociados
-                        $checkReportes = $this->conexion->prepare("SELECT COUNT(*) FROM reportes WHERE id_pagos = ?");
-                        $checkReportes->execute([$id]);
-                        $tieneReportes = $checkReportes->fetchColumn();
-
-                        if ($tieneReportes > 0) {
-                            $_SESSION['error'] = "No se puede eliminar el pago con ID $id porque tiene reportes asociados.";
-                        } else {
-                            $del = $this->conexion->prepare("DELETE FROM pagos WHERE id = ?");
-                            $del->execute([$id]);
-                            $_SESSION['success'] = "Pago con ID $id eliminado correctamente.";
-                        }
-                    } else {
-                        $_SESSION['error'] = "No se encontró pago con ID $id.";
-                    }
-                } catch (Exception $e) {
-                    $_SESSION['error'] = "Error al eliminar pago.";
-                }
-            } else {
-                $_SESSION['error'] = "ID inválido.";
-            }
+            $this->eliminar();
         }
 
-        // Listado de pagos
-        try {
-            $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->execute();
-            $pagos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Obtener todos los pagos desde el modelo
+        $pagos = $this->modelo->mdlObtenerTodos();
 
-            // Estadísticas
-            $totalPagos = count($pagos);
-            $pagosCompletados = count(array_filter($pagos, function ($p) {
-                return strtolower($p['estado']) === 'pagado';
-            }));
-            $valorTotal = array_sum(array_column($pagos, 'valor'));
+        // Calcular estadísticas
+        $estadisticas = $this->modelo->mdlObtenerEstadisticas();
 
-            include __DIR__ . '/../Vista/pagos.php';
-        } catch (Exception $e) {
-            $_SESSION['error'] = "Error al cargar pagos.";
-            include __DIR__ . '/../Vista/pagos.php';
+        // Incluir vista (variables $pagos y $estadisticas están disponibles)
+        include __DIR__ . '/../Vista/pagos.php';
+    }
+
+    /**
+     * Muestra formulario para crear pago
+     */
+    public function crear()
+    {
+        // Verificar permisos
+        $this->requiereAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Procesar creación
+            $this->procesarCreacion();
+        } else {
+            // Mostrar formulario
+            $certificados = $this->modelo->mdlObtenerCertificados();
+            include __DIR__ . '/../Vista/agregar_pago.php';
         }
     }
 
-    public function crear()
+    /**
+     * Procesa la creación de un nuevo pago
+     */
+    private function procesarCreacion()
     {
+        $certificado_id = $_POST['certificado_id'] ?? null;
+        $valor = $_POST['valor'] ?? null;
+        $estado = $_POST['estado'] ?? null;
+        $metodo = $_POST['metodo_de_pago'] ?? null;
+
+        // Validar campos requeridos
+        if (empty($certificado_id) || empty($valor) || empty($estado) || empty($metodo)) {
+            $_SESSION['error'] = 'Todos los campos son obligatorios.';
+            $certificados = $this->modelo->mdlObtenerCertificados();
+            include __DIR__ . '/../Vista/agregar_pago.php';
+            return;
+        }
+
+        // Validar tipo de dato
+        if (!is_numeric($valor) || $valor <= 0) {
+            $_SESSION['error'] = 'El valor debe ser un número positivo.';
+            $certificados = $this->modelo->mdlObtenerCertificados();
+            include __DIR__ . '/../Vista/agregar_pago.php';
+            return;
+        }
+
+        // Crear pago usando el modelo
+        $resultado = $this->modelo->mdlCrear([
+            'certificado_id' => (int)$certificado_id,
+            'valor' => (float)$valor,
+            'estado' => $estado,
+            'metodo_de_pago' => $metodo
+        ]);
+
+        if ($resultado['exito']) {
+            $_SESSION['success'] = $resultado['mensaje'];
+            header('Location: ?route=pagos');
+            exit();
+        } else {
+            $_SESSION['error'] = $resultado['mensaje'];
+            $certificados = $this->modelo->mdlObtenerCertificados();
+            include __DIR__ . '/../Vista/agregar_pago.php';
+        }
+    }
+
+    /**
+     * Muestra formulario para actualizar pago
+     */
+    public function actualizar()
+    {
+        // Verificar permisos
+        $this->requiereAdmin();
+
+        $id = $_GET['id'] ?? $_POST['id'] ?? null;
+
+        if (empty($id) || !is_numeric($id)) {
+            $_SESSION['error'] = 'ID de pago inválido.';
+            header('Location: ?route=pagos');
+            exit();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $certificado_id = $_POST['certificado_id'] ?? null;
-            $valor = $_POST['valor'] ?? null;
-            $estado = $_POST['estado'] ?? null;
-            $metodo = $_POST['metodo_de_pago'] ?? null;
+            // Procesar actualización
+            $this->procesarActualizacion((int)$id);
+        } else {
+            // Mostrar formulario
+            $pago = $this->modelo->mdlObtenerPorId((int)$id);
 
-            if (empty($certificado_id) || empty($valor) || empty($estado) || empty($metodo)) {
-                $_SESSION['error'] = 'Todos los campos son obligatorios.';
-                include __DIR__ . '/../Vista/agregar_pago.php';
-                return;
-            }
-
-            if (!is_numeric($valor) || $valor <= 0) {
-                $_SESSION['error'] = 'El valor debe ser un número positivo.';
-                include __DIR__ . '/../Vista/agregar_pago.php';
-                return;
-            }
-
-            try {
-                $sql = "INSERT INTO pagos (certificado_id, valor, estado, metodo_de_pago, fecha_pago) 
-                        VALUES (?, ?, ?, ?, NOW())";
-                $stmt = $this->conexion->prepare($sql);
-                $stmt->execute([(int)$certificado_id, (float)$valor, $estado, $metodo]);
-
-                $_SESSION['success'] = 'Pago creado exitosamente.';
+            if (!$pago) {
+                $_SESSION['error'] = 'Pago no encontrado.';
                 header('Location: ?route=pagos');
                 exit();
-            } catch (Exception $e) {
-                $_SESSION['error'] = 'Error al crear pago.';
-                include __DIR__ . '/../Vista/agregar_pago.php';
             }
+
+            include __DIR__ . '/../Vista/actualizar_pago.php';
+        }
+    }
+
+    /**
+     * Procesa la actualización de un pago
+     */
+    private function procesarActualizacion($id)
+    {
+        $estado = $_POST['estado'] ?? null;
+        $metodo = $_POST['metodo_de_pago'] ?? null;
+
+        // Validar campos
+        if (empty($estado) || empty($metodo)) {
+            $_SESSION['error'] = 'Todos los campos son obligatorios.';
+            $pago = $this->modelo->mdlObtenerPorId($id);
+            include __DIR__ . '/../Vista/actualizar_pago.php';
+            return;
+        }
+
+        // Actualizar usando el modelo
+        $resultado = $this->modelo->mdlActualizar($id, [
+            'estado' => $estado,
+            'metodo_de_pago' => $metodo
+        ]);
+
+        if ($resultado['exito']) {
+            $_SESSION['success'] = $resultado['mensaje'];
+            header('Location: ?route=pagos');
+            exit();
         } else {
-            include __DIR__ . '/../Vista/agregar_pago.php';
+            $_SESSION['error'] = $resultado['mensaje'];
+            $pago = $this->modelo->mdlObtenerPorId($id);
+            include __DIR__ . '/../Vista/actualizar_pago.php';
+        }
+    }
+
+    /**
+     * Elimina un pago
+     */
+    public function eliminar()
+    {
+        // Verificar permisos
+        $this->requiereAdmin();
+
+        $id = $_POST['id'] ?? null;
+
+        if (empty($id) || !is_numeric($id)) {
+            $_SESSION['error'] = 'ID inválido.';
+            return;
+        }
+
+        // Eliminar usando el modelo
+        $resultado = $this->modelo->mdlEliminar((int)$id);
+
+        if ($resultado['exito']) {
+            $_SESSION['success'] = $resultado['mensaje'];
+        } else {
+            $_SESSION['error'] = $resultado['mensaje'];
         }
     }
 }

@@ -50,8 +50,8 @@ class RegistroController
         }
 
         // Validar longitud mínima de contraseña
-        if (strlen($password) < 6) {
-            $_SESSION['error_password'] = 'La contraseña debe tener al menos 6 caracteres.';
+        if (strlen($password) < 8) {
+            $_SESSION['error_password'] = 'La contraseña debe tener al menos 8 caracteres.';
             $this->mostrarFormulario();
             return;
         }

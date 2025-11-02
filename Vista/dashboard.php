@@ -1,82 +1,3 @@
-<?php
-// --- CONEXIÓN MEJORADA CON MANEJO DE ERRORES ---
-$servidor = "localhost";
-$user = "root";
-$password = "";
-$db = "parroquia";
-
-try {
-    $conexion = new PDO("mysql:host=$servidor;dbname=$db;charset=utf8", $user, $password);
-    $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-    // Función para ejecutar consultas de forma segura
-    function obtenerConteo($conexion, $query) {
-        try {
-            return (int) $conexion->query($query)->fetchColumn();
-        } catch (Exception $e) {
-            error_log("Error en consulta: " . $e->getMessage());
-            return 0;
-        }
-    }
-
-    // === USUARIOS ===
-    $estadisticas['usuarios'] = [
-        'total' => obtenerConteo($conexion, "SELECT COUNT(id) FROM usuarios"),
-        'roles' => obtenerConteo($conexion, "SELECT COUNT(id) FROM usuario_roles"),
-        'feligreses' => obtenerConteo($conexion, "SELECT COUNT(id) FROM feligreses")
-    ];
-
-    // === LIBROS ===
-    $estadisticas['libros'] = [
-        'total' => obtenerConteo($conexion, "SELECT COUNT(id) FROM libros"),
-        'tipos' => obtenerConteo($conexion, "SELECT COUNT(DISTINCT libro_tipo_id) FROM libros"),
-        'registros' => obtenerConteo($conexion, "SELECT COUNT(numero) FROM libros")
-    ];
-
-    // === DOCUMENTOS ===
-    $estadisticas['documentos'] = [
-        'tipos' => obtenerConteo($conexion, "SELECT COUNT(id) FROM documento_tipos"),
-        'total' => obtenerConteo($conexion, "SELECT COUNT(tipo) FROM documento_tipos")
-    ];
-
-    // === REPORTES ===
-    $estadisticas['reportes'] = [
-        'total' => obtenerConteo($conexion, "SELECT COUNT(id) FROM reportes"),
-        'categorias' => obtenerConteo($conexion, "SELECT COUNT(DISTINCT categoria) FROM reportes")
-    ];
-
-    // === PAGOS ===
-    $estadisticas['pagos'] = [
-        'total' => obtenerConteo($conexion, "SELECT COUNT(id) FROM pagos"),
-        'completos' => obtenerConteo($conexion, "SELECT COUNT(*) FROM pagos WHERE estado='completo'"),
-        'cancelados' => obtenerConteo($conexion, "SELECT COUNT(*) FROM pagos WHERE estado='cancelado'"),
-        'pendientes' => 0
-    ];
-    $estadisticas['pagos']['pendientes'] = $estadisticas['pagos']['total'] - $estadisticas['pagos']['completos'] - $estadisticas['pagos']['cancelados'];
-
-    // === CONTACTOS ===
-    $estadisticas['contactos'] = [
-        'total' => obtenerConteo($conexion, "SELECT COUNT(id) FROM contactos")
-    ];
-
-    // Calcular totales generales
-    $totales = [
-        'usuarios_sistema' => $estadisticas['usuarios']['total'] + $estadisticas['usuarios']['roles'],
-        'recursos' => $estadisticas['libros']['total'] + $estadisticas['documentos']['total'],
-        'actividad' => $estadisticas['reportes']['total'] + $estadisticas['pagos']['total']
-    ];
-
-} catch (Exception $e) {
-    error_log("Error de conexión: " . $e->getMessage());
-    die("<div class='min-h-screen flex items-center justify-center bg-red-50'>
-            <div class='bg-white p-8 rounded-xl shadow-lg border border-red-200'>
-                <h1 class='text-2xl font-bold text-red-600 mb-4'>⚠️ Error de Conexión</h1>
-                <p class='text-gray-700'>No se pudo conectar a la base de datos. Contacte al administrador.</p>
-            </div>
-         </div>");
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -88,42 +9,42 @@ try {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+
         * { font-family: 'Inter', sans-serif; }
-        
-        .fade-in { 
-            animation: fadeInUp 0.8s ease-out forwards; 
-            opacity: 0; 
-            transform: translateY(20px); 
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
-        
+
         @keyframes fadeInUp {
             to { opacity: 1; transform: translateY(0); }
         }
-        
+
         .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .card-hover:hover {
             transform: translateY(-8px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
         }
-        
+
         .gradient-bg {
             background: linear-gradient(135deg, #D0B8A8 0%, #ab876f 100%);
         }
-        
+
         .chart-container {
             position: relative;
             height: 250px;
         }
-        
+
         .stat-number {
             font-feature-settings: 'tnum';
             letter-spacing: -0.05em;
         }
-        
+
         .loading {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -156,7 +77,7 @@ try {
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Sistema</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= $totales['usuarios_sistema'] ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['usuarios_sistema'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Usuarios activos en el sistema</p>
                         </div>
                         <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
@@ -164,12 +85,12 @@ try {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.1s">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Recursos</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= $totales['recursos'] ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['recursos'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Libros y documentos</p>
                         </div>
                         <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
@@ -177,12 +98,12 @@ try {
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.2s">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Actividad</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= $totales['actividad'] ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['actividad'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Reportes y transacciones</p>
                         </div>
                         <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
@@ -198,7 +119,7 @@ try {
             <h2 class="text-2xl font-bold text-gray-900 mb-8">
                 <i class="fas fa-analytics mr-2 text-blue-600"></i>Estadísticas Detalladas
             </h2>
-            
+
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <!-- Usuarios -->
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.3s">
@@ -207,10 +128,10 @@ try {
                             <i class="fas fa-users text-blue-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Usuarios</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['usuarios']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['usuarios']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Roles: <?= $estadisticas['usuarios']['roles'] ?></div>
-                            <div>Feligreses: <?= $estadisticas['usuarios']['feligreses'] ?></div>
+                            <div>Roles: <?= htmlspecialchars($estadisticas['usuarios']['roles'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Feligreses: <?= htmlspecialchars($estadisticas['usuarios']['feligreses'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
@@ -222,10 +143,10 @@ try {
                             <i class="fas fa-book text-yellow-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Libros</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['libros']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['libros']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Tipos: <?= $estadisticas['libros']['tipos'] ?></div>
-                            <div>Registros: <?= $estadisticas['libros']['registros'] ?></div>
+                            <div>Tipos: <?= htmlspecialchars($estadisticas['libros']['tipos'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Registros: <?= htmlspecialchars($estadisticas['libros']['registros'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
@@ -237,9 +158,9 @@ try {
                             <i class="fas fa-file-alt text-red-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Documentos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['documentos']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['documentos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Tipos: <?= $estadisticas['documentos']['tipos'] ?></div>
+                            <div>Tipos: <?= htmlspecialchars($estadisticas['documentos']['tipos'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
@@ -251,9 +172,9 @@ try {
                             <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Reportes</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['reportes']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['reportes']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Categorías: <?= $estadisticas['reportes']['categorias'] ?></div>
+                            <div>Categorías: <?= htmlspecialchars($estadisticas['reportes']['categorias'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
@@ -265,10 +186,10 @@ try {
                             <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Pagos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['pagos']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['pagos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div class="text-green-600">✓ Completos: <?= $estadisticas['pagos']['completos'] ?></div>
-                            <div class="text-red-600">✗ Cancelados: <?= $estadisticas['pagos']['cancelados'] ?></div>
+                            <div class="text-green-600">✓ Completos: <?= htmlspecialchars($estadisticas['pagos']['completos'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div class="text-red-600">✗ Cancelados: <?= htmlspecialchars($estadisticas['pagos']['cancelados'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
@@ -280,7 +201,7 @@ try {
                             <i class="fas fa-address-book text-teal-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Contactos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= $estadisticas['contactos']['total'] ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['contactos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                     </div>
                 </div>
             </div>
@@ -291,7 +212,7 @@ try {
             <h2 class="text-2xl font-bold text-gray-900 mb-8">
                 <i class="fas fa-chart-pie mr-2 text-purple-600"></i>Análisis Visual
             </h2>
-            
+
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                 <!-- Gráfico Usuarios -->
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.9s">
@@ -378,7 +299,7 @@ try {
             const ahora = new Date();
             document.getElementById('fechaHora').textContent = ahora.toLocaleString('es-ES', {
                 day: '2-digit',
-                month: '2-digit', 
+                month: '2-digit',
                 year: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
@@ -399,7 +320,7 @@ try {
             data: {
                 labels: ['Usuarios', 'Roles', 'Feligreses'],
                 datasets: [{
-                    data: [<?= $estadisticas['usuarios']['total'] ?>, <?= $estadisticas['usuarios']['roles'] ?>, <?= $estadisticas['usuarios']['feligreses'] ?>],
+                    data: [<?= (int)$estadisticas['usuarios']['total'] ?>, <?= (int)$estadisticas['usuarios']['roles'] ?>, <?= (int)$estadisticas['usuarios']['feligreses'] ?>],
                     backgroundColor: ['#3B82F6', '#EF4444', '#06B6D4'],
                     borderRadius: 8,
                     borderSkipped: false,
@@ -438,7 +359,7 @@ try {
             data: {
                 labels: ['Total', 'Tipos', 'Registros'],
                 datasets: [{
-                    data: [<?= $estadisticas['libros']['total'] ?>, <?= $estadisticas['libros']['tipos'] ?>, <?= $estadisticas['libros']['registros'] ?>],
+                    data: [<?= (int)$estadisticas['libros']['total'] ?>, <?= (int)$estadisticas['libros']['tipos'] ?>, <?= (int)$estadisticas['libros']['registros'] ?>],
                     backgroundColor: ['#F59E0B', '#8B5CF6', '#F97316'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -464,7 +385,7 @@ try {
             data: {
                 labels: ['Tipos de Documento', 'Total Documentos'],
                 datasets: [{
-                    data: [<?= $estadisticas['documentos']['tipos'] ?>, <?= $estadisticas['documentos']['total'] ?>],
+                    data: [<?= (int)$estadisticas['documentos']['tipos'] ?>, <?= (int)$estadisticas['documentos']['total'] ?>],
                     backgroundColor: ['#3B82F6', '#EF4444'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -489,7 +410,7 @@ try {
             data: {
                 labels: ['Total Reportes', 'Categorías'],
                 datasets: [{
-                    data: [<?= $estadisticas['reportes']['total'] ?>, <?= $estadisticas['reportes']['categorias'] ?>],
+                    data: [<?= (int)$estadisticas['reportes']['total'] ?>, <?= (int)$estadisticas['reportes']['categorias'] ?>],
                     backgroundColor: ['#8B5CF6', '#A855F7'],
                     borderRadius: 8,
                     borderSkipped: false
@@ -526,7 +447,7 @@ try {
             data: {
                 labels: ['Completos', 'Cancelados', 'Pendientes'],
                 datasets: [{
-                    data: [<?= $estadisticas['pagos']['completos'] ?>, <?= $estadisticas['pagos']['cancelados'] ?>, <?= $estadisticas['pagos']['pendientes'] ?>],
+                    data: [<?= (int)$estadisticas['pagos']['completos'] ?>, <?= (int)$estadisticas['pagos']['cancelados'] ?>, <?= (int)$estadisticas['pagos']['pendientes'] ?>],
                     backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -554,12 +475,12 @@ try {
                 datasets: [{
                     label: 'Actividad General',
                     data: [
-                        <?= $estadisticas['usuarios']['total'] ?>, 
-                        <?= $estadisticas['libros']['total'] ?>, 
-                        <?= $estadisticas['documentos']['total'] ?>, 
-                        <?= $estadisticas['reportes']['total'] ?>, 
-                        <?= $estadisticas['pagos']['total'] ?>, 
-                        <?= $estadisticas['contactos']['total'] ?>
+                        <?= (int)$estadisticas['usuarios']['total'] ?>,
+                        <?= (int)$estadisticas['libros']['total'] ?>,
+                        <?= (int)$estadisticas['documentos']['total'] ?>,
+                        <?= (int)$estadisticas['reportes']['total'] ?>,
+                        <?= (int)$estadisticas['pagos']['total'] ?>,
+                        <?= (int)$estadisticas['contactos']['total'] ?>
                     ],
                     backgroundColor: 'rgba(99, 102, 241, 0.1)',
                     borderColor: '#6366F1',
@@ -602,17 +523,8 @@ try {
                 }
             });
         }, { threshold: 0.1 });
-        
+
         fadeElements.forEach(el => observer.observe(el));
-
-        // Función para actualizar estadísticas en tiempo real (opcional)
-        function actualizarEstadisticas() {
-            // Aquí podrías hacer una petición AJAX para actualizar los datos
-            console.log('Actualizando estadísticas...');
-        }
-
-        // Actualizar cada 5 minutos
-        setInterval(actualizarEstadisticas, 300000);
 
         // Efectos adicionales
         document.addEventListener('DOMContentLoaded', function() {
@@ -648,7 +560,7 @@ try {
                     this.style.transform = 'scale(1.02)';
                     this.style.transition = 'transform 0.3s ease';
                 });
-                
+
                 container.addEventListener('mouseleave', function() {
                     this.style.transform = 'scale(1)';
                 });
@@ -659,7 +571,7 @@ try {
         window.addEventListener('error', function(e) {
             if (e.target.tagName === 'CANVAS') {
                 console.error('Error en gráfico:', e);
-                e.target.parentElement.innerHTML = 
+                e.target.parentElement.innerHTML =
                     '<div class="flex items-center justify-center h-full text-gray-400">' +
                     '<i class="fas fa-exclamation-triangle mr-2"></i>Error al cargar gráfico</div>';
             }

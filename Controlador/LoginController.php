@@ -140,18 +140,18 @@ class LoginController
         $mail = new PHPMailer(true);
 
         try {
-            // Configuración del servidor (DEBES CAMBIAR ESTO)
+            // Configuración del servidor desde config.php
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com'; // Ej: smtp.gmail.com
+            $mail->Host = SMTP_HOST;
             $mail->SMTPAuth = true;
-            $mail->Username = 'aquilesbedoya37@gmail.com'; // Tu email
-            $mail->Password = 'fkgs fpws rpnq jqub'; // Contraseña de app (no la de login)
+            $mail->Username = SMTP_USERNAME;
+            $mail->Password = SMTP_PASSWORD;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port = 465; // O 587 si usas STARTTLS
+            $mail->Port = SMTP_PORT;
             $mail->CharSet = 'UTF-8';
 
             // Remitente y destinatario
-            $mail->setFrom('aquilesbedoya37@gmail.com', 'Sistema de Soporte');
+            $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
             $mail->addAddress($email); // Email del usuario
 
             // Contenido del email
