@@ -1,5 +1,7 @@
 <?php
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 // ============================================================================
 // CertificadosController.php
@@ -69,9 +71,6 @@ class CertificadosController
 
             // Generar PDF con DomPDF
             require_once __DIR__ . '/../vendor/autoload.php';
-
-            use Dompdf\Dompdf;
-            use Dompdf\Options;
 
             $options = new Options();
             $options->set('isHtml5ParserEnabled', true);
@@ -180,9 +179,6 @@ class CertificadosController
 
             // Generar PDF con DomPDF
             require_once __DIR__ . '/../vendor/autoload.php';
-
-            use Dompdf\Dompdf;
-            use Dompdf\Options;
 
             $options = new Options();
             $options->set('isHtml5ParserEnabled', true);
@@ -400,9 +396,6 @@ class CertificadosController
 
             // Generar PDF con DomPDF
             require_once __DIR__ . '/../vendor/autoload.php';
-
-            use Dompdf\Dompdf;
-            use Dompdf\Options;
 
             $options = new Options();
             $options->set('isHtml5ParserEnabled', true);

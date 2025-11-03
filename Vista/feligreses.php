@@ -58,6 +58,7 @@
         <!-- Contenedor con scroll -->
         <div class="overflow-y-auto flex-1">
             <form id="feligresForm" class="space-y-4" method="POST">
+                <input type="hidden" name="feligres-id" id="feligresId" value="">
 
                 <!-- Tipo y Número de Documento -->
                 <div class="grid grid-cols-2 gap-4">
@@ -233,6 +234,7 @@ $(document).ready(function() {
     $('#addFeligres').on('click', function() {
         $('#modalTitle').text('Agregar Feligrés');
         $('#feligresForm')[0].reset();
+        $('#feligresId').val('');
         $('#feligresModal').removeClass('hidden');
     });
 
@@ -241,40 +243,77 @@ $(document).ready(function() {
         $('#feligresModal').addClass('hidden');
     });
 
+    // Botón editar
+    $(document).on('click', '.btn-editar', function() {
+        const id = $(this).data('id');
+        const row = table.row($(this).closest('tr')).data();
+
+        // Llenar formulario con datos de la fila
+        $('#modalTitle').text('Editar Feligrés');
+        $('#feligresId').val(row.id);
+        $('#tipoDoc').val(row.tipo_documento_id || '');
+        $('#documento').val(row.numero_documento || '');
+        $('#primerNombre').val(row.primer_nombre || '');
+        $('#segundoNombre').val(row.segundo_nombre || '');
+        $('#primerApellido').val(row.primer_apellido || '');
+        $('#segundoApellido').val(row.segundo_apellido || '');
+        $('#telefono').val(row.telefono || '');
+        $('#direccion').val(row.direccion || '');
+
+        $('#feligresModal').removeClass('hidden');
+    });
+
     // Submit del formulario
     $(document).on('submit', '#feligresForm', function(event) {
         event.preventDefault();
 
+        const feligresId = $('#feligresId').val();
+        const isEdit = feligresId !== '';
+        const url = isEdit ? `?route=feligreses/editar&id=${feligresId}` : "?route=feligreses/crear";
         const formData = $(this).serialize();
 
         $.ajax({
-            url: "?route=feligreses/crear",
+            url: url,
             method: "POST",
             data: formData,
+            dataType: "json",
             beforeSend: function() {
                 $('#btnGuardar').prop('disabled', true).text('Guardando...');
             },
             success: function(response) {
-                $('#feligresForm')[0].reset();
-                $('#feligresModal').addClass('hidden');
+                if (response.status === 'success') {
+                    $('#feligresForm')[0].reset();
+                    $('#feligresModal').addClass('hidden');
 
-                table.ajax.reload(null, false);
+                    table.ajax.reload(null, false);
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Completado',
-                    text: 'Feligrés guardado correctamente',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Completado',
+                        text: response.message || 'Feligrés guardado correctamente',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message || 'Error al guardar el feligrés'
+                    });
+                }
             },
             error: function(xhr, status, error) {
                 console.error('Error AJAX:', {xhr, status, error});
 
+                let mensaje = 'Error al guardar el feligrés';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    mensaje = xhr.responseJSON.message;
+                }
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Error al guardar el feligrés'
+                    text: mensaje
                 });
             },
             complete: function() {

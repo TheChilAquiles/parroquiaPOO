@@ -135,15 +135,31 @@ class ModeloFeligres
         try {
             $sql = "SELECT f.*,
                     CONCAT(f.primer_nombre, ' ', IFNULL(f.segundo_nombre, ''), ' ',
-                           f.primer_apellido, ' ', IFNULL(f.segundo_apellido, '')) AS nombre_completo,
-                    td.tipo AS tipo_documento_nombre
+                           f.primer_apellido, ' ', IFNULL(f.segundo_apellido, '')) AS nombre_completo
                     FROM feligreses f
-                    LEFT JOIN tipos_documento td ON f.tipo_documento_id = td.id
                     WHERE f.estado_registro IS NULL
                     ORDER BY f.id DESC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Mapear tipos de documento (sin tabla tipos_documento)
+            $tiposDoc = [
+                1 => 'Cédula Ciudadanía',
+                2 => 'Tarjeta Identidad',
+                3 => 'Cédula Extranjera',
+                4 => 'Registro Civil',
+                5 => 'Permiso Especial',
+                6 => 'NIT'
+            ];
+
+            $feligreses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Agregar nombre del tipo de documento
+            foreach ($feligreses as &$feligres) {
+                $feligres['tipo_documento_nombre'] = $tiposDoc[$feligres['tipo_documento_id']] ?? 'N/A';
+            }
+
+            return $feligreses;
         } catch (PDOException $e) {
             error_log("Error al listar feligreses: " . $e->getMessage());
             return [];

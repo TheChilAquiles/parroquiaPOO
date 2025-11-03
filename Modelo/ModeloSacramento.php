@@ -257,7 +257,7 @@ class ModeloSacramento
             $sql = "SELECT
                         s.id,
                         s.fecha_generacion,
-                        s.lugar,
+                        s.tipo_sacramento_id,
                         st.tipo AS tipo_sacramento,
                         GROUP_CONCAT(
                             CONCAT(
@@ -276,12 +276,19 @@ class ModeloSacramento
                     LEFT JOIN participantes_rol pr ON pr.id = p.rol_participante_id
                     WHERE s.libro_id = ?
                     AND s.estado_registro IS NULL
-                    GROUP BY s.id
+                    GROUP BY s.id, s.fecha_generacion, s.tipo_sacramento_id, st.tipo
                     ORDER BY s.fecha_generacion DESC";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$libroId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $sacramentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Agregar columna 'lugar' como N/A (no existe en BD pero la vista la espera)
+            foreach ($sacramentos as &$sacramento) {
+                $sacramento['lugar'] = 'N/A';
+            }
+
+            return $sacramentos;
 
         } catch (PDOException $e) {
             error_log("Error al obtener sacramentos por libro: " . $e->getMessage());
