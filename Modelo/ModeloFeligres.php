@@ -125,5 +125,65 @@ class ModeloFeligres
             return null;
         }
     }
+
+    /**
+     * Lista todos los feligreses activos (sin soft delete)
+     * @return array Lista de feligreses
+     */
+    public function mdlListarTodos()
+    {
+        try {
+            $sql = "SELECT f.*,
+                    CONCAT(f.primer_nombre, ' ', IFNULL(f.segundo_nombre, ''), ' ',
+                           f.primer_apellido, ' ', IFNULL(f.segundo_apellido, '')) AS nombre_completo,
+                    td.tipo AS tipo_documento_nombre
+                    FROM feligreses f
+                    LEFT JOIN tipos_documento td ON f.tipo_documento_id = td.id
+                    WHERE f.estado_registro IS NULL
+                    ORDER BY f.id DESC";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al listar feligreses: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Cuenta el total de feligreses activos
+     * @return int Total de feligreses
+     */
+    public function mdlContarTodos()
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM feligreses WHERE estado_registro IS NULL";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            error_log("Error al contar feligreses: " . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Elimina (soft delete) un feligrés
+     * @param int $id ID del feligrés
+     * @return bool True si se eliminó, false en caso contrario
+     */
+    public function mdlEliminar($id)
+    {
+        try {
+            $sql = "UPDATE feligreses SET estado_registro = NOW() WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$id]);
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            error_log("Error al eliminar feligrés: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 

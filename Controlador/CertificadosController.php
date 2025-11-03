@@ -27,6 +27,13 @@ class CertificadosController
 
     public function generar()
     {
+        // NUEVO: Manejar generación desde sacramento_id (vía GET)
+        if (isset($_GET['sacramento_id'])) {
+            $this->generarDesdeSacramento((int)$_GET['sacramento_id']);
+            return;
+        }
+
+        // LEGACY: Manejar POST con formulario manual
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->mostrar();
             return;
@@ -315,6 +322,237 @@ class CertificadosController
         } catch (Exception $e) {
             error_log("Error al generar certificado automático: " . $e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Genera certificado directamente desde un sacramento_id
+     * Llamado cuando se hace clic en "Generar Certificado" desde la vista de sacramentos
+     * @param int $sacramentoId ID del sacramento
+     */
+    private function generarDesdeSacramento($sacramentoId)
+    {
+        try {
+            // Obtener datos del sacramento
+            $sacramento = $this->modeloSacramento->mdlObtenerPorId($sacramentoId);
+
+            if (!$sacramento) {
+                $_SESSION['error'] = "Sacramento no encontrado con ID: $sacramentoId";
+                header('Location: ?route=sacramentos');
+                exit();
+            }
+
+            // Obtener participantes del sacramento
+            $participantes = $this->modeloSacramento->getParticipantes($sacramentoId);
+
+            if (empty($participantes)) {
+                $_SESSION['error'] = "No se encontraron participantes para este sacramento";
+                header('Location: ?route=sacramentos');
+                exit();
+            }
+
+            // Determinar el participante principal según el tipo de sacramento
+            $tipoSacramentoId = (int)$sacramento['tipo_sacramento_id'];
+            $participantePrincipal = null;
+            $tipoSacramento = '';
+
+            // Mapear tipo de sacramento
+            $tiposSacramento = [
+                1 => 'Bautismo',
+                2 => 'Confirmación',
+                3 => 'Defunción',
+                4 => 'Matrimonio'
+            ];
+            $tipoSacramento = $tiposSacramento[$tipoSacramentoId] ?? 'Sacramento';
+
+            // Buscar participante principal por rol
+            $rolesPrincipales = [
+                1 => 'Bautizado',      // Bautismo
+                2 => 'Confirmando',     // Confirmación
+                3 => 'Difunto',         // Defunción
+                4 => 'Esposo'           // Matrimonio (tomar esposo como principal)
+            ];
+
+            $rolBuscado = $rolesPrincipales[$tipoSacramentoId] ?? null;
+
+            foreach ($participantes as $participante) {
+                if ($participante['rol'] === $rolBuscado) {
+                    $participantePrincipal = $participante;
+                    break;
+                }
+            }
+
+            // Si no se encuentra rol principal, tomar el primero
+            if (!$participantePrincipal) {
+                $participantePrincipal = $participantes[0];
+            }
+
+            // Construir nombre completo
+            $nombreCompleto = trim(
+                $participantePrincipal['primer_nombre'] . ' ' .
+                ($participantePrincipal['segundo_nombre'] ?? '') . ' ' .
+                $participantePrincipal['primer_apellido'] . ' ' .
+                ($participantePrincipal['segundo_apellido'] ?? '')
+            );
+
+            $fechaSacramento = date('d/m/Y', strtotime($sacramento['fecha_generacion']));
+            $lugarSacramento = $sacramento['lugar'] ?? 'Parroquia';
+
+            // Generar PDF con DomPDF
+            require_once __DIR__ . '/../vendor/autoload.php';
+
+            use Dompdf\Dompdf;
+            use Dompdf\Options;
+
+            $options = new Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isRemoteEnabled', true);
+
+            $dompdf = new Dompdf($options);
+
+            // Construir HTML del certificado
+            $html = '
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body {
+                        font-family: "Times New Roman", serif;
+                        padding: 60px;
+                        text-align: center;
+                        background: #fff;
+                    }
+                    .header {
+                        text-align: center;
+                        margin-bottom: 40px;
+                    }
+                    h1 {
+                        color: #1a1a1a;
+                        font-size: 32px;
+                        margin-bottom: 10px;
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                    }
+                    h2 {
+                        color: #444;
+                        font-size: 24px;
+                        margin-bottom: 30px;
+                        font-weight: normal;
+                    }
+                    .content {
+                        font-size: 18px;
+                        line-height: 2.0;
+                        text-align: justify;
+                        margin: 50px 0;
+                        padding: 0 40px;
+                    }
+                    .nombre-feligres {
+                        font-weight: bold;
+                        text-decoration: underline;
+                    }
+                    .participantes-list {
+                        margin: 30px 0;
+                        text-align: left;
+                        padding-left: 80px;
+                    }
+                    .participante-item {
+                        margin: 10px 0;
+                        font-size: 16px;
+                    }
+                    .firma {
+                        text-align: center;
+                        margin-top: 80px;
+                        font-style: italic;
+                    }
+                    .firma-line {
+                        width: 300px;
+                        border-top: 1px solid #000;
+                        margin: 60px auto 10px auto;
+                    }
+                    .footer {
+                        text-align: center;
+                        margin-top: 40px;
+                        font-size: 12px;
+                        color: #666;
+                    }
+                    .codigo-certificado {
+                        font-family: monospace;
+                        font-size: 10px;
+                        color: #999;
+                        margin-top: 20px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>Certificado de ' . htmlspecialchars($tipoSacramento) . '</h1>
+                    <h2>Parroquia</h2>
+                </div>
+
+                <div class="content">
+                    <p>
+                        Por medio de la presente se certifica que
+                        <span class="nombre-feligres">' . htmlspecialchars($nombreCompleto) . '</span>
+                        ha recibido el Sacramento de <strong>' . htmlspecialchars($tipoSacramento) . '</strong>
+                        en fecha <strong>' . htmlspecialchars($fechaSacramento) . '</strong>
+                        en <strong>' . htmlspecialchars($lugarSacramento) . '</strong>.
+                    </p>';
+
+            // Agregar lista de participantes si hay más de uno
+            if (count($participantes) > 1) {
+                $html .= '<div class="participantes-list"><p><strong>Participantes:</strong></p>';
+                foreach ($participantes as $participante) {
+                    $nombreParticipante = trim(
+                        $participante['primer_nombre'] . ' ' .
+                        ($participante['segundo_nombre'] ?? '') . ' ' .
+                        $participante['primer_apellido'] . ' ' .
+                        ($participante['segundo_apellido'] ?? '')
+                    );
+                    $html .= '<div class="participante-item">• <strong>' . htmlspecialchars($participante['rol']) . ':</strong> ' . htmlspecialchars($nombreParticipante) . '</div>';
+                }
+                $html .= '</div>';
+            }
+
+            $html .= '
+                    <p>
+                        Se expide el presente certificado a solicitud del interesado
+                        para los fines que estime conveniente.
+                    </p>
+                </div>
+
+                <div class="firma">
+                    <div class="firma-line"></div>
+                    <p>Firma del Párroco</p>
+                    <p>Parroquia</p>
+                </div>
+
+                <div class="footer">
+                    <p>Fecha de emisión: ' . date('d/m/Y H:i') . '</p>
+                    <p class="codigo-certificado">Sacramento ID: ' . str_pad($sacramentoId, 8, '0', STR_PAD_LEFT) . '</p>
+                </div>
+            </body>
+            </html>';
+
+            $dompdf->loadHtml($html);
+            $dompdf->setPaper('A4', 'portrait');
+            $dompdf->render();
+
+            // Nombre del archivo
+            $safeName = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', $nombreCompleto));
+            $filename = 'certificado_' . $tipoSacramento . '_' . $safeName . '.pdf';
+
+            // Forzar descarga
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            echo $dompdf->output();
+            exit();
+
+        } catch (Exception $e) {
+            error_log("Error al generar certificado desde sacramento: " . $e->getMessage());
+            $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
+            header('Location: ?route=sacramentos');
+            exit();
         }
     }
 }

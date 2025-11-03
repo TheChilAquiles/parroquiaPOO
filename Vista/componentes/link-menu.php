@@ -20,7 +20,7 @@ if (!isset($item)) {
 $routes_map = [
     'Inicio' => 'inicio',
     'Dashboard' => 'dashboard',
-    'Feligreses' => 'feligres',
+    'Feligreses' => 'feligreses',
     'Libros' => 'libros',
     'Noticias' => 'noticias',
     'Información' => 'informacion',

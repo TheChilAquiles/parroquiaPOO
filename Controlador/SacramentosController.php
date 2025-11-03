@@ -55,15 +55,43 @@ class SacramentosController
         }
 
         try {
+            // Limpiar buffer para evitar HTML contaminado
+            if (ob_get_level()) {
+                ob_clean();
+            }
+
             $sacramento = new ModeloSacramento($tipo, $numero);
             $resultado = $sacramento->CrearSacramento($_POST);
 
-            $_SESSION['success'] = 'Sacramento creado correctamente.';
-            header('Location: ?route=sacramentos');
+            header('Content-Type: application/json');
+
+            if ($resultado !== false) {
+                echo json_encode([
+                    'success' => true,
+                    'id' => $resultado,
+                    'message' => 'Sacramento creado correctamente'
+                ]);
+            } else {
+                http_response_code(400);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error al crear sacramento'
+                ]);
+            }
             exit();
+
         } catch (Exception $e) {
-            $_SESSION['error'] = 'Error al crear el sacramento: ' . $e->getMessage();
-            $this->index();
+            if (ob_get_level()) {
+                ob_clean();
+            }
+
+            header('Content-Type: application/json');
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+            exit();
         }
     }
 
@@ -71,7 +99,7 @@ class SacramentosController
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(400);
-            echo json_encode(['error' => 'Método no permitido']);
+            echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
             return;
         }
 
@@ -80,13 +108,33 @@ class SacramentosController
 
         if (empty($tipoDoc) || empty($numeroDoc)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Datos incompletos']);
+            echo json_encode(['status' => 'error', 'message' => 'Datos incompletos']);
             return;
         }
 
+        // Limpiar buffer para evitar contaminación HTML
+        if (ob_get_level()) {
+            ob_clean();
+        }
+
         $feligres = $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
+
         header('Content-Type: application/json');
-        echo json_encode($feligres);
+
+        if ($feligres) {
+            // Usuario encontrado - devolver formato esperado por JavaScript
+            echo json_encode([
+                'status' => 'success',
+                'data' => $feligres
+            ]);
+        } else {
+            // Usuario no encontrado
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Usuario no encontrado'
+            ]);
+        }
+
         exit();
     }
 
@@ -104,6 +152,11 @@ class SacramentosController
             http_response_code(400);
             echo json_encode(['error' => 'ID de sacramento inválido']);
             return;
+        }
+
+        // Limpiar cualquier output previo del buffer (evitar contaminación HTML en JSON)
+        if (ob_get_level()) {
+            ob_clean();
         }
 
         $sacramento = new ModeloSacramento();
@@ -168,6 +221,11 @@ class SacramentosController
             http_response_code(400);
             echo json_encode(['error' => 'Parámetros inválidos']);
             return;
+        }
+
+        // Limpiar cualquier output previo del buffer (evitar contaminación HTML en JSON)
+        if (ob_get_level()) {
+            ob_clean();
         }
 
         // Obtener sacramentos del modelo

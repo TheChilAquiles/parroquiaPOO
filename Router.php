@@ -125,6 +125,15 @@ class Router
             'certificados/descargar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'descargar'],
 
             // ================================================================
+            // RUTAS AUTENTICADAS - FELIGRESES
+            // ================================================================
+            'feligreses' => ['controlador' => 'FeligresController', 'accion' => 'index'],
+            'feligreses/listar' => ['controlador' => 'FeligresController', 'accion' => 'listar'],
+            'feligreses/crear' => ['controlador' => 'FeligresController', 'accion' => 'crear'],
+            'feligreses/editar' => ['controlador' => 'FeligresController', 'accion' => 'editar'],
+            'feligreses/eliminar' => ['controlador' => 'FeligresController', 'accion' => 'eliminar'],
+
+            // ================================================================
             // RUTAS AUTENTICADAS - NOTICIAS (ACTUALIZADO)
             // ================================================================
             'noticias' => ['controlador' => 'NoticiasController', 'accion' => 'index'],

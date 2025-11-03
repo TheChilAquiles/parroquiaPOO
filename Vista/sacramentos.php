@@ -1,3 +1,5 @@
+<?php include_once __DIR__ . '/componentes/plantillaTop.php'; ?>
+
 <!-- Contenedor principal -->
 <div class="min-h-[500px] px-4 py-8 flex-1 ">
     <div class="max-w-7xl mx-auto bg-white/60 rounded p-5">
@@ -17,12 +19,12 @@
             <table id="recordListing" class="min-w-full text-sm text-left text-gray-700 border border-gray-300">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th></th> 
-                        <th>Participante Principal</th>
-                        <th>Tipo Documento</th>
-                        <th>Numero Doc</th>
+                        <th></th>
+                        <th>Tipo Sacramento</th>
+                        <th>Participantes</th>
                         <th>Fecha</th>
-                        <th>Certificado</th>
+                        <th>Lugar</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
 
@@ -41,20 +43,19 @@
 
 <!-- Modal Tailwind -->
 <div id="recordModal" class="modal fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 max-h-[80svh] ">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 max-h-[90vh] flex flex-col">
         <h4 class="text-xl font-semibold mb-4 modal-title w-full text-center">Editar Registro</h4>
 
-
-
-
-        <form id="recordForm" class="space-y-4" method="POST">
+        <!-- Contenedor con scroll para el formulario -->
+        <div class="overflow-y-auto flex-1">
+            <form id="recordForm" class="space-y-4" method="POST">
 
 
 
 
             <!-- inputs de navegacion  -->
-            <input type="hidden" name="tipo" value="<?= $tipo ?>">
-            <input type="hidden" name="numero" value="<?= $numeroLibro ?>">
+            <input type="hidden" name="Tipo" value="<?= $tipo ?>">
+            <input type="hidden" name="Numero" value="<?= $numeroLibro ?>">
             <!-- Fin inputs de navegacion  -->
 
             <input type="hidden" name="id" id="id" />
@@ -223,19 +224,10 @@
                                 echo '<option value="10">Abuelo</option>';
                                 echo '<option value="11">Abuela</option>';
                                 echo '<option value="1">Bautizado</option>';
-
-
-                                echo  '<script> const rolesObligatorios = [ "Bautizado", "Padrino" , "Madrina" ] </script>';
                             } elseif ($tipo == 2) {
-
                                 echo '<option value="2">Confirmando</option>';
-
-                                echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
                             } elseif ($tipo == 3) {
-
                                 echo '<option value="3">Difunto</option>';
-
-                                echo  '<script> const rolesObligatorios = [ "Confirmando", "Padrino" , "Madrina" ] </script>';
                             } elseif ($tipo == 4) {
 
                                 echo '<option value="4">Esposo</option>';
@@ -245,9 +237,6 @@
                                 echo '<option value="13">Esposo Madrina</option>';
                                 echo '<option value="14">Esposa Padrino</option>';
                                 echo '<option value="15">Esposa Madrina</option>';
-
-
-                                echo  '<script> const rolesObligatorios = [ "Esposo", "Esposa" , "Esposo Padrino" , "Esposo Madrina" , "Esposa Padrino" , "Esposa Madrina" ] </script>';
                             }
                             ?>
 
@@ -275,70 +264,6 @@
 
 
 
-                <!-- <div id="Form2" class="hidden">
-                <div class="flex space-x-2 w-full justify-between ">
-                    <select class="border border-gray-300 rounded  w-full" name="TipDoc" id="TipDoc">
-                        <option value="CC">CC</option>
-                        <option value="CC">Ti</option>
-                    </select>
-
-
-                    <input class="border border-gray-300 rounded  w-full" type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento">
-
-
-                    <div class="p-2 rounded bg-green-500">
-                        <svg class="w-10" viewBox="0 0 48 48" version="1" xmlns="http://www.w3.org/2000/svg">
-                            <g fill="#616161">
-                                <path d="m2 9.174 31.99 2.828-2.829 12.02 12.021-2.828 2.828z" />
-                                <circle cx="20" cy="20" r="16" />
-                            </g>
-                            <path fill="#37474F" d="m32.448 35.34 2.828-2.828 8.698 8.697-2.829 2.828z" />
-                            <circle fill="#64B5F6" cx="20" cy="20" r="13" />
-                            <path fill="#BBDEFB" d="M26.9 14.2c-1.7-2-4.2-3.2-6.9-3.2s-5.2 1.2-6.9 3.2c-.4.4-.3 1.1.1 1.4.4.4 1.1.3 1.4-.1C16 13.9 17.9 13 20 13s4 .9 5.4 2.5c.2.2.5.4.8.4.2 0 .5-.1.6-.2.4-.4.4-1.1.1-1.5" />
-                        </svg>
-                    </div>
-
-                </div>
-
-
-
-                <div class="flex space-x-2">
-
-                    <div>
-                        <label for="">Primer Nombre</label>
-                        <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
-                        <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                    </div>
-
-                    <div>
-                        <label for="">Segundo Nombre</label>
-                        <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
-                        <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                    </div>
-
-                </div>
-
-
-
-                <div class="flex space-x-2">
-
-                    <div>
-                        <label for="">Primer Apellido</label>
-                        <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
-                        <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                    </div>
-
-                    <div>
-                        <label for="">Segundo Apellido</label>
-                        <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
-                        <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                    </div>
-
-                </div>
-            </div> -->
-
-
-
             </div>
 
 
@@ -351,6 +276,7 @@
                 <button type="button" id="cerrarFormSacramentos" class="bg-red-100 px-4 py-2 rounded cursor-pointer">Cerrar</button>
             </div>
         </form>
+        </div> <!-- FIN contenedor overflow-y-auto -->
     </div>
 </div>
 
@@ -369,6 +295,47 @@
 
 
 <script>
+    // ============================================================================
+    // VARIABLES GLOBALES
+    // ============================================================================
+
+    // Definir roles obligatorios según el tipo de sacramento
+    const rolesObligatorios = (() => {
+        const tipo = <?php echo json_encode($tipo); ?>;
+
+        switch(tipo) {
+            case 1: // Bautizos
+                return ['Bautizado', 'Padrino', 'Madrina'];
+            case 2: // Confirmaciones
+                return ['Confirmando', 'Padrino', 'Madrina'];
+            case 3: // Defunciones
+                return ['Difunto'];
+            case 4: // Matrimonios
+                return ['Esposo', 'Esposa', 'Esposo Padrino', 'Esposa Padrino', 'Testigo 1', 'Testigo 2'];
+            default:
+                return [];
+        }
+    })();
+
+    // Mapa de IDs a nombres de roles (consolidado, usado en múltiples lugares)
+    const roles = {
+        1: 'Bautizado',
+        2: 'Confirmando',
+        3: 'Difunto',
+        4: 'Esposo',
+        5: 'Esposa',
+        6: 'Padre',
+        7: 'Madre',
+        8: 'Padrino',
+        9: 'Madrina',
+        10: 'Abuelo',
+        11: 'Abuela'
+    };
+
+    // ============================================================================
+    // EVENT LISTENERS
+    // ============================================================================
+
     $(document).on('click', '#BuscarUser', function() {
 
         alert('Buscar Usuario');
@@ -599,20 +566,7 @@
             6: "Numero Identificación Tributaria"
         };
 
-
-        const roles = {
-            1: 'Bautizado',
-            2: 'Confirmando',
-            3: 'Difunto',
-            4: 'Esposo',
-            5: 'Esposa',
-            6: 'Padre',
-               7: 'Madre',
-            8: 'Padrino',
-            9: 'Madrina',
-            10: 'Abuelo',
-            11: 'Abuela'
-        };
+        // Usar 'roles' global definido al inicio del script
 
         const colores = {
             1: 'bg-blue-50',
@@ -677,27 +631,6 @@
         boton.closest('li').remove();
         contador--;
         resetVacio(contador);
-    }
-
-
-    function eliminarTodos() {
-        const contenedor = document.getElementById('contenedor-integrantes');
-        contenedor.innerHTML = "";
-
-        const li = document.createElement('li');
-        li.id = "integranteVacio";
-        li.innerHTML = `
-        <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
-            <span class="font-bold"> --- Vacio --- </span>
-        </div>
-    `;
-
-        console.log("Antes de agregar", contenedor.innerHTML);
-        contenedor.appendChild(li);
-        console.log("Después de agregar", contenedor.innerHTML);
-
-
-
     }
 
 
@@ -809,24 +742,38 @@
                 width: "10px"
             },
             {
-                data: 'participante_principal',
-                title: 'Participante Principal'
+                data: 'tipo_sacramento',
+                title: 'Tipo Sacramento'
             },
             {
-                data: 'tipo_documento',
-                title: 'Tipo Documento' // Te recomiendo poner título para que se vea bien
-            },
-            {
-                data: 'numero_documento',
-                title: 'Número Documento' // Lo mismo aquí
+                data: 'participantes',
+                title: 'Participantes'
             },
             {
                 data: 'fecha_generacion',
-                title: 'Fecha'
+                title: 'Fecha',
+                render: function(data) {
+                    return data ? new Date(data).toLocaleDateString('es-ES') : '';
+                }
             },
             {
-                data: 'tiene_certificado',
-                title: 'Certificado'
+                data: 'lugar',
+                title: 'Lugar',
+                defaultContent: 'N/A'
+            },
+            {
+                data: null,
+                title: 'Acciones',
+                orderable: false,
+                className: 'text-center',
+                render: function(data, type, row) {
+                    return `<button class="btn-generar-certificado bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                    data-sacramento-id="${row.id}"
+                                    data-tipo="${row.tipo_sacramento}"
+                                    title="Generar certificado de este sacramento">
+                                📄 Certificado
+                            </button>`;
+                }
             }
         ],
         pageLength: 10
@@ -842,7 +789,7 @@
             tr.removeClass('shown');
             icon.text('➕');
         } else {
-            const sacramentoId = row.data().sacramento_id;
+            const sacramentoId = row.data().id;
 
             $.ajax({
                 url: '?route=sacramentos/participantes',
@@ -876,6 +823,47 @@
         }
     });
 
+    // Event handler para botón de generar certificado
+    $(document).on('click', '.btn-generar-certificado', function() {
+        const sacramentoId = $(this).data('sacramento-id');
+        const tipo = $(this).data('tipo');
+        generarCertificado(sacramentoId, tipo);
+    });
+
+    /**
+     * Genera un certificado para un sacramento específico
+     * @param {number} sacramentoId - ID del sacramento
+     * @param {string} tipo - Tipo de sacramento (para el mensaje de confirmación)
+     */
+    function generarCertificado(sacramentoId, tipo) {
+        // Confirmación antes de generar
+        Swal.fire({
+            title: '¿Generar certificado?',
+            text: `Se generará un certificado para este ${tipo}`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3b82f6',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sí, generar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Generando certificado...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Redirigir a la URL de generación de certificado
+                // El controlador debe recibir sacramento_id por GET
+                window.location.href = `?route=certificados/generar&sacramento_id=${sacramentoId}`;
+            }
+        });
+    }
 
 
 
@@ -885,9 +873,7 @@
 
 
 
-
-
-    $("#recordModal").on('submit', '#recordForm', function(event) {
+    $(document).on('submit', '#recordForm', function(event) {
         event.preventDefault();
 
 
@@ -895,23 +881,8 @@
 
         let rolesActuales = [];
 
+        // Usar 'roles' global definido al inicio del script
 
-        const roles = {
-            1: 'Bautizado',
-            2: 'Confirmando',
-            3: 'Difunto',
-            4: 'Esposo',
-            5: 'Esposa',
-            6: 'Padre',
-            7: 'Madre',
-            8: 'Padrino',
-            9: 'Madrina',
-            10: 'Abuelo',
-            11: 'Abuela'
-        };
-
-
-        // Aqui vamos Rusbelll :D 
         const libroTipo = <?= json_encode($libroTipo) ?>;
 
 
@@ -951,28 +922,57 @@
 
 
         var formData = $(this).serialize();
-        //  $('#Guardar').attr('disabled','disabled');
-        // alert('fformData: ' + formData);
-
-
-
 
         $.ajax({
             url: "?route=sacramentos/crear",
             method: "POST",
-            data: formData + '&Tipo=<?php echo $tipo; ?>&Numero=<?php echo $numeroLibro; ?>',
-            success: function(data) {
+            data: formData,
+            dataType: "json",  // Expect JSON explicitly
+            beforeSend: function() {
+                $('#Guardar').prop('disabled', true).text('Guardando...');
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#recordForm')[0].reset();
+                    $('#recordModal').addClass('hidden');
+                    $('#feligresNoExiste').addClass('hidden');
 
-                $('#recordForm')[0].reset();
-                $('#recordModal').addClass('hidden');
-                $('#feligresNoExiste').addClass('hidden');
+                    // Recargar tabla con delay para asegurar que el registro se guardó
+                    setTimeout(() => {
+                        table.ajax.reload(null, false);
+                    }, 300);
 
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Completado',
+                        text: response.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error AJAX:', {xhr, status, error});
 
-                //  $('#save').attr('disabled', false);
+                let mensaje = 'Error al guardar el sacramento';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    mensaje = xhr.responseJSON.message;
+                }
 
-                table.ajax.reload();
-                alert('completado');
-
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de Conexión',
+                    text: mensaje
+                });
+            },
+            complete: function() {
+                $('#Guardar').prop('disabled', false).text('Guardar');
             }
         })
 
@@ -980,3 +980,5 @@
 
     });
 </script>
+
+<?php include_once __DIR__ . '/componentes/plantillaBottom.php'; ?>
