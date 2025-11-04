@@ -8,7 +8,9 @@
       "Bash(find \"C:\\laragon\\www\\parroquiaPOO\\assets\" -type f ( -name \"*.js\" -o -name \"*.css\" ))",
       "Bash(for file in Vista/*.php)",
       "Bash(do echo -n \"$file: \")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe:*)",
+      "Bash(netstat:*)"
     ],
     "deny": [],
     "ask": []

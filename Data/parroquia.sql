@@ -16,10 +16,12 @@
 
 
 -- Volcando estructura de base de datos para parroquia
+DROP DATABASE IF EXISTS `parroquia`;
 CREATE DATABASE IF NOT EXISTS `parroquia` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `parroquia`;
 
 -- Volcando estructura para tabla parroquia.certificados
+DROP TABLE IF EXISTS `certificados`;
 CREATE TABLE IF NOT EXISTS `certificados` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_generador_id` bigint DEFAULT NULL,
@@ -63,6 +65,7 @@ INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `par
 	(106, 15, 1, NULL, 1, '2024-04-15', NULL, NULL, '2025-04-15', 'bautizo', NULL, '2025-11-03 09:53:07', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00');
 
 -- Volcando estructura para tabla parroquia.documento_tipos
+DROP TABLE IF EXISTS `documento_tipos`;
 CREATE TABLE IF NOT EXISTS `documento_tipos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
@@ -80,6 +83,7 @@ INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
 	(6, 'Numero Identificación Tributaria', NULL);
 
 -- Volcando estructura para tabla parroquia.feligreses
+DROP TABLE IF EXISTS `feligreses`;
 CREATE TABLE IF NOT EXISTS `feligreses` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint DEFAULT NULL,
@@ -114,6 +118,7 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 	(12, NULL, 1, '12389', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:30');
 
 -- Volcando estructura para tabla parroquia.grupos
+DROP TABLE IF EXISTS `grupos`;
 CREATE TABLE IF NOT EXISTS `grupos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -127,6 +132,7 @@ INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
 	(2, 'aadsad', NULL);
 
 -- Volcando estructura para tabla parroquia.grupo_roles
+DROP TABLE IF EXISTS `grupo_roles`;
 CREATE TABLE IF NOT EXISTS `grupo_roles` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -137,6 +143,7 @@ CREATE TABLE IF NOT EXISTS `grupo_roles` (
 -- Volcando datos para la tabla parroquia.grupo_roles: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.libros
+DROP TABLE IF EXISTS `libros`;
 CREATE TABLE IF NOT EXISTS `libros` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `libro_tipo_id` bigint DEFAULT NULL,
@@ -162,6 +169,7 @@ INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
 	(12, 4, 1, NULL);
 
 -- Volcando estructura para tabla parroquia.libro_tipo
+DROP TABLE IF EXISTS `libro_tipo`;
 CREATE TABLE IF NOT EXISTS `libro_tipo` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -177,6 +185,7 @@ INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 	(4, 'Matrimonios', NULL);
 
 -- Volcando estructura para tabla parroquia.noticias
+DROP TABLE IF EXISTS `noticias`;
 CREATE TABLE IF NOT EXISTS `noticias` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `id_usuario` bigint NOT NULL,
@@ -201,6 +210,7 @@ INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `
 	(8, 20, 'asdasdasdasd', 'asd asda sda sasdasdasd', 'assets/img/noticias/noticia_68fad63cb9e9c2.26316607.png', '2025-10-23 20:28:28', NULL);
 
 -- Volcando estructura para tabla parroquia.pagos
+DROP TABLE IF EXISTS `pagos`;
 CREATE TABLE IF NOT EXISTS `pagos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `certificado_id` bigint DEFAULT NULL,
@@ -226,6 +236,7 @@ INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `t
 	(21, 106, 2500, 'PAGADO', '2025-09-25 16:48:37', 3, 'certificado');
 
 -- Volcando estructura para tabla parroquia.parentescos
+DROP TABLE IF EXISTS `parentescos`;
 CREATE TABLE IF NOT EXISTS `parentescos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `parentesco` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -253,6 +264,7 @@ INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
 	(16, 'Padrino', NULL);
 
 -- Volcando estructura para tabla parroquia.parientes
+DROP TABLE IF EXISTS `parientes`;
 CREATE TABLE IF NOT EXISTS `parientes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `parentesco_id` bigint DEFAULT NULL,
@@ -271,6 +283,7 @@ CREATE TABLE IF NOT EXISTS `parientes` (
 -- Volcando datos para la tabla parroquia.parientes: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.participantes
+DROP TABLE IF EXISTS `participantes`;
 CREATE TABLE IF NOT EXISTS `participantes` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `feligres_id` bigint DEFAULT NULL,
@@ -305,6 +318,7 @@ INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_particip
 	(23, 12, 39, 8, NULL);
 
 -- Volcando estructura para tabla parroquia.participantes_rol
+DROP TABLE IF EXISTS `participantes_rol`;
 CREATE TABLE IF NOT EXISTS `participantes_rol` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -331,6 +345,7 @@ INSERT INTO `participantes_rol` (`id`, `rol`, `estado_registro`) VALUES
 	(15, 'Esposa Madrina', NULL);
 
 -- Volcando estructura para tabla parroquia.reportes
+DROP TABLE IF EXISTS `reportes`;
 CREATE TABLE IF NOT EXISTS `reportes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_pagos` bigint NOT NULL,
@@ -352,6 +367,7 @@ INSERT INTO `reportes` (`id`, `id_pagos`, `titulo`, `descripcion`, `categoria`, 
 	(4, 7, 'Pago duplicado certificado 103', 'Pago duplicado detectado por 1800.75', 'Auditoría', '2025-09-04 05:00:00', '0000-00-00 00:00:00');
 
 -- Volcando estructura para tabla parroquia.sacramentos
+DROP TABLE IF EXISTS `sacramentos`;
 CREATE TABLE IF NOT EXISTS `sacramentos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `libro_id` bigint DEFAULT NULL,
@@ -408,6 +424,7 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 	(39, 2, 1, 0, 0, '2025-11-03', NULL);
 
 -- Volcando estructura para tabla parroquia.sacramento_tipo
+DROP TABLE IF EXISTS `sacramento_tipo`;
 CREATE TABLE IF NOT EXISTS `sacramento_tipo` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
@@ -423,6 +440,7 @@ INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 	(4, 'Matrimonios', NULL);
 
 -- Volcando estructura para tabla parroquia.tipos_pago
+DROP TABLE IF EXISTS `tipos_pago`;
 CREATE TABLE IF NOT EXISTS `tipos_pago` (
   `id` int NOT NULL AUTO_INCREMENT,
   `descripcion` varchar(50) COLLATE utf8mb4_spanish2_ci NOT NULL,
@@ -438,6 +456,7 @@ INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
 	(5, 'Paypal');
 
 -- Volcando estructura para tabla parroquia.usuarios
+DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_rol_id` bigint DEFAULT NULL,
@@ -469,6 +488,7 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 	(21, 1, 'aquilesbedoya37@gmail.com', 0, '$2y$10$DYuEGC.Xvj1g/9B9ejZ2Oe5pSZWzGvULNtJ9JfKoZB75vzLeRRw9C', 0, NULL, 'ee33cc42317b671cb18a56ddd00d814e702ef1e2361bff3229b5ae6d69e9efd7', '2025-10-28 03:45:43');
 
 -- Volcando estructura para tabla parroquia.usuario_grupos
+DROP TABLE IF EXISTS `usuario_grupos`;
 CREATE TABLE IF NOT EXISTS `usuario_grupos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `usuario_id` bigint DEFAULT NULL,
@@ -487,6 +507,7 @@ CREATE TABLE IF NOT EXISTS `usuario_grupos` (
 -- Volcando datos para la tabla parroquia.usuario_grupos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.usuario_roles
+DROP TABLE IF EXISTS `usuario_roles`;
 CREATE TABLE IF NOT EXISTS `usuario_roles` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `rol` varchar(255) COLLATE utf8mb4_spanish2_ci DEFAULT NULL,
