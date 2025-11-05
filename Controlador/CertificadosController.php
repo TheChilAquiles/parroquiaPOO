@@ -548,4 +548,168 @@ class CertificadosController
             exit();
         }
     }
+
+    /**
+     * Genera certificado con flujo simplificado (3 campos)
+     * Para uso de Administrador/Secretario - busca automáticamente el feligrés y sacramento
+     * Responde con JSON para AJAX
+     */
+    public function generarSimplificado()
+    {
+        // Limpiar buffer de salida
+        if (ob_get_level()) {
+            ob_clean();
+        }
+
+        header('Content-Type: application/json');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Método no permitido'
+            ]);
+            exit;
+        }
+
+        try {
+            // Validar campos requeridos
+            $required = ['tipo_documento_id', 'numero_documento', 'tipo_sacramento_id'];
+            foreach ($required as $field) {
+                if (empty($_POST[$field])) {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => "Campo requerido faltante: $field"
+                    ]);
+                    exit;
+                }
+            }
+
+            // Preparar datos
+            $datos = [
+                'usuario_generador_id' => $_SESSION['user-id'] ?? null,
+                'tipo_documento_id' => (int)$_POST['tipo_documento_id'],
+                'numero_documento' => trim($_POST['numero_documento']),
+                'tipo_sacramento_id' => (int)$_POST['tipo_sacramento_id']
+            ];
+
+            // Crear certificado usando el modelo
+            $resultado = $this->modeloSolicitud->mdlCrearCertificadoDirecto($datos);
+
+            if ($resultado['status'] === 'error') {
+                echo json_encode([
+                    'success' => false,
+                    'message' => $resultado['message']
+                ]);
+                exit;
+            }
+
+            // Certificado creado exitosamente
+            $certificadoId = $resultado['id'];
+
+            // Si se proporciona método de pago en efectivo, generar PDF automáticamente
+            if (isset($_POST['metodo_pago']) && $_POST['metodo_pago'] === 'efectivo') {
+                // Marcar como pagado
+                $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+                // Generar PDF automáticamente
+                $generado = $this->generarAutomatico($certificadoId);
+
+                if ($generado) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Certificado creado y PDF generado exitosamente',
+                        'certificado_id' => $certificadoId,
+                        'pdf_generado' => true
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Certificado creado pero hubo error al generar PDF',
+                        'certificado_id' => $certificadoId,
+                        'pdf_generado' => false
+                    ]);
+                }
+            } else {
+                // Sin pago en efectivo, solo crear solicitud
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Certificado creado exitosamente. Pendiente de pago.',
+                    'certificado_id' => $certificadoId,
+                    'estado' => 'pendiente_pago'
+                ]);
+            }
+
+        } catch (Exception $e) {
+            error_log("Error en generarSimplificado: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al generar certificado: ' . $e->getMessage()
+            ]);
+        }
+
+        exit;
+    }
+
+    /**
+     * Lista todos los certificados (para vista admin con DataTables)
+     * Responde con JSON para AJAX
+     */
+    public function listarTodos()
+    {
+        // Limpiar buffer de salida
+        if (ob_get_level()) {
+            ob_clean();
+        }
+
+        header('Content-Type: application/json');
+
+        try {
+            // Verificar autenticación
+            if (!isset($_SESSION['logged']) || !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'No autorizado'
+                ]);
+                exit;
+            }
+
+            // Obtener todos los certificados
+            $certificados = $this->modeloSolicitud->mdlObtenerTodosLosCertificados();
+
+            // Formatear datos para DataTables
+            $data = [];
+            foreach ($certificados as $cert) {
+                $data[] = [
+                    'id' => $cert['id'],
+                    'tipo_certificado' => $cert['tipo_certificado'],
+                    'feligres_nombre' => $cert['feligres_nombre'],
+                    'numero_documento' => $cert['numero_documento'],
+                    'solicitante_nombre' => $cert['solicitante_nombre'],
+                    'generador_nombre' => $cert['generador_nombre'] ?? 'Sistema',
+                    'relacion' => $cert['relacion'] ?? 'Propio',
+                    'fecha_solicitud' => date('d/m/Y', strtotime($cert['fecha_solicitud'])),
+                    'fecha_generacion' => $cert['fecha_generacion'] ? date('d/m/Y', strtotime($cert['fecha_generacion'])) : 'N/A',
+                    'fecha_expiracion' => $cert['fecha_expiracion'] ? date('d/m/Y', strtotime($cert['fecha_expiracion'])) : 'N/A',
+                    'estado' => ucfirst(str_replace('_', ' ', $cert['estado'])),
+                    'ruta_archivo' => $cert['ruta_archivo'],
+                    'tipo_sacramento' => $cert['tipo_sacramento'],
+                    'fecha_sacramento' => date('d/m/Y', strtotime($cert['fecha_sacramento']))
+                ];
+            }
+
+            echo json_encode([
+                'success' => true,
+                'data' => $data
+            ]);
+
+        } catch (Exception $e) {
+            error_log("Error en listarTodos: " . $e->getMessage());
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al listar certificados'
+            ]);
+        }
+
+        exit;
+    }
 }

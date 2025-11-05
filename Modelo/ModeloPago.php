@@ -16,12 +16,28 @@ class ModeloPago
     }
 
     /**
-     * Obtiene todos los pagos
+     * Obtiene todos los pagos con información relacionada (certificados y feligreses)
      */
     public function mdlObtenerTodos()
     {
         try {
-            $sql = "SELECT * FROM pagos ORDER BY fecha_pago DESC, id DESC";
+            $sql = "SELECT
+                        p.id,
+                        p.certificado_id,
+                        p.valor,
+                        p.estado,
+                        p.metodo_de_pago,
+                        p.fecha_pago,
+                        c.tipo_certificado,
+                        CONCAT(f.primer_nombre, ' ', f.primer_apellido) AS feligres_nombre,
+                        f.numero_documento,
+                        CONCAT(sol.primer_nombre, ' ', sol.primer_apellido) AS solicitante_nombre
+                    FROM pagos p
+                    LEFT JOIN certificados c ON p.certificado_id = c.id
+                    LEFT JOIN feligreses f ON c.feligres_certificado_id = f.id
+                    LEFT JOIN feligreses sol ON c.solicitante_id = sol.id
+                    WHERE p.estado_registro IS NULL
+                    ORDER BY p.fecha_pago DESC, p.id DESC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

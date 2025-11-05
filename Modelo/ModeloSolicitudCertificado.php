@@ -284,4 +284,175 @@ class ModeloSolicitudCertificado
             return 0;
         }
     }
+
+    /**
+     * Crea certificado directamente (flujo simplificado para admin/secretario)
+     * Busca automáticamente el sacramento del feligrés y genera certificado sin validación de parentesco
+     * @param array $datos [usuario_generador_id, tipo_documento_id, numero_documento, tipo_sacramento_id]
+     * @return array ['status' => 'success'|'error', 'id' => int|null, 'message' => string]
+     */
+    public function mdlCrearCertificadoDirecto($datos)
+    {
+        try {
+            // 1. Buscar feligrés por documento
+            $sqlFeligres = "SELECT id FROM feligreses
+                           WHERE tipo_documento_id = ?
+                           AND numero_documento = ?
+                           AND estado_registro IS NULL
+                           LIMIT 1";
+            $stmtFeligres = $this->conexion->prepare($sqlFeligres);
+            $stmtFeligres->execute([
+                $datos['tipo_documento_id'],
+                $datos['numero_documento']
+            ]);
+            $feligres = $stmtFeligres->fetch(PDO::FETCH_ASSOC);
+
+            if (!$feligres) {
+                return [
+                    'status' => 'error',
+                    'id' => null,
+                    'message' => 'Feligrés no encontrado con ese documento'
+                ];
+            }
+
+            $feligresId = $feligres['id'];
+
+            // 2. Buscar sacramento del feligrés por tipo
+            $sqlSacramento = "SELECT DISTINCT s.id, st.tipo
+                             FROM sacramentos s
+                             JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                             JOIN participantes p ON p.sacramento_id = s.id
+                             WHERE p.feligres_id = ?
+                             AND s.tipo_sacramento_id = ?
+                             AND s.estado_registro IS NULL
+                             ORDER BY s.fecha_generacion DESC
+                             LIMIT 1";
+            $stmtSacramento = $this->conexion->prepare($sqlSacramento);
+            $stmtSacramento->execute([
+                $feligresId,
+                $datos['tipo_sacramento_id']
+            ]);
+            $sacramento = $stmtSacramento->fetch(PDO::FETCH_ASSOC);
+
+            if (!$sacramento) {
+                return [
+                    'status' => 'error',
+                    'id' => null,
+                    'message' => 'No se encontró sacramento de ese tipo para el feligrés'
+                ];
+            }
+
+            // 3. Crear certificado directamente
+            $sql = "INSERT INTO certificados (
+                        usuario_generador_id, solicitante_id, feligres_certificado_id,
+                        parentesco_id, fecha_solicitud, tipo_certificado,
+                        motivo_solicitud, sacramento_id, estado
+                    ) VALUES (?, ?, ?, NULL, NOW(), ?, 'Generación directa', ?, 'pendiente_pago')";
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([
+                $datos['usuario_generador_id'],
+                $feligresId, // El solicitante es el mismo feligrés
+                $feligresId,
+                $sacramento['tipo'],
+                $sacramento['id']
+            ]);
+
+            $certificadoId = $this->conexion->lastInsertId();
+
+            return [
+                'status' => 'success',
+                'id' => $certificadoId,
+                'message' => 'Certificado creado exitosamente',
+                'feligres_id' => $feligresId,
+                'sacramento_id' => $sacramento['id']
+            ];
+        } catch (PDOException $e) {
+            error_log("Error al crear certificado directo: " . $e->getMessage());
+            return [
+                'status' => 'error',
+                'id' => null,
+                'message' => 'Error al crear certificado: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Obtiene todos los certificados del sistema (para vista admin)
+     * @return array Lista de certificados con información completa
+     */
+    public function mdlObtenerTodosLosCertificados()
+    {
+        try {
+            $sql = "SELECT
+                        c.id,
+                        c.tipo_certificado,
+                        c.fecha_solicitud,
+                        c.fecha_generacion,
+                        c.fecha_expiracion,
+                        c.estado,
+                        c.ruta_archivo,
+                        CONCAT(f.primer_nombre, ' ', f.primer_apellido) AS feligres_nombre,
+                        f.numero_documento,
+                        CONCAT(sol.primer_nombre, ' ', sol.primer_apellido) AS solicitante_nombre,
+                        CONCAT(gen.nombre, ' ', gen.apellido) AS generador_nombre,
+                        pa.parentesco AS relacion,
+                        s.fecha_generacion AS fecha_sacramento,
+                        st.tipo AS tipo_sacramento
+                    FROM certificados c
+                    JOIN feligreses f ON c.feligres_certificado_id = f.id
+                    JOIN feligreses sol ON c.solicitante_id = sol.id
+                    LEFT JOIN usuarios gen ON c.usuario_generador_id = gen.id
+                    LEFT JOIN parentescos pa ON c.parentesco_id = pa.id
+                    JOIN sacramentos s ON c.sacramento_id = s.id
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                    WHERE c.estado_registro IS NULL
+                    ORDER BY c.fecha_solicitud DESC";
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener todos los certificados: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene certificados pendientes de pago (para módulo de pagos)
+     * @param int|null $feligresId Si se proporciona, filtra por feligrés solicitante
+     * @return array Lista de certificados pendientes de pago
+     */
+    public function mdlObtenerPendientesPago($feligresId = null)
+    {
+        try {
+            $sql = "SELECT
+                        c.id,
+                        c.tipo_certificado,
+                        c.fecha_solicitud,
+                        CONCAT(f.primer_nombre, ' ', f.primer_apellido) AS feligres_nombre,
+                        f.numero_documento,
+                        pa.parentesco AS relacion,
+                        15000 AS monto -- Valor fijo por ahora, puede ser configurable
+                    FROM certificados c
+                    JOIN feligreses f ON c.feligres_certificado_id = f.id
+                    LEFT JOIN parentescos pa ON c.parentesco_id = pa.id
+                    WHERE c.estado = 'pendiente_pago'
+                    AND c.estado_registro IS NULL";
+
+            if ($feligresId !== null) {
+                $sql .= " AND c.solicitante_id = ?";
+                $stmt = $this->conexion->prepare($sql);
+                $stmt->execute([$feligresId]);
+            } else {
+                $stmt = $this->conexion->prepare($sql);
+                $stmt->execute();
+            }
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error al obtener pendientes de pago: " . $e->getMessage());
+            return [];
+        }
+    }
 }

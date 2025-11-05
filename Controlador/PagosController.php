@@ -437,6 +437,30 @@ class PagosController extends BaseController
     }
 
     /**
+     * Muestra los pagos pendientes del feligrés autenticado
+     */
+    public function misPagos()
+    {
+        // Verificar autenticación
+        $this->requiereAutenticacion();
+
+        // Obtener feligrés ID del usuario autenticado
+        $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+
+        if (!$feligresId) {
+            $_SESSION['error'] = 'No se encontró un perfil de feligrés asociado a su cuenta.';
+            header('Location: ?route=dashboard');
+            exit;
+        }
+
+        // Obtener pagos pendientes usando el modelo de solicitudes
+        $pagosPendientes = $this->modeloSolicitud->mdlObtenerPendientesPago($feligresId);
+
+        // Incluir vista
+        include_once __DIR__ . '/../Vista/mis-pagos.php';
+    }
+
+    /**
      * Obtiene el ID del feligrés asociado a un usuario
      * @param int $usuarioId ID del usuario
      * @return int|null ID del feligrés o null

@@ -27,7 +27,7 @@ class ModeloSacramento
 
 
     /**
-     * Obtiene los participantes de un sacramento
+     * Obtiene los participantes de un sacramento con datos completos del documento
      */
     public function getParticipantes($sacramentoId)
 {
@@ -36,19 +36,26 @@ class ModeloSacramento
         error_log("ID de sacramento inválido: " . $sacramentoId);
         return [];
     }
-    
+
     $sacramentoId = (int)$sacramentoId; // Cast explícito
-    
+
     try {
-        $sql = "SELECT 
+        $sql = "SELECT
                     pr.rol,
-                    CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ', 
+                    pr.id AS rol_id,
+                    f.tipo_documento_id,
+                    f.numero_documento,
+                    f.primer_nombre,
+                    f.segundo_nombre,
+                    f.primer_apellido,
+                    f.segundo_apellido,
+                    CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ',
                            f.primer_apellido, ' ', COALESCE(f.segundo_apellido, '')) AS nombre
                 FROM participantes p
                 JOIN feligreses f ON f.id = p.feligres_id
                 JOIN participantes_rol pr ON pr.id = p.rol_participante_id
                 WHERE p.sacramento_id = ?";
-        
+
         $stmt = $this->conexion->prepare($sql);
         $stmt->execute([$sacramentoId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -79,7 +86,57 @@ class ModeloSacramento
     }
 
     /**
-     * Crea un nuevo sacramento
+     * Obtiene la próxima acta disponible para un libro
+     * @param int $libroId ID del libro
+     * @return array ['acta' => int, 'folio' => int] o ['error' => string] si excede límite
+     */
+    public function mdlObtenerProximaActaDisponible($libroId)
+    {
+        try {
+            // Obtener la última acta registrada en el libro
+            $sql = "SELECT MAX(acta) as ultima_acta FROM sacramentos
+                    WHERE libro_id = ? AND estado_registro IS NULL";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$libroId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $ultimaActa = $resultado['ultima_acta'] ?? 0;
+            $proximaActa = $ultimaActa + 1;
+
+            // Validar límite (1 libro = 500 folios = 1000 actas)
+            if ($proximaActa > 1000) {
+                return [
+                    'error' => 'Este libro ha alcanzado su capacidad máxima de 1000 actas. Debe crear un nuevo libro.'
+                ];
+            }
+
+            $proximoFolio = $this->calcularFolio($proximaActa);
+
+            return [
+                'acta' => $proximaActa,
+                'folio' => $proximoFolio
+            ];
+        } catch (PDOException $e) {
+            error_log("Error al obtener próxima acta: " . $e->getMessage());
+            return ['error' => 'Error al calcular próxima acta'];
+        }
+    }
+
+    /**
+     * Calcula el número de folio a partir del número de acta
+     * Regla: Cada folio contiene 2 actas
+     * @param int $acta Número de acta
+     * @return int Número de folio
+     */
+    private function calcularFolio($acta)
+    {
+        // Cada folio tiene 2 actas
+        // Ejemplos: acta 1 y 2 -> folio 1, acta 3 y 4 -> folio 2, etc.
+        return (int)ceil($acta / 2);
+    }
+
+    /**
+     * Crea un nuevo sacramento con auto-cálculo de acta/folio
      */
     public function CrearSacramento($data)
     {
@@ -90,12 +147,25 @@ class ModeloSacramento
         try {
             $this->conexion->beginTransaction();
 
-            // Crear sacramento
-            $sql_sacramento = "INSERT INTO sacramentos 
-                              (libro_id, tipo_sacramento_id, fecha_generacion)
-                              VALUES (?, ?, NOW())";
+            // Obtener próxima acta y folio disponibles
+            $proximaInfo = $this->mdlObtenerProximaActaDisponible($this->libroID);
+
+            // Validar si hay error (libro lleno)
+            if (isset($proximaInfo['error'])) {
+                error_log("Libro lleno: " . $proximaInfo['error']);
+                $this->conexion->rollBack();
+                return false;
+            }
+
+            $acta = $proximaInfo['acta'];
+            $folio = $proximaInfo['folio'];
+
+            // Crear sacramento con acta y folio auto-calculados
+            $sql_sacramento = "INSERT INTO sacramentos
+                              (libro_id, tipo_sacramento_id, acta, folio, fecha_generacion)
+                              VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->conexion->prepare($sql_sacramento);
-            $stmt->execute([$this->libroID, $this->sacramentoTipo]);
+            $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio]);
             
             $sacramentoID = $this->conexion->lastInsertId();
 
@@ -226,6 +296,38 @@ class ModeloSacramento
         } catch (PDOException $e) {
             error_log("Error al obtener sacramentos por feligrés: " . $e->getMessage());
             return [];
+        }
+    }
+
+    /**
+     * Obtiene sacramentos de un feligrés filtrados por tipo de sacramento
+     * @param int $feligresId ID del feligrés
+     * @param int $tipoSacramentoId ID del tipo de sacramento (1=Bautizo, 2=Confirmación, etc.)
+     * @return array|false Sacramento encontrado o false si no existe
+     */
+    public function mdlObtenerPorFeligresYTipo($feligresId, $tipoSacramentoId)
+    {
+        try {
+            $sql = "SELECT DISTINCT s.id, st.tipo, s.fecha_generacion, s.acta, s.folio,
+                           l.numero AS libro_numero, lt.tipo AS libro_tipo
+                    FROM sacramentos s
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                    JOIN libros l ON s.libro_id = l.id
+                    JOIN libro_tipos lt ON l.libro_tipo_id = lt.id
+                    JOIN participantes p ON p.sacramento_id = s.id
+                    WHERE p.feligres_id = ?
+                    AND s.tipo_sacramento_id = ?
+                    AND s.estado_registro IS NULL
+                    ORDER BY s.fecha_generacion DESC
+                    LIMIT 1";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$feligresId, $tipoSacramentoId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $resultado ? $resultado : false;
+        } catch (PDOException $e) {
+            error_log("Error al obtener sacramento por feligrés y tipo: " . $e->getMessage());
+            return false;
         }
     }
 

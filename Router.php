@@ -116,6 +116,8 @@ class Router
             // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
+            'certificados/generar-simplificado' => ['controlador' => 'CertificadosController', 'accion' => 'generarSimplificado'],
+            'certificados/listar-todos' => ['controlador' => 'CertificadosController', 'accion' => 'listarTodos'],
 
             // Solicitudes de certificados (Feligrés)
             'certificados/solicitar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'mostrarFormulario'],
@@ -162,6 +164,7 @@ class Router
             'pagos/eliminar' => ['controlador' => 'PagosController', 'accion' => 'eliminar'],
 
             // Pagos de certificados
+            'pagos/mis-pagos' => ['controlador' => 'PagosController', 'accion' => 'misPagos'],
             'pagos/pagar-certificado' => ['controlador' => 'PagosController', 'accion' => 'pagarCertificado'],
             'pagos/procesar-pago-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
             'pagos/registrar-pago-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],

@@ -832,6 +832,7 @@
 
     /**
      * Genera un certificado para un sacramento específico
+     * Integrado con el nuevo flujo simplificado + pago efectivo automático
      * @param {number} sacramentoId - ID del sacramento
      * @param {string} tipo - Tipo de sacramento (para el mensaje de confirmación)
      */
@@ -839,7 +840,12 @@
         // Confirmación antes de generar
         Swal.fire({
             title: '¿Generar certificado?',
-            text: `Se generará un certificado para este ${tipo}`,
+            html: `
+                <p>Se generará un certificado para este <strong>${tipo}</strong></p>
+                <p class="text-sm text-gray-600 mt-2">
+                    <em>Se registrará como pago en efectivo y el PDF se generará automáticamente.</em>
+                </p>
+            `,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#3b82f6',
@@ -858,9 +864,111 @@
                     }
                 });
 
-                // Redirigir a la URL de generación de certificado
-                // El controlador debe recibir sacramento_id por GET
-                window.location.href = `?route=certificados/generar&sacramento_id=${sacramentoId}`;
+                // Obtener datos del sacramento para generar el certificado
+                $.ajax({
+                    url: '?route=sacramentos/participantes',
+                    type: 'POST',
+                    data: { sacramento_id: sacramentoId },
+                    dataType: 'json',
+                    success: function(participantes) {
+                        if (participantes.length === 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'No se encontraron participantes para este sacramento'
+                            });
+                            return;
+                        }
+
+                        // Obtener participante principal según el tipo de sacramento
+                        const tipoSacramentoId = <?= $tipo ?>;
+                        const rolesPrincipales = {
+                            1: 'Bautizado',
+                            2: 'Confirmando',
+                            3: 'Difunto',
+                            4: 'Esposo'
+                        };
+
+                        const rolPrincipal = rolesPrincipales[tipoSacramentoId];
+                        let participantePrincipal = participantes.find(p => p.rol === rolPrincipal);
+
+                        // Si no se encuentra, usar el primero
+                        if (!participantePrincipal) {
+                            participantePrincipal = participantes[0];
+                        }
+
+                        // Validar que tengamos datos de documento
+                        if (!participantePrincipal.tipo_documento_id || !participantePrincipal.numero_documento) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'El participante no tiene documento registrado'
+                            });
+                            return;
+                        }
+
+                        // Usar el nuevo flujo simplificado con pago en efectivo
+                        const formData = new FormData();
+                        formData.append('tipo_documento_id', participantePrincipal.tipo_documento_id);
+                        formData.append('numero_documento', participantePrincipal.numero_documento);
+                        formData.append('tipo_sacramento_id', tipoSacramentoId);
+                        formData.append('metodo_pago', 'efectivo'); // Pago en efectivo automático
+
+                        $.ajax({
+                            url: '?route=certificados/generar-simplificado',
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                Swal.close();
+
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Certificado generado!',
+                                        html: `
+                                            <p class="mb-2">${response.message}</p>
+                                            <p class="text-sm text-gray-600">
+                                                El certificado se ha registrado y el PDF está disponible.
+                                            </p>
+                                        `,
+                                        confirmButtonText: 'Ver certificados',
+                                        confirmButtonColor: '#10b981'
+                                    }).then(() => {
+                                        // Redirigir al módulo de certificados
+                                        window.location.href = '?route=certificados';
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Entendido'
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error de conexión',
+                                    text: 'No se pudo generar el certificado. Intente nuevamente.',
+                                    confirmButtonText: 'Entendido'
+                                });
+                                console.error('Error AJAX:', xhr);
+                            }
+                        });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'No se pudo obtener información del sacramento'
+                        });
+                    }
+                });
             }
         });
     }
