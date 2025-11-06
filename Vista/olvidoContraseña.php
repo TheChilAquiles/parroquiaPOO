@@ -3,7 +3,7 @@
 // (Asegúrate de tener session_start() en tu index.php)
 ?>
 
-<div class="flex flex-col w-full h-full justify-center items-center">
+<div class="flex flex-col flex-1 w-full h-full justify-center items-center">
     <h1 class="text-3xl my-2 font-bold">Recuperar Contraseña</h1>
     <div class="p-10 rounded-md bg-white">
 

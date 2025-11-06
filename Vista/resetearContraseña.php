@@ -10,7 +10,7 @@ if (!isset($token)) {
 }
 ?>
 
-<div class="flex flex-col w-full h-full justify-center items-center">
+<div class="flex flex-1 flex-col w-full h-full justify-center items-center">
     <h1 class="text-3xl my-2 font-bold">Crear Nueva Contraseña</h1>
     <div class="p-10 rounded-md bg-white">
 

@@ -1,5 +1,5 @@
 <div class="w-full bg-emerald-500 text-xl font-bold p-2 hidden" id="Datos">Completa tus datos Para Continuar</div>
-<div class="flex flex-col w-full h-full justify-center items-center">
+<div class="flex flex-col flex-1 w-full h-full justify-center items-center">
     <h1 class="text-3xl my-2 font-bold">Datos Personales</h1>
 
 
