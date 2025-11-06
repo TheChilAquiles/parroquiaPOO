@@ -70,6 +70,8 @@ class Router
             // RUTAS PÚBLICAS
             // ================================================================
             'inicio' => ['controlador' => 'HomeController', 'accion' => 'index'],
+            'noticias' => ['controlador' => 'NoticiasController', 'accion' => 'index'],
+            'manual' => ['controlador' => 'ManualController', 'accion' => 'index'],
             'login' => ['controlador' => 'LoginController', 'accion' => 'mostrarFormulario'],
             'login/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesar'],
             'salir' => ['controlador' => 'LoginController', 'accion' => 'salir'],
@@ -138,7 +140,7 @@ class Router
             // ================================================================
             // RUTAS AUTENTICADAS - NOTICIAS (ACTUALIZADO)
             // ================================================================
-            'noticias' => ['controlador' => 'NoticiasController', 'accion' => 'index'],
+
             'noticias/crear' => ['controlador' => 'NoticiasController', 'accion' => 'crear'],
             'noticias/actualizar' => ['controlador' => 'NoticiasController', 'accion' => 'actualizar'],
             'noticias/eliminar' => ['controlador' => 'NoticiasController', 'accion' => 'eliminar'],
@@ -246,6 +248,8 @@ class Router
     {
         $publicRoutes = [
             'inicio',
+            'noticias',
+            'manual',
             'login',
             'login/procesar',
             'registro',

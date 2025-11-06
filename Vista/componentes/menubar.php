@@ -34,10 +34,12 @@
                     'Grupos' =>  ['Secretario', 'Administrador'],
                     'Reportes' => ['Administrador'],
                     'Pagos' => ['Administrador'],
-                    'Certificados' => ['all']
+                    'Certificados' => ['all'],
+                    'manual' => ['all']
+
                 ];
             } else {
-                $menu = ['Inicio', 'Noticias', 'Informacion', 'Contacto'];
+                $menu = ['Inicio', 'Noticias', 'Informacion', 'Contacto', 'manual'];
             }
 
             foreach ($menu as $item => $roles) {
