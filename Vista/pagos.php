@@ -245,7 +245,7 @@
                                             <!-- Método de pago -->
                                             <td class="px-3 py-6 text-center hidden md:table-cell whitespace-nowrap">
                                                 <span class="inline-block px-3 py-1 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300">
-                                                    <?= htmlspecialchars($pago['metodo_de_pago'], ENT_QUOTES, 'UTF-8') ?>
+                                                    <?= htmlspecialchars($pago['metodo_de_pago'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?>
                                                 </span>
                                             </td>
 

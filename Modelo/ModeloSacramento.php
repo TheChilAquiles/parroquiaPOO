@@ -397,4 +397,174 @@ class ModeloSacramento
             return [];
         }
     }
+
+    /**
+     * Obtiene todos los sacramentos donde un feligrés es participante
+     * @param int $feligresId ID del feligrés
+     * @return array Lista de sacramentos con información completa
+     */
+    public function mdlObtenerSacramentosPorFeligres($feligresId)
+    {
+        try {
+            $sql = "SELECT
+                        s.id,
+                        s.fecha_generacion,
+                        s.tipo_sacramento_id,
+                        st.tipo AS tipo_sacramento,
+                        pr.rol AS mi_rol,
+                        l.numero AS libro_numero,
+                        lt.tipo AS libro_tipo,
+                        GROUP_CONCAT(
+                            CONCAT(
+                                f2.primer_nombre, ' ',
+                                COALESCE(f2.segundo_nombre, ''), ' ',
+                                f2.primer_apellido, ' ',
+                                COALESCE(f2.segundo_apellido, ''),
+                                ' (', pr2.rol, ')'
+                            )
+                            SEPARATOR ', '
+                        ) AS participantes
+                    FROM participantes p
+                    JOIN sacramentos s ON s.id = p.sacramento_id
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                    JOIN participantes_rol pr ON pr.id = p.rol_participante_id
+                    JOIN libros l ON l.id = s.libro_id
+                    JOIN libro_tipo lt ON lt.id = l.libro_tipo_id
+                    LEFT JOIN participantes p2 ON p2.sacramento_id = s.id
+                    LEFT JOIN feligreses f2 ON f2.id = p2.feligres_id
+                    LEFT JOIN participantes_rol pr2 ON pr2.id = p2.rol_participante_id
+                    WHERE p.feligres_id = ?
+                    AND s.estado_registro IS NULL
+                    GROUP BY s.id, s.fecha_generacion, s.tipo_sacramento_id, st.tipo, pr.rol, l.numero, lt.tipo
+                    ORDER BY s.fecha_generacion DESC";
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$feligresId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener sacramentos por feligrés", [
+                'feligres_id' => $feligresId,
+                'error' => $e->getMessage()
+            ]);
+            return [];
+        }
+    }
+
+    /**
+     * Actualiza un sacramento existente y sus participantes
+     * @param int $sacramentoId ID del sacramento a actualizar
+     * @param array $datos Datos del sacramento y participantes
+     * @return bool|int ID del sacramento actualizado o false en caso de error
+     */
+    public function ActualizarSacramento($sacramentoId, $datos)
+    {
+        try {
+            $this->conexion->beginTransaction();
+
+            // 1. Actualizar datos del sacramento
+            $fechaEvento = $datos['fecha-evento'] ?? date('Y-m-d');
+
+            $sqlUpdate = "UPDATE sacramentos
+                         SET fecha_generacion = ?
+                         WHERE id = ? AND estado_registro IS NULL";
+            $stmtUpdate = $this->conexion->prepare($sqlUpdate);
+            $stmtUpdate->execute([$fechaEvento, $sacramentoId]);
+
+            // 2. Eliminar participantes actuales (soft delete)
+            $sqlDeletePart = "UPDATE participantes
+                             SET estado_registro = NOW()
+                             WHERE sacramento_id = ? AND estado_registro IS NULL";
+            $stmtDelete = $this->conexion->prepare($sqlDeletePart);
+            $stmtDelete->execute([$sacramentoId]);
+
+            // 3. Insertar nuevos participantes
+            $integrantes = $datos['integrantes'] ?? [];
+
+            foreach ($integrantes as $integrante) {
+                // Buscar o crear feligrés
+                $feligresId = $this->buscarOCrearFeligres($integrante);
+
+                if (!$feligresId) {
+                    throw new Exception('Error al procesar participante');
+                }
+
+                // Insertar participante
+                $sqlPart = "INSERT INTO participantes (sacramento_id, feligres_id, rol_participante_id)
+                           VALUES (?, ?, ?)";
+                $stmtPart = $this->conexion->prepare($sqlPart);
+                $stmtPart->execute([
+                    $sacramentoId,
+                    $feligresId,
+                    $integrante['rolParticipante']
+                ]);
+            }
+
+            $this->conexion->commit();
+            Logger::info("Sacramento actualizado correctamente", [
+                'sacramento_id' => $sacramentoId,
+                'num_participantes' => count($integrantes)
+            ]);
+
+            return $sacramentoId;
+
+        } catch (PDOException $e) {
+            $this->conexion->rollBack();
+            Logger::error("Error al actualizar sacramento", [
+                'sacramento_id' => $sacramentoId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
+
+    /**
+     * Busca o crea un feligrés basado en su documento
+     * @param array $datos Datos del feligrés
+     * @return int|null ID del feligrés o null si hay error
+     */
+    private function buscarOCrearFeligres($datos)
+    {
+        try {
+            $tipoDoc = $datos['tipoDoc'];
+            $numeroDoc = $datos['numeroDoc'];
+
+            // Buscar feligrés existente
+            $sqlBuscar = "SELECT id FROM feligreses
+                         WHERE tipo_documento_id = ? AND numero_documento = ?
+                         AND estado_registro IS NULL
+                         LIMIT 1";
+            $stmtBuscar = $this->conexion->prepare($sqlBuscar);
+            $stmtBuscar->execute([$tipoDoc, $numeroDoc]);
+            $feligres = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
+
+            if ($feligres) {
+                return $feligres['id'];
+            }
+
+            // Crear nuevo feligrés
+            $sqlCrear = "INSERT INTO feligreses
+                        (tipo_documento_id, numero_documento, primer_nombre, segundo_nombre,
+                         primer_apellido, segundo_apellido)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+            $stmtCrear = $this->conexion->prepare($sqlCrear);
+            $stmtCrear->execute([
+                $tipoDoc,
+                $numeroDoc,
+                $datos['primerNombre'] ?? '',
+                $datos['segundoNombre'] ?? '',
+                $datos['primerApellido'] ?? '',
+                $datos['segundoApellido'] ?? ''
+            ]);
+
+            return $this->conexion->lastInsertId();
+
+        } catch (PDOException $e) {
+            Logger::error("Error al buscar/crear feligrés", [
+                'datos' => $datos,
+                'error' => $e->getMessage()
+            ]);
+            return null;
+        }
+    }
 }

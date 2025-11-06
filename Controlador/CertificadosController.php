@@ -24,7 +24,56 @@ class CertificadosController
 
     public function mostrar()
     {
-        include_once __DIR__ . '/../Vista/certificados.php';
+        // Verificar autenticación
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
+            header('Location: ?route=login');
+            exit;
+        }
+
+        $rol = $_SESSION['user-rol'];
+
+        // Administrador y Secretario ven vista administrativa con DataTables
+        if (in_array($rol, ['Administrador', 'Secretario'])) {
+            include_once __DIR__ . '/../Vista/certificados.php';
+        }
+        // Feligrés ve vista amigable con cards
+        else {
+            // Obtener certificados del feligrés
+            $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+
+            if (!$feligresId) {
+                // Mostrar vista vacía con mensaje de perfil incompleto
+                $misCertificados = [];
+                $_SESSION['info'] = 'Tu perfil de feligrés aún no está completo. Contacta con la secretaría para completar tu registro y poder solicitar certificados.';
+                include_once __DIR__ . '/../Vista/mis-certificados.php';
+                return;
+            }
+
+            // Obtener todos los certificados (propios + familiares + generados por secretario)
+            $misCertificados = $this->modeloSolicitud->mdlObtenerMisSolicitudes($feligresId);
+
+            include_once __DIR__ . '/../Vista/mis-certificados.php';
+        }
+    }
+
+    /**
+     * Obtiene el ID del feligrés asociado a un usuario
+     * @param int $usuarioId ID del usuario
+     * @return int|null ID del feligrés o null
+     */
+    private function obtenerFeligresIdUsuario($usuarioId)
+    {
+        try {
+            $conexion = Conexion::conectar();
+            $sql = "SELECT id FROM feligreses WHERE usuario_id = ? AND estado_registro IS NULL LIMIT 1";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? $resultado['id'] : null;
+        } catch (PDOException $e) {
+            error_log("Error al obtener feligrés por usuario: " . $e->getMessage());
+            return null;
+        }
     }
 
     public function generar()
@@ -707,6 +756,204 @@ class CertificadosController
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al listar certificados'
+            ]);
+        }
+
+        exit;
+    }
+
+    /**
+     * Solicita un certificado desde la vista de sacramentos (feligrés)
+     * Permite solicitar para sí mismo o para un familiar
+     */
+    public function solicitarDesdeSacramento()
+    {
+        // Verificar autenticación
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-id'])) {
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Sesión no válida'
+            ]);
+            exit;
+        }
+
+        // Verificar método POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Método no permitido'
+            ]);
+            exit;
+        }
+
+        try {
+            $sacramentoId = $_POST['sacramento_id'] ?? null;
+            $tipoSacramentoId = $_POST['tipo_sacramento_id'] ?? null;
+            $paraQuien = $_POST['para_quien'] ?? 'yo';
+            $familiarId = $_POST['familiar_id'] ?? null;
+
+            // Validar datos requeridos
+            if (empty($sacramentoId) || empty($tipoSacramentoId)) {
+                throw new Exception('Datos incompletos');
+            }
+
+            // Obtener feligrés ID del usuario logueado
+            $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+
+            if (!$feligresId) {
+                throw new Exception('No se encontró perfil de feligrés');
+            }
+
+            // Verificar si ya existe una solicitud pendiente para este sacramento y feligrés
+            $solicitudExistente = $this->modeloSolicitud->mdlVerificarSolicitudExistente(
+                $sacramentoId,
+                $feligresId,
+                $tipoSacramentoId
+            );
+
+            if ($solicitudExistente) {
+                throw new Exception('Ya existe una solicitud pendiente para este sacramento');
+            }
+
+            // Determinar para quién es el certificado
+            $feligresCertificadoId = $feligresId; // Por defecto para el solicitante
+
+            if ($paraQuien === 'familiar' && !empty($familiarId)) {
+                // Verificar que el familiar_id es válido y pertenece al feligrés
+                $conexion = Conexion::conectar();
+                $sqlVerificar = "SELECT COUNT(*) as valido
+                                FROM parientes p
+                                WHERE ((p.feligres_sujeto_id = ? AND p.feligres_pariente_id = ?)
+                                   OR (p.feligres_sujeto_id = ? AND p.feligres_pariente_id = ?))
+                                AND p.estado_registro IS NULL";
+                $stmtVerificar = $conexion->prepare($sqlVerificar);
+                $stmtVerificar->execute([$feligresId, $familiarId, $familiarId, $feligresId]);
+                $resultado = $stmtVerificar->fetch(PDO::FETCH_ASSOC);
+
+                if ($resultado['valido'] > 0) {
+                    $feligresCertificadoId = $familiarId;
+                } else {
+                    throw new Exception('El familiar seleccionado no es válido');
+                }
+            }
+
+            // Crear solicitud de certificado
+            $datos = [
+                'sacramento_id' => $sacramentoId,
+                'tipo_sacramento_id' => $tipoSacramentoId,
+                'feligres_id' => $feligresCertificadoId,
+                'solicitante_id' => $feligresId,
+                'para_quien' => $paraQuien,
+                'estado' => 'pendiente_pago',
+                'fecha_solicitud' => date('Y-m-d H:i:s')
+            ];
+
+            $resultado = $this->modeloSolicitud->mdlCrearSolicitud($datos);
+
+            if ($resultado) {
+                if (ob_get_level()) ob_clean();
+                header('Content-Type: application/json');
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Solicitud de certificado creada exitosamente. Puedes realizar el pago en la sección "Mis Certificados".'
+                ]);
+            } else {
+                throw new Exception('No se pudo crear la solicitud');
+            }
+
+        } catch (Exception $e) {
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+            Logger::error("Error al solicitar certificado desde sacramento", [
+                'usuario_id' => $_SESSION['user-id'] ?? null,
+                'sacramento_id' => $sacramentoId ?? null,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        exit;
+    }
+
+    /**
+     * Obtiene la lista de familiares de un feligrés
+     * Endpoint AJAX para cargar en el modal de solicitud
+     */
+    public function obtenerFamiliares()
+    {
+        // Verificar autenticación
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-id'])) {
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Sesión no válida'
+            ]);
+            exit;
+        }
+
+        try {
+            // Obtener feligrés ID del usuario logueado
+            $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+
+            if (!$feligresId) {
+                throw new Exception('No se encontró perfil de feligrés');
+            }
+
+            // Obtener familiares (relaciones bidireccionales)
+            $conexion = Conexion::conectar();
+            $sql = "SELECT DISTINCT
+                        CASE
+                            WHEN p.feligres_sujeto_id = ? THEN p.feligres_pariente_id
+                            ELSE p.feligres_sujeto_id
+                        END as familiar_id,
+                        CASE
+                            WHEN p.feligres_sujeto_id = ? THEN CONCAT(f2.primer_nombre, ' ', f2.primer_apellido)
+                            ELSE CONCAT(f1.primer_nombre, ' ', f1.primer_apellido)
+                        END as nombre_completo,
+                        pa.parentesco
+                    FROM parientes p
+                    JOIN feligreses f1 ON p.feligres_sujeto_id = f1.id
+                    JOIN feligreses f2 ON p.feligres_pariente_id = f2.id
+                    JOIN parentescos pa ON p.parentesco_id = pa.id
+                    WHERE (p.feligres_sujeto_id = ? OR p.feligres_pariente_id = ?)
+                    AND p.estado_registro IS NULL
+                    AND f1.estado_registro IS NULL
+                    AND f2.estado_registro IS NULL";
+
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$feligresId, $feligresId, $feligresId, $feligresId]);
+            $familiares = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'data' => $familiares
+            ]);
+
+        } catch (Exception $e) {
+            if (ob_get_level()) ob_clean();
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+            Logger::error("Error al obtener familiares", [
+                'usuario_id' => $_SESSION['user-id'] ?? null,
+                'error' => $e->getMessage()
             ]);
         }
 

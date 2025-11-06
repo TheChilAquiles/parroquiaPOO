@@ -455,4 +455,38 @@ class ModeloSolicitudCertificado
             return [];
         }
     }
+
+    /**
+     * Verifica si ya existe una solicitud pendiente para un sacramento específico
+     * @param int $sacramentoId ID del sacramento
+     * @param int $feligresId ID del feligrés solicitante
+     * @param int $tipoSacramentoId ID del tipo de sacramento
+     * @return bool True si existe solicitud pendiente, False si no
+     */
+    public function mdlVerificarSolicitudExistente($sacramentoId, $feligresId, $tipoSacramentoId)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total
+                    FROM certificados c
+                    WHERE c.sacramento_id = ?
+                    AND c.solicitante_id = ?
+                    AND c.tipo_certificado_id = ?
+                    AND c.estado IN ('pendiente_pago', 'generado', 'descargado')
+                    AND c.estado_registro IS NULL";
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$sacramentoId, $feligresId, $tipoSacramentoId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return ($resultado['total'] > 0);
+
+        } catch (PDOException $e) {
+            Logger::error("Error al verificar solicitud existente", [
+                'sacramento_id' => $sacramentoId,
+                'feligres_id' => $feligresId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
+    }
 }

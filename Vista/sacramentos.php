@@ -700,10 +700,123 @@
     $(document).on('click', '#addRecord', function() {
         $('#recordModal').removeClass('hidden');
         $('#recordForm')[0].reset();
+        $('#id').val('');
+        $('#contenedor-integrantes').html(`
+            <li id="integranteVacio">
+                <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+                    <span class="font-bold"> --- Vacio --- </span>
+                </div>
+            </li>
+        `);
+        contador = 0;
         $('.modal-title').html("<i class='fa fa-plus'></i> Añadir Sacramento En <?php echo $libroTipo  . " " . $numeroLibro ?>  ");
         $('#Doaction').val('addRecord');
-        // $('#save').val('Adicionar');
+        mostrarFormulario(1);
     });
+
+    // Event handler para editar sacramento
+    $(document).on('click', '.btn-editar-sacramento', function() {
+        const sacramentoId = $(this).data('sacramento-id');
+        cargarSacramentoParaEditar(sacramentoId);
+    });
+
+    function cargarSacramentoParaEditar(sacramentoId) {
+        $.ajax({
+            url: '?route=sacramentos/obtener',
+            type: 'POST',
+            data: { sacramento_id: sacramentoId },
+            dataType: 'json',
+            beforeSend: function() {
+                Swal.fire({
+                    title: 'Cargando...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); }
+                });
+            },
+            success: function(response) {
+                Swal.close();
+
+                if (response.success) {
+                    // Abrir modal
+                    $('#recordModal').removeClass('hidden');
+                    $('#recordForm')[0].reset();
+
+                    // Llenar datos básicos
+                    $('#id').val(sacramentoId);
+                    $('#fecha-evento').val(response.data.fecha_generacion);
+                    $('#Doaction').val('editRecord');
+
+                    // Actualizar título
+                    $('.modal-title').html("✏️ Editar Sacramento");
+
+                    // Cargar participantes
+                    cargarParticipantesEdicion(response.data.participantes);
+
+                    // Ir al segundo formulario (participantes)
+                    mostrarFormulario(2);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message
+                    });
+                }
+            },
+            error: function(xhr) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo cargar el sacramento'
+                });
+                console.error('Error:', xhr);
+            }
+        });
+    }
+
+    function cargarParticipantesEdicion(participantes) {
+        const contenedor = $('#contenedor-integrantes');
+        contenedor.html('');
+        contador = 0;
+
+        if (participantes && participantes.length > 0) {
+            participantes.forEach(function(p) {
+                contador++;
+
+                const colores = {
+                    1: 'bg-blue-50', 2: 'bg-red-50', 3: 'bg-violet-50', 4: 'bg-yellow-50',
+                    5: 'bg-pink-50', 6: 'bg-indigo-50', 7: 'bg-lime-50', 8: 'bg-cyan-50',
+                    9: 'bg-emerald-50', 10: 'bg-violet-50', 11: 'bg-fuchsia-50'
+                };
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="bg-gray-100 border border-gray-300 rounded mb-2 mx-1 flex justify-between items-center">
+                        <span class="font-bold p-2 ${colores[p.rol_id] || 'bg-gray-50'}">${p.rol}</span>
+                        <span class="font-medium">${p.tipo_documento} - ${p.numero_documento}</span>
+                        <span class="font-medium">${p.nombre}</span>
+                        <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${p.rol_id}">
+                        <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${p.tipo_documento_id}">
+                        <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${p.numero_documento}">
+                        <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${p.primer_nombre}">
+                        <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${p.segundo_nombre || ''}">
+                        <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${p.primer_apellido}">
+                        <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${p.segundo_apellido || ''}">
+                        <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
+                    </div>
+                `;
+                contenedor.append(li);
+            });
+        } else {
+            contenedor.html(`
+                <li id="integranteVacio">
+                    <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+                        <span class="font-bold"> --- Vacio --- </span>
+                    </div>
+                </li>
+            `);
+        }
+    }
 
     const table = new DataTable('#recordListing', {
         processing: true,
@@ -767,12 +880,19 @@
                 orderable: false,
                 className: 'text-center',
                 render: function(data, type, row) {
-                    return `<button class="btn-generar-certificado bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
-                                    data-sacramento-id="${row.id}"
-                                    data-tipo="${row.tipo_sacramento}"
-                                    title="Generar certificado de este sacramento">
-                                📄 Certificado
-                            </button>`;
+                    return `<div class="flex gap-2 justify-center">
+                                <button class="btn-editar-sacramento bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                        data-sacramento-id="${row.id}"
+                                        title="Editar este sacramento">
+                                    ✏️ Editar
+                                </button>
+                                <button class="btn-generar-certificado bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                        data-sacramento-id="${row.id}"
+                                        data-tipo="${row.tipo_sacramento}"
+                                        title="Generar certificado de este sacramento">
+                                    📄 Certificado
+                                </button>
+                            </div>`;
                 }
             }
         ],

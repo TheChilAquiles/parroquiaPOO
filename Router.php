@@ -110,6 +110,7 @@ class Router
             'sacramentos/libro' => ['controlador' => 'SacramentosController', 'accion' => 'verLibro'],
             'sacramentos/listar' => ['controlador' => 'SacramentosController', 'accion' => 'listar'],
             'sacramentos/crear' => ['controlador' => 'SacramentosController', 'accion' => 'crear'],
+            'sacramentos/obtener' => ['controlador' => 'SacramentosController', 'accion' => 'obtener'],
             'sacramentos/buscar-usuario' => ['controlador' => 'SacramentosController', 'accion' => 'buscarUsuario'],
             'sacramentos/participantes' => ['controlador' => 'SacramentosController', 'accion' => 'getParticipantes'],
 
@@ -120,6 +121,8 @@ class Router
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
             'certificados/generar-simplificado' => ['controlador' => 'CertificadosController', 'accion' => 'generarSimplificado'],
             'certificados/listar-todos' => ['controlador' => 'CertificadosController', 'accion' => 'listarTodos'],
+            'certificados/solicitar-desde-sacramento' => ['controlador' => 'CertificadosController', 'accion' => 'solicitarDesdeSacramento'],
+            'certificados/obtener-familiares' => ['controlador' => 'CertificadosController', 'accion' => 'obtenerFamiliares'],
 
             // Solicitudes de certificados (Feligrés)
             'certificados/solicitar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'mostrarFormulario'],

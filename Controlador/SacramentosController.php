@@ -18,8 +18,24 @@ class SacramentosController
 
     public function index()
     {
-        // Mostrar vista de sacramentos
-        include_once __DIR__ . '/../Vista/sacramentos.php';
+        // Verificar autenticación
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
+            header('Location: ?route=login');
+            exit;
+        }
+
+        $rol = $_SESSION['user-rol'];
+
+        // Administrador y Secretario van a vista de libros
+        if (in_array($rol, ['Administrador', 'Secretario'])) {
+            header('Location: ?route=libros');
+            exit;
+        }
+
+        // Feligrés ve sus propios sacramentos
+        else {
+            $this->misSacramentos();
+        }
     }   
 
     private function buscarFeligres($tipoDoc, $numeroDoc)
@@ -38,6 +54,8 @@ class SacramentosController
 
         $tipo = $_POST['Tipo'] ?? null;
         $numero = $_POST['Numero'] ?? null;
+        $sacramentoId = $_POST['id'] ?? null;
+        $accion = $_POST['Doaction'] ?? 'addRecord';
 
         if (empty($tipo) || empty($numero)) {
             $_SESSION['error'] = 'Tipo y número son requeridos.';
@@ -61,7 +79,16 @@ class SacramentosController
             }
 
             $sacramento = new ModeloSacramento($tipo, $numero);
-            $resultado = $sacramento->CrearSacramento($_POST);
+
+            if ($accion === 'editRecord' && !empty($sacramentoId)) {
+                // Actualizar sacramento existente
+                $resultado = $sacramento->ActualizarSacramento($sacramentoId, $_POST);
+                $mensaje = 'Sacramento actualizado correctamente';
+            } else {
+                // Crear nuevo sacramento
+                $resultado = $sacramento->CrearSacramento($_POST);
+                $mensaje = 'Sacramento creado correctamente';
+            }
 
             header('Content-Type: application/json');
 
@@ -69,13 +96,13 @@ class SacramentosController
                 echo json_encode([
                     'success' => true,
                     'id' => $resultado,
-                    'message' => 'Sacramento creado correctamente'
+                    'message' => $mensaje
                 ]);
             } else {
                 http_response_code(400);
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Error al crear sacramento'
+                    'message' => 'Error al procesar sacramento'
                 ]);
             }
             exit();
@@ -93,6 +120,72 @@ class SacramentosController
             ]);
             exit();
         }
+    }
+
+    /**
+     * Obtiene los datos completos de un sacramento para edición
+     */
+    public function obtener()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            return;
+        }
+
+        $sacramentoId = $_POST['sacramento_id'] ?? null;
+
+        if (empty($sacramentoId) || !is_numeric($sacramentoId)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID de sacramento inválido']);
+            return;
+        }
+
+        if (ob_get_level()) ob_clean();
+
+        try {
+            // Obtener datos del sacramento
+            $conexion = Conexion::conectar();
+            $sql = "SELECT id, fecha_generacion, tipo_sacramento_id, libro_id
+                    FROM sacramentos
+                    WHERE id = ? AND estado_registro IS NULL";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$sacramentoId]);
+            $sacramento = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$sacramento) {
+                throw new Exception('Sacramento no encontrado');
+            }
+
+            // Obtener participantes con datos completos
+            $participantes = $this->modeloSacramento->getParticipantes((int)$sacramentoId);
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'data' => [
+                    'id' => $sacramento['id'],
+                    'fecha_generacion' => $sacramento['fecha_generacion'],
+                    'tipo_sacramento_id' => $sacramento['tipo_sacramento_id'],
+                    'libro_id' => $sacramento['libro_id'],
+                    'participantes' => $participantes
+                ]
+            ]);
+
+        } catch (Exception $e) {
+            header('Content-Type: application/json');
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => $e->getMessage()
+            ]);
+            Logger::error("Error al obtener sacramento", [
+                'sacramento_id' => $sacramentoId,
+                'error' => $e->getMessage()
+            ]);
+        }
+
+        exit();
     }
 
     public function buscarUsuario()
@@ -168,11 +261,54 @@ class SacramentosController
     }
 
     /**
-     * Muestra la vista de sacramentos de un libro específico
+     * Vista amigable de sacramentos para feligrés (card-based)
+     * Muestra solo los sacramentos donde el feligrés es participante
+     */
+    public function misSacramentos()
+    {
+        // Verificar autenticación
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-id'])) {
+            header('Location: ?route=login');
+            exit;
+        }
+
+        // Obtener ID del feligrés asociado al usuario
+        $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+
+        if (!$feligresId) {
+            // Mostrar vista vacía con mensaje de perfil incompleto
+            $misSacramentos = [];
+            $_SESSION['info'] = 'Tu perfil de feligrés aún no está completo. Contacta con la secretaría para completar tu registro.';
+            include_once __DIR__ . '/../Vista/mis-sacramentos.php';
+            return;
+        }
+
+        // Obtener sacramentos del feligrés
+        $misSacramentos = $this->modeloSacramento->mdlObtenerSacramentosPorFeligres($feligresId);
+
+        // Incluir vista card-based para feligrés
+        include_once __DIR__ . '/../Vista/mis-sacramentos.php';
+    }
+
+    /**
+     * Muestra la vista de sacramentos de un libro específico (Admin/Secretario)
      * Recibe tipo y número por GET desde Vista/libros.php
      */
     public function verLibro()
     {
+        // Verificar autenticación y permisos
+        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
+            header('Location: ?route=login');
+            exit;
+        }
+
+        // Solo admin y secretario pueden acceder a vista de libros
+        if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+            $_SESSION['error'] = 'No tienes permisos para acceder a esta sección.';
+            header('Location: ?route=dashboard');
+            exit;
+        }
+
         // Obtener parámetros de GET
         $tipo = $_GET['tipo'] ?? null;
         $numero = $_GET['numero'] ?? null;
@@ -197,7 +333,7 @@ class SacramentosController
         // Obtener nombre legible del tipo
         $libroTipo = $this->obtenerNombreTipo($tipo);
 
-        // Pasar variables a la vista
+        // Pasar variables a la vista administrativa (DataTables)
         include_once __DIR__ . '/../Vista/sacramentos.php';
     }
 
@@ -235,6 +371,26 @@ class SacramentosController
         header('Content-Type: application/json');
         echo json_encode(['data' => $sacramentos]);
         exit();
+    }
+
+    /**
+     * Obtiene el ID del feligrés asociado a un usuario
+     * @param int $usuarioId ID del usuario
+     * @return int|null ID del feligrés o null si no existe
+     */
+    private function obtenerFeligresIdUsuario($usuarioId)
+    {
+        try {
+            $conexion = Conexion::conectar();
+            $sql = "SELECT id FROM feligreses WHERE usuario_id = ? AND estado_registro IS NULL LIMIT 1";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $resultado ? $resultado['id'] : null;
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener feligrés por usuario: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
