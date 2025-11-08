@@ -179,11 +179,11 @@ class ManualController {
             // Por ahora solo retornamos true
             
             // Ejemplo de log simple
-            error_log("Manual - Sección vista: $seccionId por usuario: " . ($userId ?? 'anónimo'));
+            Logger::error("Manual - Sección vista: $seccionId por usuario:", ['info' => ($userId ?? 'anónimo')]);
             
             return true;
         } catch (Exception $e) {
-            error_log("Error al registrar visualización: " . $e->getMessage());
+            Logger::error("Error al registrar visualización:", ['error' => $e->getMessage()]);
             return false;
         }
     }

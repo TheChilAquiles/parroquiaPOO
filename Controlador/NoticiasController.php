@@ -44,12 +44,12 @@ class NoticiasController extends BaseController
         $this->requiereAdmin();
 
         // 🔥 DEBUG: Loguear información de la petición
-        error_log("========== CREAR NOTICIA DEBUG ==========");
-        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
-        error_log("X-Requested-With: " . ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'NO DEFINIDO'));
-        error_log("Método: " . $_SERVER['REQUEST_METHOD']);
-        error_log("POST: " . print_r($_POST, true));
-        error_log("=========================================");
+        Logger::error("========== CREAR NOTICIA DEBUG ==========");
+        Logger::error("Es AJAX:", ['info' => ($this->esAjax() ? 'SÍ' : 'NO')]);
+        Logger::error("X-Requested-With:", ['info' => ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'NO DEFINIDO')]);
+        Logger::error("Método:", ['info' => $_SERVER['REQUEST_METHOD']]);
+        Logger::error("POST:", ['info' => print_r($_POST, true)]);
+        Logger::error("=========================================");
 
     
 
@@ -106,9 +106,9 @@ class NoticiasController extends BaseController
     public function actualizar()
     {
         // 🔥 DEBUG
-        error_log("========== ACTUALIZAR NOTICIA DEBUG ==========");
-        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
-        error_log("=============================================");
+        Logger::error("========== ACTUALIZAR NOTICIA DEBUG ==========");
+        Logger::error("Es AJAX:", ['info' => ($this->esAjax() ? 'SÍ' : 'NO')]);
+        Logger::error("=============================================");
 
         if (!$this->tienePermisos()) {
             $this->responderError('No tienes permisos para realizar esta acción.');
@@ -173,9 +173,9 @@ class NoticiasController extends BaseController
     public function eliminar()
     {
         // 🔥 DEBUG
-        error_log("========== ELIMINAR NOTICIA DEBUG ==========");
-        error_log("Es AJAX: " . ($this->esAjax() ? 'SÍ' : 'NO'));
-        error_log("===========================================");
+        Logger::error("========== ELIMINAR NOTICIA DEBUG ==========");
+        Logger::error("Es AJAX:", ['info' => ($this->esAjax() ? 'SÍ' : 'NO')]);
+        Logger::error("===========================================");
 
         if (!$this->tienePermisos()) {
             $this->responderError('No tienes permisos para realizar esta acción.');

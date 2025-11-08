@@ -35,7 +35,7 @@ class ModeloCertificados
 
             return $this->db->lastInsertId();
         } catch (PDOException $e) {
-            error_log("Error al crear certificado: " . $e->getMessage());
+            Logger::error("Error al crear certificado:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -51,7 +51,7 @@ class ModeloCertificados
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener certificados: " . $e->getMessage());
+            Logger::error("Error al obtener certificados:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -67,7 +67,7 @@ class ModeloCertificados
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener certificado: " . $e->getMessage());
+            Logger::error("Error al obtener certificado:", ['error' => $e->getMessage()]);
             return null;
         }
     }

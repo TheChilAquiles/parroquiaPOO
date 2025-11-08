@@ -71,7 +71,7 @@ class CertificadosController
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             return $resultado ? $resultado['id'] : null;
         } catch (PDOException $e) {
-            error_log("Error al obtener feligrés por usuario: " . $e->getMessage());
+            Logger::error("Error al obtener feligrés por usuario:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -188,13 +188,13 @@ class CertificadosController
             $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
 
             if (!$certificado) {
-                error_log("Certificado no encontrado: $certificadoId");
+                Logger::error("Certificado no encontrado: $certificadoId");
                 return false;
             }
 
             // Validar que esté en estado pendiente_pago o ya pagado
             if (!in_array($certificado['estado'], ['pendiente_pago', 'generado'])) {
-                error_log("Estado inválido para generación: " . $certificado['estado']);
+                Logger::error("Estado inválido para generación:", ['info' => $certificado['estado']]);
                 return false;
             }
 
@@ -202,7 +202,7 @@ class CertificadosController
             $sacramento = $this->modeloSacramento->mdlObtenerPorId($certificado['sacramento_id']);
 
             if (!$sacramento) {
-                error_log("Sacramento no encontrado: " . $certificado['sacramento_id']);
+                Logger::error("Sacramento no encontrado:", ['info' => $certificado['sacramento_id']]);
                 return false;
             }
 
@@ -210,7 +210,7 @@ class CertificadosController
             $feligres = $this->modeloFeligres->mdlObtenerPorId($certificado['feligres_certificado_id']);
 
             if (!$feligres) {
-                error_log("Feligrés no encontrado: " . $certificado['feligres_certificado_id']);
+                Logger::error("Feligrés no encontrado:", ['info' => $certificado['feligres_certificado_id']]);
                 return false;
             }
 
@@ -358,14 +358,14 @@ class CertificadosController
             $actualizado = $this->modeloSolicitud->mdlActualizarTrasGeneracion($certificadoId, $rutaRelativa);
 
             if (!$actualizado) {
-                error_log("Error al actualizar BD para certificado: $certificadoId");
+                Logger::error("Error al actualizar BD para certificado: $certificadoId");
                 return false;
             }
 
             return true;
 
         } catch (Exception $e) {
-            error_log("Error al generar certificado automático: " . $e->getMessage());
+            Logger::error("Error al generar certificado automático:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -591,7 +591,7 @@ class CertificadosController
             exit();
 
         } catch (Exception $e) {
-            error_log("Error al generar certificado desde sacramento: " . $e->getMessage());
+            Logger::error("Error al generar certificado desde sacramento:", ['error' => $e->getMessage()]);
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
             header('Location: ?route=sacramentos');
             exit();
@@ -689,7 +689,7 @@ class CertificadosController
             }
 
         } catch (Exception $e) {
-            error_log("Error en generarSimplificado: " . $e->getMessage());
+            Logger::error("Error en generarSimplificado:", ['error' => $e->getMessage()]);
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al generar certificado: ' . $e->getMessage()
@@ -713,8 +713,15 @@ class CertificadosController
         header('Content-Type: application/json');
 
         try {
+            Logger::info("Intento de acceso a listarTodos", [
+                'logged' => isset($_SESSION['logged']) ? $_SESSION['logged'] : 'not set',
+                'user_rol' => isset($_SESSION['user-rol']) ? $_SESSION['user-rol'] : 'not set',
+                'session_id' => session_id()
+            ]);
+
             // Verificar autenticación
             if (!isset($_SESSION['logged']) || !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+                Logger::error("Acceso denegado a listarTodos - no autorizado");
                 echo json_encode([
                     'success' => false,
                     'message' => 'No autorizado'
@@ -724,6 +731,10 @@ class CertificadosController
 
             // Obtener todos los certificados
             $certificados = $this->modeloSolicitud->mdlObtenerTodosLosCertificados();
+
+            Logger::info("Certificados listados para admin", [
+                'cantidad' => count($certificados)
+            ]);
 
             // Formatear datos para DataTables
             $data = [];
@@ -752,7 +763,7 @@ class CertificadosController
             ]);
 
         } catch (Exception $e) {
-            error_log("Error en listarTodos: " . $e->getMessage());
+            Logger::error("Error en listarTodos:", ['error' => $e->getMessage()]);
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al listar certificados'
@@ -847,7 +858,7 @@ class CertificadosController
             $datos = [
                 'sacramento_id' => $sacramentoId,
                 'tipo_sacramento_id' => $tipoSacramentoId,
-                'feligres_id' => $feligresCertificadoId,
+                'feligres_certificado_id' => $feligresCertificadoId,
                 'solicitante_id' => $feligresId,
                 'para_quien' => $paraQuien,
                 'estado' => 'pendiente_pago',
@@ -856,15 +867,23 @@ class CertificadosController
 
             $resultado = $this->modeloSolicitud->mdlCrearSolicitud($datos);
 
-            if ($resultado) {
+            if ($resultado['status'] === 'success') {
+                Logger::info("Certificado solicitado exitosamente", [
+                    'certificado_id' => $resultado['id'],
+                    'solicitante_id' => $feligresId,
+                    'feligres_certificado_id' => $feligresCertificadoId,
+                    'para_quien' => $paraQuien,
+                    'sacramento_id' => $sacramentoId
+                ]);
+
                 if (ob_get_level()) ob_clean();
                 header('Content-Type: application/json');
                 echo json_encode([
                     'success' => true,
-                    'message' => 'Solicitud de certificado creada exitosamente. Puedes realizar el pago en la sección "Mis Certificados".'
+                    'message' => $resultado['message']
                 ]);
             } else {
-                throw new Exception('No se pudo crear la solicitud');
+                throw new Exception($resultado['message'] ?? 'No se pudo crear la solicitud');
             }
 
         } catch (Exception $e) {

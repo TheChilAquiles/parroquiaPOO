@@ -32,7 +32,7 @@ class ModeloParticipante
 
             return ['success' => true, 'id' => $this->conexion->lastInsertId()];
         } catch (PDOException $e) {
-            error_log("Error al crear participante: " . $e->getMessage());
+            Logger::error("Error al crear participante:", ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -48,7 +48,7 @@ class ModeloParticipante
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener participantes: " . $e->getMessage());
+            Logger::error("Error al obtener participantes:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -64,7 +64,7 @@ class ModeloParticipante
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener participante: " . $e->getMessage());
+            Logger::error("Error al obtener participante:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -87,7 +87,7 @@ class ModeloParticipante
                 $id
             ]);
         } catch (PDOException $e) {
-            error_log("Error al actualizar participante: " . $e->getMessage());
+            Logger::error("Error al actualizar participante:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -103,7 +103,7 @@ class ModeloParticipante
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
         } catch (PDOException $e) {
-            error_log("Error al eliminar participante: " . $e->getMessage());
+            Logger::error("Error al eliminar participante:", ['error' => $e->getMessage()]);
             return false;
         }
     }

@@ -26,7 +26,7 @@ class ModeloPago
                         p.certificado_id,
                         p.valor,
                         p.estado,
-                        p.metodo_de_pago,
+                        tp.descripcion AS metodo_de_pago,
                         p.fecha_pago,
                         c.tipo_certificado,
                         CONCAT(f.primer_nombre, ' ', f.primer_apellido) AS feligres_nombre,
@@ -36,13 +36,14 @@ class ModeloPago
                     LEFT JOIN certificados c ON p.certificado_id = c.id
                     LEFT JOIN feligreses f ON c.feligres_certificado_id = f.id
                     LEFT JOIN feligreses sol ON c.solicitante_id = sol.id
+                    LEFT JOIN tipos_pago tp ON p.tipo_pago_id = tp.id
                     WHERE p.estado_registro IS NULL
                     ORDER BY p.fecha_pago DESC, p.id DESC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener pagos: " . $e->getMessage());
+            Logger::error("Error al obtener pagos:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -58,7 +59,7 @@ class ModeloPago
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener pago: " . $e->getMessage());
+            Logger::error("Error al obtener pago:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -69,7 +70,10 @@ class ModeloPago
     public function mdlCrear($data)
     {
         try {
-            $sql = "INSERT INTO pagos (certificado_id, valor, estado, metodo_de_pago, fecha_pago)
+            // Convertir método de pago a ID si viene como texto
+            $tipoPagoId = $this->obtenerTipoPagoId($data['metodo_de_pago'] ?? null);
+
+            $sql = "INSERT INTO pagos (certificado_id, valor, estado, tipo_pago_id, fecha_pago)
                     VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->conexion->prepare($sql);
 
@@ -77,7 +81,7 @@ class ModeloPago
                 $data['certificado_id'],
                 $data['valor'],
                 $data['estado'],
-                $data['metodo_de_pago']
+                $tipoPagoId
             ]);
 
             if ($stmt->rowCount() > 0) {
@@ -85,7 +89,7 @@ class ModeloPago
             }
             return ['exito' => false, 'mensaje' => 'No se pudo crear el pago'];
         } catch (PDOException $e) {
-            error_log("Error al crear pago: " . $e->getMessage());
+            Logger::error("Error al crear pago:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => 'Error al crear pago'];
         }
     }
@@ -96,12 +100,15 @@ class ModeloPago
     public function mdlActualizar($id, $data)
     {
         try {
-            $sql = "UPDATE pagos SET estado = ?, metodo_de_pago = ? WHERE id = ?";
+            // Convertir método de pago a ID si viene como texto
+            $tipoPagoId = $this->obtenerTipoPagoId($data['metodo_de_pago'] ?? null);
+
+            $sql = "UPDATE pagos SET estado = ?, tipo_pago_id = ? WHERE id = ?";
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->execute([
                 $data['estado'],
-                $data['metodo_de_pago'],
+                $tipoPagoId,
                 $id
             ]);
 
@@ -110,7 +117,7 @@ class ModeloPago
             }
             return ['exito' => false, 'mensaje' => 'No se pudo actualizar el pago'];
         } catch (PDOException $e) {
-            error_log("Error al actualizar pago: " . $e->getMessage());
+            Logger::error("Error al actualizar pago:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => 'Error al actualizar pago'];
         }
     }
@@ -141,7 +148,7 @@ class ModeloPago
             }
             return ['exito' => false, 'mensaje' => 'No se pudo eliminar el pago'];
         } catch (PDOException $e) {
-            error_log("Error al eliminar pago: " . $e->getMessage());
+            Logger::error("Error al eliminar pago:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => 'Error al eliminar pago'];
         }
     }
@@ -162,7 +169,7 @@ class ModeloPago
             $stmt->execute();
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener estadísticas: " . $e->getMessage());
+            Logger::error("Error al obtener estadísticas:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -178,8 +185,38 @@ class ModeloPago
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener certificados: " . $e->getMessage());
+            Logger::error("Error al obtener certificados:", ['error' => $e->getMessage()]);
             return [];
         }
+    }
+
+    /**
+     * Convierte método de pago (texto o ID) a ID de tipos_pago
+     * @param mixed $metodoPago Puede ser ID numérico o texto ("efectivo", "tarjeta", etc)
+     * @return int|null ID del tipo de pago o null
+     */
+    private function obtenerTipoPagoId($metodoPago)
+    {
+        // Si ya es numérico y válido, devolverlo
+        if (is_numeric($metodoPago) && $metodoPago > 0) {
+            return (int)$metodoPago;
+        }
+
+        // Si es texto, convertir a ID
+        if (is_string($metodoPago)) {
+            $mapeo = [
+                'efectivo' => 3,
+                'tarjeta credito' => 1,
+                'tarjeta debito' => 2,
+                'transferencia' => 4,
+                'paypal' => 5
+            ];
+
+            $metodoPago = strtolower(trim($metodoPago));
+            return $mapeo[$metodoPago] ?? 3; // Default: efectivo
+        }
+
+        // Default: efectivo
+        return 3;
     }
 }

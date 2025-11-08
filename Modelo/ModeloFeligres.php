@@ -27,7 +27,7 @@ class ModeloFeligres
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             return $resultado ?: false;
         } catch (PDOException $e) {
-            error_log("Error al consultar feligrés: " . $e->getMessage());
+            Logger::error("Error al consultar feligrés:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -61,7 +61,7 @@ class ModeloFeligres
             }
             return ['status' => 'error', 'message' => 'No se pudo registrar el feligrés'];
         } catch (PDOException $e) {
-            error_log("Error al crear feligrés: " . $e->getMessage());
+            Logger::error("Error al crear feligrés:", ['error' => $e->getMessage()]);
             if ($e->getCode() == 23000) {
                 return ['status' => 'error', 'message' => 'El feligrés ya existe'];
             }
@@ -105,7 +105,7 @@ class ModeloFeligres
             }
             return ['status' => 'error', 'message' => 'No se pudo actualizar el feligrés'];
         } catch (PDOException $e) {
-            error_log("Error al actualizar feligrés: " . $e->getMessage());
+            Logger::error("Error al actualizar feligrés:", ['error' => $e->getMessage()]);
             return ['status' => 'error', 'message' => 'Error al actualizar feligrés'];
         }
     }
@@ -121,7 +121,7 @@ class ModeloFeligres
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener feligrés: " . $e->getMessage());
+            Logger::error("Error al obtener feligrés:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -161,7 +161,7 @@ class ModeloFeligres
 
             return $feligreses;
         } catch (PDOException $e) {
-            error_log("Error al listar feligreses: " . $e->getMessage());
+            Logger::error("Error al listar feligreses:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -179,7 +179,7 @@ class ModeloFeligres
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             return (int)$result['total'];
         } catch (PDOException $e) {
-            error_log("Error al contar feligreses: " . $e->getMessage());
+            Logger::error("Error al contar feligreses:", ['error' => $e->getMessage()]);
             return 0;
         }
     }
@@ -197,7 +197,7 @@ class ModeloFeligres
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
         } catch (PDOException $e) {
-            error_log("Error al eliminar feligrés: " . $e->getMessage());
+            Logger::error("Error al eliminar feligrés:", ['error' => $e->getMessage()]);
             return false;
         }
     }

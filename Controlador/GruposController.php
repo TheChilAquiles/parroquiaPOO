@@ -23,7 +23,7 @@ class GruposController
             include_once __DIR__ . '/../Vista/grupos.php';
         } catch (Exception $e) {
             $_SESSION['error'] = 'Error al cargar los grupos.';
-            error_log("Error en GruposController::index - " . $e->getMessage());
+            Logger::error("Error en GruposController::index -", ['error' => $e->getMessage()]);
             include_once __DIR__ . '/../Vista/grupos.php';
         }
     }
@@ -73,7 +73,7 @@ class GruposController
         } catch (Exception $e) {
             $_SESSION['mensaje'] = 'Error al cargar el grupo.';
             $_SESSION['tipo_mensaje'] = 'error';
-            error_log("Error en GruposController::ver - " . $e->getMessage());
+            Logger::error("Error en GruposController::ver -", ['error' => $e->getMessage()]);
             header('Location: ?route=grupos');
             exit();
         }
@@ -112,7 +112,7 @@ class GruposController
             } catch (Exception $e) {
                 $_SESSION['mensaje'] = 'Error al crear el grupo.';
                 $_SESSION['tipo_mensaje'] = 'error';
-                error_log("Error en GruposController::crear - " . $e->getMessage());
+                Logger::error("Error en GruposController::crear -", ['error' => $e->getMessage()]);
                 $grupo = null;
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             }
@@ -172,7 +172,7 @@ class GruposController
             } catch (Exception $e) {
                 $_SESSION['mensaje'] = 'Error al actualizar el grupo.';
                 $_SESSION['tipo_mensaje'] = 'error';
-                error_log("Error en GruposController::editar - " . $e->getMessage());
+                Logger::error("Error en GruposController::editar -", ['error' => $e->getMessage()]);
                 $grupo = $this->modelo->mdlObtenerGrupoPorId($grupo_id);
                 include_once __DIR__ . '/../Vista/grupoFormulario.php';
             }
@@ -192,7 +192,7 @@ class GruposController
             } catch (Exception $e) {
                 $_SESSION['mensaje'] = 'Error al cargar el grupo.';
                 $_SESSION['tipo_mensaje'] = 'error';
-                error_log("Error en GruposController::editar GET - " . $e->getMessage());
+                Logger::error("Error en GruposController::editar GET -", ['error' => $e->getMessage()]);
                 header('Location: ?route=grupos');
                 exit();
             }
@@ -248,7 +248,7 @@ class GruposController
         } catch (Exception $e) {
             $_SESSION['mensaje'] = 'Error al procesar eliminación.';
             $_SESSION['tipo_mensaje'] = 'error';
-            error_log("Error en GruposController::eliminar - " . $e->getMessage());
+            Logger::error("Error en GruposController::eliminar -", ['error' => $e->getMessage()]);
             header('Location: ?route=grupos');
             exit();
         }
@@ -292,7 +292,7 @@ class GruposController
         } catch (Exception $e) {
             $_SESSION['mensaje'] = 'Error al agregar miembro.';
             $_SESSION['tipo_mensaje'] = 'error';
-            error_log("Error en GruposController::agregarMiembro - " . $e->getMessage());
+            Logger::error("Error en GruposController::agregarMiembro -", ['error' => $e->getMessage()]);
         }
 
         header('Location: ?route=grupos/ver&id=' . $grupo_id);
@@ -334,7 +334,7 @@ class GruposController
         } catch (Exception $e) {
             $_SESSION['mensaje'] = 'Error al eliminar miembro.';
             $_SESSION['tipo_mensaje'] = 'error';
-            error_log("Error en GruposController::eliminarMiembro - " . $e->getMessage());
+            Logger::error("Error en GruposController::eliminarMiembro -", ['error' => $e->getMessage()]);
         }
 
         header('Location: ?route=grupos/ver&id=' . $grupo_id);
@@ -387,7 +387,7 @@ class GruposController
         } catch (Exception $e) {
             $_SESSION['mensaje'] = 'Error al actualizar rol.';
             $_SESSION['tipo_mensaje'] = 'error';
-            error_log("Error en GruposController::actualizarRol - " . $e->getMessage());
+            Logger::error("Error en GruposController::actualizarRol -", ['error' => $e->getMessage()]);
         }
 
         header('Location: ?route=grupos/ver&id=' . $grupo_id);

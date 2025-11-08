@@ -63,7 +63,7 @@ class ModeloSolicitudCertificado
                 'mensaje' => 'No existe parentesco registrado. Debe registrarlo primero en secretaría.'
             ];
         } catch (PDOException $e) {
-            error_log("Error al validar parentesco: " . $e->getMessage());
+            Logger::error("Error al validar parentesco:", ['error' => $e->getMessage()]);
             return [
                 'valido' => false,
                 'parentesco_id' => null,
@@ -136,17 +136,30 @@ class ModeloSolicitudCertificado
 
             $certificadoId = $this->conexion->lastInsertId();
 
+            Logger::info("Certificado creado en BD", [
+                'certificado_id' => $certificadoId,
+                'solicitante_id' => $datos['solicitante_id'],
+                'feligres_certificado_id' => $datos['feligres_certificado_id'],
+                'sacramento_id' => $datos['sacramento_id'],
+                'tipo_certificado' => $sacramento['tipo'],
+                'parentesco_id' => $datos['parentesco_id']
+            ]);
+
             return [
                 'status' => 'success',
                 'id' => $certificadoId,
                 'message' => 'Solicitud creada exitosamente. Proceda al pago.'
             ];
         } catch (PDOException $e) {
-            error_log("Error al crear solicitud: " . $e->getMessage());
+            Logger::error("Error al crear certificado en BD", [
+                'datos' => $datos,
+                'error' => $e->getMessage(),
+                'codigo_error' => $e->getCode()
+            ]);
             return [
                 'status' => 'error',
                 'id' => null,
-                'message' => 'Error al crear solicitud'
+                'message' => 'Error al crear solicitud: ' . $e->getMessage()
             ];
         }
     }
@@ -179,9 +192,20 @@ class ModeloSolicitudCertificado
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$feligresId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $certificados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            Logger::info("Certificados obtenidos para feligrés", [
+                'feligres_id' => $feligresId,
+                'cantidad' => count($certificados),
+                'certificados' => array_column($certificados, 'id')
+            ]);
+
+            return $certificados;
         } catch (PDOException $e) {
-            error_log("Error al obtener solicitudes: " . $e->getMessage());
+            Logger::error("Error al obtener solicitudes", [
+                'feligres_id' => $feligresId,
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -199,7 +223,7 @@ class ModeloSolicitudCertificado
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener certificado: " . $e->getMessage());
+            Logger::error("Error al obtener certificado:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -219,7 +243,7 @@ class ModeloSolicitudCertificado
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
-            error_log("Error al marcar como pagado: " . $e->getMessage());
+            Logger::error("Error al marcar como pagado:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -236,7 +260,7 @@ class ModeloSolicitudCertificado
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$id]);
         } catch (PDOException $e) {
-            error_log("Error al marcar como descargado: " . $e->getMessage());
+            Logger::error("Error al marcar como descargado:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -259,7 +283,7 @@ class ModeloSolicitudCertificado
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$rutaArchivo, $id]);
         } catch (PDOException $e) {
-            error_log("Error al actualizar tras generación: " . $e->getMessage());
+            Logger::error("Error al actualizar tras generación:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -280,7 +304,7 @@ class ModeloSolicitudCertificado
             $stmt->execute();
             return $stmt->rowCount();
         } catch (PDOException $e) {
-            error_log("Error al verificar expiración: " . $e->getMessage());
+            Logger::error("Error al verificar expiración:", ['error' => $e->getMessage()]);
             return 0;
         }
     }
@@ -318,7 +342,7 @@ class ModeloSolicitudCertificado
             $feligresId = $feligres['id'];
 
             // 2. Buscar sacramento del feligrés por tipo
-            $sqlSacramento = "SELECT DISTINCT s.id, st.tipo
+            $sqlSacramento = "SELECT s.id, st.tipo
                              FROM sacramentos s
                              JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
                              JOIN participantes p ON p.sacramento_id = s.id
@@ -368,7 +392,7 @@ class ModeloSolicitudCertificado
                 'sacramento_id' => $sacramento['id']
             ];
         } catch (PDOException $e) {
-            error_log("Error al crear certificado directo: " . $e->getMessage());
+            Logger::error("Error al crear certificado directo:", ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
                 'id' => null,
@@ -395,7 +419,7 @@ class ModeloSolicitudCertificado
                         CONCAT(f.primer_nombre, ' ', f.primer_apellido) AS feligres_nombre,
                         f.numero_documento,
                         CONCAT(sol.primer_nombre, ' ', sol.primer_apellido) AS solicitante_nombre,
-                        CONCAT(gen.nombre, ' ', gen.apellido) AS generador_nombre,
+                        gen.email AS generador_nombre,
                         pa.parentesco AS relacion,
                         s.fecha_generacion AS fecha_sacramento,
                         st.tipo AS tipo_sacramento
@@ -411,9 +435,18 @@ class ModeloSolicitudCertificado
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $certificados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            Logger::info("Todos los certificados obtenidos de BD", [
+                'cantidad' => count($certificados)
+            ]);
+
+            return $certificados;
         } catch (PDOException $e) {
-            error_log("Error al obtener todos los certificados: " . $e->getMessage());
+            Logger::error("Error al obtener todos los certificados", [
+                'error' => $e->getMessage(),
+                'codigo' => $e->getCode()
+            ]);
             return [];
         }
     }
@@ -451,7 +484,7 @@ class ModeloSolicitudCertificado
 
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener pendientes de pago: " . $e->getMessage());
+            Logger::error("Error al obtener pendientes de pago:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -466,16 +499,17 @@ class ModeloSolicitudCertificado
     public function mdlVerificarSolicitudExistente($sacramentoId, $feligresId, $tipoSacramentoId)
     {
         try {
+            // No need to check tipo since sacramento_id already implies the type
+            // Just check for duplicate certificate request for same sacramento by same person
             $sql = "SELECT COUNT(*) as total
                     FROM certificados c
                     WHERE c.sacramento_id = ?
                     AND c.solicitante_id = ?
-                    AND c.tipo_certificado_id = ?
                     AND c.estado IN ('pendiente_pago', 'generado', 'descargado')
                     AND c.estado_registro IS NULL";
 
             $stmt = $this->conexion->prepare($sql);
-            $stmt->execute([$sacramentoId, $feligresId, $tipoSacramentoId]);
+            $stmt->execute([$sacramentoId, $feligresId]);
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
             return ($resultado['total'] > 0);

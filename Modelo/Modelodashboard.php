@@ -90,7 +90,7 @@ class DashboardModel
             $stmt->execute();
             return (int)$stmt->fetchColumn();
         } catch (Exception $e) {
-            error_log("Error al obtener conteo: " . $e->getMessage());
+            Logger::error("Error al obtener conteo:", ['error' => $e->getMessage()]);
             return 0;
         }
     }

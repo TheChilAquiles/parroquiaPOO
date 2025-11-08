@@ -39,7 +39,7 @@ class ReporteModelo
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener reportes: " . $e->getMessage());
+            Logger::error("Error al obtener reportes:", ['error' => $e->getMessage()]);
             return [];
         }
     }

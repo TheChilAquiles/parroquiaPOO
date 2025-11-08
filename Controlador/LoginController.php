@@ -170,7 +170,7 @@ class LoginController
             exit();
 
         } catch (Exception $e) {
-            error_log("Error al enviar email: {$mail->ErrorInfo}");
+            Logger::error("Error al enviar email: {$mail->ErrorInfo}");
             $_SESSION['error'] = 'No se pudo enviar el email. Contacta al administrador.';
             header('Location: ?route=olvido');
             exit();

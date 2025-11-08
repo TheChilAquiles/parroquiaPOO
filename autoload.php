@@ -4,7 +4,7 @@ spl_autoload_register(function ($clase) {
         __DIR__ . '/Modelo/',
         __DIR__ . '/Controlador/',
     ];
-    
+
     foreach ($directorios as $dir) {
         $archivo = $dir . $clase . '.php';
         if (file_exists($archivo)) {
@@ -13,3 +13,6 @@ spl_autoload_register(function ($clase) {
         }
     }
 });
+
+// Cargar Logger manualmente (siempre disponible)
+require_once __DIR__ . '/Modelo/Logger.php';

@@ -95,7 +95,7 @@ class ModeloNoticia
             }
             
             // Registra error en logs del servidor (no expone al usuario)
-            error_log("Error al crear noticia: " . $e->getMessage());
+            Logger::error("Error al crear noticia:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => "Error interno al guardar la noticia."];
             
         } finally {
@@ -151,7 +151,7 @@ class ModeloNoticia
 
         } catch (PDOException $e) {
             // Log del error sin exponer detalles al usuario
-            error_log("Error al obtener noticias: " . $e->getMessage());
+            Logger::error("Error al obtener noticias:", ['error' => $e->getMessage()]);
             
         } finally {
             $stmt = null;
@@ -211,7 +211,7 @@ class ModeloNoticia
             if ($this->conexion && $this->conexion->inTransaction()) {
                 $this->conexion->rollBack();
             }
-            error_log("Error al actualizar noticia: " . $e->getMessage());
+            Logger::error("Error al actualizar noticia:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => "Error interno al actualizar la noticia."];
             
         } finally {
@@ -263,7 +263,7 @@ class ModeloNoticia
             if ($this->conexion && $this->conexion->inTransaction()) {
                 $this->conexion->rollBack();
             }
-            error_log("Error al borrar noticia: " . $e->getMessage());
+            Logger::error("Error al borrar noticia:", ['error' => $e->getMessage()]);
             return ['exito' => false, 'mensaje' => "Error interno al borrar la noticia."];
             
         } finally {

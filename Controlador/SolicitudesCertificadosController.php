@@ -280,7 +280,7 @@ class SolicitudesCertificadosController
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             return $resultado ? $resultado['id'] : null;
         } catch (PDOException $e) {
-            error_log("Error al obtener feligrés por usuario: " . $e->getMessage());
+            Logger::error("Error al obtener feligrés por usuario:", ['error' => $e->getMessage()]);
             return null;
         }
     }

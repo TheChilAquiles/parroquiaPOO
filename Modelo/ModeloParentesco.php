@@ -52,7 +52,7 @@ class ModeloParentesco
             $stmt->execute([$feligresId, $feligresId, $feligresId, $feligresId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener parentescos: " . $e->getMessage());
+            Logger::error("Error al obtener parentescos:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -80,7 +80,7 @@ class ModeloParentesco
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar parentescos: " . $e->getMessage());
+            Logger::error("Error al listar parentescos:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -124,7 +124,7 @@ class ModeloParentesco
                 'message' => 'Parentesco registrado exitosamente'
             ];
         } catch (PDOException $e) {
-            error_log("Error al crear parentesco: " . $e->getMessage());
+            Logger::error("Error al crear parentesco:", ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
                 'message' => 'Error al registrar parentesco'
@@ -151,7 +151,7 @@ class ModeloParentesco
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             return $resultado['existe'] > 0;
         } catch (PDOException $e) {
-            error_log("Error al verificar relación: " . $e->getMessage());
+            Logger::error("Error al verificar relación:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -168,7 +168,7 @@ class ModeloParentesco
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener tipos de parentesco: " . $e->getMessage());
+            Logger::error("Error al obtener tipos de parentesco:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -197,7 +197,7 @@ class ModeloParentesco
                 'message' => 'No se pudo actualizar el parentesco'
             ];
         } catch (PDOException $e) {
-            error_log("Error al editar parentesco: " . $e->getMessage());
+            Logger::error("Error al editar parentesco:", ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
                 'message' => 'Error al actualizar parentesco'
@@ -228,7 +228,7 @@ class ModeloParentesco
                 'message' => 'No se pudo eliminar el parentesco'
             ];
         } catch (PDOException $e) {
-            error_log("Error al eliminar parentesco: " . $e->getMessage());
+            Logger::error("Error al eliminar parentesco:", ['error' => $e->getMessage()]);
             return [
                 'status' => 'error',
                 'message' => 'Error al eliminar parentesco'

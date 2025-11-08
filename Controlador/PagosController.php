@@ -358,7 +358,7 @@ class PagosController extends BaseController
             exit;
 
         } catch (Exception $e) {
-            error_log("Error en webhook: " . $e->getMessage());
+            Logger::error("Error en webhook:", ['error' => $e->getMessage()]);
             http_response_code(500);
             echo json_encode(['status' => 'error', 'message' => 'Error interno']);
             exit;
@@ -475,7 +475,7 @@ class PagosController extends BaseController
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             return $resultado ? $resultado['id'] : null;
         } catch (PDOException $e) {
-            error_log("Error al obtener feligrés por usuario: " . $e->getMessage());
+            Logger::error("Error al obtener feligrés por usuario:", ['error' => $e->getMessage()]);
             return null;
         }
     }

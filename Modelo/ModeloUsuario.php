@@ -38,7 +38,7 @@ class ModeloUsuario
 
             return ['status' => 'success', 'message' => 'Usuario registrado correctamente'];
         } catch (PDOException $e) {
-            error_log("Error al registrar usuario: " . $e->getMessage());
+            Logger::error("Error al registrar usuario:", ['error' => $e->getMessage()]);
             return ['status' => 'error', 'message' => 'Error al registrar usuario'];
         }
     }
@@ -93,7 +93,7 @@ class ModeloUsuario
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             return $usuario ?: null;
         } catch (PDOException $e) {
-            error_log("Error al consultar usuario: " . $e->getMessage());
+            Logger::error("Error al consultar usuario:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -109,7 +109,7 @@ class ModeloUsuario
             $stmt->execute([$email]);
             return $stmt->fetchColumn() > 0;
         } catch (PDOException $e) {
-            error_log("Error al verificar email: " . $e->getMessage());
+            Logger::error("Error al verificar email:", ['error' => $e->getMessage()]);
             return true; // Por seguridad, asumimos que existe
         }
     }
@@ -129,7 +129,7 @@ class ModeloUsuario
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener usuario: " . $e->getMessage());
+            Logger::error("Error al obtener usuario:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -149,7 +149,7 @@ class ModeloUsuario
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener usuarios: " . $e->getMessage());
+            Logger::error("Error al obtener usuarios:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -170,7 +170,7 @@ class ModeloUsuario
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$token, $expires, $email]);
         } catch (PDOException $e) {
-            error_log("Error al guardar token de reseteo: " . $e->getMessage());
+            Logger::error("Error al guardar token de reseteo:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -187,7 +187,7 @@ class ModeloUsuario
             $stmt->execute([$token]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al buscar por token: " . $e->getMessage());
+            Logger::error("Error al buscar por token:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -207,7 +207,7 @@ class ModeloUsuario
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$hashedPassword, $token]);
         } catch (PDOException $e) {
-            error_log("Error al actualizar contraseña: " . $e->getMessage());
+            Logger::error("Error al actualizar contraseña:", ['error' => $e->getMessage()]);
             return false;
         }
     }

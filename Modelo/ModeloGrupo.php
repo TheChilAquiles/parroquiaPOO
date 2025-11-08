@@ -81,7 +81,7 @@ class ModeloGrupo
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar grupos: " . $e->getMessage());
+            Logger::error("Error al listar grupos:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -115,7 +115,7 @@ class ModeloGrupo
             $stmt->execute([$grupo_id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener grupo: " . $e->getMessage());
+            Logger::error("Error al obtener grupo:", ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -145,7 +145,7 @@ class ModeloGrupo
 
             // Verificar unicidad del nombre entre grupos activos
             if ($this->mdlGrupoExistePorNombre($nombre_grupo)) {
-                error_log("Ya existe un grupo activo con ese nombre");
+                Logger::error("Ya existe un grupo activo con ese nombre");
                 return false;
             }
 
@@ -157,7 +157,7 @@ class ModeloGrupo
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Error al crear grupo: " . $e->getMessage());
+            Logger::error("Error al crear grupo:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -193,7 +193,7 @@ class ModeloGrupo
             // Verificar unicidad: permitir el mismo nombre solo para el mismo grupo
             $grupoExistente = $this->mdlGrupoExistePorNombre($nombre_grupo);
             if ($grupoExistente && $grupoExistente['id'] != $grupo_id) {
-                error_log("Ya existe otro grupo con ese nombre");
+                Logger::error("Ya existe otro grupo con ese nombre");
                 return false;
             }
 
@@ -201,7 +201,7 @@ class ModeloGrupo
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$nombre_grupo, $grupo_id]);
         } catch (PDOException $e) {
-            error_log("Error al actualizar grupo: " . $e->getMessage());
+            Logger::error("Error al actualizar grupo:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -262,7 +262,7 @@ class ModeloGrupo
                 throw $e;
             }
         } catch (PDOException $e) {
-            error_log("Error al eliminar grupo lógicamente: " . $e->getMessage());
+            Logger::error("Error al eliminar grupo lógicamente:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -319,7 +319,7 @@ class ModeloGrupo
             $stmt->execute([$grupo_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar miembros del grupo: " . $e->getMessage());
+            Logger::error("Error al listar miembros del grupo:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -351,19 +351,19 @@ class ModeloGrupo
 
             // Verificar que el usuario no esté ya en el grupo (activo)
             if ($this->mdlUsuarioEnGrupo($grupo_id, $usuario_id)) {
-                error_log("El usuario ya está en el grupo");
+                Logger::error("El usuario ya está en el grupo");
                 return false;
             }
 
             // Verificar que el grupo existe y está activo
             if (!$this->mdlObtenerGrupoPorId($grupo_id)) {
-                error_log("El grupo no existe o está eliminado");
+                Logger::error("El grupo no existe o está eliminado");
                 return false;
             }
 
             // Verificar que el usuario existe
             if (!$this->mdlUsuarioExiste($usuario_id)) {
-                error_log("El usuario no existe");
+                Logger::error("El usuario no existe");
                 return false;
             }
 
@@ -372,7 +372,7 @@ class ModeloGrupo
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$grupo_id, $usuario_id, $grupo_rol_id]);
         } catch (PDOException $e) {
-            error_log("Error al agregar miembro: " . $e->getMessage());
+            Logger::error("Error al agregar miembro:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -403,11 +403,11 @@ class ModeloGrupo
             $resultado = $stmt->execute([$grupo_id, $usuario_id]);
             
             // Log para depuración y auditoría
-            error_log("Eliminando miembro - Grupo: $grupo_id, Usuario: $usuario_id, Filas afectadas: " . $stmt->rowCount());
+            Logger::error("Eliminando miembro - Grupo: $grupo_id, Usuario: $usuario_id, Filas afectadas:", ['info' => $stmt->rowCount()]);
             
             return $resultado && $stmt->rowCount() > 0;
         } catch (PDOException $e) {
-            error_log("Error al eliminar miembro: " . $e->getMessage());
+            Logger::error("Error al eliminar miembro:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -429,7 +429,7 @@ class ModeloGrupo
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar roles de grupo: " . $e->getMessage());
+            Logger::error("Error al listar roles de grupo:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -465,7 +465,7 @@ class ModeloGrupo
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar usuarios disponibles: " . $e->getMessage());
+            Logger::error("Error al listar usuarios disponibles:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -495,7 +495,7 @@ class ModeloGrupo
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar grupos eliminados: " . $e->getMessage());
+            Logger::error("Error al listar grupos eliminados:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -530,7 +530,7 @@ class ModeloGrupo
 
             // Verificar unicidad del nombre entre grupos activos
             if ($this->mdlGrupoExistePorNombre($grupo_eliminado['nombre'])) {
-                error_log("Ya existe un grupo activo con ese nombre, no se puede restaurar");
+                Logger::error("Ya existe un grupo activo con ese nombre, no se puede restaurar");
                 return false;
             }
 
@@ -539,7 +539,7 @@ class ModeloGrupo
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$grupo_id]);
         } catch (PDOException $e) {
-            error_log("Error al restaurar grupo: " . $e->getMessage());
+            Logger::error("Error al restaurar grupo:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -585,7 +585,7 @@ class ModeloGrupo
             $stmt->execute([$grupo_id]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al listar todos los miembros: " . $e->getMessage());
+            Logger::error("Error al listar todos los miembros:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -614,7 +614,7 @@ class ModeloGrupo
             $stmt->execute([$grupo_id, $usuario_id]);
             return $stmt->fetchColumn() > 0;
         } catch (PDOException $e) {
-            error_log("Error al verificar usuario en grupo: " . $e->getMessage());
+            Logger::error("Error al verificar usuario en grupo:", ['error' => $e->getMessage()]);
             return true; // Por seguridad, asumimos que está en el grupo
         }
     }
@@ -636,7 +636,7 @@ class ModeloGrupo
             $stmt->execute([$usuario_id]);
             return $stmt->fetchColumn() > 0;
         } catch (PDOException $e) {
-            error_log("Error al verificar existencia de usuario: " . $e->getMessage());
+            Logger::error("Error al verificar existencia de usuario:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -660,7 +660,7 @@ class ModeloGrupo
             $stmt->execute([$nombre_grupo]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al verificar existencia de grupo por nombre: " . $e->getMessage());
+            Logger::error("Error al verificar existencia de grupo por nombre:", ['error' => $e->getMessage()]);
             return false;
         }
     }

@@ -23,7 +23,7 @@ class Conexion
             );
             self::$conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            error_log("Error de conexión: " . $e->getMessage());
+            Logger::error("Error de conexión:", ['error' => $e->getMessage()]);
             throw new Exception("Error de conexión a la base de datos", 0, $e);
         }
         

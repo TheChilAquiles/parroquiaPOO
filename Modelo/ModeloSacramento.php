@@ -33,7 +33,7 @@ class ModeloSacramento
 {
     // ✅ AGREGAR ESTAS LÍNEAS
     if (!is_numeric($sacramentoId) || $sacramentoId <= 0) {
-        error_log("ID de sacramento inválido: " . $sacramentoId);
+        Logger::error("ID de sacramento inválido:", ['info' => $sacramentoId]);
         return [];
     }
 
@@ -60,7 +60,7 @@ class ModeloSacramento
         $stmt->execute([$sacramentoId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error al obtener participantes: " . $e->getMessage());
+        Logger::error("Error al obtener participantes:", ['error' => $e->getMessage()]);
         return [];
     }
 }
@@ -80,7 +80,7 @@ class ModeloSacramento
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->libroID = $resultado['id'] ?? null;
         } catch (PDOException $e) {
-            error_log("Error al obtener ID del libro: " . $e->getMessage());
+            Logger::error("Error al obtener ID del libro:", ['error' => $e->getMessage()]);
             $this->libroID = null;
         }
     }
@@ -117,7 +117,7 @@ class ModeloSacramento
                 'folio' => $proximoFolio
             ];
         } catch (PDOException $e) {
-            error_log("Error al obtener próxima acta: " . $e->getMessage());
+            Logger::error("Error al obtener próxima acta:", ['error' => $e->getMessage()]);
             return ['error' => 'Error al calcular próxima acta'];
         }
     }
@@ -152,7 +152,7 @@ class ModeloSacramento
 
             // Validar si hay error (libro lleno)
             if (isset($proximaInfo['error'])) {
-                error_log("Libro lleno: " . $proximaInfo['error']);
+                Logger::error("Libro lleno:", ['info' => $proximaInfo['error']]);
                 $this->conexion->rollBack();
                 return false;
             }
@@ -196,7 +196,7 @@ class ModeloSacramento
             return $sacramentoID;
         } catch (PDOException $e) {
             $this->conexion->rollBack();
-            error_log("Error al crear sacramento: " . $e->getMessage());
+            Logger::error("Error al crear sacramento:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -211,7 +211,7 @@ class ModeloSacramento
         try {
             // Validar datos mínimos requeridos
             if (empty($datos['tipoDoc']) || empty($datos['numeroDoc'])) {
-                error_log("Datos insuficientes para buscar/crear feligrés");
+                Logger::error("Datos insuficientes para buscar/crear feligrés");
                 return false;
             }
 
@@ -246,7 +246,7 @@ class ModeloSacramento
 
             return $this->conexion->lastInsertId();
         } catch (PDOException $e) {
-            error_log("Error al obtener/crear feligrés: " . $e->getMessage());
+            Logger::error("Error al obtener/crear feligrés:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -270,7 +270,7 @@ class ModeloSacramento
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener sacramento por ID: " . $e->getMessage());
+            Logger::error("Error al obtener sacramento por ID:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -294,7 +294,7 @@ class ModeloSacramento
             $stmt->execute([$feligresId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener sacramentos por feligrés: " . $e->getMessage());
+            Logger::error("Error al obtener sacramentos por feligrés:", ['error' => $e->getMessage()]);
             return [];
         }
     }
@@ -326,7 +326,7 @@ class ModeloSacramento
 
             return $resultado ? $resultado : false;
         } catch (PDOException $e) {
-            error_log("Error al obtener sacramento por feligrés y tipo: " . $e->getMessage());
+            Logger::error("Error al obtener sacramento por feligrés y tipo:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -393,7 +393,7 @@ class ModeloSacramento
             return $sacramentos;
 
         } catch (PDOException $e) {
-            error_log("Error al obtener sacramentos por libro: " . $e->getMessage());
+            Logger::error("Error al obtener sacramentos por libro:", ['error' => $e->getMessage()]);
             return [];
         }
     }

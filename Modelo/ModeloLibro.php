@@ -24,7 +24,7 @@ class ModeloLibro
             $stmt->execute([$tipo]);
             return (int)$stmt->fetchColumn();
         } catch (PDOException $e) {
-            error_log("Error al consultar cantidad de libros: " . $e->getMessage());
+            Logger::error("Error al consultar cantidad de libros:", ['error' => $e->getMessage()]);
             return 0;
         }
     }
@@ -44,7 +44,7 @@ class ModeloLibro
             }
             return false;
         } catch (PDOException $e) {
-            error_log("Error al añadir libro: " . $e->getMessage());
+            Logger::error("Error al añadir libro:", ['error' => $e->getMessage()]);
             return false;
         }
     }
@@ -60,7 +60,7 @@ class ModeloLibro
             $stmt->execute([$tipo]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            error_log("Error al obtener libros: " . $e->getMessage());
+            Logger::error("Error al obtener libros:", ['error' => $e->getMessage()]);
             return [];
         }
     }
