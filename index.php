@@ -1,15 +1,13 @@
 <?php
 /**
  * index.php - PUNTO DE ENTRADA ÚNICO
- * 
- * Se encarga de:
+ * * Se encarga de:
  * 1. Inicializar sesiones
  * 2. Cargar dependencias básicas
  * 3. Crear instancia del router (disponible globalmente)
  * 4. Ejecutar el router
  * 5. Mostrar la plantilla HTML
- * 
- * @version 2.1
+ * * @version 2.2 (Corregido)
  */
 
 // ============================================================================
@@ -30,13 +28,31 @@ error_reporting(E_ALL);
 ob_start();
 
 // ============================================================================
-// CARGAR DEPENDENCIAS BÁSICAS
+// CARGAR DEPENDENCIAS BÁSICAS (ORDEN CORREGIDO)
 // ============================================================================
+
+// 1. Cargar autoloader de Composer
 require_once __DIR__ . '/vendor/autoload.php';
-// Conexión a base de datos
+
+// 2. [NUEVO] Cargar las variables de entorno del archivo .env
+// Esto es gracias a la librería que instalaste (vlucas/phpdotenv)
+try {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+} catch (Dotenv\Exception\InvalidPathException $e) {
+    die('Error: No se pudo encontrar el archivo .env. Asegúrate de que esté en la raíz.');
+}
+
+// 3. [NUEVO] Cargar tu archivo de configuración
+// Ahora que .env está cargado, config.php puede usar getenv()
+// para definir las constantes (SMTP_HOST, DB_HOST, etc.)
+require_once __DIR__ . '/config.php';
+
+// 4. Cargar el resto de tus archivos
+// Ahora la conexión SÍ tiene las constantes DB_HOST, DB_NAME, etc.
 require_once __DIR__ . '/Modelo/Conexion.php';
 
-// Router
+// Tu autoloader y el Router
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/Router.php';
 
