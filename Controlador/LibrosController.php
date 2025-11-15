@@ -4,7 +4,7 @@
 // LibrosController.php
 // ============================================================================
 
-class LibrosController
+class LibrosController extends BaseController
 {
     private $modelo;
 
@@ -15,6 +15,9 @@ class LibrosController
 
     public function index()
     {
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
+
         include_once __DIR__ . '/../Vista/libros-tipo.php';
     }
 

@@ -4,7 +4,7 @@
 // ReportesController.php
 // ============================================================================
 
-class ReportesController
+class ReportesController extends BaseController
 {
     private $modelo;
 
@@ -15,6 +15,9 @@ class ReportesController
 
     public function index()
     {
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
+
         try {
             $reportes = $this->modelo->obtenerReportes();
 

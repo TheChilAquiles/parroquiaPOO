@@ -5,7 +5,7 @@
 // Gestiona solicitudes de certificados (propios y familiares)
 // ============================================================================
 
-class SolicitudesCertificadosController
+class SolicitudesCertificadosController extends BaseController
 {
     private $modeloSolicitud;
     private $modeloParentesco;
@@ -25,11 +25,8 @@ class SolicitudesCertificadosController
      */
     public function mostrarFormulario()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            header('Location: ?route=login');
-            exit;
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Obtener ID del feligrés asociado al usuario
         $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);

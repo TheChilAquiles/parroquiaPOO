@@ -4,7 +4,7 @@
 // FeligresController.php
 // ============================================================================
 
-class FeligresController
+class FeligresController extends BaseController
 {
     private $modelo;
 
@@ -18,11 +18,8 @@ class FeligresController
      */
     public function index()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            header('Location: ?route=login');
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Solo administradores y secretarios pueden ver la lista completa
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
@@ -39,12 +36,8 @@ class FeligresController
      */
     public function listar()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            http_response_code(401);
-            echo json_encode(['error' => 'No autenticado']);
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Verificar autorización
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
@@ -105,11 +98,8 @@ class FeligresController
      */
     public function crear()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            header('Location: ?route=login');
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Verificar autorización
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
@@ -182,11 +172,8 @@ class FeligresController
      */
     public function editar()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            header('Location: ?route=login');
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Verificar autorización
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
@@ -241,11 +228,8 @@ class FeligresController
      */
     public function eliminar()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged'])) {
-            header('Location: ?route=login');
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Solo administradores pueden eliminar
         if ($_SESSION['user-rol'] !== 'Administrador') {

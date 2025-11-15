@@ -4,7 +4,7 @@
 // GruposController.php - REFACTORIZADO PARA MVC
 // ============================================================================
 
-class GruposController
+class GruposController extends BaseController
 {
     private $modelo;
 
@@ -18,6 +18,9 @@ class GruposController
      */
     public function index()
     {
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
+
         try {
             $grupos = $this->modelo->mdlListarGrupos();
             include_once __DIR__ . '/../Vista/grupos.php';

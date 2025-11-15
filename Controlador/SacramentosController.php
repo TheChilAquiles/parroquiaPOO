@@ -4,7 +4,7 @@
 // SacramentosController.php
 // ============================================================================
 
-class SacramentosController
+class SacramentosController extends BaseController
 {
     private $modeloSacramento;
     private $modeloFeligres;
@@ -18,11 +18,8 @@ class SacramentosController
 
     public function index()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
-            header('Location: ?route=login');
-            exit;
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         $rol = $_SESSION['user-rol'];
 
@@ -266,11 +263,8 @@ class SacramentosController
      */
     public function misSacramentos()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-id'])) {
-            header('Location: ?route=login');
-            exit;
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Obtener ID del feligrés asociado al usuario
         $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
@@ -296,11 +290,8 @@ class SacramentosController
      */
     public function verLibro()
     {
-        // Verificar autenticación y permisos
-        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
-            header('Location: ?route=login');
-            exit;
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Solo admin y secretario pueden acceder a vista de libros
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
