@@ -26,21 +26,28 @@ class PaymentGatewayFactory
             case 'mock':
                 return new MockPaymentGateway($mode);
 
+            case 'paymentway':
+                return new PaymentWayGateway(
+                    PAYMENT_GATEWAY_API_KEY,
+                    PAYMENT_GATEWAY_SECRET_KEY,
+                    $mode
+                );
+
             case 'stripe':
                 // Aquí se implementaría la integración con Stripe
                 // return new StripePaymentGateway(PAYMENT_GATEWAY_API_KEY, $mode);
-                throw new Exception("Stripe payment gateway no implementado aún. Use 'mock' para desarrollo.");
+                throw new Exception("Stripe payment gateway no implementado aún. Use 'mock' o 'paymentway'.");
 
             case 'paypal':
                 // Aquí se implementaría la integración con PayPal
                 // return new PayPalPaymentGateway(PAYMENT_GATEWAY_API_KEY, PAYMENT_GATEWAY_SECRET_KEY, $mode);
-                throw new Exception("PayPal payment gateway no implementado aún. Use 'mock' para desarrollo.");
+                throw new Exception("PayPal payment gateway no implementado aún. Use 'mock' o 'paymentway'.");
 
             default:
                 Logger::error("PaymentGatewayFactory: Proveedor no soportado", [
                     'provider' => $provider
                 ]);
-                throw new Exception("Proveedor de pago no soportado: {$provider}. Proveedores disponibles: mock");
+                throw new Exception("Proveedor de pago no soportado: {$provider}. Proveedores disponibles: mock, paymentway");
         }
     }
 
@@ -69,8 +76,13 @@ class PaymentGatewayFactory
         }
 
         // Validar API keys para proveedores reales
-        if (in_array(PAYMENT_GATEWAY_PROVIDER, ['stripe', 'paypal']) && empty(PAYMENT_GATEWAY_API_KEY)) {
-            $errors[] = "PAYMENT_GATEWAY_API_KEY es requerido para {PAYMENT_GATEWAY_PROVIDER}";
+        if (in_array(PAYMENT_GATEWAY_PROVIDER, ['stripe', 'paypal', 'paymentway']) && empty(PAYMENT_GATEWAY_API_KEY)) {
+            $errors[] = "PAYMENT_GATEWAY_API_KEY es requerido para " . PAYMENT_GATEWAY_PROVIDER;
+        }
+
+        // Validar secret key para proveedores que lo requieren
+        if (in_array(PAYMENT_GATEWAY_PROVIDER, ['paypal', 'paymentway']) && empty(PAYMENT_GATEWAY_SECRET_KEY)) {
+            $errors[] = "PAYMENT_GATEWAY_SECRET_KEY es requerido para " . PAYMENT_GATEWAY_PROVIDER;
         }
 
         // Validar precio del certificado
@@ -96,19 +108,29 @@ class PaymentGatewayFactory
                 'name' => 'Mock Payment Gateway',
                 'description' => 'Simulador de pagos para desarrollo y pruebas',
                 'status' => 'available',
-                'supports_sandbox' => true
+                'supports_sandbox' => true,
+                'country' => 'Global'
+            ],
+            'paymentway' => [
+                'name' => 'PaymentWay Colombia',
+                'description' => 'Pasarela de pagos colombiana - Acepta PSE, tarjetas crédito/débito, billeteras electrónicas',
+                'status' => 'available',
+                'supports_sandbox' => true,
+                'country' => 'Colombia'
             ],
             'stripe' => [
                 'name' => 'Stripe',
-                'description' => 'Procesador de pagos Stripe',
+                'description' => 'Procesador de pagos internacional',
                 'status' => 'not_implemented',
-                'supports_sandbox' => true
+                'supports_sandbox' => true,
+                'country' => 'Global'
             ],
             'paypal' => [
                 'name' => 'PayPal',
                 'description' => 'Procesador de pagos PayPal',
                 'status' => 'not_implemented',
-                'supports_sandbox' => true
+                'supports_sandbox' => true,
+                'country' => 'Global'
             ]
         ];
     }
