@@ -4,3 +4,6 @@ Data/Registros_PSP
 vendor
 CLAUDE.md
 .claude
+logs/
+*.log
+certificados_generados/
