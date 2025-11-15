@@ -18,16 +18,39 @@ class DashboardController extends BaseController
      */
     public function mostrar()
     {
-        // Verificar autenticación y perfil completo
-        $this->requiereAutenticacion();
+        try {
+            // Verificar autenticación y perfil completo
+            $this->requiereAutenticacion();
 
-        // Obtener estadísticas del modelo
-        $estadisticas = $this->modelo->obtenerEstadisticas();
+            Logger::info("Acceso a dashboard", [
+                'user_id' => $_SESSION['user-id'],
+                'rol' => $_SESSION['user-rol'] ?? 'unknown',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
 
-        // Calcular totales
-        $totales = $this->modelo->calcularTotales($estadisticas);
+            // Obtener estadísticas del modelo
+            $estadisticas = $this->modelo->obtenerEstadisticas();
 
-        // Incluir vista (las variables $estadisticas y $totales están disponibles)
-        include_once __DIR__ . '/../Vista/dashboard.php';
+            // Calcular totales
+            $totales = $this->modelo->calcularTotales($estadisticas);
+
+            Logger::info("Dashboard cargado exitosamente", [
+                'user_id' => $_SESSION['user-id'],
+                'total_usuarios' => $totales['usuarios_sistema'] ?? 0,
+                'total_recursos' => $totales['recursos'] ?? 0
+            ]);
+
+            // Incluir vista (las variables $estadisticas y $totales están disponibles)
+            include_once __DIR__ . '/../Vista/dashboard.php';
+
+        } catch (Exception $e) {
+            Logger::error("Error al cargar dashboard", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $_SESSION['user-id'] ?? 'unknown'
+            ]);
+            $_SESSION['error'] = 'Error al cargar el dashboard. Por favor, intenta de nuevo.';
+            include_once __DIR__ . '/../Vista/dashboard.php';
+        }
     }
 }
