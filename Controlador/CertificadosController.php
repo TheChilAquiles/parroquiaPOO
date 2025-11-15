@@ -927,4 +927,62 @@ class CertificadosController extends BaseController
 
         exit;
     }
+
+    /**
+     * Verifica la autenticidad de un certificado por código (ruta pública para QR)
+     * Muestra información del certificado si es válido
+     */
+    public function verificar()
+    {
+        try {
+            // Obtener código del certificado desde GET
+            $codigo = $_GET['codigo'] ?? null;
+
+            if (empty($codigo)) {
+                $_SESSION['error'] = 'No se proporcionó un código de verificación válido.';
+                include_once __DIR__ . '/../Vista/verificar-certificado.php';
+                return;
+            }
+
+            // Buscar certificado por ID
+            $certificado = $this->modelo->mdlObtenerPorId($codigo);
+
+            if (!$certificado) {
+                $mensaje = 'Certificado no encontrado. Verifique el código e intente nuevamente.';
+                $valido = false;
+                include_once __DIR__ . '/../Vista/verificar-certificado.php';
+                return;
+            }
+
+            // Verificar que el certificado esté generado
+            if (empty($certificado['ruta_archivo'])) {
+                $mensaje = 'Este certificado aún no ha sido generado por la parroquia.';
+                $valido = false;
+                include_once __DIR__ . '/../Vista/verificar-certificado.php';
+                return;
+            }
+
+            // Certificado válido
+            $mensaje = 'Certificado válido y verificado.';
+            $valido = true;
+
+            // Preparar datos para la vista
+            $datos = [
+                'id' => $certificado['id'],
+                'tipo' => $certificado['tipo_certificado'] ?? 'N/A',
+                'feligres' => $certificado['feligres_nombre'] ?? 'N/A',
+                'fecha_emision' => $certificado['fecha_generacion'] ? date('d/m/Y', strtotime($certificado['fecha_generacion'])) : 'N/A',
+                'fecha_sacramento' => $certificado['fecha_sacramento'] ? date('d/m/Y', strtotime($certificado['fecha_sacramento'])) : 'N/A',
+                'estado' => ucfirst(str_replace('_', ' ', $certificado['estado']))
+            ];
+
+            include_once __DIR__ . '/../Vista/verificar-certificado.php';
+
+        } catch (Exception $e) {
+            Logger::error("Error al verificar certificado:", ['error' => $e->getMessage(), 'codigo' => $codigo ?? 'N/A']);
+            $mensaje = 'Error al verificar el certificado. Por favor, intente más tarde.';
+            $valido = false;
+            include_once __DIR__ . '/../Vista/verificar-certificado.php';
+        }
+    }
 }

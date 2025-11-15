@@ -30,6 +30,13 @@ RewriteRule ^(Modelo|Controlador|logs)/ - [F,L]
 # REESCRITURA PRINCIPAL - URLs AMIGABLES
 # ============================================================================
 
+# Regla especial: Verificación de certificados (usa parámetro "codigo" en lugar de "id")
+# Ejemplo: /certificados/verificar/ABC123
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^certificados/verificar/([a-zA-Z0-9]+)/?$ index.php?route=certificados/verificar&codigo=$1 [QSA,L]
+
 # Regla 1: URLs con 3 segmentos (ej: /grupos/ver/5)
 # Patrón: /controlador/accion/parametro
 RewriteCond %{REQUEST_URI} !^/index\.php

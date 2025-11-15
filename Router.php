@@ -118,6 +118,7 @@ class Router
             // RUTAS AUTENTICADAS - CERTIFICADOS
             // ================================================================
             'certificados' => ['controlador' => 'CertificadosController', 'accion' => 'mostrar'],
+            'certificados/verificar' => ['controlador' => 'CertificadosController', 'accion' => 'verificar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
             'certificados/generar-simplificado' => ['controlador' => 'CertificadosController', 'accion' => 'generarSimplificado'],
             'certificados/listar-todos' => ['controlador' => 'CertificadosController', 'accion' => 'listarTodos'],
@@ -271,6 +272,7 @@ class Router
             'olvido/procesar',
             'resetear',
             'resetear/procesar',
+            'certificados/verificar', // Verificación pública de certificados por QR
             'pagos/webhook-confirmacion' // Webhook para pasarela de pago externa
         ];
         return !in_array($route, $publicRoutes);
