@@ -4,7 +4,7 @@
 // DashboardController.php - Controlador del dashboard
 // ============================================================================
 
-class DashboardController
+class DashboardController extends BaseController
 {
     private $modelo;
 
@@ -18,11 +18,8 @@ class DashboardController
      */
     public function mostrar()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged']) || $_SESSION['logged'] !== true) {
-            header('Location: ?route=login');
-            exit();
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         // Obtener estadísticas del modelo
         $estadisticas = $this->modelo->obtenerEstadisticas();

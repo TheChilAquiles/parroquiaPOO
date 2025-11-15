@@ -201,13 +201,41 @@ class ModeloUsuario
             // Hashear la nueva contraseña
             $hashedPassword = password_hash($nuevaPassword, PASSWORD_DEFAULT);
 
-            $sql = "UPDATE usuarios 
-                    SET contraseña = ?, reset_token = NULL, reset_token_expires = NULL 
+            $sql = "UPDATE usuarios
+                    SET contraseña = ?, reset_token = NULL, reset_token_expires = NULL
                     WHERE reset_token = ?";
             $stmt = $this->conexion->prepare($sql);
             return $stmt->execute([$hashedPassword, $token]);
         } catch (PDOException $e) {
             Logger::error("Error al actualizar contraseña:", ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
+     * Marca los datos del usuario como completos
+     * Se llama después de que el usuario complete su perfil de feligrés
+     *
+     * @param int $usuarioId ID del usuario
+     * @return bool True si se actualizó correctamente, false en caso contrario
+     */
+    public function mdlMarcarDatosCompletos($usuarioId)
+    {
+        try {
+            $sql = "UPDATE usuarios SET datos_completos = 1 WHERE id = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $result = $stmt->execute([$usuarioId]);
+
+            if ($result) {
+                Logger::info("Datos marcados como completos para usuario", ['usuario_id' => $usuarioId]);
+            }
+
+            return $result;
+        } catch (PDOException $e) {
+            Logger::error("Error al marcar datos completos:", [
+                'usuario_id' => $usuarioId,
+                'error' => $e->getMessage()
+            ]);
             return false;
         }
     }

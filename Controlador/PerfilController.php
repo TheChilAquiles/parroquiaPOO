@@ -3,7 +3,7 @@
 // PerfilController.php
 // ============================================================================
 
-class PerfilController
+class PerfilController extends BaseController
 {
     private $modeloFeligres;
     private $modeloUsuario;
@@ -16,11 +16,17 @@ class PerfilController
 
     public function mostrar()
     {
+        // Verificar autenticación pero permitir perfil incompleto
+        $this->requiereAutenticacion(true);
+
         include_once __DIR__ . '/../Vista/datos-personales.php';
     }
 
     public function buscar()
     {
+        // Verificar autenticación pero permitir perfil incompleto
+        $this->requiereAutenticacion(true);
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->mostrar();
             return;
@@ -49,6 +55,9 @@ class PerfilController
 
     public function actualizar()
     {
+        // Verificar autenticación pero permitir perfil incompleto
+        $this->requiereAutenticacion(true);
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->mostrar();
             return;
@@ -94,8 +103,21 @@ class PerfilController
             return;
         }
 
-        $_SESSION['user-datos'] = true;
-        $_SESSION['success'] = 'Datos actualizados correctamente.';
+        // Actualizar el campo datos_completos en la tabla usuarios
+        $actualizado = $this->modeloUsuario->mdlMarcarDatosCompletos($_SESSION['user-id']);
+
+        if ($actualizado) {
+            $_SESSION['user-datos'] = true;
+            $_SESSION['success'] = 'Datos actualizados correctamente.';
+        } else {
+            // Aun así marcamos la sesión como completa
+            $_SESSION['user-datos'] = true;
+            $_SESSION['success'] = 'Datos actualizados correctamente.';
+            Logger::warning("No se pudo actualizar datos_completos en BD pero se marcó en sesión", [
+                'usuario_id' => $_SESSION['user-id']
+            ]);
+        }
+
         header('Location: ?route=dashboard');
         exit();
     }
