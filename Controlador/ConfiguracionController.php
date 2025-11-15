@@ -1,10 +1,10 @@
 <?php
 
 /**
- * AdminController
+ * ConfiguracionController
  * Controlador para el panel de administración del sistema
  */
-class AdminController extends BaseController
+class ConfiguracionController extends BaseController
 {
     private $modeloConfiguracion;
 

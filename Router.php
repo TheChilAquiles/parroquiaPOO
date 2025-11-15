@@ -186,10 +186,10 @@ class Router
             // ================================================================
             // RUTAS DE ADMINISTRACIÓN (Solo Administradores)
             // ================================================================
-            'admin' => ['controlador' => 'AdminController', 'accion' => 'index'],
-            'admin/configuraciones' => ['controlador' => 'AdminController', 'accion' => 'configuraciones'],
-            'admin/precios' => ['controlador' => 'AdminController', 'accion' => 'precios'],
-            'admin/pasarela-pagos' => ['controlador' => 'AdminController', 'accion' => 'pasarelaPagos'],
+            'configuracion' => ['controlador' => 'ConfiguracionController', 'accion' => 'index'],
+            'configuracion/configuraciones' => ['controlador' => 'ConfiguracionController', 'accion' => 'configuraciones'],
+            'configuracion/precios' => ['controlador' => 'ConfiguracionController', 'accion' => 'precios'],
+            'configuracion/pasarela-pagos' => ['controlador' => 'ConfiguracionController', 'accion' => 'pasarelaPagos'],
         ];
     }
 

@@ -149,7 +149,7 @@ grep "192.168.1.100" logs/app.log
 
 ### Componentes Pendientes de Logging Completo:
 - [ ] PagosController (métodos de pago críticos)
-- [ ] AdminController (configuraciones del sistema)
+- [ ] ConfiguracionController (configuraciones del sistema)
 - [ ] CertificadosController (generación de certificados)
 - [ ] ModeloUsuario (operaciones de BD)
 - [ ] ModeloPago (transacciones)
