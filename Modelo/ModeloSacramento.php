@@ -263,7 +263,7 @@ class ModeloSacramento
                     FROM sacramentos s
                     JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
                     JOIN libros l ON s.libro_id = l.id
-                    JOIN libro_tipos lt ON l.libro_tipo_id = lt.id
+                    JOIN libro_tipo lt ON l.libro_tipo_id = lt.id
                     WHERE s.id = ? AND s.estado_registro IS NULL
                     LIMIT 1";
             $stmt = $this->conexion->prepare($sql);
@@ -313,7 +313,7 @@ class ModeloSacramento
                     FROM sacramentos s
                     JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
                     JOIN libros l ON s.libro_id = l.id
-                    JOIN libro_tipos lt ON l.libro_tipo_id = lt.id
+                    JOIN libro_tipo lt ON l.libro_tipo_id = lt.id
                     JOIN participantes p ON p.sacramento_id = s.id
                     WHERE p.feligres_id = ?
                     AND s.tipo_sacramento_id = ?

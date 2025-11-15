@@ -7,7 +7,7 @@ use Dompdf\Options;
 // CertificadosController.php
 // ============================================================================
 
-class CertificadosController
+class CertificadosController extends BaseController
 {
     private $modelo;
     private $modeloSolicitud;
@@ -24,11 +24,8 @@ class CertificadosController
 
     public function mostrar()
     {
-        // Verificar autenticación
-        if (!isset($_SESSION['logged']) || !isset($_SESSION['user-rol'])) {
-            header('Location: ?route=login');
-            exit;
-        }
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
 
         $rol = $_SESSION['user-rol'];
 

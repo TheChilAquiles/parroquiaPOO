@@ -5,7 +5,7 @@
 // UsuarioController.php
 // ============================================================================
 
-class UsuarioController
+class UsuarioController extends BaseController
 {
     private $modelo;
 
@@ -16,6 +16,9 @@ class UsuarioController
 
     public function crear()
     {
+        // Verificar autenticación y perfil completo
+        $this->requiereAutenticacion();
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             include __DIR__ . '/../Vista/crear-usuario.php';
             return;
