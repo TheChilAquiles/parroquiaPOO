@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificado de Bautismo</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #fff;
+            color: #333;
+            padding: 40px 60px;
+            line-height: 1.6;
+        }
+
+        .certificate {
+            border: 15px solid #1e3a8a;
+            border-image: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e3a8a 100%) 1;
+            padding: 40px;
+            position: relative;
+            min-height: 950px;
+        }
+
+        .inner-border {
+            border: 3px solid #3b82f6;
+            padding: 30px;
+            min-height: 870px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .church-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .certificate-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1e3a8a;
+            text-align: center;
+            margin: 30px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .content {
+            font-size: 16px;
+            line-height: 2.2;
+            text-align: justify;
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #1e3a8a;
+            text-decoration: underline;
+        }
+
+        .data-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .data-row {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .data-label {
+            font-weight: bold;
+            color: #4b5563;
+            display: inline-block;
+            width: 150px;
+        }
+
+        .data-value {
+            color: #1f2937;
+        }
+
+        .signatures {
+            margin-top: 80px;
+            display: table;
+            width: 100%;
+        }
+
+        .signature-block {
+            display: table-cell;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .signature-line {
+            border-top: 2px solid #374151;
+            margin: 60px auto 10px;
+            width: 250px;
+        }
+
+        .signature-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #4b5563;
+            margin-top: 5px;
+        }
+
+        .signature-name {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 11px;
+            color: #9ca3af;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .qr-section {
+            position: absolute;
+            bottom: 40px;
+            right: 60px;
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #e5e7eb;
+            padding: 5px;
+            background: #fff;
+        }
+
+        .qr-label {
+            font-size: 9px;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .certificate-code {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            color: #9ca3af;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            color: rgba(59, 130, 246, 0.03);
+            font-weight: bold;
+            z-index: -1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate">
+        <div class="inner-border">
+            <div class="watermark">PARROQUIA</div>
+
+            <div class="header">
+                <div class="church-name">{{NOMBRE_PARROQUIA}}</div>
+                <div class="subtitle">{{DIRECCION_PARROQUIA}}</div>
+                <div class="subtitle">{{CIUDAD}}, {{PAIS}}</div>
+            </div>
+
+            <div class="certificate-title">
+                Certificado de Bautismo
+            </div>
+
+            <div class="content">
+                <p>
+                    El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>,
+                    certifica que según consta en el Libro de Bautismos Número <strong>{{NUMERO_LIBRO}}</strong>,
+                    Página <strong>{{NUMERO_PAGINA}}</strong>, Número <strong>{{NUMERO_REGISTRO}}</strong>:
+                </p>
+            </div>
+
+            <div class="data-section">
+                <div class="data-row">
+                    <span class="data-label">Nombre del Bautizado:</span>
+                    <span class="data-value highlight">{{NOMBRE_COMPLETO}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Fecha de Nacimiento:</span>
+                    <span class="data-value">{{FECHA_NACIMIENTO}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Lugar de Nacimiento:</span>
+                    <span class="data-value">{{LUGAR_NACIMIENTO}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Fecha del Bautismo:</span>
+                    <span class="data-value">{{FECHA_BAUTISMO}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Lugar del Bautismo:</span>
+                    <span class="data-value">{{LUGAR_BAUTISMO}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Nombre del Padre:</span>
+                    <span class="data-value">{{NOMBRE_PADRE}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Nombre de la Madre:</span>
+                    <span class="data-value">{{NOMBRE_MADRE}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Padrinos:</span>
+                    <span class="data-value">{{NOMBRE_PADRINOS}}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Ministro:</span>
+                    <span class="data-value">{{NOMBRE_MINISTRO}}</span>
+                </div>
+            </div>
+
+            <div class="content">
+                <p>
+                    Se expide el presente certificado a solicitud del interesado
+                    para los fines que estime conveniente.
+                </p>
+            </div>
+
+            <div class="signatures">
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-title">PÁRROCO</div>
+                    <div class="signature-name">{{NOMBRE_PARROCO}}</div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-title">SECRETARIO(A)</div>
+                    <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
+                </div>
+            </div>
+
+            <div class="qr-section">
+                <img src="{{QR_CODE}}" alt="QR Code" class="qr-code">
+                <div class="qr-label">Escanea para verificar</div>
+            </div>
+
+            <div class="footer">
+                <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
+                <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
+                <p>Este certificado es válido únicamente con sello y firma original</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
