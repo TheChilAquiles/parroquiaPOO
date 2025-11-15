@@ -181,6 +181,14 @@ class Router
             // RUTAS AUTENTICADAS - REPORTES
             // ================================================================
             'reportes' => ['controlador' => 'ReportesController', 'accion' => 'index'],
+
+            // ================================================================
+            // RUTAS DE ADMINISTRACIÓN (Solo Administradores)
+            // ================================================================
+            'admin' => ['controlador' => 'AdminController', 'accion' => 'index'],
+            'admin/configuraciones' => ['controlador' => 'AdminController', 'accion' => 'configuraciones'],
+            'admin/precios' => ['controlador' => 'AdminController', 'accion' => 'precios'],
+            'admin/pasarela-pagos' => ['controlador' => 'AdminController', 'accion' => 'pasarelaPagos'],
         ];
     }
 
