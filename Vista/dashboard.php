@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        * { font-family: 'Inter', sans-serif; }
+        * {
+            font-family: 'Inter', sans-serif;
+        }
 
         .fade-in {
             animation: fadeInUp 0.8s ease-out forwards;
@@ -19,7 +22,10 @@
         }
 
         @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .card-hover {
@@ -50,6 +56,7 @@
         }
     </style>
 </head>
+
 <body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
     <!-- Header Superior -->
     <header class="gradient-bg text-white shadow-xl">
@@ -77,7 +84,8 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Sistema</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['usuarios_sistema'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2">
+                                <?= htmlspecialchars($totales['usuarios_sistema'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Usuarios activos en el sistema</p>
                         </div>
                         <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
@@ -86,11 +94,13 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.1s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.1s">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Recursos</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['recursos'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2">
+                                <?= htmlspecialchars($totales['recursos'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Libros y documentos</p>
                         </div>
                         <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
@@ -99,11 +109,13 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.2s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.2s">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Actividad</h3>
-                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2"><?= htmlspecialchars($totales['actividad'], ENT_QUOTES, 'UTF-8') ?></p>
+                            <p class="text-3xl font-bold text-gray-900 stat-number mt-2">
+                                <?= htmlspecialchars($totales['actividad'], ENT_QUOTES, 'UTF-8') ?></p>
                             <p class="text-sm text-gray-600 mt-1">Reportes y transacciones</p>
                         </div>
                         <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
@@ -114,6 +126,8 @@
             </div>
         </section>
 
+
+
         <!-- Estadísticas Detalladas -->
         <section class="mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-8">
@@ -122,86 +136,108 @@
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 <!-- Usuarios -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.3s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.3s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-users text-blue-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Usuarios</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['usuarios']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['usuarios']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Roles: <?= htmlspecialchars($estadisticas['usuarios']['roles'], ENT_QUOTES, 'UTF-8') ?></div>
-                            <div>Feligreses: <?= htmlspecialchars($estadisticas['usuarios']['feligreses'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Roles: <?= htmlspecialchars($estadisticas['usuarios']['roles'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
+                            <div>Feligreses:
+                                <?= htmlspecialchars($estadisticas['usuarios']['feligreses'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Libros -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.4s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.4s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-book text-yellow-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Libros</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['libros']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['libros']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Tipos: <?= htmlspecialchars($estadisticas['libros']['tipos'], ENT_QUOTES, 'UTF-8') ?></div>
-                            <div>Registros: <?= htmlspecialchars($estadisticas['libros']['registros'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Tipos: <?= htmlspecialchars($estadisticas['libros']['tipos'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
+                            <div>Registros:
+                                <?= htmlspecialchars($estadisticas['libros']['registros'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Documentos -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.5s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.5s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-file-alt text-red-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Documentos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['documentos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['documentos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Tipos: <?= htmlspecialchars($estadisticas['documentos']['tipos'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Tipos:
+                                <?= htmlspecialchars($estadisticas['documentos']['tipos'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Reportes -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.6s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.6s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-chart-bar text-purple-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Reportes</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['reportes']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['reportes']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div>Categorías: <?= htmlspecialchars($estadisticas['reportes']['categorias'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div>Categorías:
+                                <?= htmlspecialchars($estadisticas['reportes']['categorias'], ENT_QUOTES, 'UTF-8') ?>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Pagos -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.7s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.7s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Pagos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['pagos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['pagos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
-                            <div class="text-green-600">✓ Completos: <?= htmlspecialchars($estadisticas['pagos']['completos'], ENT_QUOTES, 'UTF-8') ?></div>
-                            <div class="text-red-600">✗ Cancelados: <?= htmlspecialchars($estadisticas['pagos']['cancelados'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div class="text-green-600">✓ Completos:
+                                <?= htmlspecialchars($estadisticas['pagos']['completos'], ENT_QUOTES, 'UTF-8') ?></div>
+                            <div class="text-red-600">✗ Cancelados:
+                                <?= htmlspecialchars($estadisticas['pagos']['cancelados'], ENT_QUOTES, 'UTF-8') ?></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Contactos -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.8s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.8s">
                     <div class="text-center">
                         <div class="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-address-book text-teal-600 text-xl"></i>
                         </div>
                         <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Contactos</h3>
-                        <p class="text-3xl font-bold text-gray-900 stat-number"><?= htmlspecialchars($estadisticas['contactos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
+                        <p class="text-3xl font-bold text-gray-900 stat-number">
+                            <?= htmlspecialchars($estadisticas['contactos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                     </div>
                 </div>
             </div>
@@ -215,7 +251,8 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                 <!-- Gráfico Usuarios -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 0.9s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 0.9s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-users mr-2 text-blue-600"></i>Gestión de Usuarios
                     </h3>
@@ -225,7 +262,8 @@
                 </div>
 
                 <!-- Gráfico Libros -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 1.0s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 1.0s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-book mr-2 text-yellow-600"></i>Biblioteca Parroquial
                     </h3>
@@ -235,7 +273,8 @@
                 </div>
 
                 <!-- Gráfico Documentos -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 1.1s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 1.1s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-file-alt mr-2 text-red-600"></i>Documentación
                     </h3>
@@ -245,7 +284,8 @@
                 </div>
 
                 <!-- Gráfico Reportes -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 1.2s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 1.2s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-chart-bar mr-2 text-purple-600"></i>Sistema de Reportes
                     </h3>
@@ -255,7 +295,8 @@
                 </div>
 
                 <!-- Gráfico Pagos -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 1.3s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 1.3s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-dollar-sign mr-2 text-green-600"></i>Estados de Pagos
                     </h3>
@@ -265,7 +306,8 @@
                 </div>
 
                 <!-- Gráfico General -->
-                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in" style="animation-delay: 1.4s">
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200 card-hover fade-in"
+                    style="animation-delay: 1.4s">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">
                         <i class="fas fa-chart-area mr-2 text-indigo-600"></i>Resumen General
                     </h3>
@@ -320,7 +362,7 @@
             data: {
                 labels: ['Usuarios', 'Roles', 'Feligreses'],
                 datasets: [{
-                    data: [<?= (int)$estadisticas['usuarios']['total'] ?>, <?= (int)$estadisticas['usuarios']['roles'] ?>, <?= (int)$estadisticas['usuarios']['feligreses'] ?>],
+                    data: [<?= (int) $estadisticas['usuarios']['total'] ?>, <?= (int) $estadisticas['usuarios']['roles'] ?>, <?= (int) $estadisticas['usuarios']['feligreses'] ?>],
                     backgroundColor: ['#3B82F6', '#EF4444', '#06B6D4'],
                     borderRadius: 8,
                     borderSkipped: false,
@@ -359,7 +401,7 @@
             data: {
                 labels: ['Total', 'Tipos', 'Registros'],
                 datasets: [{
-                    data: [<?= (int)$estadisticas['libros']['total'] ?>, <?= (int)$estadisticas['libros']['tipos'] ?>, <?= (int)$estadisticas['libros']['registros'] ?>],
+                    data: [<?= (int) $estadisticas['libros']['total'] ?>, <?= (int) $estadisticas['libros']['tipos'] ?>, <?= (int) $estadisticas['libros']['registros'] ?>],
                     backgroundColor: ['#F59E0B', '#8B5CF6', '#F97316'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -385,7 +427,7 @@
             data: {
                 labels: ['Tipos de Documento', 'Total Documentos'],
                 datasets: [{
-                    data: [<?= (int)$estadisticas['documentos']['tipos'] ?>, <?= (int)$estadisticas['documentos']['total'] ?>],
+                    data: [<?= (int) $estadisticas['documentos']['tipos'] ?>, <?= (int) $estadisticas['documentos']['total'] ?>],
                     backgroundColor: ['#3B82F6', '#EF4444'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -410,7 +452,7 @@
             data: {
                 labels: ['Total Reportes', 'Categorías'],
                 datasets: [{
-                    data: [<?= (int)$estadisticas['reportes']['total'] ?>, <?= (int)$estadisticas['reportes']['categorias'] ?>],
+                    data: [<?= (int) $estadisticas['reportes']['total'] ?>, <?= (int) $estadisticas['reportes']['categorias'] ?>],
                     backgroundColor: ['#8B5CF6', '#A855F7'],
                     borderRadius: 8,
                     borderSkipped: false
@@ -447,7 +489,7 @@
             data: {
                 labels: ['Completos', 'Cancelados', 'Pendientes'],
                 datasets: [{
-                    data: [<?= (int)$estadisticas['pagos']['completos'] ?>, <?= (int)$estadisticas['pagos']['cancelados'] ?>, <?= (int)$estadisticas['pagos']['pendientes'] ?>],
+                    data: [<?= (int) $estadisticas['pagos']['completos'] ?>, <?= (int) $estadisticas['pagos']['cancelados'] ?>, <?= (int) $estadisticas['pagos']['pendientes'] ?>],
                     backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
                     borderWidth: 3,
                     borderColor: '#ffffff'
@@ -475,12 +517,12 @@
                 datasets: [{
                     label: 'Actividad General',
                     data: [
-                        <?= (int)$estadisticas['usuarios']['total'] ?>,
-                        <?= (int)$estadisticas['libros']['total'] ?>,
-                        <?= (int)$estadisticas['documentos']['total'] ?>,
-                        <?= (int)$estadisticas['reportes']['total'] ?>,
-                        <?= (int)$estadisticas['pagos']['total'] ?>,
-                        <?= (int)$estadisticas['contactos']['total'] ?>
+                        <?= (int) $estadisticas['usuarios']['total'] ?>,
+                        <?= (int) $estadisticas['libros']['total'] ?>,
+                        <?= (int) $estadisticas['documentos']['total'] ?>,
+                        <?= (int) $estadisticas['reportes']['total'] ?>,
+                        <?= (int) $estadisticas['pagos']['total'] ?>,
+                        <?= (int) $estadisticas['contactos']['total'] ?>
                     ],
                     backgroundColor: 'rgba(99, 102, 241, 0.1)',
                     borderColor: '#6366F1',
@@ -527,7 +569,7 @@
         fadeElements.forEach(el => observer.observe(el));
 
         // Efectos adicionales
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Contador animado para números grandes
             function animateCounter(element, target, duration = 2000) {
                 let start = 0;
@@ -556,19 +598,19 @@
             // Tooltip para gráficos
             const chartContainers = document.querySelectorAll('.chart-container');
             chartContainers.forEach(container => {
-                container.addEventListener('mouseenter', function() {
+                container.addEventListener('mouseenter', function () {
                     this.style.transform = 'scale(1.02)';
                     this.style.transition = 'transform 0.3s ease';
                 });
 
-                container.addEventListener('mouseleave', function() {
+                container.addEventListener('mouseleave', function () {
                     this.style.transform = 'scale(1)';
                 });
             });
         });
 
         // Manejo de errores para gráficos
-        window.addEventListener('error', function(e) {
+        window.addEventListener('error', function (e) {
             if (e.target.tagName === 'CANVAS') {
                 console.error('Error en gráfico:', e);
                 e.target.parentElement.innerHTML =
@@ -578,7 +620,7 @@
         });
 
         // Responsive behavior
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             Chart.instances.forEach(chart => {
                 chart.resize();
             });
@@ -587,4 +629,5 @@
         console.log('Dashboard Parroquia inicializado correctamente ✅');
     </script>
 </body>
+
 </html>
