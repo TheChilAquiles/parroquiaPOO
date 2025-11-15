@@ -278,16 +278,72 @@ class PagosController extends BaseController
             exit;
         }
 
-        // TODO: Aquí iría la integración con pasarela de pago real
-        // Por ahora, simularemos pago exitoso para desarrollo
+        // Integración con pasarela de pago
+        try {
+            // Validar configuración del gateway
+            $configValidation = PaymentGatewayFactory::validateConfiguration();
+            if (!$configValidation['valid']) {
+                Logger::error("Configuración de gateway inválida", $configValidation['errors']);
+                $_SESSION['error'] = 'Error en la configuración del sistema de pagos. Contacte al administrador.';
+                header('Location: ?route=pagos/pagar-certificado&id=' . $certificadoId);
+                exit;
+            }
 
-        // Crear registro de pago
-        $resultadoPago = $this->modelo->mdlCrear([
-            'certificado_id' => $certificadoId,
-            'valor' => 10.00, // Valor fijo por ahora
-            'estado' => 'pagado',
-            'metodo_de_pago' => $metodoPago
-        ]);
+            // Crear instancia del gateway de pago
+            $gateway = PaymentGatewayFactory::create();
+
+            // Preparar datos del pago
+            $paymentData = [
+                'amount' => PAYMENT_CERTIFICATE_PRICE,
+                'currency' => PAYMENT_DEFAULT_CURRENCY,
+                'description' => "Pago de certificado #{$certificadoId}",
+                'metadata' => [
+                    'certificado_id' => $certificadoId,
+                    'feligres_id' => $feligresId,
+                    'tipo_certificado' => $certificado['tipo_certificado'] ?? 'no especificado'
+                ]
+            ];
+
+            // Procesar el pago a través del gateway
+            $gatewayResponse = $gateway->processPayment($paymentData);
+
+            // Verificar si el pago fue exitoso
+            if (!$gatewayResponse['success']) {
+                Logger::warning("Pago rechazado por gateway", [
+                    'certificado_id' => $certificadoId,
+                    'message' => $gatewayResponse['message']
+                ]);
+                $_SESSION['error'] = 'El pago fue rechazado: ' . $gatewayResponse['message'];
+                header('Location: ?route=pagos/pagar-certificado&id=' . $certificadoId);
+                exit;
+            }
+
+            // Log del pago exitoso
+            Logger::info("Pago procesado exitosamente por gateway", [
+                'transaction_id' => $gatewayResponse['transaction_id'],
+                'certificado_id' => $certificadoId,
+                'amount' => $paymentData['amount'],
+                'provider' => $gateway->getProviderName()
+            ]);
+
+            // Crear registro de pago en la base de datos
+            $resultadoPago = $this->modelo->mdlCrear([
+                'certificado_id' => $certificadoId,
+                'valor' => $paymentData['amount'],
+                'estado' => 'pagado',
+                'metodo_de_pago' => $metodoPago,
+                'transaction_id' => $gatewayResponse['transaction_id'] ?? null
+            ]);
+
+        } catch (Exception $e) {
+            Logger::error("Error al procesar pago online", [
+                'error' => $e->getMessage(),
+                'certificado_id' => $certificadoId
+            ]);
+            $_SESSION['error'] = 'Error al procesar el pago: ' . $e->getMessage();
+            header('Location: ?route=pagos/pagar-certificado&id=' . $certificadoId);
+            exit;
+        }
 
         if ($resultadoPago['exito']) {
             // Marcar certificado como pagado

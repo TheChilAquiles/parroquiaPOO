@@ -16,7 +16,13 @@ define('SMTP_FROM_NAME', $_ENV['SMTP_FROM_NAME'] ?? 'Sistema Parroquial');
 // Es buena práctica convertir el puerto a número
 define('SMTP_PORT', (int)($_ENV['SMTP_PORT'] ?? 465));
 
-
+// Payment Gateway configuration
+define('PAYMENT_GATEWAY_MODE', $_ENV['PAYMENT_GATEWAY_MODE'] ?? 'sandbox'); // 'sandbox' or 'production'
+define('PAYMENT_GATEWAY_PROVIDER', $_ENV['PAYMENT_GATEWAY_PROVIDER'] ?? 'mock'); // 'mock', 'stripe', 'paypal', etc.
+define('PAYMENT_GATEWAY_API_KEY', $_ENV['PAYMENT_GATEWAY_API_KEY'] ?? '');
+define('PAYMENT_GATEWAY_SECRET_KEY', $_ENV['PAYMENT_GATEWAY_SECRET_KEY'] ?? '');
+define('PAYMENT_DEFAULT_CURRENCY', $_ENV['PAYMENT_DEFAULT_CURRENCY'] ?? 'USD');
+define('PAYMENT_CERTIFICATE_PRICE', (float)($_ENV['PAYMENT_CERTIFICATE_PRICE'] ?? 10.00));
 
 // Produccion - Byethost
 

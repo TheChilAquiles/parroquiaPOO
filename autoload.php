@@ -3,6 +3,7 @@ spl_autoload_register(function ($clase) {
     $directorios = [
         __DIR__ . '/Modelo/',
         __DIR__ . '/Controlador/',
+        __DIR__ . '/Servicios/',
     ];
 
     foreach ($directorios as $dir) {

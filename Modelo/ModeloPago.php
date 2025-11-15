@@ -73,16 +73,33 @@ class ModeloPago
             // Convertir método de pago a ID si viene como texto
             $tipoPagoId = $this->obtenerTipoPagoId($data['metodo_de_pago'] ?? null);
 
-            $sql = "INSERT INTO pagos (certificado_id, valor, estado, tipo_pago_id, fecha_pago)
-                    VALUES (?, ?, ?, ?, NOW())";
-            $stmt = $this->conexion->prepare($sql);
+            // Verificar si se debe incluir transaction_id
+            $transactionId = $data['transaction_id'] ?? null;
 
-            $stmt->execute([
-                $data['certificado_id'],
-                $data['valor'],
-                $data['estado'],
-                $tipoPagoId
-            ]);
+            // Construir SQL dinámicamente según si hay transaction_id
+            if ($transactionId) {
+                $sql = "INSERT INTO pagos (certificado_id, valor, estado, tipo_pago_id, transaction_id, fecha_pago)
+                        VALUES (?, ?, ?, ?, ?, NOW())";
+                $params = [
+                    $data['certificado_id'],
+                    $data['valor'],
+                    $data['estado'],
+                    $tipoPagoId,
+                    $transactionId
+                ];
+            } else {
+                $sql = "INSERT INTO pagos (certificado_id, valor, estado, tipo_pago_id, fecha_pago)
+                        VALUES (?, ?, ?, ?, NOW())";
+                $params = [
+                    $data['certificado_id'],
+                    $data['valor'],
+                    $data['estado'],
+                    $tipoPagoId
+                ];
+            }
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
                 return ['exito' => true, 'mensaje' => 'Pago creado correctamente'];
