@@ -198,29 +198,66 @@ class Router
      */
     public function dispatch()
     {
-        $route = trim($this->route, '/');
+        try {
+            $route = trim($this->route, '/');
 
-        // Buscar si la ruta existe en el mapeo
-        if (!isset($this->controllers[$route])) {
-            $this->notFound();
-            return;
-        }
+            Logger::info("Ruta solicitada", [
+                'route' => $route,
+                'method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'user_agent' => substr($_SERVER['HTTP_USER_AGENT'] ?? 'unknown', 0, 100),
+                'logged' => isset($_SESSION['logged']) ? 'yes' : 'no',
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
 
-        $controllerData = $this->controllers[$route];
-        $controllerClass = $controllerData['controlador'];
-        $action = $controllerData['accion'];
-
-        // Verificar autenticación si es necesario
-        if ($this->requiresAuth($route)) {
-            if (!$this->isAuthenticated()) {
-                $_SESSION['redirect_after_login'] = $route;
-                header('Location: ?route=login');
-                exit();
+            // Buscar si la ruta existe en el mapeo
+            if (!isset($this->controllers[$route])) {
+                Logger::warning("Ruta no encontrada - 404", [
+                    'route' => $route,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
+                $this->notFound();
+                return;
             }
-        }
 
-        // Cargar y ejecutar el controlador
-        $this->loadAndExecute($controllerClass, $action);
+            $controllerData = $this->controllers[$route];
+            $controllerClass = $controllerData['controlador'];
+            $action = $controllerData['accion'];
+
+            // Verificar autenticación si es necesario
+            if ($this->requiresAuth($route)) {
+                if (!$this->isAuthenticated()) {
+                    Logger::info("Acceso denegado - autenticación requerida", [
+                        'route' => $route,
+                        'redirect' => 'login',
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                    ]);
+                    $_SESSION['redirect_after_login'] = $route;
+                    header('Location: ?route=login');
+                    exit();
+                }
+            }
+
+            Logger::info("Ejecutando controlador", [
+                'route' => $route,
+                'controller' => $controllerClass,
+                'action' => $action,
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
+
+            // Cargar y ejecutar el controlador
+            $this->loadAndExecute($controllerClass, $action);
+
+        } catch (Exception $e) {
+            Logger::error("Error crítico en Router::dispatch", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'route' => $this->route ?? 'unknown',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+            http_response_code(500);
+            die("Error crítico en la aplicación. Por favor, contacta al administrador.");
+        }
     }
 
     /**
@@ -228,27 +265,58 @@ class Router
      */
     private function loadAndExecute($controllerClass, $action)
     {
-        $controllerFile = __DIR__ . '/Controlador/' . $controllerClass . '.php';
-
-        if (!file_exists($controllerFile)) {
-            die("Error: Controlador no encontrado - $controllerClass en " . $controllerFile);
-        }
-
-        require_once $controllerFile;
-
-        if (!class_exists($controllerClass)) {
-            die("Error: Clase $controllerClass no encontrada en $controllerFile");
-        }
-
         try {
+            $controllerFile = __DIR__ . '/Controlador/' . $controllerClass . '.php';
+
+            if (!file_exists($controllerFile)) {
+                Logger::error("Archivo de controlador no encontrado", [
+                    'controller' => $controllerClass,
+                    'path' => $controllerFile,
+                    'route' => $this->route
+                ]);
+                die("Error: Controlador no encontrado - $controllerClass en " . $controllerFile);
+            }
+
+            require_once $controllerFile;
+
+            if (!class_exists($controllerClass)) {
+                Logger::error("Clase de controlador no encontrada después de require", [
+                    'controller' => $controllerClass,
+                    'file' => $controllerFile,
+                    'route' => $this->route
+                ]);
+                die("Error: Clase $controllerClass no encontrada en $controllerFile");
+            }
+
             $controller = new $controllerClass();
 
             if (!method_exists($controller, $action)) {
+                Logger::error("Método de acción no encontrado en controlador", [
+                    'controller' => $controllerClass,
+                    'action' => $action,
+                    'route' => $this->route
+                ]);
                 die("Error: Acción $action no existe en $controllerClass");
             }
 
             $controller->$action();
+
+            Logger::info("Controlador ejecutado exitosamente", [
+                'controller' => $controllerClass,
+                'action' => $action,
+                'route' => $this->route,
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
+
         } catch (Exception $e) {
+            Logger::error("Excepción durante ejecución de controlador", [
+                'controller' => $controllerClass,
+                'action' => $action,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'route' => $this->route,
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
             die("Error al ejecutar $controllerClass->$action(): " . $e->getMessage());
         }
     }
