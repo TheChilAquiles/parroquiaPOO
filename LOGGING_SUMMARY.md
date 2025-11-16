@@ -51,6 +51,20 @@ Este documento detalla el sistema de logging y manejo de errores implementado en
 - ✅ Tracking de certificados pendientes vs generados
 - ✅ Protección PII: números de documento enmascarados
 
+#### PagosController.php
+- ✅ Acceso a lista de pagos con estadísticas
+- ✅ Creación de pagos (validaciones y éxito)
+- ✅ Actualización de pagos (estado y método)
+- ✅ Eliminación de pagos con tracking
+- ✅ Acceso a página de pago de certificado
+- ✅ Validación de permisos (solicitante autorizado)
+- ✅ Registro de pagos en efectivo (solo Secretario/Admin)
+- ✅ Vista de pagos pendientes del feligrés
+- ✅ Tracking de intentos no autorizados
+- ✅ Logging de gateway de pago (PaymentsWay)
+- ✅ Tracking de certificados no válidos para pago
+- ✅ Errores críticos con stack trace completo
+
 ### 3. **Sistema de Routing**
 
 #### Router.php
@@ -161,7 +175,7 @@ grep "192.168.1.100" logs/app.log
 ## Próximos Pasos
 
 ### Componentes Pendientes de Logging Completo:
-- [ ] PagosController (métodos de pago críticos)
+- [x] PagosController (métodos de pago críticos)
 - [ ] ConfiguracionController (configuraciones del sistema)
 - [x] CertificadosController (generación de certificados)
 - [ ] ModeloUsuario (operaciones de BD)
