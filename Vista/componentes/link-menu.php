@@ -30,6 +30,7 @@ $routes_map = [
     'Reportes' => 'reportes',
     'Pagos' => 'pagos',
     'Certificados' => 'certificados',
+    'Configuracion' => 'configuracion',
     'Contacto' => 'contacto',
     'Perfil' => 'perfil',
     'Salir' => 'salir',
@@ -43,7 +44,7 @@ $is_active = (strpos($current_route, $menu_route) === 0);
 $active_class = $is_active ? 'bg-[#DFD3C3] text-gray-900' : 'text-gray-700 hover:bg-[#E8DFD5]';
 ?>
 
-<a href="?route=<?php echo htmlspecialchars($menu_route, ENT_QUOTES, 'UTF-8'); ?>" 
+<a href="<?= url($menu_route) ?>"
    class="py-2 px-4 cursor-pointer rounded transition-colors duration-200 <?php echo $active_class; ?>">
     <?php echo htmlspecialchars($item, ENT_QUOTES, 'UTF-8'); ?>
 </a>

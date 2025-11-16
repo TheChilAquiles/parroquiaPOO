@@ -33,10 +33,10 @@ $categoriasTitulos = [
                     <h1 class="text-xl font-bold text-gray-800">Configuraciones del Sistema</h1>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <a href="?route=dashboard" class="text-gray-600 hover:text-blue-600">
+                    <a href="<?= url('dashboard') ?>" class="text-gray-600 hover:text-blue-600">
                         <i class="fas fa-home mr-2"></i>Dashboard
                     </a>
-                    <a href="?route=admin/precios" class="text-gray-600 hover:text-blue-600">
+                    <a href="<?= url('admin/precios') ?>" class="text-gray-600 hover:text-blue-600">
                         <i class="fas fa-dollar-sign mr-2"></i>Precios
                     </a>
                 </div>
@@ -61,7 +61,7 @@ $categoriasTitulos = [
         <?php endif; ?>
 
         <!-- Formulario de Configuraciones -->
-        <form method="POST" action="?route=admin/configuraciones" class="space-y-6">
+        <form method="POST" action="<?= url('admin/configuraciones') ?>" class="space-y-6">
             <?php foreach ($configuraciones as $categoria => $configs): ?>
                 <div class="bg-white shadow rounded-lg p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
@@ -143,7 +143,7 @@ $categoriasTitulos = [
 
             <!-- Botones de acción -->
             <div class="flex justify-end space-x-4">
-                <a href="?route=dashboard" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                <a href="<?= url('dashboard') ?>" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
                     <i class="fas fa-times mr-2"></i>Cancelar
                 </a>
                 <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">

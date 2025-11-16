@@ -25,7 +25,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             Puede solicitar certificados sacramentales propios o de sus familiares registrados.
         </p>
 
-        <form id="formSolicitarCertificado" method="POST" action="?route=certificados/crear" class="space-y-6">
+        <form id="formSolicitarCertificado" method="POST" action="<?= url('certificados/crear') ?>" class="space-y-6">
             <!-- Tipo de solicitud -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -119,7 +119,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                 <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md">
                     Crear Solicitud y Proceder al Pago
                 </button>
-                <a href="?route=certificados/mis-solicitudes"
+                <a href="<?= url('certificados/mis-solicitudes') ?>"
                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-md text-center">
                     Cancelar
                 </a>
@@ -187,7 +187,7 @@ function cargarSacramentosFamiliar() {
     sacramentoSelect.innerHTML = '<option value="">Cargando...</option>';
 
     $.ajax({
-        url: '?route=certificados/buscar-sacramentos-familiar',
+        url: '<?= url('certificados/buscar-sacramentos-familiar') ?>',
         type: 'POST',
         data: { familiar_id: familiarId },
         dataType: 'json',

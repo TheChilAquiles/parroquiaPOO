@@ -7,7 +7,7 @@
 
             <?php for ($i = 1; $i <= $cantidad; $i++): ?>
 
-                <form action="?route=sacramentos/libro" method="GET">
+                <form action="<?= url('sacramentos/libro') ?>" method="GET">
                     <input type="hidden" name="route" value="sacramentos/libro">
                     <input type="hidden" name="tipo" value="<?= $tipoId ?>">
                     <input type="hidden" name="numero" value="<?= $i ?>">
@@ -32,7 +32,7 @@
         <?php endif; ?>
 
 
-        <form action="?route=libros/crear" method="POST">
+        <form action="<?= url('libros/crear') ?>" method="POST">
             <input type="hidden" name="tipo" value="<?= $tipoId ?>">
 
 

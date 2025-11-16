@@ -21,7 +21,7 @@ if (isset($_SESSION['mensaje'])) {
     <!-- BARRA DE NAVEGACIÓN -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <!-- ✅ NUEVO: Volver con ruta MVC -->
-        <a href="?route=grupos"
+        <a href="<?= url('grupos') ?>"
            class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition duration-200">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -32,8 +32,8 @@ if (isset($_SESSION['mensaje'])) {
         <!-- BOTONES DE ACCIÓN -->
         <div class="flex gap-2">
             <!-- ✅ NUEVO: Editar con ruta MVC -->
-            <a href="?route=grupos/editar&id=<?php echo htmlspecialchars($grupo['id']); ?>"
-               class="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition duration-200">
+            <a href="<?= url('grupos/editar', ['id' => $grupo['id']]) ?>"
+               class="px-4 py-2 bg-[#D0B8A8] text-white rounded-lg font-medium hover:bg-[#ab876f] transition duration-200">
                 Editar Grupo
             </a>
             
@@ -59,7 +59,7 @@ if (isset($_SESSION['mensaje'])) {
             </div>
             
             <button id="btnAgregarMiembro"
-                    class="px-6 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition duration-200 shadow-sm">
+                    class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg font-medium hover:bg-[#ab876f] transition duration-200 shadow-sm">
                 + Agregar Miembro
             </button>
         </div>
@@ -98,7 +98,7 @@ if (isset($_SESSION['mensaje'])) {
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-purple-500 flex items-center justify-center">
+                                            <div class="h-10 w-10 rounded-full bg-[#D0B8A8] flex items-center justify-center">
                                                 <span class="text-white font-medium text-sm">
                                                     <?php
                                                     $iniciales = '';
@@ -128,11 +128,11 @@ if (isset($_SESSION['mensaje'])) {
                                         <?php
                                         $rol = strtolower($miembro['rol']);
                                         if ($rol === 'líder' || $rol === 'lider') 
-                                            echo 'bg-purple-100 text-purple-800';
+                                            echo 'bg-[#F5F0EB] text-[#ab876f]';
                                         elseif ($rol === 'coordinador') 
-                                            echo 'bg-blue-100 text-blue-800';
+                                            echo 'bg-[#E8DFD5] text-[#8B6F47]';
                                         elseif ($rol === 'secretario') 
-                                            echo 'bg-green-100 text-green-800';
+                                            echo 'bg-[#DFD3C3] text-[#5D4E37]';
                                         else 
                                             echo 'bg-gray-100 text-gray-800';
                                         ?>">
@@ -154,7 +154,7 @@ if (isset($_SESSION['mensaje'])) {
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div class="flex space-x-2">
                                         <button onclick="editarRol(<?php echo $miembro['usuario_id']; ?>, '<?php echo htmlspecialchars($miembro['rol'], ENT_QUOTES); ?>')"
-                                                class="text-blue-600 hover:text-blue-900 transition duration-200">
+                                                class="text-[#ab876f] hover:text-[#8B6F47] transition duration-200">
                                             Cambiar Rol
                                         </button>
                                         <button onclick="eliminarMiembro(<?php echo $miembro['usuario_id']; ?>, '<?php echo htmlspecialchars($miembro['nombre_completo'], ENT_QUOTES); ?>')"
@@ -179,14 +179,14 @@ if (isset($_SESSION['mensaje'])) {
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Agregar Nuevo Miembro</h3>
             
             <!-- ✅ NUEVO: Formulario con ruta MVC -->
-            <form action="?route=grupos/agregar-miembro" method="POST">
+            <form action="<?= url('grupos/agregar-miembro') ?>" method="POST">
                 <input type="hidden" name="grupo_id" value="<?php echo htmlspecialchars($grupo['id']); ?>">
 
                 <!-- Selector de usuario -->
                 <div class="mb-4">
                     <label for="usuario_id" class="block text-gray-700 font-medium mb-2">Seleccionar Usuario</label>
                     <select id="usuario_id" name="usuario_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A]">
                         <option value="">Seleccione un usuario...</option>
                         <?php foreach ($usuariosDisponibles as $usuario): ?>
                             <option value="<?php echo $usuario['id']; ?>">
@@ -200,7 +200,7 @@ if (isset($_SESSION['mensaje'])) {
                 <div class="mb-6">
                     <label for="rol_id" class="block text-gray-700 font-medium mb-2">Rol en el Grupo</label>
                     <select id="rol_id" name="rol_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A]">
                         <option value="">Seleccione un rol...</option>
                         <?php foreach ($rolesGrupo as $rol): ?>
                             <option value="<?php echo $rol['id']; ?>">
@@ -212,7 +212,7 @@ if (isset($_SESSION['mensaje'])) {
 
                 <div class="flex gap-3">
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200">
+                            class="flex-1 px-4 py-2 bg-[#D0B8A8] text-white rounded-lg hover:bg-[#ab876f] transition duration-200">
                         Agregar Miembro
                     </button>
                     <button type="button" id="btnCerrarModalAgregar"
@@ -232,14 +232,14 @@ if (isset($_SESSION['mensaje'])) {
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Cambiar Rol de Miembro</h3>
             
             <!-- ✅ NUEVO: Formulario con ruta MVC -->
-            <form action="?route=grupos/actualizar-rol" method="POST">
+            <form action="<?= url('grupos/actualizar-rol') ?>" method="POST">
                 <input type="hidden" name="grupo_id" value="<?php echo htmlspecialchars($grupo['id']); ?>">
                 <input type="hidden" name="usuario_id" id="usuario_cambiar_rol">
 
                 <div class="mb-6">
                     <label for="nuevo_rol_id" class="block text-gray-700 font-medium mb-2">Nuevo Rol</label>
                     <select id="nuevo_rol_id" name="nuevo_rol_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A]">
                         <?php foreach ($rolesGrupo as $rol): ?>
                             <option value="<?php echo $rol['id']; ?>">
                                 <?php echo htmlspecialchars($rol['rol']); ?>
@@ -250,7 +250,7 @@ if (isset($_SESSION['mensaje'])) {
 
                 <div class="flex gap-3">
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+                            class="flex-1 px-4 py-2 bg-[#D0B8A8] text-white rounded-lg hover:bg-[#ab876f] transition duration-200">
                         Actualizar Rol
                     </button>
                     <button type="button" id="btnCerrarModalRol"
@@ -297,7 +297,7 @@ if (isset($_SESSION['mensaje'])) {
         if (confirm(`¿Estás seguro de que deseas eliminar a "${nombreUsuario}" del grupo?`)) {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '?route=grupos/eliminar-miembro';
+            form.action = '<?= url('grupos/eliminar-miembro') ?>';
 
             const inputGrupoId = document.createElement('input');
             inputGrupoId.type = 'hidden';
@@ -321,7 +321,7 @@ if (isset($_SESSION['mensaje'])) {
      */
     function confirmarEliminacion() {
         if (confirm('⚠️ ¿Estás seguro de que deseas eliminar este grupo?\n\nEsta acción eliminará el grupo y todos sus miembros de forma permanente.')) {
-            window.location.href = '?route=grupos/eliminar&id=<?php echo $grupo['id']; ?>';
+            window.location.href = '<?= url('grupos/eliminar', ['id' => $grupo['id']]) ?>';
         }
     }
 </script>

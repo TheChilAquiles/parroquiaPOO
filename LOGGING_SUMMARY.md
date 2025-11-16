@@ -38,6 +38,19 @@ Este documento detalla el sistema de logging y manejo de errores implementado en
 - ✅ Totales de usuarios y recursos
 - ✅ Errores de carga capturados
 
+#### CertificadosController.php
+- ✅ Acceso a vista de certificados (admin y feligrés)
+- ✅ Generación de certificados (todos los métodos)
+- ✅ Validaciones de campos faltantes
+- ✅ Creación exitosa de certificados con detalles
+- ✅ Generación de PDF automática y manual
+- ✅ Solicitud de certificados desde sacramentos
+- ✅ Verificación pública de certificados (con IP y user-agent tracking)
+- ✅ Obtención de lista de familiares
+- ✅ Tracking de certificados no encontrados
+- ✅ Tracking de certificados pendientes vs generados
+- ✅ Protección PII: números de documento enmascarados
+
 ### 3. **Sistema de Routing**
 
 #### Router.php
@@ -150,7 +163,7 @@ grep "192.168.1.100" logs/app.log
 ### Componentes Pendientes de Logging Completo:
 - [ ] PagosController (métodos de pago críticos)
 - [ ] ConfiguracionController (configuraciones del sistema)
-- [ ] CertificadosController (generación de certificados)
+- [x] CertificadosController (generación de certificados)
 - [ ] ModeloUsuario (operaciones de BD)
 - [ ] ModeloPago (transacciones)
 - [ ] ModeloCertificados (emisión de documentos)

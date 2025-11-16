@@ -1,19 +1,77 @@
 <?php include_once __DIR__ . '/componentes/plantillaTop.php'; ?>
 
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-6">Gestión de Certificados</h1>
+    <!-- Encabezado -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">Gestión de Certificados</h1>
+            <p class="text-gray-600 mt-2">Administra y genera certificados sacramentales</p>
+        </div>
 
-    <!-- Formulario Simplificado (3 campos) -->
-    <div class="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 class="text-xl font-semibold mb-4">Generar Certificado Sacramental</h2>
-        <p class="text-gray-600 mb-6 text-sm">Ingrese los datos del feligrés y el sistema buscará automáticamente el sacramento correspondiente.</p>
+        <button id="btnAbrirModal"
+                class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+            <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Nuevo Certificado
+        </button>
+    </div>
 
-        <form id="formCertificado" class="space-y-4">
+    <!-- Historial de Certificados (DataTables) -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5] border-b border-[#DFD3C3]">
+            <h2 class="text-xl font-semibold text-gray-800">Historial de Certificados</h2>
+        </div>
+
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table id="tablaCertificados" class="table-auto w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">ID</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tipo Sacramento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Feligrés</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Documento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Solicitante</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Estado</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Fecha Solicitud</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables populate this -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Generar Certificado -->
+<div id="modalCertificado" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <!-- Header del Modal -->
+        <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] border-b border-[#8B6F47]">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white">Generar Certificado Sacramental</h2>
+                <button id="btnCerrarModal" class="text-white hover:text-gray-200 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-white text-sm mt-2">Ingrese los datos del feligrés para buscar el sacramento</p>
+        </div>
+
+        <!-- Formulario -->
+        <form id="formCertificado" class="p-6 space-y-5">
             <!-- Tipo de Documento -->
             <div>
-                <label class="block text-gray-700 font-semibold mb-2">Tipo de Documento:</label>
+                <label class="block text-gray-700 font-semibold mb-2">
+                    Tipo de Documento <span class="text-red-500">*</span>
+                </label>
                 <select name="tipo_documento_id" id="tipoDocumento" required
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
                     <option value="">Seleccione...</option>
                     <option value="1">Cédula de Ciudadanía</option>
                     <option value="2">Tarjeta de Identidad</option>
@@ -26,17 +84,21 @@
 
             <!-- Número de Documento -->
             <div>
-                <label class="block text-gray-700 font-semibold mb-2">Número de Documento:</label>
+                <label class="block text-gray-700 font-semibold mb-2">
+                    Número de Documento <span class="text-red-500">*</span>
+                </label>
                 <input type="text" name="numero_documento" id="numeroDocumento" required
-                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
                        placeholder="Ej: 1234567890">
             </div>
 
             <!-- Tipo de Sacramento -->
             <div>
-                <label class="block text-gray-700 font-semibold mb-2">Tipo de Sacramento:</label>
+                <label class="block text-gray-700 font-semibold mb-2">
+                    Tipo de Sacramento <span class="text-red-500">*</span>
+                </label>
                 <select name="tipo_sacramento_id" id="tipoSacramento" required
-                        class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 outline-none">
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
                     <option value="">Seleccione...</option>
                     <option value="1">Bautismo</option>
                     <option value="2">Confirmación</option>
@@ -45,123 +107,156 @@
                 </select>
             </div>
 
-            <!-- Pago en Efectivo (opcional) -->
-            <div class="flex items-center">
-                <input type="checkbox" name="metodo_pago" id="pagoEfectivo" value="efectivo"
-                       class="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-400">
-                <label for="pagoEfectivo" class="ml-2 text-gray-700">
-                    <span class="font-semibold">Pago en efectivo</span>
-                    <span class="text-sm text-gray-500">(Generar PDF inmediatamente)</span>
-                </label>
+            <!-- Pago en Efectivo -->
+            <div class="bg-[#F5F0EB] border border-[#DFD3C3] rounded-lg p-4">
+                <div class="flex items-start">
+                    <input type="checkbox" name="metodo_pago" id="pagoEfectivo" value="efectivo"
+                           class="w-5 h-5 text-[#ab876f] rounded focus:ring-2 focus:ring-[#C4A68A] mt-0.5">
+                    <label for="pagoEfectivo" class="ml-3">
+                        <span class="font-semibold text-gray-900 block">Pago en efectivo</span>
+                        <span class="text-sm text-gray-600">Generar PDF inmediatamente sin requerir pago online</span>
+                    </label>
+                </div>
             </div>
 
             <!-- Botones -->
-            <div class="flex gap-4 pt-4">
+            <div class="flex gap-3 pt-4">
                 <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow font-semibold transition">
+                        class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-3 rounded-lg shadow-md font-semibold transition duration-200">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                     Generar Certificado
                 </button>
-                <button type="reset"
-                        class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg shadow transition">
-                    Limpiar
+                <button type="button" id="btnCancelar"
+                        class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg shadow font-semibold transition">
+                    Cancelar
                 </button>
             </div>
         </form>
     </div>
-
-    <!-- Historial de Certificados (DataTables) -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Historial de Certificados</h2>
-
-        <div class="overflow-x-auto">
-            <table id="tablaCertificados" class="table-auto w-full">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-2 text-left">ID</th>
-                        <th class="px-4 py-2 text-left">Tipo Sacramento</th>
-                        <th class="px-4 py-2 text-left">Feligrés</th>
-                        <th class="px-4 py-2 text-left">Documento</th>
-                        <th class="px-4 py-2 text-left">Solicitante</th>
-                        <th class="px-4 py-2 text-left">Estado</th>
-                        <th class="px-4 py-2 text-left">Fecha Solicitud</th>
-                        <th class="px-4 py-2 text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- DataTables populate this -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 $(document).ready(function() {
     // Inicializar DataTables
     const table = $('#tablaCertificados').DataTable({
-        ajax: {
-            url: '?route=certificados/listar-todos',
-            dataSrc: function(json) {
-                if (json.success) {
-                    return json.data;
-                } else {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Error al cargar certificados',
-                        showConfirmButton: false,
-                        timer: 3000
-                    });
-                    return [];
-                }
-            }
-        },
+        ajax: '<?= url('certificados/listar-todos') ?>',
         columns: [
             { data: 'id' },
             { data: 'tipo_sacramento' },
-            { data: 'feligres_nombre' },
-            { data: 'numero_documento' },
-            { data: 'solicitante_nombre' },
-            {
-                data: 'estado',
-                render: function(data) {
-                    const badges = {
-                        'Pendiente pago': 'bg-yellow-100 text-yellow-800',
-                        'Generado': 'bg-green-100 text-green-800',
-                        'Descargado': 'bg-blue-100 text-blue-800',
-                        'Expirado': 'bg-red-100 text-red-800'
-                    };
-                    const badge = badges[data] || 'bg-gray-100 text-gray-800';
-                    return `<span class="px-2 py-1 rounded text-xs font-semibold ${badge}">${data}</span>`;
-                }
-            },
-            { data: 'fecha_solicitud' },
             {
                 data: null,
-                render: function(data, type, row) {
-                    let html = '';
+                render: function(data) {
+                    return data.nombre_feligres + '<br><small class="text-gray-500">' + data.tipo_documento + ': ' + data.numero_documento + '</small>';
+                }
+            },
+            { data: 'numero_documento' },
+            {
+                data: null,
+                render: function(data) {
+                    return data.solicitante_nombre || '<span class="text-gray-400">Sin solicitante</span>';
+                }
+            },
+            {
+                data: 'estado',
+                render: function(estado) {
+                    const badges = {
+                        'pendiente_pago': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendiente Pago</span>',
+                        'pagado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Pagado</span>',
+                        'generado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Generado</span>',
+                        'entregado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#E8DFD5] text-[#8B6F47]">Entregado</span>'
+                    };
+                    return badges[estado] || estado;
+                }
+            },
+            {
+                data: 'fecha_solicitud',
+                render: function(fecha) {
+                    return new Date(fecha).toLocaleString('es-CO');
+                }
+            },
+            {
+                data: null,
+                render: function(data) {
+                    let html = '<div class="flex gap-2 justify-center">';
 
-                    // Botón descargar (solo si PDF generado)
-                    if (row.ruta_archivo) {
-                        html += `<a href="${row.ruta_archivo}" target="_blank"
-                                   class="inline-block bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm mr-2">
-                                   Descargar PDF
+                    if (data.ruta_archivo) {
+                        html += `<a href="<?= url('certificados/descargar') ?>&id=${data.id}"
+                                    class="px-3 py-1.5 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded text-sm font-medium transition"
+                                    title="Descargar PDF">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
                                 </a>`;
                     } else {
-                        html += `<span class="text-gray-400 text-sm">PDF no disponible</span>`;
+                        html += '<span class="text-xs text-gray-400">PDF no generado</span>';
                     }
 
+                    html += '</div>';
                     return html;
                 },
                 className: 'text-center'
             }
         ],
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            "decimal": ",",
+            "thousands": ".",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ certificados",
+            "infoEmpty": "Mostrando 0 a 0 de 0 certificados",
+            "infoFiltered": "(filtrado de _MAX_ certificados totales)",
+            "infoPostFix": "",
+            "lengthMenu": "Mostrar _MENU_ certificados",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron certificados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": activar para ordenar la columna de manera ascendente",
+                "sortDescending": ": activar para ordenar la columna de manera descendente"
+            }
         },
         order: [[0, 'desc']],
         pageLength: 25
+    });
+
+    // Controles del Modal
+    $('#btnAbrirModal').click(function() {
+        $('#modalCertificado').removeClass('hidden');
+        $('body').addClass('overflow-hidden');
+    });
+
+    function cerrarModal() {
+        $('#modalCertificado').addClass('hidden');
+        $('body').removeClass('overflow-hidden');
+        $('#formCertificado')[0].reset();
+    }
+
+    $('#btnCerrarModal, #btnCancelar').click(cerrarModal);
+
+    // Cerrar al hacer clic fuera del modal
+    $('#modalCertificado').click(function(e) {
+        if (e.target.id === 'modalCertificado') {
+            cerrarModal();
+        }
+    });
+
+    // Cerrar con tecla ESC
+    $(document).keydown(function(e) {
+        if (e.key === 'Escape' && !$('#modalCertificado').hasClass('hidden')) {
+            cerrarModal();
+        }
     });
 
     // Manejar envío del formulario (AJAX)
@@ -182,7 +277,7 @@ $(document).ready(function() {
         });
 
         $.ajax({
-            url: '?route=certificados/generar-simplificado',
+            url: '<?= url('certificados/generar-simplificado') ?>',
             type: 'POST',
             data: formData,
             processData: false,
@@ -202,8 +297,8 @@ $(document).ready(function() {
                         timer: 3000
                     });
 
-                    // Limpiar formulario
-                    $('#formCertificado')[0].reset();
+                    // Cerrar modal y limpiar formulario
+                    cerrarModal();
 
                     // Recargar DataTables
                     table.ajax.reload();
@@ -212,20 +307,19 @@ $(document).ready(function() {
                     if (response.pdf_generado) {
                         setTimeout(() => {
                             Swal.fire({
-                                icon: 'info',
-                                title: 'PDF Generado',
-                                text: 'El certificado ha sido generado y está disponible en el historial',
-                                confirmButtonText: 'Entendido'
+                                icon: 'success',
+                                title: 'PDF generado',
+                                text: 'El certificado ha sido generado exitosamente.',
+                                confirmButtonColor: '#D0B8A8'
                             });
-                        }, 3000);
+                        }, 500);
                     }
                 } else {
-                    // Mostrar error
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: response.message,
-                        confirmButtonText: 'Entendido'
+                        confirmButtonColor: '#D0B8A8'
                     });
                 }
             },
@@ -235,9 +329,8 @@ $(document).ready(function() {
                     icon: 'error',
                     title: 'Error de conexión',
                     text: 'No se pudo conectar con el servidor. Intente nuevamente.',
-                    confirmButtonText: 'Entendido'
+                    confirmButtonColor: '#D0B8A8'
                 });
-                console.error('Error AJAX:', error);
             }
         });
     });

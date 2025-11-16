@@ -27,7 +27,7 @@ if (isset($_SESSION['mensaje'])) {
     <!-- BARRA DE NAVEGACIÓN -->
     <div class="flex items-center justify-between mb-8">
         <!-- ✅ NUEVO: Volver con ruta MVC -->
-        <a href="?route=grupos"
+        <a href="<?= url('grupos') ?>"
            class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition duration-200">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -37,8 +37,8 @@ if (isset($_SESSION['mensaje'])) {
 
         <!-- Botón ver detalles (solo en modo edición) -->
         <?php if ($esEdicion): ?>
-            <a href="?route=grupos/ver&id=<?php echo $grupo['id']; ?>"
-               class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition duration-200">
+            <a href="<?= url('grupos/ver', ['id' => $grupo['id']]) ?>"
+               class="px-4 py-2 bg-[#D0B8A8] text-white rounded-lg font-medium hover:bg-[#ab876f] transition duration-200">
                 Ver Detalles
             </a>
         <?php endif; ?>
@@ -49,8 +49,8 @@ if (isset($_SESSION['mensaje'])) {
         
         <!-- ENCABEZADO -->
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-[#F5F0EB] rounded-full mb-4">
+                <svg class="w-8 h-8 text-[#ab876f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
             </div>
@@ -62,9 +62,9 @@ if (isset($_SESSION['mensaje'])) {
             </p>
         </div>
 
-        <!-- ✅ NUEVO: Formulario con ruta MVC dinámica -->
-        <form action="<?php echo $esEdicion ? '?route=grupos/editar&id=' . $grupo['id'] : '?route=grupos/crear'; ?>" 
-              method="POST" 
+        <!-- Formulario con URL limpia -->
+        <form action="<?= $esEdicion ? url('grupos/editar', ['id' => $grupo['id']]) : url('grupos/crear') ?>"
+              method="POST"
               class="space-y-6">
 
             <!-- CAMPO: NOMBRE DEL GRUPO -->
@@ -79,7 +79,7 @@ if (isset($_SESSION['mensaje'])) {
                            value="<?php echo $valorNombre; ?>"
                            required
                            maxlength="255"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition duration-200"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent transition duration-200"
                            placeholder="Ej: Coro Parroquial, Grupo de Jóvenes, Catequesis..."
                            autocomplete="off">
                     
@@ -111,7 +111,7 @@ if (isset($_SESSION['mensaje'])) {
             <div class="flex flex-col sm:flex-row gap-4 pt-6">
                 <!-- Botón principal: Crear/Actualizar -->
                 <button type="submit"
-                        class="flex-1 flex justify-center items-center px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200">
+                        class="flex-1 flex justify-center items-center px-6 py-3 bg-[#D0B8A8] text-white font-medium rounded-lg hover:bg-[#ab876f] focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:ring-offset-2 transition duration-200">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
@@ -121,7 +121,7 @@ if (isset($_SESSION['mensaje'])) {
                 <!-- ✅ NUEVO: Botón cancelar con rutas MVC -->
                 <?php if ($esEdicion): ?>
                     <!-- En edición: volver a detalles del grupo -->
-                    <a href="?route=grupos/ver&id=<?php echo $grupo['id']; ?>"
+                    <a href="<?= url('grupos/ver', ['id' => $grupo['id']]) ?>"
                        class="flex-1 flex justify-center items-center px-6 py-3 bg-gray-300 text-gray-800 font-medium rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -130,7 +130,7 @@ if (isset($_SESSION['mensaje'])) {
                     </a>
                 <?php else: ?>
                     <!-- En creación: volver al listado -->
-                    <a href="?route=grupos"
+                    <a href="<?= url('grupos') ?>"
                        class="flex-1 flex justify-center items-center px-6 py-3 bg-gray-300 text-gray-800 font-medium rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -171,7 +171,7 @@ if (isset($_SESSION['mensaje'])) {
              */
             function confirmarEliminacion() {
                 if (confirm('⚠️ ¿Estás seguro de que deseas eliminar este grupo?\n\nEsta acción eliminará el grupo y todos sus miembros de forma permanente y no se puede deshacer.')) {
-                    window.location.href = '?route=grupos/eliminar&id=<?php echo $grupo['id']; ?>';
+                    window.location.href = '<?= url('grupos/eliminar', ['id' => $grupo['id']]) ?>';
                 }
             }
         </script>

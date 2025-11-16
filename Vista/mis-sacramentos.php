@@ -174,7 +174,7 @@ $('input[name="para_quien"]').on('change', function() {
 // Cargar familiares registrados (AJAX)
 function cargarFamiliares() {
     $.ajax({
-        url: '?route=certificados/obtener-familiares',
+        url: '<?= url('certificados/obtener-familiares') ?>',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -223,7 +223,7 @@ $(document).on('submit', '#formSolicitar', function(e) {
     const formData = $(this).serialize();
 
     $.ajax({
-        url: '?route=certificados/solicitar-desde-sacramento',
+        url: '<?= url('certificados/solicitar-desde-sacramento') ?>',
         method: 'POST',
         data: formData,
         dataType: 'json',
@@ -244,7 +244,7 @@ $(document).on('submit', '#formSolicitar', function(e) {
                     text: response.message,
                     confirmButtonText: 'Ver mis certificados'
                 }).then(() => {
-                    window.location.href = '?route=certificados';
+                    window.location.href = '<?= url('certificados') ?>';
                 });
             } else {
                 Swal.fire({

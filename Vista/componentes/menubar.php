@@ -35,7 +35,7 @@
                     'Reportes' => ['Administrador'],
                     'Pagos' => ['Administrador'],
                     'Certificados' => ['all'],
-                    'Admin' => ['Administrador'],
+                    'Configuracion' => ['Administrador'],
                     'manual' => ['all']
 
                 ];

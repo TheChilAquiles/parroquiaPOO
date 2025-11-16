@@ -25,14 +25,24 @@ if (isset($_SESSION['mensaje'])) {
             <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">Grupos Parroquiales</h1>
             <p class="text-gray-600 mt-2">Gestiona los grupos y comunidades de la parroquia</p>
         </div>
-        
-        <button id="btnCrearGrupo" 
-                class="px-6 py-3 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700 transition duration-200 font-medium">
-            <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Crear Grupo
-        </button>
+
+        <div class="flex gap-2">
+            <button id="btnCrearGrupo"
+                    class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Crear Grupo
+            </button>
+
+            <button id="btnCrearRol"
+                    class="px-6 py-3 bg-[#8B6F47] text-white rounded-lg shadow-md hover:bg-[#6B5437] transition duration-200 font-medium">
+                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                Añadir Rol
+            </button>
+        </div>
     </div>
 
     <!-- GRID DE GRUPOS -->
@@ -43,8 +53,8 @@ if (isset($_SESSION['mensaje'])) {
                     <div class="p-6">
                         <!-- ENCABEZADO DE CARD -->
                         <div class="flex items-start justify-between mb-4">
-                            <div class="flex-shrink-0 h-12 w-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex-shrink-0 h-12 w-12 bg-[#F5F0EB] rounded-lg flex items-center justify-center">
+                                <svg class="h-6 w-6 text-[#ab876f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                             </div>
@@ -63,16 +73,16 @@ if (isset($_SESSION['mensaje'])) {
 
                         <!-- CONTROLES DE ACCIÓN -->
                         <div class="flex gap-2">
-                            <!-- ✅ NUEVO: Botón Ver con ruta MVC -->
-                            <a href="?route=grupos/ver&id=<?php echo htmlspecialchars($grupo['id']); ?>"
-                               class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg shadow-sm hover:bg-purple-700 transition duration-200 font-medium text-center">
+                            <!-- Botón Ver con URL limpia -->
+                            <a href="<?= url('grupos/ver', ['id' => $grupo['id']]) ?>"
+                               class="flex-1 px-4 py-2 bg-[#D0B8A8] text-white rounded-lg shadow-sm hover:bg-[#ab876f] transition duration-200 font-medium text-center">
                                 Ver Detalles
                             </a>
 
                             <div class="flex gap-1">
-                                <!-- ✅ NUEVO: Botón Editar con ruta MVC -->
-                                <a href="?route=grupos/editar&id=<?php echo htmlspecialchars($grupo['id']); ?>"
-                                   class="px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition duration-200"
+                                <!-- Botón Editar con URL limpia -->
+                                <a href="<?= url('grupos/editar', ['id' => $grupo['id']]) ?>"
+                                   class="px-3 py-2 bg-[#E8DFD5] text-[#ab876f] rounded-lg hover:bg-[#DFD3C3] transition duration-200"
                                    title="Editar grupo">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -108,14 +118,14 @@ if (isset($_SESSION['mensaje'])) {
     </div>
 </main>
 
-<!-- MODAL DE CREACIÓN -->
+<!-- MODAL DE CREACIÓN DE GRUPO -->
 <div id="modalCrearGrupo" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50">
     <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
         <div class="mt-3">
             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 text-center">Crear Nuevo Grupo</h3>
-            
+
             <!-- ✅ NUEVO: Formulario con ruta MVC -->
-            <form action="?route=grupos/crear" method="POST">
+            <form action="<?= url('grupos/crear') ?>" method="POST">
                 <div class="mb-4">
                     <label for="nombre_grupo" class="block text-gray-700 font-medium mb-2">
                         Nombre del Grupo *
@@ -125,17 +135,56 @@ if (isset($_SESSION['mensaje'])) {
                            name="nombre_grupo"
                            required
                            maxlength="255"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
                            placeholder="Ej: Coro Parroquial, Grupo de Jóvenes...">
                 </div>
 
                 <div class="flex gap-3">
-                    <button type="submit" 
+                    <button type="submit"
                             class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 font-medium">
                         Crear Grupo
                     </button>
-                    <button type="button" 
-                            id="btnCerrarModal" 
+                    <button type="button"
+                            id="btnCerrarModal"
+                            class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE CREACIÓN DE ROL -->
+<div id="modalCrearRol" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 text-center">Añadir Rol de Grupo</h3>
+
+            <form action="<?= url('grupos/crear-rol') ?>" method="POST">
+                <div class="mb-4">
+                    <label for="nombre_rol" class="block text-gray-700 font-medium mb-2">
+                        Nombre del Rol *
+                    </label>
+                    <input type="text"
+                           id="nombre_rol"
+                           name="nombre_rol"
+                           required
+                           maxlength="100"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
+                           placeholder="Ej: Líder, Coordinador, Secretario...">
+                    <p class="mt-1 text-sm text-gray-500">
+                        Este rol estará disponible para asignar a miembros de grupos.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit"
+                            class="flex-1 px-4 py-2 bg-[#8B6F47] text-white rounded-lg hover:bg-[#6B5437] transition duration-200 font-medium">
+                        Crear Rol
+                    </button>
+                    <button type="button"
+                            id="btnCerrarModalRol"
                             class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
                         Cancelar
                     </button>
@@ -148,32 +197,64 @@ if (isset($_SESSION['mensaje'])) {
 <!-- SCRIPTS -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('modalCrearGrupo');
+        // Modal Crear Grupo
+        const modalGrupo = document.getElementById('modalCrearGrupo');
         const btnCrearGrupo = document.getElementById('btnCrearGrupo');
         const btnCerrarModal = document.getElementById('btnCerrarModal');
-        const inputNombre = document.getElementById('nombre_grupo');
+        const inputNombreGrupo = document.getElementById('nombre_grupo');
 
+        // Modal Crear Rol
+        const modalRol = document.getElementById('modalCrearRol');
+        const btnCrearRol = document.getElementById('btnCrearRol');
+        const btnCerrarModalRol = document.getElementById('btnCerrarModalRol');
+        const inputNombreRol = document.getElementById('nombre_rol');
+
+        // Abrir modal de grupo
         btnCrearGrupo.addEventListener('click', function() {
-            modal.classList.remove('hidden');
-            inputNombre.focus();
+            modalGrupo.classList.remove('hidden');
+            inputNombreGrupo.focus();
         });
 
-        function cerrarModal() {
-            modal.classList.add('hidden');
-            inputNombre.value = '';
+        // Abrir modal de rol
+        btnCrearRol.addEventListener('click', function() {
+            modalRol.classList.remove('hidden');
+            inputNombreRol.focus();
+        });
+
+        // Cerrar modal de grupo
+        function cerrarModalGrupo() {
+            modalGrupo.classList.add('hidden');
+            inputNombreGrupo.value = '';
         }
 
-        btnCerrarModal.addEventListener('click', cerrarModal);
+        // Cerrar modal de rol
+        function cerrarModalRol() {
+            modalRol.classList.add('hidden');
+            inputNombreRol.value = '';
+        }
 
+        btnCerrarModal.addEventListener('click', cerrarModalGrupo);
+        btnCerrarModalRol.addEventListener('click', cerrarModalRol);
+
+        // Click fuera del modal para cerrar
         window.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                cerrarModal();
+            if (event.target === modalGrupo) {
+                cerrarModalGrupo();
+            }
+            if (event.target === modalRol) {
+                cerrarModalRol();
             }
         });
 
+        // ESC para cerrar modales
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
-                cerrarModal();
+            if (event.key === 'Escape') {
+                if (!modalGrupo.classList.contains('hidden')) {
+                    cerrarModalGrupo();
+                }
+                if (!modalRol.classList.contains('hidden')) {
+                    cerrarModalRol();
+                }
             }
         });
     });
@@ -184,7 +265,7 @@ if (isset($_SESSION['mensaje'])) {
     function eliminarGrupo(grupoId, nombreGrupo) {
         if (confirm(`¿Estás seguro de que deseas eliminar el grupo "${nombreGrupo}"?\n\nEsta acción eliminará el grupo y todos sus miembros.`)) {
             // Redirigir a la página de confirmación
-            window.location.href = `?route=grupos/eliminar&id=${grupoId}`;
+            window.location.href = "<?= url('grupos/eliminar') ?>window.location.href = `?route=grupos/eliminar&id=${grupoId}`;id=" + grupoId;
         }
     }
 </script>

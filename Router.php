@@ -160,6 +160,7 @@ class Router
             'grupos/agregar-miembro' => ['controlador' => 'GruposController', 'accion' => 'agregarMiembro'],
             'grupos/eliminar-miembro' => ['controlador' => 'GruposController', 'accion' => 'eliminarMiembro'],
             'grupos/actualizar-rol' => ['controlador' => 'GruposController', 'accion' => 'actualizarRol'],
+            'grupos/crear-rol' => ['controlador' => 'GruposController', 'accion' => 'crearRol'],
 
             // ================================================================
             // RUTAS AUTENTICADAS - PAGOS
@@ -177,6 +178,7 @@ class Router
 
             // Webhook para confirmación de pagos externos (PÚBLICA)
             'pagos/webhook-confirmacion' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
+            'pagos/respuesta' => ['controlador' => 'PagosController', 'accion' => 'respuestaPaymentsWay'], // Callback PaymentsWay
 
             // ================================================================
             // RUTAS AUTENTICADAS - REPORTES

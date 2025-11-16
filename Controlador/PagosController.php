@@ -318,6 +318,16 @@ class PagosController extends BaseController
                 exit;
             }
 
+            // Verificar si el gateway requiere redirección (PaymentsWay, etc)
+            if (isset($gatewayResponse['data']['requires_redirect']) && $gatewayResponse['data']['requires_redirect']) {
+                // Mostrar página de redirección con formulario
+                $paymentUrl = $gatewayResponse['data']['payment_url'];
+                $formData = $gatewayResponse['data']['form_data'];
+
+                include_once __DIR__ . '/../Vista/pagar-redireccion.php';
+                exit;
+            }
+
             // Log del pago exitoso
             Logger::info("Pago procesado exitosamente por gateway", [
                 'transaction_id' => $gatewayResponse['transaction_id'],
@@ -514,6 +524,130 @@ class PagosController extends BaseController
 
         // Incluir vista
         include_once __DIR__ . '/../Vista/mis-pagos.php';
+    }
+
+    /**
+     * Maneja la respuesta/callback de PaymentsWay después del pago
+     * Esta ruta es llamada por PaymentsWay después de que el usuario completa el pago
+     */
+    public function respuestaPaymentsWay()
+    {
+        // Obtener todos los datos de la respuesta (GET o POST)
+        $responseData = array_merge($_GET, $_POST);
+
+        Logger::info("PaymentsWay: Respuesta recibida", [
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'data_keys' => array_keys($responseData)
+        ]);
+
+        try {
+            // Verificar que sea una respuesta de PaymentsWay
+            if (empty($responseData['order_number'])) {
+                Logger::warning("Respuesta sin order_number", $responseData);
+                $_SESSION['error'] = 'Respuesta de pago inválida';
+                header('Location: ?route=certificados/mis-solicitudes');
+                exit;
+            }
+
+            // Crear instancia del gateway para procesar la respuesta
+            $gateway = PaymentGatewayFactory::create();
+
+            // Verificar que sea PaymentWayGateway
+            if (!($gateway instanceof PaymentWayGateway)) {
+                Logger::error("Gateway no es PaymentWayGateway", [
+                    'gateway_type' => get_class($gateway)
+                ]);
+                $_SESSION['error'] = 'Error en la configuración del sistema de pagos';
+                header('Location: ?route=certificados/mis-solicitudes');
+                exit;
+            }
+
+            // Procesar el callback
+            $callbackResult = $gateway->processCallback($responseData);
+
+            // Extraer el certificado_id del order_number
+            // Formato: CERT{certificado_id}_{timestamp}_{random}
+            preg_match('/^CERT(\d+)_/', $callbackResult['order_number'], $matches);
+            $certificadoId = $matches[1] ?? null;
+
+            if (!$certificadoId) {
+                Logger::error("No se pudo extraer certificado_id del order_number", [
+                    'order_number' => $callbackResult['order_number']
+                ]);
+                $_SESSION['error'] = 'Error al procesar el pago';
+                header('Location: ?route=certificados/mis-solicitudes');
+                exit;
+            }
+
+            // Verificar que el certificado existe
+            $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+            if (!$certificado) {
+                Logger::error("Certificado no encontrado en callback", [
+                    'certificado_id' => $certificadoId
+                ]);
+                $_SESSION['error'] = 'Certificado no encontrado';
+                header('Location: ?route=certificados/mis-solicitudes');
+                exit;
+            }
+
+            // Si el pago fue exitoso
+            if ($callbackResult['success']) {
+                // Registrar pago en la base de datos
+                $resultadoPago = $this->modelo->mdlCrear([
+                    'certificado_id' => $certificadoId,
+                    'valor' => PAYMENT_CERTIFICATE_PRICE,
+                    'estado' => 'pagado',
+                    'metodo_de_pago' => 'paymentway',
+                    'transaction_id' => $callbackResult['transaction_id']
+                ]);
+
+                if ($resultadoPago['exito']) {
+                    // Marcar certificado como pagado
+                    $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+                    // Generar PDF automáticamente
+                    $pdfGenerado = $this->controladorCertificados->generarAutomatico($certificadoId);
+
+                    if ($pdfGenerado) {
+                        $_SESSION['success'] = 'Pago procesado exitosamente. Su certificado está listo para descargar.';
+                    } else {
+                        $_SESSION['success'] = 'Pago procesado. El certificado se está generando.';
+                    }
+
+                    Logger::info("Pago de PaymentsWay procesado exitosamente", [
+                        'certificado_id' => $certificadoId,
+                        'transaction_id' => $callbackResult['transaction_id']
+                    ]);
+                } else {
+                    Logger::error("Error al registrar pago en BD", [
+                        'certificado_id' => $certificadoId,
+                        'transaction_id' => $callbackResult['transaction_id']
+                    ]);
+                    $_SESSION['warning'] = 'El pago fue aprobado, pero hubo un error al procesarlo. Contacte con la parroquia.';
+                }
+            } else {
+                // Pago no exitoso
+                $_SESSION['error'] = 'El pago no fue aprobado: ' . $callbackResult['message'];
+
+                Logger::warning("Pago de PaymentsWay no aprobado", [
+                    'certificado_id' => $certificadoId,
+                    'status' => $callbackResult['status'],
+                    'message' => $callbackResult['message']
+                ]);
+            }
+
+        } catch (Exception $e) {
+            Logger::error("Error al procesar respuesta de PaymentsWay", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $_SESSION['error'] = 'Error al procesar la respuesta del pago';
+        }
+
+        // Redirigir a mis solicitudes
+        header('Location: ?route=certificados/mis-solicitudes');
+        exit;
     }
 
     /**

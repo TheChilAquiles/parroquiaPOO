@@ -150,7 +150,7 @@ function procesarPagoSimulado(certificadoId) {
         formData.append('certificado_id', certificadoId);
         formData.append('metodo_pago', 'online');
 
-        fetch('?route=pagos/procesar-pago-online', {
+        fetch('<?= url('pagos/procesar-pago-online') ?>', {
             method: 'POST',
             body: formData
         })

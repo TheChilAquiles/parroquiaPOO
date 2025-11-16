@@ -1,54 +1,72 @@
 <?php include_once __DIR__ . '/componentes/plantillaTop.php'; ?>
 
-<!-- Contenedor principal -->
-<div class="min-h-[500px] px-4 py-8 flex-1 ">
-    <div class="max-w-7xl mx-auto bg-white/60 rounded p-5">
-
-        <h2 class="text-2xl font-semibold mb-6 text-gray-800 text-center"> <?= htmlspecialchars($libroTipo ?? 'Desconocido') . " " . htmlspecialchars($numeroLibro ?? '') ?> </h2>
-
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-medium"></h3>
-            
-            <button id="addRecord" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
-                Agregar nuevo Bautizado
-            </button>
+<div class="container mx-auto px-4 py-8">
+    <!-- Encabezado -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900">Gestión de Sacramentos</h1>
+            <p class="text-gray-600 mt-2"><?= htmlspecialchars($libroTipo ?? 'Desconocido') . " " . htmlspecialchars($numeroLibro ?? '') ?></p>
         </div>
 
-        <!-- Tabla -->
-        <div class="overflow-auto">
-            <table id="recordListing" class="min-w-full text-sm text-left text-gray-700 border border-gray-300">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th></th>
-                        <th>Tipo Sacramento</th>
-                        <th>Participantes</th>
-                        <th>Fecha</th>
-                        <th>Lugar</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
+        <button id="addRecord"
+                class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+            <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Agregar nuevo Bautizado
+        </button>
+    </div>
 
-                <tbody></tbody>
-            </table>
+    <!-- Tabla de Sacramentos (DataTables) -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5] border-b border-[#DFD3C3]">
+            <h2 class="text-xl font-semibold text-gray-800">Registro de Sacramentos</h2>
         </div>
 
+        <div class="p-6">
+            <div class="overflow-x-auto">
+                <table id="recordListing" class="table-auto w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider"></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Tipo Sacramento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Participantes</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Fecha</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Lugar</th>
+                            <th class="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
 
-
-
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 
 
 
-<!-- Modal Tailwind -->
-<div id="recordModal" class="modal fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 max-h-[90vh] flex flex-col">
-        <h4 class="text-xl font-semibold mb-4 modal-title w-full text-center">Editar Registro</h4>
+<!-- Modal para agregar/editar sacramento -->
+<div id="recordModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+        <!-- Header del Modal -->
+        <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] border-b border-[#8B6F47]">
+            <div class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white modal-title">Editar Registro</h2>
+                <button type="button" id="cerrarFormSacramentos" class="text-white hover:text-gray-200 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <p class="text-white text-sm mt-2">Complete los datos del sacramento</p>
+        </div>
 
-        <!-- Contenedor con scroll para el formulario -->
-        <div class="overflow-y-auto flex-1">
-            <form id="recordForm" class="space-y-4" method="POST">
+        <!-- Formulario -->
+        <form id="recordForm" method="POST" class="flex flex-col flex-1 overflow-hidden">
+            <div class="overflow-y-auto flex-1 p-6">
+                <div class="space-y-5">
 
 
 
@@ -71,155 +89,157 @@
                         Fecha Evento
                     </div>
                     <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
-                    <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded">
+                    <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
                 </div>
             </div>
 
             <div id="Form2" class="hidden py-4">
 
-                <div class="border border-blue-400 rounded mt-4">
+                <div class="border border-[#D0B8A8] rounded-lg p-4">
 
-                    <div class=" text-center text-lg font-bold my-1">
-                        Participantes
+                    <div class="text-center text-lg font-bold my-2 text-gray-800">
+                        Participantes del Sacramento
                     </div>
 
-
-
-                    <ul id="contenedor-integrantes">
+                    <ul id="contenedor-integrantes" class="my-4">
 
                         <li id="integranteVacio">
                             <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
-                                <span class="font-bold"> --- Vacio --- </span>
+                                <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
                             </div>
                         </li>
 
                         <!-- Aquí se mostrarán los integrantes -->
                     </ul>
+
+                    <button type="button" id="btnAbrirModalParticipante"
+                            class="w-full bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold py-3 cursor-pointer transition duration-200 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Añadir Participante
+                    </button>
                 </div>
 
-                <hr class="my-4 border-t-2 border-gray-300">
-
-                <div class="border border-emerald-400 p-2 rounded mb-4">
+            </div>
 
 
-                    <div class=" text-center text-lg font-bold my-1">
-                        Añadir Participante
-                    </div>
+            <!-- Eliminado todo el contenido del formulario de añadir participante que ahora estará en el mini-modal -->
 
+                </div> <!-- Cierre de space-y-5 -->
+            </div> <!-- Cierre de overflow-y-auto -->
 
-                    <div class="mx-7">
+            <!-- Botones fijos en la parte inferior -->
+            <div class="flex flex-wrap gap-3 px-6 py-4 border-t border-gray-200 bg-white">
+                <button type="button" id="Anterior"
+                        class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium hidden">
+                    ← Anterior
+                </button>
+                <button type="button" id="Siguiente"
+                        class="flex-1 px-6 py-2.5 bg-[#D0B8A8] text-white rounded-lg hover:bg-[#ab876f] transition duration-200 font-medium">
+                    Siguiente →
+                </button>
+                <button type="submit" id="Guardar"
+                        class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-2.5 rounded-lg shadow-md font-semibold transition duration-200 hidden">
+                    <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
+<!-- Mini-Modal para añadir participante -->
+<div id="miniModalParticipante" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
+        <!-- Header del Mini-Modal -->
+        <div class="px-6 py-3 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f]">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white">Añadir Participante</h3>
+                <button type="button" id="cerrarMiniModal" class="text-white hover:text-gray-200 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
 
-                        <div class="flex space-x-2 mt-4 justify-center items-end">
+        <!-- Contenido del Mini-Modal -->
+        <div class="overflow-y-auto flex-1 p-6">
+            <div class="space-y-4">
+                <!-- Búsqueda de participante -->
+                <div class="border border-[#D0B8A8] rounded-lg p-4 bg-[#F5F0EB]">
+                    <h4 class="font-semibold text-gray-800 mb-3">Buscar Feligrés</h4>
 
-
-                            <div>
-                                <label for="">Tipo Documento</label>
-
-                                <select placeholder="Selecciona un Documento" class="border border-gray-300 rounded  w-full placeholder:text-gray-100 placeholder:text-center p-2" name="tipo-doc" id="tipo-doc">
-                                    <option class="text-center" value="" disabled selected>-- Selecciona un Documento --</option>
-                                    <option value="1">Cedula Ciudadania</option>
-                                    <option value="2">Tarjeta Identidad</option>
-                                    <option value="3">Cedula Extranjeria</option>
-                                    <option value="4">Registro Civil</option>
-                                    <option value="5">Permiso Especial</option>
-                                    <option value="6">Numero Identificación Tributaria</option>
-
-                                </select>
-
-                                <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                            </div>
-
-
-                            <div class="flex">
-
-                                <div>
-                                    <label for="">Numero De Documento</label>
-                                    <input class="border border-gray-300 rounded  w-full placeholder:text-center p-2" type="text" name="numero-doc" id="numero-doc" placeholder="Numero de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                                    <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                                </div>
-
-                            </div>
-
-
-                            <div id="BuscarUser" class="p-2 rounded bg-green-500">
-
-
-
-                                <svg class="w-6" viewBox="0 0 64 64" id="Layer_1" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
-                                    <style>
-                                        .st2 {
-                                            fill: #d2f0ea
-                                        }
-                                    </style>
-                                    <path class="st2" d="m37.24 40.04 2.87-2.94c2.38-3.05 3.67-6.89 3.82-11.06.33-9.51-7.81-17.67-18-18-9.94-.32-18 8.06-18 18s8.06 18 18 18c4.28 0 8.22-1.5 11.31-4" />
-                                    <circle cx="25.93" cy="26.04" r="13.76" style="fill:#fff" />
-                                    <path class="st2" d="M16.16 27.04c-.55 0-1-.45-1-1 0-5.94 4.83-10.76 10.76-10.76.55 0 1 .45 1 1s-.45 1-1 1c-4.83 0-8.76 3.93-8.76 8.76 0 .56-.45 1-1 1" />
-                                    <path d="M54.46 48.03 42.33 37.96l-.68.68-1.54-1.54-2.87 2.94 1.51 1.51-.68.68 10.08 12.12a4.49 4.49 0 0 0 6.62.31 4.5 4.5 0 0 0-.31-6.63" style="fill:#7c64bd" />
-                                    <path d="M25.93 39.81c-7.59 0-13.76-6.17-13.76-13.76v11.59c3.3 3.92 8.24 6.41 13.76 6.41 4.29 0 8.22-1.5 11.31-4.01l2.45-2.51V26.04c0 7.59-6.17 13.77-13.76 13.77" style="fill:#b4e6dd" />
-                                </svg>
-
-
-
-
-                            </div>
-
+                    <div class="flex gap-3 items-end">
+                        <div class="flex-1">
+                            <label for="tipo-doc" class="block text-sm font-medium mb-1">Tipo Documento</label>
+                            <select id="tipo-doc" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                                <option value="" disabled selected>-- Selecciona --</option>
+                                <option value="1">Cedula Ciudadania</option>
+                                <option value="2">Tarjeta Identidad</option>
+                                <option value="3">Cedula Extranjeria</option>
+                                <option value="4">Registro Civil</option>
+                                <option value="5">Permiso Especial</option>
+                                <option value="6">Numero Identificación Tributaria</option>
+                            </select>
                         </div>
 
-
-
-
-                    </div>
-
-                    <div class="text-center text-orange-500 font-bold bg-orange-100  rounded rounded-orange-500 my-2 mx-1 hidden" id="feligresNoExiste">
-                        <span>feligres no existe ingresa sus datos : </span>
-                    </div>
-
-
-                    <div class="flex space-x-2 mt-4 justify-center">
-                        <div>
-                            <label for="">Primer Nombre</label>
-                            <input type="text" name="primerNombre" id="primerNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerNombre'])) echo $_POST['primerNombre']; ?>">
-                            <label name="primerNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                        <div class="flex-1">
+                            <label for="numero-doc" class="block text-sm font-medium mb-1">Número de Documento</label>
+                            <input type="text" id="numero-doc" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                                   placeholder="Número de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
 
-                        <div>
-                            <label for="">Segundo Nombre</label>
-                            <input type="text" name="segundoNombre" id="segundoNombre" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Nombre" value="<?php if (isset($_POST['segundoNombre'])) echo $_POST['segundoNombre']; ?>">
-                            <label name="segundoNombre-error" class="text-red-500 hidden">Corrije Este Campo </label>
-                        </div>
-
+                        <button type="button" id="BuscarUser" class="p-3 rounded-lg bg-[#D0B8A8] hover:bg-[#ab876f] transition duration-200">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </button>
                     </div>
 
+                    <div id="feligresNoExiste" class="text-center text-orange-600 font-semibold bg-orange-100 rounded-lg p-2 mt-3 hidden">
+                        <span>Feligrés no existe, completa sus datos manualmente</span>
+                    </div>
+                </div>
 
+                <!-- Datos del participante -->
+                <div class="border border-gray-300 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-800 mb-3">Datos del Participante</h4>
 
-
-
-                    <div class="flex space-x-2 mt-4 justify-center">
-
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label for="">Primer Apellido</label>
-                            <input type="text" name="primerApellido" id="primerApellido" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu Primer Nombre" value="<?php if (isset($_POST['primerApellido'])) echo $_POST['primerApellido']; ?>">
-                            <label name="primerApellido-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                            <label for="primerNombre" class="block text-sm font-medium mb-1">Primer Nombre *</label>
+                            <input type="text" id="primerNombre" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                                   placeholder="Primer Nombre">
                         </div>
 
                         <div>
-                            <label for="">Segundo Apellido</label>
-                            <input type="text" name="segundoApellido" id="segundoApellido" class="border border-gray-300 rounded p-2 w-full" placeholder="Ingresa Tu segundo Apellido" value="<?php if (isset($_POST['segundoApellido'])) echo $_POST['segundoApellido']; ?>">
-                            <label name="segundoApellido-error" class="text-red-500 hidden">Corrije Este Campo </label>
+                            <label for="segundoNombre" class="block text-sm font-medium mb-1">Segundo Nombre</label>
+                            <input type="text" id="segundoNombre" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                                   placeholder="Segundo Nombre">
                         </div>
 
+                        <div>
+                            <label for="primerApellido" class="block text-sm font-medium mb-1">Primer Apellido *</label>
+                            <input type="text" id="primerApellido" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                                   placeholder="Primer Apellido">
+                        </div>
+
+                        <div>
+                            <label for="segundoApellido" class="block text-sm font-medium mb-1">Segundo Apellido</label>
+                            <input type="text" id="segundoApellido" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                                   placeholder="Segundo Apellido">
+                        </div>
                     </div>
 
-
-
-                    <div class="mx-7">
-                        <label for="rolParticipante" class="block font-medium">Rol</label>
-                        <select class="border border-gray-300 rounded p-2 w-full" name="rolParticipante" id="rolParticipante">
-                            <option class="text-center" value="" disabled selected>-- Selecciona un Rol --</option>
-
+                    <div class="mt-3">
+                        <label for="rolParticipante" class="block text-sm font-medium mb-1">Rol en el Sacramento *</label>
+                        <select id="rolParticipante" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                            <option value="" disabled selected>-- Selecciona un Rol --</option>
                             <?php
-
                             if ($tipo == 1) {
                                 echo '<option value="10">Abuelo</option>';
                                 echo '<option value="11">Abuela</option>';
@@ -229,58 +249,37 @@
                             } elseif ($tipo == 3) {
                                 echo '<option value="3">Difunto</option>';
                             } elseif ($tipo == 4) {
-
                                 echo '<option value="4">Esposo</option>';
                                 echo '<option value="5">Esposa</option>';
-
                                 echo '<option value="12">Esposo Padrino</option>';
                                 echo '<option value="13">Esposo Madrina</option>';
                                 echo '<option value="14">Esposa Padrino</option>';
                                 echo '<option value="15">Esposa Madrina</option>';
                             }
                             ?>
-
                             <option value="6">Padre</option>
                             <option value="7">Madre</option>
-
-                            <?php if ($tipo !== 3 &&  $tipo !== 4) {
-
-                                echo ' <option value="8">Padrino</option>';
+                            <?php if ($tipo !== 3 && $tipo !== 4) {
+                                echo '<option value="8">Padrino</option>';
                                 echo '<option value="9">Madrina</option>';
-                            }; ?>
+                            } ?>
                         </select>
                     </div>
-
-
-                    <div id="AddNew" class="w-full bg-gray-200 rounded text-center font-bold py-1 cursor-pointer my-3">+ Añadir Participante</div>
-
-
-
-
-
-
-
                 </div>
-
-
-
             </div>
+        </div>
 
-
-            <div class="flex justify-end gap-2 pt-4">
-
-                <button type="button" id="Anterior" class="bg-blue-100 px-4 py-2 rounded cursor-pointer hidden">Anterior</button>
-                <button type="button" id="Siguiente" class="bg-blue-100 px-4 py-2 rounded cursor-pointer">Siguiente</button>
-                <button type="submit" id="Guardar" class="bg-blue-100 text-black/50 px-4 py-2 rounded hidden">Guardar</button>
-
-                <button type="button" id="cerrarFormSacramentos" class="bg-red-100 px-4 py-2 rounded cursor-pointer">Cerrar</button>
-            </div>
-        </form>
-        </div> <!-- FIN contenedor overflow-y-auto -->
+        <!-- Botones del Mini-Modal -->
+        <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white">
+            <button type="button" id="cancelarParticipante" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium">
+                Cancelar
+            </button>
+            <button type="button" id="AddNew" class="flex-1 px-4 py-2 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold transition duration-200">
+                Añadir Participante
+            </button>
+        </div>
     </div>
 </div>
-
-
 
 
 
@@ -336,9 +335,72 @@
     // EVENT LISTENERS
     // ============================================================================
 
-    $(document).on('click', '#BuscarUser', function() {
+    // ============================================================================
+    // MANEJO DEL MINI-MODAL
+    // ============================================================================
 
-        alert('Buscar Usuario');
+    // Abrir mini-modal
+    $(document).on('click', '#btnAbrirModalParticipante', function() {
+        $('#miniModalParticipante').removeClass('hidden');
+        actualizarOpcionesRol(); // Actualizar roles disponibles
+    });
+
+    // Cerrar mini-modal
+    $(document).on('click', '#cerrarMiniModal, #cancelarParticipante', function() {
+        cerrarMiniModal();
+    });
+
+    // Cerrar mini-modal al hacer clic fuera
+    $(document).on('click', '#miniModalParticipante', function(e) {
+        if (e.target.id === 'miniModalParticipante') {
+            cerrarMiniModal();
+        }
+    });
+
+    // Función para cerrar mini-modal y limpiar campos
+    function cerrarMiniModal() {
+        $('#miniModalParticipante').addClass('hidden');
+        $('#tipo-doc').val('').removeClass('border-red-500');
+        $('#numero-doc').val('').removeClass('border-red-500');
+        $('#primerNombre').val('');
+        $('#segundoNombre').val('');
+        $('#primerApellido').val('');
+        $('#segundoApellido').val('');
+        $('#rolParticipante').val('').removeClass('border-red-500');
+        $('#feligresNoExiste').addClass('hidden');
+    }
+
+    // ============================================================================
+    // GESTIÓN DINÁMICA DE ROLES EN SELECT
+    // ============================================================================
+
+    /**
+     * Actualiza las opciones disponibles del select de roles
+     * Oculta los roles que ya han sido añadidos
+     */
+    function actualizarOpcionesRol() {
+        const rolesAñadidos = [];
+
+        // Obtener todos los roles ya añadidos
+        $('input[name^="integrantes"][name$="[rolParticipante]"]').each(function() {
+            rolesAñadidos.push($(this).val());
+        });
+
+        // Mostrar/ocultar opciones según los roles añadidos
+        $('#rolParticipante option').each(function() {
+            const valorOpcion = $(this).val();
+            if (valorOpcion && rolesAñadidos.includes(valorOpcion)) {
+                $(this).hide(); // Ocultar rol ya añadido
+            } else {
+                $(this).show(); // Mostrar rol disponible
+            }
+        });
+
+        // Resetear el select
+        $('#rolParticipante').val('');
+    }
+
+    $(document).on('click', '#BuscarUser', function() {
 
         $numeroDoc = document.getElementById('numero-doc').value.trim();
         $tipoDoc = document.getElementById('tipo-doc').value.trim();
@@ -435,9 +497,12 @@
     });
 
     $(document).on('click', '#AddNew', function() {
-        agregarIntegrante();
-        $('#feligresNoExiste').addClass('hidden');
-        resetVacio(contador);
+        const resultado = agregarIntegrante();
+        if (resultado) {
+            // Solo cerrar el mini-modal si se añadió correctamente
+            cerrarMiniModal();
+            resetVacio(contador);
+        }
     });
 
 
@@ -481,37 +546,18 @@
 
             resaltarCampo('#primerNombre');
             resaltarCampo('#primerApellido');
-            resaltarCampo('#segundoNombre');
-            resaltarCampo('#segundoApellido');
             resaltarCampo('#tipo-doc');
             resaltarCampo('#numero-doc');
             resaltarCampo('#rolParticipante');
 
-
-
-
-            $('#rolParticipante').addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
-            setTimeout(
-                function() {
-                    $('#rolParticipante').removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
-                }, 5000);
-
-
-
-
-
-
-
-            Toast.fire({
-                icon: "warning",
-                title: "Inserta Datos Para Continuar"
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Por favor, complete todos los campos obligatorios',
+                confirmButtonColor: '#D0B8A8'
             });
 
-
-
-            return;
-
-
+            return false;
         }
 
         const inputs = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]'));
@@ -528,29 +574,33 @@
         });
 
         if (existedoc) {
-
             resaltarCampo('#tipo-doc');
             resaltarCampo('#numero-doc');
 
+            Swal.fire({
+                icon: 'warning',
+                title: 'Documento duplicado',
+                text: 'Ya hay un participante con ese documento',
+                confirmButtonColor: '#D0B8A8'
+            });
 
-            alert('ya hay un participanteas con ese Documento. ');
-
-            return;
+            return false;
         }
 
-
         if (existe) {
-            const idDelInput = inputEncontrado ? inputEncontrado.id : null;
-
             resaltarCampo('#rolParticipante');
 
             const select = document.getElementById('rolParticipante');
             const textoSeleccionado = select.options[select.selectedIndex].text;
 
-            resaltarCampo('#' + textoSeleccionado + '-rol');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Rol duplicado',
+                text: `El rol "${textoSeleccionado}" ya ha sido añadido`,
+                confirmButtonColor: '#D0B8A8'
+            });
 
-            alert('Este ROL ya ha sido añadido.' + textoSeleccionado);
-            return;
+            return false;
         }
 
 
@@ -615,22 +665,30 @@
 
         document.getElementById('contenedor-integrantes').appendChild(li);
 
-        // Limpiar los campos después de añadir
-        document.getElementById('tipo-doc').value = '';
-        document.getElementById('numero-doc').value = '';
-        document.getElementById('primerNombre').value = '';
-        document.getElementById('segundoNombre').value = '';
-        document.getElementById('primerApellido').value = '';
-        document.getElementById('segundoApellido').value = '';
-        document.getElementById('rolParticipante').value = '';
+        // Actualizar opciones disponibles en el select
+        actualizarOpcionesRol();
 
+        // Mostrar mensaje de éxito
+        Toast.fire({
+            icon: 'success',
+            title: 'Participante añadido correctamente'
+        });
 
+        return true;
     }
 
     function eliminarIntegrante(boton) {
         boton.closest('li').remove();
         contador--;
         resetVacio(contador);
+
+        // Actualizar opciones disponibles después de eliminar
+        actualizarOpcionesRol();
+
+        Toast.fire({
+            icon: 'info',
+            title: 'Participante eliminado'
+        });
     }
 
 
@@ -662,6 +720,26 @@
     }
 
     $(document).on('click', '#Siguiente', function() {
+        // Validar fecha antes de avanzar del Form1
+        if (form === 1) {
+            const fechaEvento = $('#fecha-evento').val();
+            if (!fechaEvento || fechaEvento.trim() === '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Fecha requerida',
+                    text: 'Por favor, ingrese la fecha del evento antes de continuar',
+                    confirmButtonColor: '#D0B8A8'
+                });
+                $('#fecha-evento').addClass('border-red-500 animate-pulse');
+                setTimeout(() => {
+                    $('#fecha-evento').removeClass('animate-pulse');
+                }, 2000);
+                return;
+            } else {
+                $('#fecha-evento').removeClass('border-red-500');
+            }
+        }
+
         if (form < totalForms) form++;
         mostrarFormulario(form);
     });
@@ -722,7 +800,7 @@
 
     function cargarSacramentoParaEditar(sacramentoId) {
         $.ajax({
-            url: '?route=sacramentos/obtener',
+            url: '<?= url('sacramentos/obtener') ?>',
             type: 'POST',
             data: { sacramento_id: sacramentoId },
             dataType: 'json',
@@ -859,8 +937,59 @@
                 title: 'Tipo Sacramento'
             },
             {
-                data: 'participantes',
-                title: 'Participantes'
+                data: 'participante_principal',
+                title: 'Participante(s) Principal(es)',
+                render: function(data, type, row) {
+                    if (!data) {
+                        return '<span class="text-gray-400 italic">Sin datos</span>';
+                    }
+
+                    // Si es matrimonio (array con dos personas)
+                    if (Array.isArray(data)) {
+                        return `
+                            <div class="space-y-1">
+                                ${data.map(p => `
+                                    <div class="flex items-center gap-2 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5] p-2 rounded-lg border-l-4 border-[#D0B8A8]">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-10 h-10 rounded-full bg-[#D0B8A8] flex items-center justify-center text-white font-bold">
+                                                ${p.nombre.charAt(0)}
+                                            </div>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-semibold text-gray-800 truncate">${p.nombre}</div>
+                                            <div class="text-xs text-gray-600">
+                                                <span class="font-medium">${p.rol}</span>
+                                                ${p.tipo_documento && p.numero_documento ?
+                                                    ` • ${p.tipo_documento}: ${p.numero_documento}` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+
+                    // Para otros sacramentos (una sola persona)
+                    return `
+                        <div class="flex items-center gap-3 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5] p-3 rounded-lg border-l-4 border-[#D0B8A8]">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 rounded-full bg-[#D0B8A8] flex items-center justify-center text-white font-bold text-lg">
+                                    ${data.nombre.charAt(0)}
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-gray-800 text-sm">${data.nombre}</div>
+                                <div class="text-xs text-gray-600 mt-1">
+                                    <span class="inline-block bg-[#ab876f] text-white px-2 py-0.5 rounded text-xs font-medium">
+                                        ${data.rol}
+                                    </span>
+                                    ${data.tipo_documento && data.numero_documento ?
+                                        `<span class="ml-2">${data.tipo_documento}: ${data.numero_documento}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             },
             {
                 data: 'fecha_generacion',
@@ -881,12 +1010,12 @@
                 className: 'text-center',
                 render: function(data, type, row) {
                     return `<div class="flex gap-2 justify-center">
-                                <button class="btn-editar-sacramento bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                <button class="btn-editar-sacramento bg-[#E8DFD5] hover:bg-[#DFD3C3] text-[#ab876f] px-3 py-1.5 rounded-lg text-sm font-medium transition duration-200"
                                         data-sacramento-id="${row.id}"
                                         title="Editar este sacramento">
                                     ✏️ Editar
                                 </button>
-                                <button class="btn-generar-certificado bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                                <button class="btn-generar-certificado bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-3 py-1.5 rounded-lg text-sm font-medium transition duration-200"
                                         data-sacramento-id="${row.id}"
                                         data-tipo="${row.tipo_sacramento}"
                                         title="Generar certificado de este sacramento">
@@ -912,7 +1041,7 @@
             const sacramentoId = row.data().id;
 
             $.ajax({
-                url: '?route=sacramentos/participantes',
+                url: '<?= url('sacramentos/participantes') ?>',
                 type: 'POST',
                 data: {
                     sacramento_id: sacramentoId
@@ -921,13 +1050,63 @@
                 success: function(data) {
                     let html = '';
                     if (data.length > 0) {
-                        html = '<ul style="margin:0;padding-left:15px">';
+                        html = `
+                            <div class="bg-gradient-to-r from-[#F5F0EB] to-white p-4 rounded-lg border border-[#DFD3C3]">
+                                <h4 class="text-sm font-bold text-[#ab876f] mb-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    Todos los Participantes (${data.length})
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        `;
+
+                        // Colores por rol
+                        const coloresRol = {
+                            'Bautizado': 'bg-blue-100 text-blue-800 border-blue-300',
+                            'Confirmando': 'bg-purple-100 text-purple-800 border-purple-300',
+                            'Difunto': 'bg-gray-100 text-gray-800 border-gray-300',
+                            'Esposo': 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                            'Esposa': 'bg-pink-100 text-pink-800 border-pink-300',
+                            'Padre': 'bg-indigo-100 text-indigo-800 border-indigo-300',
+                            'Madre': 'bg-rose-100 text-rose-800 border-rose-300',
+                            'Padrino': 'bg-cyan-100 text-cyan-800 border-cyan-300',
+                            'Madrina': 'bg-emerald-100 text-emerald-800 border-emerald-300',
+                            'Abuelo': 'bg-violet-100 text-violet-800 border-violet-300',
+                            'Abuela': 'bg-fuchsia-100 text-fuchsia-800 border-fuchsia-300'
+                        };
+
                         data.forEach(p => {
-                            html += `<li><strong>${p.rol}</strong>: ${p.nombre}</li>`;
+                            const colorClasses = coloresRol[p.rol] || 'bg-gray-100 text-gray-800 border-gray-300';
+
+                            html += `
+                                <div class="flex items-center gap-3 bg-white p-3 rounded-lg border ${colorClasses.split(' ')[2]} shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 rounded-full ${colorClasses.split(' ')[0]} flex items-center justify-center font-bold ${colorClasses.split(' ')[1]}">
+                                            ${p.nombre.charAt(0)}
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="font-semibold text-gray-800 text-sm truncate">${p.nombre}</div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <span class="inline-block ${colorClasses} px-2 py-0.5 rounded-full text-xs font-medium border">
+                                                ${p.rol}
+                                            </span>
+                                            ${p.tipo_documento && p.numero_documento ?
+                                                `<span class="text-xs text-gray-500">${p.tipo_documento}: ${p.numero_documento}</span>`
+                                                : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
                         });
-                        html += '</ul>';
+
+                        html += `
+                                </div>
+                            </div>
+                        `;
                     } else {
-                        html = '<em>No hay participantes adicionales</em>';
+                        html = '<div class="p-4 text-center text-gray-500 italic">No hay participantes adicionales</div>';
                     }
 
                     row.child(html).show();
@@ -935,7 +1114,7 @@
                     icon.text('➖');
                 },
                 error: function() {
-                    row.child('<em>Error al cargar participantes</em>').show();
+                    row.child('<div class="p-4 text-center text-red-500">Error al cargar participantes</div>').show();
                     tr.addClass('shown');
                     icon.text('➖');
                 }
@@ -968,7 +1147,7 @@
             `,
             icon: 'question',
             showCancelButton: true,
-            confirmButtonColor: '#3b82f6',
+            confirmButtonColor: '#D0B8A8',
             cancelButtonColor: '#6b7280',
             confirmButtonText: 'Sí, generar',
             cancelButtonText: 'Cancelar'
@@ -986,7 +1165,7 @@
 
                 // Obtener datos del sacramento para generar el certificado
                 $.ajax({
-                    url: '?route=sacramentos/participantes',
+                    url: '<?= url('sacramentos/participantes') ?>',
                     type: 'POST',
                     data: { sacramento_id: sacramentoId },
                     dataType: 'json',
@@ -1035,7 +1214,7 @@
                         formData.append('metodo_pago', 'efectivo'); // Pago en efectivo automático
 
                         $.ajax({
-                            url: '?route=certificados/generar-simplificado',
+                            url: '<?= url('certificados/generar-simplificado') ?>',
                             type: 'POST',
                             data: formData,
                             processData: false,
@@ -1055,10 +1234,10 @@
                                             </p>
                                         `,
                                         confirmButtonText: 'Ver certificados',
-                                        confirmButtonColor: '#10b981'
+                                        confirmButtonColor: '#D0B8A8'
                                     }).then(() => {
                                         // Redirigir al módulo de certificados
-                                        window.location.href = '?route=certificados';
+                                        window.location.href = '<?= url('certificados') ?>';
                                     });
                                 } else {
                                     Swal.fire({

@@ -355,39 +355,37 @@ class ModeloSacramento
 
             $libroId = $libro['id'];
 
-            // Ahora obtenemos los sacramentos de ese libro con sus participantes
+            // Ahora obtenemos los sacramentos de ese libro
             $sql = "SELECT
                         s.id,
                         s.fecha_generacion,
                         s.tipo_sacramento_id,
-                        st.tipo AS tipo_sacramento,
-                        GROUP_CONCAT(
-                            CONCAT(
-                                f.primer_nombre, ' ',
-                                COALESCE(f.segundo_nombre, ''), ' ',
-                                f.primer_apellido, ' ',
-                                COALESCE(f.segundo_apellido, ''),
-                                ' (', pr.rol, ')'
-                            )
-                            SEPARATOR ', '
-                        ) AS participantes
+                        st.tipo AS tipo_sacramento
                     FROM sacramentos s
                     JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
-                    LEFT JOIN participantes p ON p.sacramento_id = s.id
-                    LEFT JOIN feligreses f ON f.id = p.feligres_id
-                    LEFT JOIN participantes_rol pr ON pr.id = p.rol_participante_id
                     WHERE s.libro_id = ?
                     AND s.estado_registro IS NULL
-                    GROUP BY s.id, s.fecha_generacion, s.tipo_sacramento_id, st.tipo
                     ORDER BY s.fecha_generacion DESC";
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$libroId]);
             $sacramentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Agregar columna 'lugar' como N/A (no existe en BD pero la vista la espera)
+            // Para cada sacramento, obtener el participante principal y todos los participantes
             foreach ($sacramentos as &$sacramento) {
                 $sacramento['lugar'] = 'N/A';
+
+                // Obtener participante(s) principal(es) según el tipo de sacramento
+                $participantePrincipal = $this->obtenerParticipantePrincipal($sacramento['id'], $sacramento['tipo_sacramento_id']);
+                $sacramento['participante_principal'] = $participantePrincipal;
+
+                // Mantener todos los participantes para la lista completa
+                $todosParticipantes = $this->getParticipantes($sacramento['id']);
+                $listaParticipantes = array_map(function($p) {
+                    return $p['nombre'] . ' (' . $p['rol'] . ')';
+                }, $todosParticipantes);
+
+                $sacramento['participantes'] = implode(', ', $listaParticipantes);
             }
 
             return $sacramentos;
@@ -395,6 +393,71 @@ class ModeloSacramento
         } catch (PDOException $e) {
             Logger::error("Error al obtener sacramentos por libro:", ['error' => $e->getMessage()]);
             return [];
+        }
+    }
+
+    /**
+     * Obtiene el participante principal de un sacramento según su tipo
+     * Para bautizos: Bautizado
+     * Para confirmaciones: Confirmando
+     * Para defunciones: Difunto
+     * Para matrimonios: Esposo y Esposa
+     */
+    private function obtenerParticipantePrincipal($sacramentoId, $tipoSacramentoId)
+    {
+        try {
+            // Definir el rol principal según el tipo de sacramento
+            $rolesPrincipales = [
+                1 => ['Bautizado'],           // Bautizos
+                2 => ['Confirmando'],         // Confirmaciones
+                3 => ['Difunto'],             // Defunciones
+                4 => ['Esposo', 'Esposa']     // Matrimonios - ambos son principales
+            ];
+
+            $roles = $rolesPrincipales[$tipoSacramentoId] ?? [];
+
+            if (empty($roles)) {
+                return null;
+            }
+
+            $placeholders = implode(',', array_fill(0, count($roles), '?'));
+
+            $sql = "SELECT
+                        CONCAT(
+                            f.primer_nombre, ' ',
+                            COALESCE(f.segundo_nombre, ''), ' ',
+                            f.primer_apellido, ' ',
+                            COALESCE(f.segundo_apellido, '')
+                        ) AS nombre,
+                        pr.rol,
+                        td.tipo AS tipo_documento,
+                        f.numero_documento
+                    FROM participantes p
+                    JOIN feligreses f ON f.id = p.feligres_id
+                    JOIN participantes_rol pr ON pr.id = p.rol_participante_id
+                    LEFT JOIN tipo_documento td ON td.id = f.tipo_documento_id
+                    WHERE p.sacramento_id = ?
+                    AND pr.rol IN ($placeholders)
+                    AND p.estado_registro IS NULL
+                    ORDER BY pr.id";
+
+            $params = array_merge([$sacramentoId], $roles);
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute($params);
+
+            $participantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Para matrimonios, devolver ambos como un array
+            if ($tipoSacramentoId == 4 && count($participantes) == 2) {
+                return $participantes;
+            }
+
+            // Para otros sacramentos, devolver el primero
+            return $participantes[0] ?? null;
+
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener participante principal:", ['error' => $e->getMessage()]);
+            return null;
         }
     }
 

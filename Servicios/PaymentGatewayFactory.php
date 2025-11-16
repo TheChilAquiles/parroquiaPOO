@@ -28,8 +28,9 @@ class PaymentGatewayFactory
 
             case 'paymentway':
                 return new PaymentWayGateway(
-                    PAYMENT_GATEWAY_API_KEY,
-                    PAYMENT_GATEWAY_SECRET_KEY,
+                    PAYMENTSWAY_MERCHANT_ID,
+                    PAYMENTSWAY_FORM_ID,
+                    PAYMENTSWAY_TERMINAL_ID,
                     $mode
                 );
 

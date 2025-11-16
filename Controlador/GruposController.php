@@ -396,4 +396,45 @@ class GruposController extends BaseController
         header('Location: ?route=grupos/ver&id=' . $grupo_id);
         exit();
     }
+
+    /**
+     * Crea un nuevo rol de grupo
+     */
+    public function crearRol()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $_SESSION['mensaje'] = 'Método no permitido.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
+            exit();
+        }
+
+        $nombreRol = trim($_POST['nombre_rol'] ?? '');
+
+        if (empty($nombreRol)) {
+            $_SESSION['mensaje'] = 'El nombre del rol es obligatorio.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            header('Location: ?route=grupos');
+            exit();
+        }
+
+        try {
+            $resultado = $this->modelo->mdlCrearRolGrupo($nombreRol);
+
+            if ($resultado) {
+                $_SESSION['mensaje'] = "Rol '$nombreRol' creado exitosamente.";
+                $_SESSION['tipo_mensaje'] = 'success';
+            } else {
+                $_SESSION['mensaje'] = 'El rol ya existe o no se pudo crear.';
+                $_SESSION['tipo_mensaje'] = 'error';
+            }
+        } catch (Exception $e) {
+            $_SESSION['mensaje'] = 'Error al crear el rol.';
+            $_SESSION['tipo_mensaje'] = 'error';
+            Logger::error("Error en GruposController::crearRol -", ['error' => $e->getMessage()]);
+        }
+
+        header('Location: ?route=grupos');
+        exit();
+    }
 }

@@ -48,6 +48,9 @@ try {
 // para definir las constantes (SMTP_HOST, DB_HOST, etc.)
 require_once __DIR__ . '/config.php';
 
+// 3.5. Cargar funciones helper
+require_once __DIR__ . '/helpers.php';
+
 // 4. Cargar el resto de tus archivos
 // Ahora la conexión SÍ tiene las constantes DB_HOST, DB_NAME, etc.
 require_once __DIR__ . '/Modelo/Conexion.php';

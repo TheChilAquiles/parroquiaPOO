@@ -78,7 +78,7 @@
 
             <!-- Header con efecto flotante -->
             <div class="text-center mb-10 floating">
-                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-pink-400 via-purple-400 to-indigo-400 rounded-full shadow-2xl mb-6 border-4 border-white">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-pink-400 via-[#D0B8A8] to-indigo-400 rounded-full shadow-2xl mb-6 border-4 border-white">
                     <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                     </svg>
@@ -136,13 +136,13 @@
                     </div>
                 </div>
 
-                <div class="glass-card hover-lift rounded-3xl p-8 border-l-4 border-purple-400">
+                <div class="glass-card hover-lift rounded-3xl p-8 border-l-4 border-[#D0B8A8]">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-semibold text-gray-600 uppercase tracking-wide">Valor Total</p>
-                            <p class="text-4xl font-black text-purple-700">$<?= number_format($estadisticas['valor_total'] ?? 0, 0, ',', '.') ?></p>
+                            <p class="text-4xl font-black text-[#ab876f]">$<?= number_format($estadisticas['valor_total'] ?? 0, 0, ',', '.') ?></p>
                         </div>
-                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <div class="w-16 h-16 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] rounded-2xl flex items-center justify-center shadow-lg">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
@@ -168,8 +168,8 @@
                     </div>
 
                     <!-- Botón agregar -->
-                    <a href="?route=pagos/crear"
-                       class="shimmer inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105">
+                    <a href="<?= url('pagos/crear') ?>"
+                       class="shimmer inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-500 via-[#D0B8A8] to-pink-500 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105">
                         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
@@ -195,10 +195,10 @@
                             <tbody class="bg-white" id="tableBody">
                                 <?php if (!empty($pagos)): ?>
                                     <?php foreach ($pagos as $pago): ?>
-                                        <tr class="border-b-2 border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all duration-300">
+                                        <tr class="border-b-2 border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-[#F5F0EB] transition-all duration-300">
                                             <!-- ID -->
                                             <td class="px-8 py-6 text-center">
-                                                <div class="w-14 h-14 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg mx-auto">
+                                                <div class="w-14 h-14 bg-gradient-to-br from-indigo-400 to-[#F5F0EB]0 rounded-full flex items-center justify-center shadow-lg mx-auto">
                                                     <span class="text-lg font-black text-white"><?= htmlspecialchars($pago['id'], ENT_QUOTES, 'UTF-8') ?></span>
                                                 </div>
                                             </td>
@@ -252,7 +252,7 @@
                                             <!-- Acciones -->
                                             <td class="px-8 py-6 text-center">
                                                 <div class="flex items-center justify-center space-x-3">
-                                                    <a href="?route=pagos/actualizar&id=<?= htmlspecialchars($pago['id'], ENT_QUOTES, 'UTF-8') ?>"
+                                                    <a href="<?= url('pagos/actualizar', ['id' => $pago['id'], ENT_QUOTES, 'UTF-8']) ?>"
                                                        class="px-4 py-3 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-sm font-bold rounded-xl hover:scale-110 transition-transform shadow-lg">
                                                         Editar
                                                     </a>

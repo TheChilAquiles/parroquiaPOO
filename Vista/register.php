@@ -2,8 +2,8 @@
     <h1 class="text-3xl my-2 font-bold">Registrarse</h1>
     <div class="p-10 rounded-md bg-white">
 
-        <!-- ✅ CAMBIO PRINCIPAL: action="?route=registro/procesar" -->
-        <form action="?route=registro/procesar" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
+        <!-- ✅ Formulario de registro con URL limpia -->
+        <form action="<?= url('registro/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
             
             <label for="email">Correo electrónico</label>
             <input 

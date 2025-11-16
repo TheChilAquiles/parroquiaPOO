@@ -2,8 +2,8 @@
     <h1 class="text-3xl my-2 font-bold">Ingresar</h1>
     <div class="p-10 rounded-md bg-white">
 
-        <!-- ✅ CAMBIO PRINCIPAL: action="?route=login/procesar" -->
-        <form action="?route=login/procesar" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
+        <!-- ✅ Formulario de login con URL limpia -->
+        <form action="<?= url('login/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
             
             <label for="email">Correo electrónico</label>
             <input 
@@ -47,7 +47,7 @@
     </form>
 
     <div class="mt-4 text-center">
-        <a href="?route=olvido" class="text-sm text-blue-600 hover:underline">
+        <a href="<?= url('olvido') ?>" class="text-sm text-blue-600 hover:underline">
             ¿Olvidaste tu contraseña?
         </a>
     </div>

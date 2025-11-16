@@ -418,7 +418,7 @@ class ModeloGrupo
 
     /**
      * Lista todos los roles disponibles para asignar en grupos.
-     * 
+     *
      * @return array Lista de roles con id y nombre
      */
     public function mdlListarRolesGrupo()
@@ -431,6 +431,43 @@ class ModeloGrupo
         } catch (PDOException $e) {
             Logger::error("Error al listar roles de grupo:", ['error' => $e->getMessage()]);
             return [];
+        }
+    }
+
+    /**
+     * Crea un nuevo rol de grupo.
+     *
+     * @param string $nombreRol Nombre del rol a crear
+     * @return bool True si se creó exitosamente, false si ya existe o hubo error
+     */
+    public function mdlCrearRolGrupo($nombreRol)
+    {
+        try {
+            // Validar que el nombre no esté vacío
+            if (empty(trim($nombreRol))) {
+                return false;
+            }
+
+            // Verificar si el rol ya existe
+            $sqlCheck = "SELECT id FROM grupo_roles WHERE rol = ? AND estado_registro IS NULL";
+            $stmtCheck = $this->conexion->prepare($sqlCheck);
+            $stmtCheck->execute([trim($nombreRol)]);
+
+            if ($stmtCheck->rowCount() > 0) {
+                return false; // El rol ya existe
+            }
+
+            // Insertar nuevo rol
+            $sql = "INSERT INTO grupo_roles (rol) VALUES (?)";
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute([trim($nombreRol)]);
+
+        } catch (PDOException $e) {
+            Logger::error("Error al crear rol de grupo:", [
+                'error' => $e->getMessage(),
+                'rol' => $nombreRol
+            ]);
+            return false;
         }
     }
 

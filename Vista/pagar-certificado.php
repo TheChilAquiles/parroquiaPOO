@@ -44,7 +44,9 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
 
             <div class="flex justify-between items-center pt-3 border-t-2 border-gray-300">
                 <span class="text-lg font-semibold text-gray-700">Total a Pagar:</span>
-                <span class="text-2xl font-bold text-blue-600">$10.00</span>
+                <span class="text-2xl font-bold text-blue-600">
+                    $<?= number_format(PAYMENT_CERTIFICATE_PRICE, 0, ',', '.') ?> <?= PAYMENT_DEFAULT_CURRENCY ?>
+                </span>
             </div>
         </div>
     </div>
@@ -53,7 +55,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
         <h2 class="text-xl font-semibold mb-4 text-gray-700">Método de Pago</h2>
 
-        <form method="POST" action="?route=pagos/procesar-pago-online" id="formPago">
+        <form method="POST" action="<?= url('pagos/procesar-pago-online') ?>" id="formPago">
             <input type="hidden" name="certificado_id" value="<?= htmlspecialchars($certificado['id'], ENT_QUOTES, 'UTF-8') ?>">
 
             <div class="space-y-4">
@@ -102,7 +104,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md transition-colors">
                     Proceder al Pago
                 </button>
-                <a href="?route=certificados/mis-solicitudes"
+                <a href="<?= url('certificados/mis-solicitudes') ?>"
                    class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-md text-center transition-colors">
                     Cancelar
                 </a>

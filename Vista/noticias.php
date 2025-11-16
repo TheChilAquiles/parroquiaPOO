@@ -83,7 +83,7 @@ $esAdmin = isset($_SESSION['user-rol']) &&
             
             <!-- Formulario de búsqueda -->
             <div class="flex-1 w-full lg:w-auto">
-                <form action="?route=noticias" method="POST" class="relative group">
+                <form action="<?= url('noticias') ?>" method="POST" class="relative group">
                     <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
                         <span class="material-icons text-gray-400 group-focus-within:text-[#ab876f] transition-colors">search</span>
                     </div>
@@ -102,7 +102,7 @@ $esAdmin = isset($_SESSION['user-rol']) &&
             <!-- Controles adicionales -->
             <div class="flex items-center gap-4">
                 <?php if (!empty($_POST['buscar'])): ?>
-                    <form action="?route=noticias" method="POST" class="inline-block">
+                    <form action="<?= url('noticias') ?>" method="POST" class="inline-block">
                         <button type="submit" class="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
                             <span class="material-icons mr-2">clear</span>
                             Limpiar búsqueda

@@ -29,6 +29,12 @@ class CertificadosController extends BaseController
 
         $rol = $_SESSION['user-rol'];
 
+        Logger::info("Acceso a vista de certificados", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'rol' => $rol,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
+
         // Administrador y Secretario ven vista administrativa con DataTables
         if (in_array($rol, ['Administrador', 'Secretario'])) {
             include_once __DIR__ . '/../Vista/certificados.php';
@@ -39,6 +45,10 @@ class CertificadosController extends BaseController
             $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
 
             if (!$feligresId) {
+                Logger::warning("Feligrés sin perfil completo intentó acceder a certificados", [
+                    'user_id' => $_SESSION['user-id'],
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 // Mostrar vista vacía con mensaje de perfil incompleto
                 $misCertificados = [];
                 $_SESSION['info'] = 'Tu perfil de feligrés aún no está completo. Contacta con la secretaría para completar tu registro y poder solicitar certificados.';
@@ -48,6 +58,12 @@ class CertificadosController extends BaseController
 
             // Obtener todos los certificados (propios + familiares + generados por secretario)
             $misCertificados = $this->modeloSolicitud->mdlObtenerMisSolicitudes($feligresId);
+
+            Logger::info("Certificados de feligrés cargados", [
+                'user_id' => $_SESSION['user-id'],
+                'feligres_id' => $feligresId,
+                'cantidad' => count($misCertificados)
+            ]);
 
             include_once __DIR__ . '/../Vista/mis-certificados.php';
         }
@@ -75,6 +91,13 @@ class CertificadosController extends BaseController
 
     public function generar()
     {
+        Logger::info("Intento de generación de certificado", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'method' => $_SERVER['REQUEST_METHOD'],
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'via' => isset($_GET['sacramento_id']) ? 'sacramento_id' : 'formulario'
+        ]);
+
         // NUEVO: Manejar generación desde sacramento_id (vía GET)
         if (isset($_GET['sacramento_id'])) {
             $this->generarDesdeSacramento((int)$_GET['sacramento_id']);
@@ -91,6 +114,11 @@ class CertificadosController extends BaseController
         $required = ['usuario_id', 'feligres_id', 'nombre_feligres', 'sacramento', 'fecha_realizacion', 'lugar'];
         foreach ($required as $field) {
             if (empty($_POST[$field])) {
+                Logger::warning("Generación de certificado - campo faltante", [
+                    'user_id' => $_SESSION['user-id'] ?? 'guest',
+                    'campo_faltante' => $field,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $_SESSION['error'] = "Falta el campo requerido: $field";
                 $this->mostrar();
                 return;
@@ -160,6 +188,15 @@ class CertificadosController extends BaseController
             $outPath = $outDir . '/' . $filename;
             file_put_contents($outPath, $dompdf->output());
 
+            Logger::info("Certificado generado exitosamente (método legacy)", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'certificado_id' => $id,
+                'feligres_id' => $data['feligres_id'],
+                'sacramento' => $data['sacramento'],
+                'archivo' => $filename,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             // Descargar
             header('Content-Type: application/pdf');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -167,6 +204,12 @@ class CertificadosController extends BaseController
             exit();
 
         } catch (Exception $e) {
+            Logger::error("Error al generar certificado (método legacy)", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
             $this->mostrar();
         }
@@ -326,11 +369,22 @@ class CertificadosController extends BaseController
      */
     private function generarDesdeSacramento($sacramentoId)
     {
+        Logger::info("Intento de generación de certificado desde sacramento", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'sacramento_id' => $sacramentoId,
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
+
         try {
             // Obtener datos del sacramento
             $sacramento = $this->modeloSacramento->mdlObtenerPorId($sacramentoId);
 
             if (!$sacramento) {
+                Logger::warning("Sacramento no encontrado para generar certificado", [
+                    'user_id' => $_SESSION['user-id'] ?? 'guest',
+                    'sacramento_id' => $sacramentoId,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $_SESSION['error'] = "Sacramento no encontrado con ID: $sacramentoId";
                 header('Location: ?route=sacramentos');
                 exit();
@@ -340,6 +394,11 @@ class CertificadosController extends BaseController
             $participantes = $this->modeloSacramento->getParticipantes($sacramentoId);
 
             if (empty($participantes)) {
+                Logger::warning("No se encontraron participantes para sacramento", [
+                    'user_id' => $_SESSION['user-id'] ?? 'guest',
+                    'sacramento_id' => $sacramentoId,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $_SESSION['error'] = "No se encontraron participantes para este sacramento";
                 header('Location: ?route=sacramentos');
                 exit();
@@ -533,6 +592,15 @@ class CertificadosController extends BaseController
             $safeName = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', $nombreCompleto));
             $filename = 'certificado_' . $tipoSacramento . '_' . $safeName . '.pdf';
 
+            Logger::info("Certificado generado exitosamente desde sacramento", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'sacramento_id' => $sacramentoId,
+                'tipo_sacramento' => $tipoSacramento,
+                'participantes_count' => count($participantes),
+                'archivo' => $filename,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             // Forzar descarga
             header('Content-Type: application/pdf');
             header('Content-Disposition: attachment; filename="' . $filename . '"');
@@ -540,7 +608,13 @@ class CertificadosController extends BaseController
             exit();
 
         } catch (Exception $e) {
-            Logger::error("Error al generar certificado desde sacramento:", ['error' => $e->getMessage()]);
+            Logger::error("Error al generar certificado desde sacramento:", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'sacramento_id' => $sacramentoId ?? null,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
             header('Location: ?route=sacramentos');
             exit();
@@ -561,7 +635,17 @@ class CertificadosController extends BaseController
 
         header('Content-Type: application/json');
 
+        Logger::info("Intento de generación simplificada de certificado", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'rol' => $_SESSION['user-rol'] ?? 'unknown',
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Logger::warning("Generación simplificada - método no permitido", [
+                'method' => $_SERVER['REQUEST_METHOD'],
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
             echo json_encode([
                 'success' => false,
                 'message' => 'Método no permitido'
@@ -574,6 +658,11 @@ class CertificadosController extends BaseController
             $required = ['tipo_documento_id', 'numero_documento', 'tipo_sacramento_id'];
             foreach ($required as $field) {
                 if (empty($_POST[$field])) {
+                    Logger::warning("Generación simplificada - campo faltante", [
+                        'user_id' => $_SESSION['user-id'] ?? 'guest',
+                        'campo_faltante' => $field,
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                    ]);
                     echo json_encode([
                         'success' => false,
                         'message' => "Campo requerido faltante: $field"
@@ -594,6 +683,13 @@ class CertificadosController extends BaseController
             $resultado = $this->modeloSolicitud->mdlCrearCertificadoDirecto($datos);
 
             if ($resultado['status'] === 'error') {
+                Logger::warning("Generación simplificada - error al crear certificado", [
+                    'user_id' => $_SESSION['user-id'] ?? 'guest',
+                    'numero_documento_prefix' => substr($datos['numero_documento'], 0, 3) . '***',
+                    'tipo_sacramento_id' => $datos['tipo_sacramento_id'],
+                    'mensaje' => $resultado['message'],
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 echo json_encode([
                     'success' => false,
                     'message' => $resultado['message']
@@ -613,6 +709,15 @@ class CertificadosController extends BaseController
                 $generado = $this->generarAutomatico($certificadoId);
 
                 if ($generado) {
+                    Logger::info("Certificado simplificado creado y PDF generado exitosamente", [
+                        'user_id' => $_SESSION['user-id'] ?? 'guest',
+                        'certificado_id' => $certificadoId,
+                        'numero_documento_prefix' => substr($datos['numero_documento'], 0, 3) . '***',
+                        'tipo_sacramento_id' => $datos['tipo_sacramento_id'],
+                        'metodo_pago' => 'efectivo',
+                        'pdf_generado' => true,
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                    ]);
                     echo json_encode([
                         'success' => true,
                         'message' => 'Certificado creado y PDF generado exitosamente',
@@ -620,6 +725,13 @@ class CertificadosController extends BaseController
                         'pdf_generado' => true
                     ]);
                 } else {
+                    Logger::warning("Certificado simplificado creado pero PDF no generado", [
+                        'user_id' => $_SESSION['user-id'] ?? 'guest',
+                        'certificado_id' => $certificadoId,
+                        'numero_documento_prefix' => substr($datos['numero_documento'], 0, 3) . '***',
+                        'tipo_sacramento_id' => $datos['tipo_sacramento_id'],
+                        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                    ]);
                     echo json_encode([
                         'success' => true,
                         'message' => 'Certificado creado pero hubo error al generar PDF',
@@ -629,6 +741,14 @@ class CertificadosController extends BaseController
                 }
             } else {
                 // Sin pago en efectivo, solo crear solicitud
+                Logger::info("Certificado simplificado creado - pendiente de pago", [
+                    'user_id' => $_SESSION['user-id'] ?? 'guest',
+                    'certificado_id' => $certificadoId,
+                    'numero_documento_prefix' => substr($datos['numero_documento'], 0, 3) . '***',
+                    'tipo_sacramento_id' => $datos['tipo_sacramento_id'],
+                    'estado' => 'pendiente_pago',
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 echo json_encode([
                     'success' => true,
                     'message' => 'Certificado creado exitosamente. Pendiente de pago.',
@@ -638,7 +758,12 @@ class CertificadosController extends BaseController
             }
 
         } catch (Exception $e) {
-            Logger::error("Error en generarSimplificado:", ['error' => $e->getMessage()]);
+            Logger::error("Error en generarSimplificado:", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al generar certificado: ' . $e->getMessage()
@@ -859,8 +984,16 @@ class CertificadosController extends BaseController
      */
     public function obtenerFamiliares()
     {
+        Logger::info("Solicitud de lista de familiares", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+        ]);
+
         // Verificar autenticación
         if (!isset($_SESSION['logged']) || !isset($_SESSION['user-id'])) {
+            Logger::warning("Obtener familiares - sesión no válida", [
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             if (ob_get_level()) ob_clean();
             header('Content-Type: application/json');
             http_response_code(401);
@@ -876,6 +1009,10 @@ class CertificadosController extends BaseController
             $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
 
             if (!$feligresId) {
+                Logger::warning("Obtener familiares - perfil de feligrés no encontrado", [
+                    'user_id' => $_SESSION['user-id'],
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 throw new Exception('No se encontró perfil de feligrés');
             }
 
@@ -904,6 +1041,13 @@ class CertificadosController extends BaseController
             $stmt->execute([$feligresId, $feligresId, $feligresId, $feligresId]);
             $familiares = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            Logger::info("Lista de familiares obtenida exitosamente", [
+                'user_id' => $_SESSION['user-id'],
+                'feligres_id' => $feligresId,
+                'cantidad_familiares' => count($familiares),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             if (ob_get_level()) ob_clean();
             header('Content-Type: application/json');
             echo json_encode([
@@ -912,16 +1056,18 @@ class CertificadosController extends BaseController
             ]);
 
         } catch (Exception $e) {
+            Logger::error("Error al obtener familiares", [
+                'user_id' => $_SESSION['user-id'] ?? null,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             if (ob_get_level()) ob_clean();
             header('Content-Type: application/json');
             http_response_code(400);
             echo json_encode([
                 'success' => false,
                 'message' => $e->getMessage()
-            ]);
-            Logger::error("Error al obtener familiares", [
-                'usuario_id' => $_SESSION['user-id'] ?? null,
-                'error' => $e->getMessage()
             ]);
         }
 
@@ -934,11 +1080,20 @@ class CertificadosController extends BaseController
      */
     public function verificar()
     {
+        $codigo = $_GET['codigo'] ?? null;
+
+        Logger::info("Intento de verificación de certificado", [
+            'codigo' => $codigo ?? 'no_proporcionado',
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+        ]);
+
         try {
             // Obtener código del certificado desde GET
-            $codigo = $_GET['codigo'] ?? null;
-
             if (empty($codigo)) {
+                Logger::warning("Verificación de certificado sin código", [
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $_SESSION['error'] = 'No se proporcionó un código de verificación válido.';
                 include_once __DIR__ . '/../Vista/verificar-certificado.php';
                 return;
@@ -948,6 +1103,10 @@ class CertificadosController extends BaseController
             $certificado = $this->modelo->mdlObtenerPorId($codigo);
 
             if (!$certificado) {
+                Logger::warning("Verificación fallida - certificado no encontrado", [
+                    'codigo' => $codigo,
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $mensaje = 'Certificado no encontrado. Verifique el código e intente nuevamente.';
                 $valido = false;
                 include_once __DIR__ . '/../Vista/verificar-certificado.php';
@@ -956,6 +1115,12 @@ class CertificadosController extends BaseController
 
             // Verificar que el certificado esté generado
             if (empty($certificado['ruta_archivo'])) {
+                Logger::warning("Verificación fallida - certificado no generado", [
+                    'codigo' => $codigo,
+                    'certificado_id' => $certificado['id'],
+                    'estado' => $certificado['estado'] ?? 'unknown',
+                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                ]);
                 $mensaje = 'Este certificado aún no ha sido generado por la parroquia.';
                 $valido = false;
                 include_once __DIR__ . '/../Vista/verificar-certificado.php';
@@ -963,6 +1128,14 @@ class CertificadosController extends BaseController
             }
 
             // Certificado válido
+            Logger::info("Certificado verificado exitosamente", [
+                'codigo' => $codigo,
+                'certificado_id' => $certificado['id'],
+                'tipo' => $certificado['tipo_certificado'] ?? 'N/A',
+                'fecha_generacion' => $certificado['fecha_generacion'] ?? 'N/A',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             $mensaje = 'Certificado válido y verificado.';
             $valido = true;
 
@@ -979,7 +1152,12 @@ class CertificadosController extends BaseController
             include_once __DIR__ . '/../Vista/verificar-certificado.php';
 
         } catch (Exception $e) {
-            Logger::error("Error al verificar certificado:", ['error' => $e->getMessage(), 'codigo' => $codigo ?? 'N/A']);
+            Logger::error("Error al verificar certificado:", [
+                'error' => $e->getMessage(),
+                'codigo' => $codigo ?? 'N/A',
+                'trace' => $e->getTraceAsString(),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             $mensaje = 'Error al verificar el certificado. Por favor, intente más tarde.';
             $valido = false;
             include_once __DIR__ . '/../Vista/verificar-certificado.php';

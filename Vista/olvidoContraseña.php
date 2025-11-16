@@ -21,7 +21,7 @@
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
 
-        <form action="?route=olvido/procesar" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
+        <form action="<?= url('olvido/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
             
             <label for="email">Ingresa tu correo electrónico</label>
             <p class="text-sm text-gray-600 mb-2">Te enviaremos un enlace para restablecer tu contraseña.</p>
@@ -47,7 +47,7 @@
         </form>
 
         <div class="mt-4 text-center">
-            <a href="?route=login" class="text-sm text-blue-600 hover:underline">
+            <a href="<?= url('login') ?>" class="text-sm text-blue-600 hover:underline">
                 Volver a Iniciar Sesión
             </a>
         </div>

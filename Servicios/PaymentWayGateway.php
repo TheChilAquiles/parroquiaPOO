@@ -2,40 +2,43 @@
 
 /**
  * PaymentWayGateway
- * Implementación del gateway de Payment Way Solutions (Colombia)
+ * Implementación del gateway de PaymentsWay (VePay) - Colombia
  *
- * NOTA: Esta es una implementación base que debe ser configurada con las credenciales
- * y endpoints reales de Payment Way Solutions.
+ * PaymentsWay utiliza un sistema de redirección de formularios HTML
+ * donde el usuario es redirigido a su pasarela de pagos para completar la transacción.
  *
- * Documentación oficial: Contactar a Payments Way Solutions (paymentsway.co)
- * para obtener credenciales de API y documentación técnica.
+ * Documentación: https://www.vepay.com.co
  */
 class PaymentWayGateway implements PaymentGatewayInterface
 {
-    private $apiKey;
-    private $secretKey;
+    private $merchantId;
+    private $formId;
+    private $terminalId;
     private $mode; // 'sandbox' o 'production'
-    private $apiUrl;
+    private $responseUrl;
 
-    // Endpoints (estos deben ser actualizados con los URLs reales de PaymentWay)
-    const SANDBOX_URL = 'https://sandbox.paymentsway.co/api/v1'; // URL hipotética
-    const PRODUCTION_URL = 'https://api.paymentsway.co/api/v1';  // URL hipotética
+    // URLs de PaymentsWay (VePay)
+    const SANDBOX_URL = 'https://merchantpruebas.vepay.com.co/cartaspago/redirect';
+    const PRODUCTION_URL = 'https://merchant.vepay.com.co/cartaspago/redirect';
 
-    public function __construct(string $apiKey, string $secretKey, string $mode = 'sandbox')
+    public function __construct(string $merchantId = null, string $formId = null, string $terminalId = null, string $mode = 'sandbox')
     {
-        $this->apiKey = $apiKey;
-        $this->secretKey = $secretKey;
+        // Usar constantes de config si no se pasan parámetros
+        $this->merchantId = $merchantId ?? PAYMENTSWAY_MERCHANT_ID;
+        $this->formId = $formId ?? PAYMENTSWAY_FORM_ID;
+        $this->terminalId = $terminalId ?? PAYMENTSWAY_TERMINAL_ID;
         $this->mode = $mode;
-        $this->apiUrl = ($mode === 'production') ? self::PRODUCTION_URL : self::SANDBOX_URL;
+        $this->responseUrl = PAYMENTSWAY_RESPONSE_URL;
 
         // Validar credenciales
-        if (empty($this->apiKey) || empty($this->secretKey)) {
-            throw new Exception("PaymentWay requiere API Key y Secret Key válidos");
+        if (empty($this->merchantId) || empty($this->formId) || empty($this->terminalId)) {
+            throw new Exception("PaymentsWay requiere merchant_id, form_id y terminal_id válidos");
         }
     }
 
     /**
-     * Procesa un pago a través de PaymentWay
+     * Procesa un pago a través de PaymentsWay
+     * Este método genera los datos necesarios para la redirección al formulario de pago
      *
      * @param array $paymentData Datos del pago
      * @return array
@@ -66,66 +69,71 @@ class PaymentWayGateway implements PaymentGatewayInterface
                 ];
             }
 
-            // Preparar datos para la API de PaymentWay
-            // NOTA: Estos campos deben ajustarse según la documentación oficial de PaymentWay
-            $requestData = [
-                'api_key' => $this->apiKey,
+            // Generar número de orden único
+            $orderNumber = $this->generateOrderNumber($paymentData['metadata']['certificado_id'] ?? null);
+
+            // Preparar datos para el formulario de PaymentsWay
+            $formData = [
+                'merchant_id' => $this->merchantId,
+                'form_id' => $this->formId,
+                'terminal_id' => $this->terminalId,
+                'order_number' => $orderNumber,
                 'amount' => $paymentData['amount'],
-                'currency' => $paymentData['currency'],
-                'description' => $paymentData['description'],
-                'reference' => $this->generateReference(),
-                'customer' => [
-                    'email' => $paymentData['customer_email'] ?? '',
-                    'name' => $paymentData['customer_name'] ?? '',
-                    'phone' => $paymentData['customer_phone'] ?? ''
-                ],
-                'metadata' => $paymentData['metadata'] ?? [],
-                'return_url' => $paymentData['return_url'] ?? '',
-                'notification_url' => $paymentData['notification_url'] ?? '',
+                'currency' => strtolower($paymentData['currency']), // PaymentsWay usa minúsculas
+                'order_description' => $paymentData['description'],
+                'color_base' => '#3e5569', // Color del tema de la pasarela
+                'response_url' => $this->responseUrl,
             ];
 
-            // Generar firma de seguridad
-            $requestData['signature'] = $this->generateSignature($requestData);
-
-            // Hacer petición HTTP a PaymentWay
-            $response = $this->makeApiRequest('/payments', 'POST', $requestData);
-
-            // Procesar respuesta
-            if ($response['success']) {
-                Logger::info("PaymentWay: Pago procesado exitosamente", [
-                    'transaction_id' => $response['transaction_id'] ?? 'N/A',
-                    'amount' => $paymentData['amount']
-                ]);
-
-                return [
-                    'success' => true,
-                    'transaction_id' => $response['transaction_id'] ?? null,
-                    'message' => 'Pago procesado exitosamente',
-                    'data' => [
-                        'payment_url' => $response['payment_url'] ?? null, // URL para redirigir al usuario
-                        'status' => $response['status'] ?? 'pending',
-                        'reference' => $response['reference'] ?? null,
-                        'mode' => $this->mode
-                    ]
-                ];
-            } else {
-                Logger::error("PaymentWay: Pago rechazado", $response);
-                return [
-                    'success' => false,
-                    'transaction_id' => null,
-                    'message' => $response['message'] ?? 'Pago rechazado',
-                    'data' => ['error_code' => $response['error_code'] ?? 'UNKNOWN']
-                ];
+            // Datos opcionales del cliente (si están disponibles)
+            if (isset($paymentData['customer_email'])) {
+                $formData['client_email'] = $paymentData['customer_email'];
+            }
+            if (isset($paymentData['customer_phone'])) {
+                $formData['client_phone'] = $paymentData['customer_phone'];
+            }
+            if (isset($paymentData['customer_name'])) {
+                // Dividir nombre completo en nombre y apellido
+                $nameParts = explode(' ', $paymentData['customer_name'], 2);
+                $formData['client_firstname'] = $nameParts[0] ?? '';
+                $formData['client_lastname'] = $nameParts[1] ?? '';
+            }
+            if (isset($paymentData['customer_doctype'])) {
+                $formData['client_doctype'] = $paymentData['customer_doctype'];
+            }
+            if (isset($paymentData['customer_numdoc'])) {
+                $formData['client_numdoc'] = $paymentData['customer_numdoc'];
             }
 
+            // Determinar URL de redirección según el modo
+            $paymentUrl = ($this->mode === 'production') ? self::PRODUCTION_URL : self::SANDBOX_URL;
+
+            Logger::info("PaymentsWay: Preparando redirección de pago", [
+                'order_number' => $orderNumber,
+                'amount' => $paymentData['amount'],
+                'mode' => $this->mode
+            ]);
+
+            return [
+                'success' => true,
+                'transaction_id' => $orderNumber,
+                'message' => 'Redirección a pasarela de pago preparada',
+                'data' => [
+                    'payment_url' => $paymentUrl,
+                    'form_data' => $formData,
+                    'requires_redirect' => true,
+                    'mode' => $this->mode
+                ]
+            ];
+
         } catch (Exception $e) {
-            Logger::error("PaymentWay: Error al procesar pago", [
+            Logger::error("PaymentsWay: Error al preparar pago", [
                 'error' => $e->getMessage()
             ]);
             return [
                 'success' => false,
                 'transaction_id' => null,
-                'message' => 'Error al procesar el pago: ' . $e->getMessage(),
+                'message' => 'Error al preparar el pago: ' . $e->getMessage(),
                 'data' => []
             ];
         }
@@ -133,52 +141,28 @@ class PaymentWayGateway implements PaymentGatewayInterface
 
     /**
      * Verifica el estado de una transacción
+     * NOTA: PaymentsWay no proporciona API para verificación directa,
+     * la confirmación se hace mediante webhook/callback
      *
      * @param string $transactionId
      * @return array
      */
     public function verifyTransaction(string $transactionId): array
     {
-        try {
-            $requestData = [
-                'api_key' => $this->apiKey,
-                'transaction_id' => $transactionId
-            ];
+        Logger::warning("PaymentsWay: verifyTransaction no implementado - use callback", [
+            'transaction_id' => $transactionId
+        ]);
 
-            $requestData['signature'] = $this->generateSignature($requestData);
-
-            $response = $this->makeApiRequest('/payments/' . $transactionId, 'GET', $requestData);
-
-            if ($response['success']) {
-                return [
-                    'success' => true,
-                    'status' => $response['status'] ?? 'unknown',
-                    'message' => 'Transacción verificada',
-                    'data' => $response
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'status' => 'error',
-                    'message' => $response['message'] ?? 'Error al verificar transacción'
-                ];
-            }
-
-        } catch (Exception $e) {
-            Logger::error("PaymentWay: Error al verificar transacción", [
-                'error' => $e->getMessage(),
-                'transaction_id' => $transactionId
-            ]);
-            return [
-                'success' => false,
-                'status' => 'error',
-                'message' => 'Error al verificar transacción: ' . $e->getMessage()
-            ];
-        }
+        return [
+            'success' => false,
+            'status' => 'unknown',
+            'message' => 'PaymentsWay no soporta verificación directa. Use el callback de respuesta.'
+        ];
     }
 
     /**
      * Reembolsa un pago
+     * NOTA: Los reembolsos en PaymentsWay deben gestionarse manualmente a través del panel administrativo
      *
      * @param string $transactionId
      * @param float|null $amount
@@ -186,49 +170,15 @@ class PaymentWayGateway implements PaymentGatewayInterface
      */
     public function refundPayment(string $transactionId, float $amount = null): array
     {
-        try {
-            $requestData = [
-                'api_key' => $this->apiKey,
-                'transaction_id' => $transactionId,
-                'amount' => $amount,
-                'reason' => 'Solicitud de reembolso'
-            ];
+        Logger::warning("PaymentsWay: refundPayment no implementado", [
+            'transaction_id' => $transactionId
+        ]);
 
-            $requestData['signature'] = $this->generateSignature($requestData);
-
-            $response = $this->makeApiRequest('/refunds', 'POST', $requestData);
-
-            if ($response['success']) {
-                Logger::info("PaymentWay: Reembolso procesado", [
-                    'transaction_id' => $transactionId,
-                    'refund_id' => $response['refund_id'] ?? 'N/A'
-                ]);
-
-                return [
-                    'success' => true,
-                    'refund_id' => $response['refund_id'] ?? null,
-                    'message' => 'Reembolso procesado exitosamente',
-                    'data' => $response
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'refund_id' => null,
-                    'message' => $response['message'] ?? 'Error al procesar reembolso'
-                ];
-            }
-
-        } catch (Exception $e) {
-            Logger::error("PaymentWay: Error al procesar reembolso", [
-                'error' => $e->getMessage(),
-                'transaction_id' => $transactionId
-            ]);
-            return [
-                'success' => false,
-                'refund_id' => null,
-                'message' => 'Error al procesar reembolso: ' . $e->getMessage()
-            ];
-        }
+        return [
+            'success' => false,
+            'refund_id' => null,
+            'message' => 'Los reembolsos en PaymentsWay deben gestionarse a través del panel administrativo'
+        ];
     }
 
     /**
@@ -238,119 +188,100 @@ class PaymentWayGateway implements PaymentGatewayInterface
      */
     public function getProviderName(): string
     {
-        return 'PaymentWay Colombia';
+        return 'PaymentsWay Colombia (VePay)';
     }
 
     /**
-     * Genera una referencia única para la transacción
+     * Genera un número de orden único
      *
+     * @param int|null $certificadoId
      * @return string
      */
-    private function generateReference(): string
+    private function generateOrderNumber($certificadoId = null): string
     {
-        return 'PW_' . strtoupper(uniqid('', true)) . '_' . time();
-    }
+        $prefix = 'CERT';
+        $timestamp = time();
+        $random = strtoupper(substr(uniqid(), -6));
 
-    /**
-     * Genera la firma de seguridad para la petición
-     * NOTA: Debe ajustarse según el algoritmo específico de PaymentWay
-     *
-     * @param array $data
-     * @return string
-     */
-    private function generateSignature(array $data): string
-    {
-        // Este es un ejemplo genérico. Debe reemplazarse con el algoritmo oficial de PaymentWay
-        // Usualmente es un HMAC-SHA256 de ciertos campos concatenados
-
-        // Ordenar datos alfabéticamente
-        ksort($data);
-
-        // Construir string de firma
-        $signatureString = '';
-        foreach ($data as $key => $value) {
-            if ($key !== 'signature' && !is_array($value)) {
-                $signatureString .= $key . '=' . $value . '&';
-            }
+        if ($certificadoId) {
+            return "{$prefix}{$certificadoId}_{$timestamp}_{$random}";
         }
-        $signatureString = rtrim($signatureString, '&');
 
-        // Generar HMAC
-        $signature = hash_hmac('sha256', $signatureString, $this->secretKey);
-
-        return $signature;
+        return "{$prefix}_{$timestamp}_{$random}";
     }
 
     /**
-     * Realiza una petición HTTP a la API de PaymentWay
+     * Procesa la respuesta de PaymentsWay después del pago
+     * Este método debe llamarse desde el callback/webhook
      *
-     * @param string $endpoint
-     * @param string $method
-     * @param array $data
+     * @param array $responseData Datos recibidos de PaymentsWay
      * @return array
      */
-    private function makeApiRequest(string $endpoint, string $method, array $data): array
+    public function processCallback(array $responseData): array
     {
-        $url = $this->apiUrl . $endpoint;
+        try {
+            // Validar que tengamos los datos necesarios
+            if (empty($responseData['order_number'])) {
+                return [
+                    'success' => false,
+                    'message' => 'Respuesta inválida: falta order_number'
+                ];
+            }
 
-        $headers = [
-            'Content-Type: application/json',
-            'Accept: application/json',
-            'Authorization: Bearer ' . $this->apiKey
-        ];
+            // PaymentsWay envía diferentes estados según el resultado
+            // Los estados pueden ser: 'approved', 'pending', 'rejected', 'cancelled', etc.
+            $status = strtolower($responseData['status'] ?? $responseData['estado'] ?? 'unknown');
 
-        $ch = curl_init();
+            $success = in_array($status, ['approved', 'aprobada', 'exitosa', 'success']);
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->mode === 'production');
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            Logger::info("PaymentsWay: Callback procesado", [
+                'order_number' => $responseData['order_number'],
+                'status' => $status,
+                'success' => $success
+            ]);
 
-        if ($method === 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        } elseif ($method === 'GET') {
-            curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($data));
+            return [
+                'success' => $success,
+                'order_number' => $responseData['order_number'],
+                'status' => $status,
+                'transaction_id' => $responseData['transaction_id'] ?? $responseData['order_number'],
+                'amount' => $responseData['amount'] ?? null,
+                'message' => $success ? 'Pago aprobado' : "Pago {$status}",
+                'raw_data' => $responseData
+            ];
+
+        } catch (Exception $e) {
+            Logger::error("PaymentsWay: Error al procesar callback", [
+                'error' => $e->getMessage(),
+                'data' => $responseData
+            ]);
+
+            return [
+                'success' => false,
+                'message' => 'Error al procesar respuesta: ' . $e->getMessage()
+            ];
         }
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_error($ch);
-        curl_close($ch);
-
-        if ($curlError) {
-            throw new Exception("cURL Error: " . $curlError);
-        }
-
-        $responseData = json_decode($response, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception("Error al decodificar respuesta JSON");
-        }
-
-        // Determinar si fue exitoso basado en el código HTTP
-        $responseData['success'] = ($httpCode >= 200 && $httpCode < 300);
-        $responseData['http_code'] = $httpCode;
-
-        return $responseData;
     }
 
     /**
-     * Valida la notificación de webhook de PaymentWay
+     * Genera el HTML del formulario de pago para redirección automática
      *
-     * @param array $webhookData
-     * @return bool
+     * @param array $formData Datos del formulario
+     * @return string HTML del formulario
      */
-    public function validateWebhook(array $webhookData): bool
+    public function generatePaymentForm(array $formData): string
     {
-        if (!isset($webhookData['signature'])) {
-            return false;
+        $paymentUrl = ($this->mode === 'production') ? self::PRODUCTION_URL : self::SANDBOX_URL;
+
+        $html = '<form id="paymentForm" method="post" action="' . htmlspecialchars($paymentUrl) . '">';
+
+        foreach ($formData as $key => $value) {
+            $html .= '<input name="' . htmlspecialchars($key) . '" type="hidden" value="' . htmlspecialchars($value) . '">';
         }
 
-        $receivedSignature = $webhookData['signature'];
-        $expectedSignature = $this->generateSignature($webhookData);
+        $html .= '</form>';
+        $html .= '<script>document.getElementById("paymentForm").submit();</script>';
 
-        return hash_equals($expectedSignature, $receivedSignature);
+        return $html;
     }
 }

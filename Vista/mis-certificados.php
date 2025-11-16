@@ -98,12 +98,12 @@
                     <!-- Footer del card con botones -->
                     <div class="border-t border-gray-200 p-4 bg-gray-50">
                         <?php if (($cert['estado'] ?? '') === 'pendiente_pago'): ?>
-                            <a href="?route=pagos/mis-pagos"
+                            <a href="<?= url('pagos/mis-pagos') ?>"
                                class="block w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
                                 💳 Realizar Pago
                             </a>
                         <?php elseif (in_array($cert['estado'] ?? '', ['generado', 'descargado'])): ?>
-                            <a href="?route=certificados/descargar&id=<?= $cert['id'] ?>"
+                            <a href="<?= url('certificados/descargar', ['id' => $cert['id']]) ?>"
                                class="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200">
                                 📥 Descargar PDF
                             </a>

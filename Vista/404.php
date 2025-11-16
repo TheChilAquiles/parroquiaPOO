@@ -14,7 +14,7 @@
             <p class="text-gray-600 mb-8">
                 La ruta "<strong><?php echo htmlspecialchars($_GET['route'] ?? 'desconocida', ENT_QUOTES, 'UTF-8'); ?></strong>" no existe
             </p>
-            <a href="?route=inicio"
+            <a href="<?= url('inicio') ?>"
                 class="px-6 py-3 bg-[#DFD3C3] text-gray-900 font-semibold rounded hover:bg-[#D0C3B3] transition-colors">
                 Volver al inicio
             </a>

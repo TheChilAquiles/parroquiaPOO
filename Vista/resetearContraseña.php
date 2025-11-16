@@ -21,7 +21,7 @@ if (!isset($token)) {
             <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
-        <form action="?route=resetear/procesar" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
+        <form action="<?= url('resetear/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
             
             <input type="hidden" name="token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>">
             

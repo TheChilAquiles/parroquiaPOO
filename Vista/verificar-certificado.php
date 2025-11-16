@@ -168,7 +168,7 @@
 
         <!-- Botón volver -->
         <div class="text-center mt-8">
-            <a href="?route=inicio" class="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
+            <a href="<?= url('inicio') ?>" class="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 transform hover:scale-105">
                 <i class="fas fa-home mr-2"></i>
                 Volver al Inicio
             </a>
