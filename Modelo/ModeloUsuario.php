@@ -17,17 +17,26 @@ class ModeloUsuario
      */
     public function mdlRegistrarUsuario($usuario)
     {
+        $email = $usuario['email'] ?? null;
+
         if (!isset($usuario['email']) || !isset($usuario['password'])) {
+            Logger::warning("Intento de registro con campos faltantes", [
+                'email_presente' => isset($usuario['email']),
+                'password_presente' => isset($usuario['password'])
+            ]);
             return ['status' => 'error', 'message' => 'Email y contraseña son requeridos'];
         }
 
         // Verificar si el email ya existe
         if ($this->existEmail($usuario['email'])) {
+            Logger::warning("Intento de registro con email duplicado", [
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+            ]);
             return ['status' => 'error', 'message' => 'El email ya está registrado'];
         }
 
         try {
-            $sql = "INSERT INTO usuarios (usuario_rol_id, email, contraseña) 
+            $sql = "INSERT INTO usuarios (usuario_rol_id, email, contraseña)
                     VALUES (?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
 
@@ -35,10 +44,20 @@ class ModeloUsuario
             $hashedPassword = password_hash($usuario['password'], PASSWORD_DEFAULT);
 
             $stmt->execute([1, $usuario['email'], $hashedPassword]);
+            $userId = $this->conexion->lastInsertId();
+
+            Logger::info("Usuario registrado exitosamente en BD", [
+                'user_id' => $userId,
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
+                'rol_id' => 1
+            ]);
 
             return ['status' => 'success', 'message' => 'Usuario registrado correctamente'];
         } catch (PDOException $e) {
-            Logger::error("Error al registrar usuario:", ['error' => $e->getMessage()]);
+            Logger::error("Error al registrar usuario:", [
+                'error' => $e->getMessage(),
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+            ]);
             return ['status' => 'error', 'message' => 'Error al registrar usuario'];
         }
     }
@@ -50,13 +69,22 @@ class ModeloUsuario
     public function mdlVerificarLogin($email, $password)
     {
         $usuario = $this->consultarUsuario($email);
+        $emailMasked = substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1);
 
         if (!$usuario) {
+            Logger::warning("Intento de login con email no registrado", [
+                'email' => $emailMasked
+            ]);
             return null;
         }
 
         // 1. Verificar si es bcrypt (nuevo)
         if (password_verify($password, $usuario['contraseña'])) {
+            Logger::info("Login exitoso con bcrypt", [
+                'user_id' => $usuario['id'],
+                'email' => $emailMasked,
+                'rol' => $usuario['rol'] ?? 'N/A'
+            ]);
             unset($usuario['contraseña']);
             return $usuario;
         }
@@ -69,9 +97,19 @@ class ModeloUsuario
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$nuevoHash, $usuario['id']]);
 
+            Logger::info("Login exitoso - Password migrado de MD5 a bcrypt", [
+                'user_id' => $usuario['id'],
+                'email' => $emailMasked
+            ]);
+
             unset($usuario['contraseña']);
             return $usuario;
         }
+
+        Logger::warning("Intento de login con contraseña incorrecta", [
+            'user_id' => $usuario['id'],
+            'email' => $emailMasked
+        ]);
 
         return null;
     }
@@ -83,17 +121,29 @@ class ModeloUsuario
     public function consultarUsuario($email)
     {
         try {
-            $sql = "SELECT u.*, ur.rol 
+            $sql = "SELECT u.*, ur.rol
                     FROM usuarios u
-                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id 
+                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id
                     WHERE u.email = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$email]);
 
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                Logger::info("Usuario consultado exitosamente por email", [
+                    'user_id' => $usuario['id'],
+                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
+                    'rol' => $usuario['rol'] ?? 'N/A'
+                ]);
+            }
+
             return $usuario ?: null;
         } catch (PDOException $e) {
-            Logger::error("Error al consultar usuario:", ['error' => $e->getMessage()]);
+            Logger::error("Error al consultar usuario:", [
+                'error' => $e->getMessage(),
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+            ]);
             return null;
         }
     }
@@ -107,9 +157,19 @@ class ModeloUsuario
             $sql = "SELECT COUNT(*) FROM usuarios WHERE email = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$email]);
-            return $stmt->fetchColumn() > 0;
+            $existe = $stmt->fetchColumn() > 0;
+
+            Logger::info("Verificación de email existente", [
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
+                'existe' => $existe
+            ]);
+
+            return $existe;
         } catch (PDOException $e) {
-            Logger::error("Error al verificar email:", ['error' => $e->getMessage()]);
+            Logger::error("Error al verificar email:", [
+                'error' => $e->getMessage(),
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+            ]);
             return true; // Por seguridad, asumimos que existe
         }
     }
@@ -121,15 +181,32 @@ class ModeloUsuario
     {
         // (Tu código original está bien)
         try {
-            $sql = "SELECT u.*, ur.rol 
+            $sql = "SELECT u.*, ur.rol
                     FROM usuarios u
-                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id 
+                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id
                     WHERE u.id = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                Logger::info("Usuario obtenido por ID", [
+                    'user_id' => $id,
+                    'email' => substr($usuario['email'], 0, 3) . '***@' . substr(strstr($usuario['email'], '@'), 1),
+                    'rol' => $usuario['rol'] ?? 'N/A'
+                ]);
+            } else {
+                Logger::warning("Usuario no encontrado por ID", [
+                    'user_id' => $id
+                ]);
+            }
+
+            return $usuario;
         } catch (PDOException $e) {
-            Logger::error("Error al obtener usuario:", ['error' => $e->getMessage()]);
+            Logger::error("Error al obtener usuario:", [
+                'error' => $e->getMessage(),
+                'user_id' => $id
+            ]);
             return null;
         }
     }
@@ -141,15 +218,23 @@ class ModeloUsuario
     {
         // (Tu código original está bien)
         try {
-            $sql = "SELECT u.*, ur.rol 
+            $sql = "SELECT u.*, ur.rol
                     FROM usuarios u
-                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id 
+                    LEFT JOIN usuario_roles ur ON u.usuario_rol_id = ur.id
                     ORDER BY u.email ASC";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            Logger::info("Listado de usuarios obtenido de BD", [
+                'total_usuarios' => count($usuarios)
+            ]);
+
+            return $usuarios;
         } catch (PDOException $e) {
-            Logger::error("Error al obtener usuarios:", ['error' => $e->getMessage()]);
+            Logger::error("Error al obtener usuarios:", [
+                'error' => $e->getMessage()
+            ]);
             return [];
         }
     }
@@ -164,13 +249,30 @@ class ModeloUsuario
     public function mdlGuardarTokenReset($email, $token, $expires)
     {
         try {
-            $sql = "UPDATE usuarios 
+            $sql = "UPDATE usuarios
                     SET reset_token = ?, reset_token_expires = ?
                     WHERE email = ?";
             $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$token, $expires, $email]);
+            $result = $stmt->execute([$token, $expires, $email]);
+
+            if ($result) {
+                Logger::info("Token de reseteo de contraseña guardado", [
+                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
+                    'token_prefix' => substr($token, 0, 8) . '...',
+                    'expires' => $expires
+                ]);
+            } else {
+                Logger::warning("No se pudo guardar token de reseteo - email no encontrado", [
+                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+                ]);
+            }
+
+            return $result;
         } catch (PDOException $e) {
-            Logger::error("Error al guardar token de reseteo:", ['error' => $e->getMessage()]);
+            Logger::error("Error al guardar token de reseteo:", [
+                'error' => $e->getMessage(),
+                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
+            ]);
             return false;
         }
     }
@@ -181,13 +283,30 @@ class ModeloUsuario
     public function mdlBuscarUsuarioPorToken($token)
     {
         try {
-            $sql = "SELECT * FROM usuarios 
+            $sql = "SELECT * FROM usuarios
                     WHERE reset_token = ? AND reset_token_expires > NOW()";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$token]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($usuario) {
+                Logger::info("Usuario encontrado por token válido", [
+                    'user_id' => $usuario['id'],
+                    'email' => substr($usuario['email'], 0, 3) . '***@' . substr(strstr($usuario['email'], '@'), 1),
+                    'token_prefix' => substr($token, 0, 8) . '...'
+                ]);
+            } else {
+                Logger::warning("Token de reseteo inválido o expirado", [
+                    'token_prefix' => substr($token, 0, 8) . '...'
+                ]);
+            }
+
+            return $usuario;
         } catch (PDOException $e) {
-            Logger::error("Error al buscar por token:", ['error' => $e->getMessage()]);
+            Logger::error("Error al buscar por token:", [
+                'error' => $e->getMessage(),
+                'token_prefix' => substr($token, 0, 8) . '...'
+            ]);
             return null;
         }
     }
@@ -198,6 +317,16 @@ class ModeloUsuario
     public function mdlActualizarContrasenaPorToken($token, $nuevaPassword)
     {
         try {
+            // Primero obtenemos el usuario para logging
+            $usuario = $this->mdlBuscarUsuarioPorToken($token);
+
+            if (!$usuario) {
+                Logger::warning("Intento de actualizar contraseña con token inválido", [
+                    'token_prefix' => substr($token, 0, 8) . '...'
+                ]);
+                return false;
+            }
+
             // Hashear la nueva contraseña
             $hashedPassword = password_hash($nuevaPassword, PASSWORD_DEFAULT);
 
@@ -205,9 +334,21 @@ class ModeloUsuario
                     SET contraseña = ?, reset_token = NULL, reset_token_expires = NULL
                     WHERE reset_token = ?";
             $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute([$hashedPassword, $token]);
+            $result = $stmt->execute([$hashedPassword, $token]);
+
+            if ($result) {
+                Logger::info("Contraseña actualizada exitosamente", [
+                    'user_id' => $usuario['id'],
+                    'email' => substr($usuario['email'], 0, 3) . '***@' . substr(strstr($usuario['email'], '@'), 1)
+                ]);
+            }
+
+            return $result;
         } catch (PDOException $e) {
-            Logger::error("Error al actualizar contraseña:", ['error' => $e->getMessage()]);
+            Logger::error("Error al actualizar contraseña:", [
+                'error' => $e->getMessage(),
+                'token_prefix' => substr($token, 0, 8) . '...'
+            ]);
             return false;
         }
     }
