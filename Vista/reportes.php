@@ -1,26 +1,24 @@
 <?php
-// Vista/reportes.php
-// Variables que deben llegar desde el controlador:
-// $reportes (array), $totalReportes (int), $totalValor (float), $pagosCompletados (int)
+/**
+ * Vista/reportes.php - Vista Principal del Módulo de Reportes
+ * Variables requeridas desde el controlador:
+ * - $reportes (array): Lista de reportes
+ * - $totalReportes (int): Cantidad total de reportes
+ * - $totalValor (float): Suma total de valores
+ * - $pagosCompletados (int): Cantidad de pagos completados
+ * - $pagosPendientes (int): Cantidad de pagos pendientes (opcional)
+ * - $reportesActivos (int): Cantidad de reportes activos (opcional)
+ */
 
-// Guardas por seguridad si alguien carga la vista sin pasar datos
-if (!isset($reportes) || !is_array($reportes)) $reportes = [];
-if (!isset($totalReportes)) $totalReportes = count($reportes);
-if (!isset($totalValor)) $totalValor = array_sum(array_map(function($r){ return isset($r['valor']) ? floatval($r['valor']) : 0.0; }, $reportes));
-if (!isset($pagosCompletados)) {
-    $pagosCompletados = 0;
-    foreach ($reportes as $r) {
-        $estadoPago = strtolower(trim($r['estado_pago'] ?? ''));
-        if (in_array($estadoPago, ['completo', 'pagado', 'paid', 'complete'])) $pagosCompletados++;
-    }
-}
+// Guardas de seguridad
+$reportes = $reportes ?? [];
+$totalReportes = $totalReportes ?? 0;
+$totalValor = $totalValor ?? 0.0;
+$pagosCompletados = $pagosCompletados ?? 0;
+$pagosPendientes = $pagosPendientes ?? 0;
 
-// Helper para fechas seguras
-function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
-    if (empty($fecha) || $fecha === '0000-00-00 00:00:00') return '-';
-    $ts = strtotime($fecha);
-    return $ts ? date($formato, $ts) : $fecha;
-}
+// Helper para formateo de fechas
+require_once __DIR__ . '/../helpers.php';
 ?>
 <!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
@@ -79,16 +77,24 @@ function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
                 <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-stretch lg:items-center justify-between">
                     <div class="search-box relative flex-1 max-w-md rounded-2xl overflow-hidden">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <!-- icono búsqueda -->
+                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
                         </div>
                         <input type="text" id="searchInput" placeholder="Buscar reportes..." class="w-full pl-12 pr-4 py-4 bg-transparent border-0 focus:outline-none text-slate-700 placeholder-slate-400 text-lg">
                     </div>
 
                     <div class="flex flex-wrap gap-3">
-                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700" data-filter="all">Todos</button>
-                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700" data-filter="pagado">Pagados</button>
-                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700" data-filter="pendiente">Pendientes</button>
-                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700" data-filter="activo">Activos</button>
+                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700 border border-slate-300 hover:bg-slate-50" data-filter="all">Todos</button>
+                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700 border border-slate-300 hover:bg-slate-50" data-filter="pagado">Pagados</button>
+                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700 border border-slate-300 hover:bg-slate-50" data-filter="pendiente">Pendientes</button>
+                        <button class="filter-button px-6 py-3 rounded-xl font-semibold text-slate-700 border border-slate-300 hover:bg-slate-50" data-filter="activo">Activos</button>
+                        <button id="btnExportarPDF" class="px-6 py-3 rounded-xl font-semibold text-white bg-red-600 hover:bg-red-700 transition">
+                            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Exportar PDF
+                        </button>
                     </div>
                 </div>
             </div>
@@ -111,15 +117,11 @@ function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
                         </thead>
 
                         <tbody class="bg-white divide-y-0" id="tableBody">
-                        <?php if (count($reportes) > 0): ?>
+                        <?php if (!empty($reportes)): ?>
                             <?php foreach ($reportes as $fila): ?>
-                                <?php
-                                    $estadoPagoAttr = strtolower($fila['estado_pago'] ?? 'pendiente');
-                                    $estadoRegistroAttr = strtolower($fila['estado_registro'] ?? 'inactivo');
-                                ?>
                                 <tr class="table-row border-b border-slate-100"
-                                    data-estado-pago="<?= htmlspecialchars($estadoPagoAttr) ?>"
-                                    data-estado-registro="<?= htmlspecialchars($estadoRegistroAttr) ?>">
+                                    data-estado-pago="<?= e(strtolower($fila['estado_pago'] ?? 'pendiente')) ?>"
+                                    data-estado-registro="<?= e(strtolower($fila['estado_registro'] ?? 'inactivo')) ?>">
 
                                     <td class="px-4 lg:px-6 py-6 text-center border-r">
                                         <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -146,22 +148,35 @@ function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
 
                                     <td class="px-4 lg:px-6 py-6 text-center border-r hidden sm:table-cell">
                                         <div class="text-sm text-slate-600">
-                                            <div class="font-medium"><?= formatoFechaSegura($fila['fecha_reporte'], 'd/m/Y') ?></div>
-                                            <div class="text-xs text-slate-400 mt-1"><?= formatoFechaSegura($fila['fecha_reporte'], 'H:i') ?></div>
+                                            <?php
+                                            $fechaReporte = $fila['fecha_reporte'] ?? '';
+                                            if (!empty($fechaReporte) && $fechaReporte !== '0000-00-00 00:00:00') {
+                                                $timestamp = strtotime($fechaReporte);
+                                                if ($timestamp) {
+                                                    echo '<div class="font-medium">' . date('d/m/Y', $timestamp) . '</div>';
+                                                    echo '<div class="text-xs text-slate-400 mt-1">' . date('H:i', $timestamp) . '</div>';
+                                                } else {
+                                                    echo '<div class="text-slate-400">-</div>';
+                                                }
+                                            } else {
+                                                echo '<div class="text-slate-400">-</div>';
+                                            }
+                                            ?>
                                         </div>
                                     </td>
 
                                     <td class="px-4 lg:px-6 py-6 text-center border-r">
                                         <?php
-                                            $estado_registro = htmlspecialchars($fila['estado_registro'] ?? 'Inactivo');
-                                            $registro_class = (strtolower($estado_registro) === 'activo') ?
-                                                'bg-gradient-to-r from-green-50 to-green-100 text-green-800 border-green-200' :
-                                                'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border-red-200';
-                                            $registro_dot_class = (strtolower($estado_registro) === 'activo') ? 'bg-green-500' : 'bg-red-500';
+                                            $estadoRegistro = $fila['estado_registro'] ?? 'inactivo';
+                                            $esActivo = strtolower($estadoRegistro) === 'activo';
+                                            $registroClass = $esActivo
+                                                ? 'bg-gradient-to-r from-green-50 to-green-100 text-green-800 border-green-200'
+                                                : 'bg-gradient-to-r from-red-50 to-red-100 text-red-800 border-red-200';
+                                            $registroDotClass = $esActivo ? 'bg-green-500' : 'bg-red-500';
                                         ?>
-                                        <span class="status-badge inline-flex items-center px-3 py-2 rounded-full text-xs font-bold border-2 <?= $registro_class ?>">
-                                            <span class="w-2 h-2 rounded-full mr-2 <?= $registro_dot_class ?>"></span>
-                                            <?= $estado_registro ?>
+                                        <span class="status-badge inline-flex items-center px-3 py-2 rounded-full text-xs font-bold border-2 <?= $registroClass ?>">
+                                            <span class="w-2 h-2 rounded-full mr-2 <?= $registroDotClass ?>"></span>
+                                            <?= e(ucfirst($estadoRegistro)) ?>
                                         </span>
                                     </td>
 
@@ -172,37 +187,48 @@ function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
 
                                     <td class="px-4 lg:px-6 py-6 text-center border-r">
                                         <?php
-                                            $estado_pago = htmlspecialchars($fila['estado_pago'] ?? 'Pendiente');
-                                            $pago_class = (in_array(strtolower($estado_pago), ['pagado','completo','paid','complete'])) ?
-                                                'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 border-blue-200' :
-                                                'bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-800 border-yellow-200';
+                                            $estadoPago = $fila['estado_pago'] ?? 'pendiente';
+                                            $estadosPagados = ['pagado', 'completo', 'paid', 'complete'];
+                                            $estaPagado = in_array(strtolower($estadoPago), $estadosPagados);
+                                            $pagoClass = $estaPagado
+                                                ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 border-blue-200'
+                                                : 'bg-gradient-to-r from-yellow-50 to-yellow-100 text-yellow-800 border-yellow-200';
                                         ?>
                                         <div class="flex flex-col items-center space-y-2">
-                                            <span class="status-badge inline-flex items-center px-3 py-2 rounded-full text-xs font-bold border-2 <?= $pago_class ?>">
+                                            <span class="status-badge inline-flex items-center px-3 py-2 rounded-full text-xs font-bold border-2 <?= $pagoClass ?>">
                                                 <svg class="w-3 h-3 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                                    <?php if (in_array(strtolower($estado_pago), ['pagado','completo','paid','complete'])): ?>
+                                                    <?php if ($estaPagado): ?>
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                                                     <?php else: ?>
                                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                                                     <?php endif; ?>
                                                 </svg>
-                                                <?= $estado_pago ?>
+                                                <?= e(ucfirst($estadoPago)) ?>
                                             </span>
 
-                                            <?php if (in_array(strtolower($estado_pago), ['pagado','completo','paid','complete']) && !empty($fila['certificado_id'])): ?>
-                                                <a href="ver_certificado.php?id=<?= urlencode($fila['certificado_id']) ?>" target="_blank" class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md text-white bg-teal-500 hover:bg-teal-600 transition shadow-md">
+                                            <?php if ($estaPagado && !empty($fila['certificado_id'])): ?>
+                                                <a href="index.php?route=certificados/ver&id=<?= urlencode($fila['certificado_id']) ?>" target="_blank" class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-md text-white bg-teal-500 hover:bg-teal-600 transition shadow-md">
                                                     Ver Certificado
                                                 </a>
                                             <?php endif; ?>
 
-                                            <?php if (!empty($fila['fecha_pago']) && $fila['fecha_pago'] !== '0000-00-00 00:00:00'): ?>
-                                                <div class="text-xs text-slate-500 mt-1"><?= formatoFechaSegura($fila['fecha_pago'], 'd/m/Y') ?></div>
-                                            <?php endif; ?>
+                                            <?php
+                                            $fechaPago = $fila['fecha_pago'] ?? '';
+                                            if (!empty($fechaPago) && $fechaPago !== '0000-00-00 00:00:00') {
+                                                $timestampPago = strtotime($fechaPago);
+                                                if ($timestampPago) {
+                                                    echo '<div class="text-xs text-slate-500 mt-1">' . date('d/m/Y', $timestampPago) . '</div>';
+                                                }
+                                            }
+                                            ?>
                                         </div>
                                     </td>
 
                                     <td class="px-4 lg:px-6 py-6 text-center">
-                                        <a href="editar_reporte.php?id=<?= urlencode($fila['id_reporte']) ?>" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition transform hover:scale-105" title="Editar Reporte #<?= htmlspecialchars($fila['id_reporte']) ?>">
+                                        <a href="index.php?route=reportes/editar&id=<?= urlencode($fila['id_reporte']) ?>" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 transition transform hover:scale-105" title="Editar Reporte #<?= e($fila['id_reporte']) ?>">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
                                             Editar
                                         </a>
                                     </td>
@@ -243,68 +269,18 @@ function formatoFechaSegura($fecha, $formato = 'd/m/Y') {
         </div>
     </div>
 
-    <script>
-    (function(){
-        const rows = () => Array.from(document.querySelectorAll('#tableBody tr'));
-        const searchInput = document.getElementById('searchInput');
-        const filterButtons = document.querySelectorAll('.filter-button');
+    <!-- Mensajes de sesión para JavaScript -->
+    <?php if (isset($_SESSION['success'])): ?>
+        <div data-mensaje-success="<?= e($_SESSION['success']) ?>" style="display:none;"></div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
 
-        function applyFilters() {
-            const q = (searchInput.value || '').toLowerCase().trim();
-            const activeBtn = document.querySelector('.filter-button.active');
-            const filter = activeBtn ? activeBtn.dataset.filter : 'all';
+    <?php if (isset($_SESSION['error'])): ?>
+        <div data-mensaje-error="<?= e($_SESSION['error']) ?>" style="display:none;"></div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
-            rows().forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const matchesSearch = text.includes(q);
-
-                const estadoPago = (row.dataset.estadoPago || '').toLowerCase();
-                const estadoRegistro = (row.dataset.estadoRegistro || '').toLowerCase();
-
-                let matchesFilter = false;
-                if (filter === 'all') {
-                    matchesFilter = true;
-                } else if (filter === 'pagado') {
-                    matchesFilter = ['pagado','completo','paid','complete'].includes(estadoPago);
-                } else if (filter === 'pendiente') {
-                    matchesFilter = ['pendiente','pending'].includes(estadoPago);
-                } else if (filter === 'activo') {
-                    matchesFilter = (estadoRegistro === 'activo');
-                }
-
-                row.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-            });
-        }
-
-        // Search -> apply
-        if (searchInput) {
-            searchInput.addEventListener('input', () => applyFilters());
-        }
-
-        // Filter buttons
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterButtons.forEach(b => {
-                    b.classList.remove('active','bg-blue-500','text-white');
-                    b.classList.add('text-slate-700');
-                });
-                btn.classList.add('active','bg-blue-500','text-white');
-                btn.classList.remove('text-slate-700');
-                applyFilters();
-            });
-        });
-
-        // Al cargar, seleccionar "Todos"
-        document.addEventListener('DOMContentLoaded', () => {
-            const allButton = document.querySelector('.filter-button[data-filter="all"]');
-            if (allButton) {
-                allButton.classList.add('active','bg-blue-500','text-white');
-                allButton.classList.remove('text-slate-700');
-            }
-            applyFilters();
-        });
-
-    })();
-    </script>
+    <!-- Scripts externos -->
+    <script src="assets/js/reportes.js"></script>
 </body>
 </html>

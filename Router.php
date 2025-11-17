@@ -184,6 +184,13 @@ class Router
             // RUTAS AUTENTICADAS - REPORTES
             // ================================================================
             'reportes' => ['controlador' => 'ReportesController', 'accion' => 'index'],
+            'reportes/crear' => ['controlador' => 'ReportesController', 'accion' => 'crear'],
+            'reportes/guardar' => ['controlador' => 'ReportesController', 'accion' => 'guardar'],
+            'reportes/editar' => ['controlador' => 'ReportesController', 'accion' => 'editar'],
+            'reportes/actualizar' => ['controlador' => 'ReportesController', 'accion' => 'actualizar'],
+            'reportes/eliminar' => ['controlador' => 'ReportesController', 'accion' => 'eliminar'],
+            'reportes/exportarPDF' => ['controlador' => 'ReportesController', 'accion' => 'exportarPDF'],
+            'reportes/filtrar' => ['controlador' => 'ReportesController', 'accion' => 'filtrar'],
 
             // ================================================================
             // RUTAS DE ADMINISTRACIÓN (Solo Administradores)
