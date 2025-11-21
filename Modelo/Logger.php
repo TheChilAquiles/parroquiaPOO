@@ -32,6 +32,12 @@ class Logger
         self::log('ERROR', $message, $context, self::$errorLog);
     }
 
+
+    public static function warning($message, $context = [])
+{
+    self::log('WARNING', $message, $context, self::$errorLog);
+}
+
     /**
      * Registra información general
      * @param string $message Mensaje informativo

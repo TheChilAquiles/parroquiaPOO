@@ -8,7 +8,7 @@ class ModeloCertificados
 {
     private $db;
 
-    public function __construct(PDO $pdo = null)
+    public function __construct(?PDO $pdo = null)
     {
         $this->db = $pdo ?? Conexion::conectar();
     }
