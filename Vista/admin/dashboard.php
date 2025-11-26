@@ -79,7 +79,7 @@
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Configuraciones Generales -->
-                <a href="<?= url('configuracion/configuraciones') ?>"
+                <a href="<?= url('admin/configuraciones') ?>"
                    class="block p-6 bg-gradient-to-br from-[#F5F0EB] to-white rounded-lg border-2 border-[#DFD3C3] hover:border-[#D0B8A8] hover:shadow-lg transition duration-200">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-[#D0B8A8] rounded-full flex items-center justify-center">

@@ -36,9 +36,6 @@ $categoriasTitulos = [
                     <a href="<?= url('dashboard') ?>" class="text-gray-600 hover:text-blue-600">
                         <i class="fas fa-home mr-2"></i>Dashboard
                     </a>
-                    <a href="<?= url('admin/precios') ?>" class="text-gray-600 hover:text-blue-600">
-                        <i class="fas fa-dollar-sign mr-2"></i>Precios
-                    </a>
                 </div>
             </div>
         </div>
@@ -133,7 +130,7 @@ $categoriasTitulos = [
                                 <?php endif; ?>
 
                                 <p class="text-xs text-gray-500">
-                                    Tipo: <?= $config['tipo'] ?> | Última actualización: <?= date('d/m/Y H:i', strtotime($config['fecha_actualizacion'])) ?>
+                                    Última actualización: <?= date('d/m/Y H:i', strtotime($config['fecha_actualizacion'])) ?>
                                 </p>
                             </div>
                         <?php endforeach; ?>
@@ -153,20 +150,15 @@ $categoriasTitulos = [
         </form>
 
         <!-- Información adicional -->
-        <div class="mt-8 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+        <div class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4">
             <div class="flex">
                 <div class="flex-shrink-0">
-                    <i class="fas fa-exclamation-triangle text-yellow-400 text-xl"></i>
+                    <i class="fas fa-info-circle text-blue-400 text-xl"></i>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-sm font-medium text-yellow-800">Información Importante</h3>
-                    <div class="mt-2 text-sm text-yellow-700">
-                        <ul class="list-disc list-inside space-y-1">
-                            <li>Para configurar las credenciales de la pasarela de pago (API keys), edite el archivo <code class="bg-yellow-100 px-1">.env</code></li>
-                            <li>Los cambios en la configuración de pagos pueden requerir reiniciar el sistema</li>
-                            <li>Asegúrese de tener una copia de seguridad antes de cambiar configuraciones críticas</li>
-                            <li>Las configuraciones se guardan en la base de datos y pueden ser auditadas</li>
-                        </ul>
+                    <h3 class="text-sm font-medium text-blue-800">Información</h3>
+                    <div class="mt-2 text-sm text-blue-700">
+                        <p>Las configuraciones se guardan en la base de datos. Para configurar credenciales de la pasarela de pago (API keys), edite el archivo <code class="bg-blue-100 px-1">.env</code></p>
                     </div>
                 </div>
             </div>

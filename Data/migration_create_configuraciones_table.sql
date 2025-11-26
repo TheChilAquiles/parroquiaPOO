@@ -46,8 +46,7 @@ INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripci
 INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`) VALUES
 ('sistema_url', 'http://localhost', 'url', 'sistema', 'URL base del sistema', 1),
 ('sistema_nombre', 'Sistema Parroquial', 'texto', 'sistema', 'Nombre del sistema', 1),
-('sistema_mantenimiento', '0', 'booleano', 'sistema', 'Modo mantenimiento (1=Activo, 0=Inactivo)', 1),
-('sistema_registro_abierto', '1', 'booleano', 'sistema', 'Permitir registro de nuevos usuarios (1=Sí, 0=No)', 1);
+('sistema_mantenimiento', '0', 'booleano', 'sistema', 'Modo mantenimiento (1=Activo, 0=Inactivo)', 1);
 
 -- Configuraciones del Párroco y Secretario
 INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`) VALUES
@@ -60,9 +59,7 @@ INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripci
 INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`) VALUES
 ('pago_gateway', 'mock', 'texto', 'pagos', 'Proveedor de pagos (mock, paymentway, stripe, paypal)', 1),
 ('pago_modo', 'sandbox', 'texto', 'pagos', 'Modo de pago (sandbox, production)', 1),
-('pago_moneda', 'COP', 'texto', 'pagos', 'Moneda por defecto (COP, USD, EUR, etc)', 1),
-('pago_iva_porcentaje', '19', 'numero', 'pagos', 'Porcentaje de IVA a aplicar', 1),
-('pago_aplicar_iva', '0', 'booleano', 'pagos', 'Si se debe aplicar IVA a los certificados (1=Sí, 0=No)', 1);
+('pago_moneda', 'COP', 'texto', 'pagos', 'Moneda por defecto (COP, USD, EUR, etc)', 1);
 
 -- Configuraciones de Notificaciones
 INSERT INTO `configuraciones` (`clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`) VALUES
