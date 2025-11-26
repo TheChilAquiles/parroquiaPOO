@@ -3,22 +3,22 @@
 <!-- SISTEMA DE NOTIFICACIONES -->
 <?php
 if (isset($_SESSION['mensaje'])) {
-    $tipo_clase = $_SESSION['tipo_mensaje'] == 'success' 
-        ? 'bg-green-100 border-green-400 text-green-700' 
-        : ($_SESSION['tipo_mensaje'] == 'error' 
-            ? 'bg-red-100 border-red-400 text-red-700' 
+    $tipo_clase = $_SESSION['tipo_mensaje'] == 'success'
+        ? 'bg-green-100 border-green-400 text-green-700'
+        : ($_SESSION['tipo_mensaje'] == 'error'
+            ? 'bg-red-100 border-red-400 text-red-700'
             : 'bg-blue-100 border-blue-400 text-blue-700');
-    
-    echo '<div class="' . $tipo_clase . ' border px-4 py-3 rounded mb-4">' 
-         . htmlspecialchars($_SESSION['mensaje']) . '</div>';
-    
+
+    echo '<div class="' . $tipo_clase . ' border px-4 py-3 rounded mb-4">'
+        . htmlspecialchars($_SESSION['mensaje']) . '</div>';
+
     unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
 }
 ?>
 
 <!-- SECCIÓN PRINCIPAL -->
 <main class="mx-auto max-w-7xl px-4 py-8">
-    
+
     <!-- ENCABEZADO -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
         <div>
@@ -28,17 +28,19 @@ if (isset($_SESSION['mensaje'])) {
 
         <div class="flex gap-2">
             <button id="btnCrearGrupo"
-                    class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+                class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
                 <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 Crear Grupo
             </button>
 
             <button id="btnCrearRol"
-                    class="px-6 py-3 bg-[#8B6F47] text-white rounded-lg shadow-md hover:bg-[#6B5437] transition duration-200 font-medium">
+                class="px-6 py-3 bg-[#8B6F47] text-white rounded-lg shadow-md hover:bg-[#6B5437] transition duration-200 font-medium">
                 <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
                 Añadir Rol
             </button>
@@ -47,21 +49,23 @@ if (isset($_SESSION['mensaje'])) {
 
     <!-- GRID DE GRUPOS -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <?php if (!empty($grupos)) : ?>
-            <?php foreach ($grupos as $grupo) : ?>
+        <?php if (!empty($grupos)): ?>
+            <?php foreach ($grupos as $grupo): ?>
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                     <div class="p-6">
                         <!-- ENCABEZADO DE CARD -->
                         <div class="flex items-start justify-between mb-4">
                             <div class="flex-shrink-0 h-12 w-12 bg-[#F5F0EB] rounded-lg flex items-center justify-center">
                                 <svg class="h-6 w-6 text-[#ab876f]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                             </div>
-                            
+
                             <div class="ml-4 flex-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    <?php echo $grupo['total_miembros']; ?> 
+                                <span
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <?php echo $grupo['total_miembros']; ?>
                                     miembro<?php echo $grupo['total_miembros'] != 1 ? 's' : ''; ?>
                                 </span>
                             </div>
@@ -75,26 +79,29 @@ if (isset($_SESSION['mensaje'])) {
                         <div class="flex gap-2">
                             <!-- Botón Ver con URL limpia -->
                             <a href="<?= url('grupos/ver', ['id' => $grupo['id']]) ?>"
-                               class="flex-1 px-4 py-2 bg-[#D0B8A8] text-white rounded-lg shadow-sm hover:bg-[#ab876f] transition duration-200 font-medium text-center">
+                                class="flex-1 px-4 py-2 bg-[#D0B8A8] text-white rounded-lg shadow-sm hover:bg-[#ab876f] transition duration-200 font-medium text-center">
                                 Ver Detalles
                             </a>
 
                             <div class="flex gap-1">
                                 <!-- Botón Editar con URL limpia -->
                                 <a href="<?= url('grupos/editar', ['id' => $grupo['id']]) ?>"
-                                   class="px-3 py-2 bg-[#E8DFD5] text-[#ab876f] rounded-lg hover:bg-[#DFD3C3] transition duration-200"
-                                   title="Editar grupo">
+                                    class="px-3 py-2 bg-[#E8DFD5] text-[#ab876f] rounded-lg hover:bg-[#DFD3C3] transition duration-200"
+                                    title="Editar grupo">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                 </a>
 
                                 <!-- ✅ NUEVO: Botón Eliminar con confirmación -->
-                                <button onclick="eliminarGrupo(<?php echo $grupo['id']; ?>, '<?php echo htmlspecialchars($grupo['nombre'], ENT_QUOTES); ?>')"
-                                        class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition duration-200"
-                                        title="Eliminar grupo">
+                                <button
+                                    onclick="eliminarGrupo(<?php echo $grupo['id']; ?>, '<?php echo htmlspecialchars($grupo['nombre'], ENT_QUOTES); ?>')"
+                                    class="px-3 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition duration-200"
+                                    title="Eliminar grupo">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
                                 </button>
                             </div>
@@ -102,13 +109,14 @@ if (isset($_SESSION['mensaje'])) {
                     </div>
                 </div>
             <?php endforeach; ?>
-            
-        <?php else : ?>
+
+        <?php else: ?>
             <!-- ESTADO VACÍO -->
             <div class="col-span-full">
                 <div class="text-center py-12">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <p class="text-gray-500 text-lg mb-2">No hay grupos parroquiales registrados</p>
                     <p class="text-gray-400 text-sm">Crea el primer grupo para comenzar</p>
@@ -130,23 +138,18 @@ if (isset($_SESSION['mensaje'])) {
                     <label for="nombre_grupo" class="block text-gray-700 font-medium mb-2">
                         Nombre del Grupo *
                     </label>
-                    <input type="text"
-                           id="nombre_grupo"
-                           name="nombre_grupo"
-                           required
-                           maxlength="255"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
-                           placeholder="Ej: Coro Parroquial, Grupo de Jóvenes...">
+                    <input type="text" id="nombre_grupo" name="nombre_grupo" required maxlength="255"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
+                        placeholder="Ej: Coro Parroquial, Grupo de Jóvenes...">
                 </div>
 
                 <div class="flex gap-3">
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 font-medium">
+                        class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 font-medium">
                         Crear Grupo
                     </button>
-                    <button type="button"
-                            id="btnCerrarModal"
-                            class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
+                    <button type="button" id="btnCerrarModal"
+                        class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
                         Cancelar
                     </button>
                 </div>
@@ -166,13 +169,9 @@ if (isset($_SESSION['mensaje'])) {
                     <label for="nombre_rol" class="block text-gray-700 font-medium mb-2">
                         Nombre del Rol *
                     </label>
-                    <input type="text"
-                           id="nombre_rol"
-                           name="nombre_rol"
-                           required
-                           maxlength="100"
-                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
-                           placeholder="Ej: Líder, Coordinador, Secretario...">
+                    <input type="text" id="nombre_rol" name="nombre_rol" required maxlength="100"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent"
+                        placeholder="Ej: Líder, Coordinador, Secretario...">
                     <p class="mt-1 text-sm text-gray-500">
                         Este rol estará disponible para asignar a miembros de grupos.
                     </p>
@@ -180,12 +179,11 @@ if (isset($_SESSION['mensaje'])) {
 
                 <div class="flex gap-3">
                     <button type="submit"
-                            class="flex-1 px-4 py-2 bg-[#8B6F47] text-white rounded-lg hover:bg-[#6B5437] transition duration-200 font-medium">
+                        class="flex-1 px-4 py-2 bg-[#8B6F47] text-white rounded-lg hover:bg-[#6B5437] transition duration-200 font-medium">
                         Crear Rol
                     </button>
-                    <button type="button"
-                            id="btnCerrarModalRol"
-                            class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
+                    <button type="button" id="btnCerrarModalRol"
+                        class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-200 font-medium">
                         Cancelar
                     </button>
                 </div>
@@ -196,7 +194,7 @@ if (isset($_SESSION['mensaje'])) {
 
 <!-- SCRIPTS -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Modal Crear Grupo
         const modalGrupo = document.getElementById('modalCrearGrupo');
         const btnCrearGrupo = document.getElementById('btnCrearGrupo');
@@ -210,13 +208,13 @@ if (isset($_SESSION['mensaje'])) {
         const inputNombreRol = document.getElementById('nombre_rol');
 
         // Abrir modal de grupo
-        btnCrearGrupo.addEventListener('click', function() {
+        btnCrearGrupo.addEventListener('click', function () {
             modalGrupo.classList.remove('hidden');
             inputNombreGrupo.focus();
         });
 
         // Abrir modal de rol
-        btnCrearRol.addEventListener('click', function() {
+        btnCrearRol.addEventListener('click', function () {
             modalRol.classList.remove('hidden');
             inputNombreRol.focus();
         });
@@ -237,7 +235,7 @@ if (isset($_SESSION['mensaje'])) {
         btnCerrarModalRol.addEventListener('click', cerrarModalRol);
 
         // Click fuera del modal para cerrar
-        window.addEventListener('click', function(event) {
+        window.addEventListener('click', function (event) {
             if (event.target === modalGrupo) {
                 cerrarModalGrupo();
             }
@@ -247,7 +245,7 @@ if (isset($_SESSION['mensaje'])) {
         });
 
         // ESC para cerrar modales
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 if (!modalGrupo.classList.contains('hidden')) {
                     cerrarModalGrupo();
@@ -264,8 +262,8 @@ if (isset($_SESSION['mensaje'])) {
      */
     function eliminarGrupo(grupoId, nombreGrupo) {
         if (confirm(`¿Estás seguro de que deseas eliminar el grupo "${nombreGrupo}"?\n\nEsta acción eliminará el grupo y todos sus miembros.`)) {
-            // Redirigir a la página de confirmación
-            window.location.href = "<?= url('grupos/eliminar') ?>window.location.href = `?route=grupos/eliminar&id=${grupoId}`;id=" + grupoId;
+            window.location.href = "grupos/eliminar/" + grupoId;
         }
     }
+
 </script>

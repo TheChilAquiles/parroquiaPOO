@@ -48,7 +48,7 @@
 </div>
 
 <!-- Modal para Generar Certificado -->
-<div id="modalCertificado" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+<div id="modalCertificado" class="hidden fixed inset-0 bg-black/50  backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <!-- Header del Modal -->
         <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] border-b border-[#8B6F47]">

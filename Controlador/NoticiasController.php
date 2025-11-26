@@ -251,7 +251,8 @@ class NoticiasController extends BaseController
                 'tipo' => 'success',
                 'texto' => $mensaje
             ];
-            header('Location: ?route=noticias');
+            redirect('noticias');
+            
             exit();
         }
     }
@@ -281,7 +282,7 @@ class NoticiasController extends BaseController
                 'tipo' => 'error',
                 'texto' => $mensaje
             ];
-            header('Location: ?route=noticias');
+            redirect('noticias');
             exit();
         }
     }

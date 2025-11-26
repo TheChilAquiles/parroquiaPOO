@@ -22,7 +22,8 @@ abstract class BaseController
         if (!isset($_SESSION['user-rol']) ||
             !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para esta acción.';
-            header('Location: ?route=dashboard');
+            redirect('dashboard');
+            
             exit();
         }
     }
@@ -38,7 +39,8 @@ abstract class BaseController
     {
         if (!isset($_SESSION['logged']) || $_SESSION['logged'] !== true) {
             $_SESSION['error'] = 'Debes iniciar sesión.';
-            header('Location: ?route=login');
+            redirect('login');
+            
             exit();
         }
 
@@ -58,7 +60,8 @@ abstract class BaseController
             if (!in_array($rutaActual, $rutasPermitidas)) {
                 if (!isset($_SESSION['user-datos']) || $_SESSION['user-datos'] === false) {
                     $_SESSION['info'] = 'Por favor, completa tus datos personales para continuar.';
-                    header('Location: ?route=perfil');
+                    redirect('perfil');
+                    
                     exit();
                 }
             }
@@ -78,7 +81,8 @@ abstract class BaseController
 
         if (!in_array($rolUsuario, $rolesPermitidos)) {
             $_SESSION['error'] = 'No tienes permisos para acceder a esta sección.';
-            header('Location: ?route=dashboard');
+            redirect('dashboard');
+            
             exit();
         }
     }

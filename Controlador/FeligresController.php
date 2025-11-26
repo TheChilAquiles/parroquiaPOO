@@ -24,7 +24,8 @@ class FeligresController extends BaseController
         // Solo administradores y secretarios pueden ver la lista completa
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para acceder a esta sección';
-            header('Location: ?route=inicio');
+            redirect('inicio');
+            
             exit();
         }
 
@@ -104,7 +105,8 @@ class FeligresController extends BaseController
         // Verificar autorización
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para realizar esta acción';
-            header('Location: ?route=feligreses');
+            redirect('feligreses');
+            
             exit();
         }
 
@@ -129,7 +131,8 @@ class FeligresController extends BaseController
                         exit();
                     } else {
                         $_SESSION['error'] = $error;
-                        header('Location: ?route=feligreses');
+                        redirect('feligreses');
+                        
                         exit();
                     }
                 }
@@ -156,14 +159,14 @@ class FeligresController extends BaseController
                 } else {
                     $_SESSION['error'] = $resultado['message'];
                 }
-                header('Location: ?route=feligreses');
+                redirect('feligreses');
                 exit();
             }
         }
 
         // Si no es POST, retornar error
         $_SESSION['error'] = 'Método no permitido';
-        header('Location: ?route=feligreses');
+        redirect('feligreses');
         exit();
     }
 
@@ -178,14 +181,14 @@ class FeligresController extends BaseController
         // Verificar autorización
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para realizar esta acción';
-            header('Location: ?route=feligreses');
+            redirect('feligreses');
             exit();
         }
 
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) {
             $_SESSION['error'] = 'ID de feligrés inválido';
-            header('Location: ?route=feligreses');
+            redirect('feligreses');
             exit();
         }
 
@@ -212,14 +215,14 @@ class FeligresController extends BaseController
                 } else {
                     $_SESSION['error'] = $resultado['message'];
                 }
-                header('Location: ?route=feligreses');
+                redirect('feligreses');
                 exit();
             }
         }
 
         // Si no es POST, retornar error
         $_SESSION['error'] = 'Método no permitido';
-        header('Location: ?route=feligreses');
+        redirect('feligreses');
         exit();
     }
 
@@ -234,14 +237,14 @@ class FeligresController extends BaseController
         // Solo administradores pueden eliminar
         if ($_SESSION['user-rol'] !== 'Administrador') {
             $_SESSION['error'] = 'No tienes permisos para eliminar feligreses';
-            header('Location: ?route=feligreses');
+            redirect('feligreses');
             exit();
         }
 
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) {
             $_SESSION['error'] = 'ID de feligrés inválido';
-            header('Location: ?route=feligreses');
+            redirect('feligreses');
             exit();
         }
 
@@ -251,7 +254,7 @@ class FeligresController extends BaseController
             $_SESSION['error'] = 'Error al eliminar feligrés';
         }
 
-        header('Location: ?route=feligreses');
+        redirect('feligreses');
         exit();
     }
 }

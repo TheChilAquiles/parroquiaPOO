@@ -72,7 +72,9 @@
 </div>
 
 <!-- Modal para agregar/editar feligrés -->
-<div id="feligresModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+<div id="feligresModal" class="modal fixed inset-0 bg-black/50 bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+
+
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
         <!-- Header del Modal -->
         <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] border-b border-[#8B6F47]">

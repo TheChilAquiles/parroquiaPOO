@@ -386,7 +386,8 @@ class CertificadosController extends BaseController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = "Sacramento no encontrado con ID: $sacramentoId";
-                header('Location: ?route=sacramentos');
+                redirect('sacramentos');
+                
                 exit();
             }
 

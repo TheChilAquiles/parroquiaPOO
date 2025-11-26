@@ -59,7 +59,8 @@ class PagosController extends BaseController
                 'trace' => $e->getTraceAsString()
             ]);
             $_SESSION['error'] = 'Error al cargar los pagos.';
-            header('Location: ?route=dashboard');
+            redirect('dashboard');
+            
             exit();
         }
     }
@@ -92,7 +93,8 @@ class PagosController extends BaseController
                     'error' => $e->getMessage()
                 ]);
                 $_SESSION['error'] = 'Error al cargar el formulario.';
-                header('Location: ?route=pagos');
+                redirect('pagos');
+                
                 exit();
             }
         }
@@ -166,7 +168,7 @@ class PagosController extends BaseController
                     'metodo' => $metodo
                 ]);
                 $_SESSION['success'] = $resultado['mensaje'];
-                header('Location: ?route=pagos');
+                redirect('pagos');
                 exit();
             } else {
                 Logger::warning("Creación de pago fallida", [
@@ -214,7 +216,7 @@ class PagosController extends BaseController
                 'pago_id_recibido' => $id
             ]);
             $_SESSION['error'] = 'ID de pago inválido.';
-            header('Location: ?route=pagos');
+            redirect('pagos');
             exit();
         }
 
@@ -232,7 +234,7 @@ class PagosController extends BaseController
                         'pago_id' => $id
                     ]);
                     $_SESSION['error'] = 'Pago no encontrado.';
-                    header('Location: ?route=pagos');
+                    redirect('pagos');
                     exit();
                 }
 
@@ -245,7 +247,7 @@ class PagosController extends BaseController
                     'error' => $e->getMessage()
                 ]);
                 $_SESSION['error'] = 'Error al cargar el formulario.';
-                header('Location: ?route=pagos');
+                redirect('pagos');
                 exit();
             }
         }
@@ -296,7 +298,7 @@ class PagosController extends BaseController
                     'metodo' => $metodo
                 ]);
                 $_SESSION['success'] = $resultado['mensaje'];
-                header('Location: ?route=pagos');
+                redirect('pagos');
                 exit();
             } else {
                 Logger::warning("Actualización de pago fallida", [
@@ -672,7 +674,8 @@ class PagosController extends BaseController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
             $_SESSION['error'] = 'No tiene permisos para realizar esta acción.';
-            header('Location: ?route=dashboard');
+            redirect('dashboard');
+            
             exit;
         }
 

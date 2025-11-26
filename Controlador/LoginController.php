@@ -91,7 +91,8 @@ class LoginController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
 
-            header('Location: ?route=dashboard');
+            redirect('dashboard');
+            
             exit();
 
         } catch (Exception $e) {
@@ -118,7 +119,8 @@ class LoginController
             ]);
 
             session_destroy();
-            header('Location: ?route=inicio');
+            redirect('inicio');
+            
             exit();
 
         } catch (Exception $e) {
@@ -127,7 +129,7 @@ class LoginController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
             session_destroy();
-            header('Location: ?route=inicio');
+            redirect('inicio');
             exit();
         }
     }
@@ -156,7 +158,8 @@ class LoginController
             ]);
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                header('Location: ?route=olvido');
+                redirect('olvido');
+                
                 exit();
             }
 
@@ -168,7 +171,7 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = 'Por favor, ingresa un email válido.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
                 exit();
             }
 
@@ -182,7 +185,7 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['success'] = 'Si tu email está registrado, recibirás un enlace para recuperar tu contraseña.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
                 exit();
             }
 
@@ -204,7 +207,7 @@ class LoginController
                     'user_id' => $usuario['id']
                 ]);
                 $_SESSION['error'] = 'Hubo un error al procesar tu solicitud. Intenta de nuevo.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
                 exit();
             }
 
@@ -245,7 +248,7 @@ class LoginController
                 ]);
 
                 $_SESSION['success'] = 'Si tu email está registrado, recibirás un enlace para recuperar tu contraseña.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
                 exit();
 
             } catch (Exception $e) {
@@ -256,7 +259,7 @@ class LoginController
                     'user_id' => $usuario['id']
                 ]);
                 $_SESSION['error'] = 'No se pudo enviar el email. Contacta al administrador.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
                 exit();
             }
 
@@ -267,7 +270,7 @@ class LoginController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
             $_SESSION['error'] = 'Error al procesar tu solicitud. Por favor, intenta de nuevo.';
-            header('Location: ?route=olvido');
+            redirect('olvido');
             exit();
         }
     }
@@ -281,7 +284,8 @@ class LoginController
 
         if (empty($token)) {
             $_SESSION['error'] = 'Token inválido o no proporcionado.';
-            header('Location: ?route=login');
+            redirect('login');
+            
             exit();
         }
 
@@ -290,7 +294,8 @@ class LoginController
 
         if (!$usuario) {
             $_SESSION['error'] = 'El token es inválido o ha expirado. Por favor, solicita un nuevo reseteo.';
-            header('Location: ?route=olvido');
+            redirect('olvido');
+            
             exit();
         }
 
@@ -310,7 +315,8 @@ class LoginController
             ]);
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                header('Location: ?route=login');
+                redirect('login');
+                
                 exit();
             }
 
@@ -357,7 +363,8 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = 'El token es inválido o ha expirado.';
-                header('Location: ?route=olvido');
+                redirect('olvido');
+                
                 exit();
             }
 
@@ -369,7 +376,8 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['success'] = '¡Tu contraseña ha sido actualizada! Ya puedes iniciar sesión.';
-                header('Location: ?route=login');
+                redirect('login');
+                
                 exit();
             } else {
                 Logger::error("Error al actualizar contraseña en BD", [
@@ -388,7 +396,8 @@ class LoginController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
             $_SESSION['error'] = 'Error al procesar tu solicitud. Por favor, intenta de nuevo.';
-            header('Location: ?route=olvido');
+            redirect('olvido');
+            
             exit();
         }
     }

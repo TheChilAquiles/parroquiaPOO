@@ -242,7 +242,8 @@ class Router
                         'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                     ]);
                     $_SESSION['redirect_after_login'] = $route;
-                    header('Location: ?route=login');
+                    redirect('login');
+                    
                     exit();
                 }
             }

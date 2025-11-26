@@ -1,6 +1,6 @@
 <!-- HEADER REFACTORIZADO -->
 <header class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4">
+    <div class="max-w-8xl mx-auto px-4">
         <div class="flex justify-between items-center py-3">
 
             <!-- LOGO Y NOMBRE -->
