@@ -22,7 +22,7 @@
                             <path d="M5 1a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h2v-1H5.5a1.5 1.5 0 0 1 0-3H19a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#16a085" />
                             <path d="M8 1v18h11a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#1abc9c" />
                         </svg>
-                       <span class="absolute"><?= htmlspecialchars($libroTipo, ENT_QUOTES, 'UTF-8') ?></span>
+                       <span class="absolute inset-x-0 top-6 text-white font-bold text-2xl text-center group-hover:text-emerald-100"><?= htmlspecialchars($libroTipo, ENT_QUOTES, 'UTF-8') ?></span>
                         <span class=" absolute inset-x-0 top-17 text-white font-bold text-8xl text-center "><?= $i ?></span>
                     </button>
                 </form>
@@ -45,8 +45,8 @@
                     <path d="M5 1a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h2v-1H5.5a1.5 1.5 0 0 1 0-3H19a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#606060" />
                     <path d="M8 1v18h11a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2z" fill="#c1c1c1" />
                 </svg>
-                <span class=" absolute inset-x-0 top-6 text-white font-bold text-2xl text-center group-hover:text-emerald-100">Añadir </span>
-                <span class=" absolute inset-x-0 top-17 text-white font-bold text-8xl text-center group-hover:text-emerald-100 ">+</span>
+                <span class="absolute inset-x-0 top-6 text-white font-bold text-2xl text-center group-hover:text-emerald-100">Añadir </span>
+                <span class="absolute inset-x-0 top-17 text-white font-bold text-8xl text-center group-hover:text-emerald-100 ">+</span>
             </button>
         </form>
 
