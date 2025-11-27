@@ -10,55 +10,85 @@ if (!isset($token)) {
 }
 ?>
 
-<div class="flex flex-1 flex-col w-full h-full justify-center items-center">
-    <h1 class="text-3xl my-2 font-bold">Crear Nueva Contraseña</h1>
-    <div class="p-10 rounded-md bg-white">
+<main class="min-h-screen relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden py-10">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="absolute -top-20 -right-20 w-96 h-96 bg-[#8D7B68] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute -bottom-20 -left-20 w-96 h-96 bg-[#C8B6A6] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <span class="block sm:inline"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></span>
+    <div class="relative z-10 w-full max-w-md p-8 mx-4">
+        <div class="bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl p-8">
+            
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2">Nueva Contraseña</h1>
+                <p class="text-white/80">Crea una contraseña segura</p>
             </div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
 
-        <form action="<?= url('resetear/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="w-[20svw] flex flex-col">
-            
-            <input type="hidden" name="token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>">
-            
-            <label class="mt-2" for="password">Nueva Contraseña</label>
-            <input 
-                name="password" 
-                id="password"
-                type="password" 
-                class="border border-gray-300 rounded p-2 w-full" 
-                placeholder="Ingresa tu nueva contraseña"
-            >
-            <label name="password-error" class="text-red-500 hidden">
-                La contraseña es obligatoria.
-            </label>
-            
-            <label class="mt-2" for="password_confirm">Confirmar Contraseña</label>
-            <input 
-                name="password_confirm" 
-                id="password_confirm"
-                type="password" 
-                class="border border-gray-300 rounded p-2 w-full" 
-                placeholder="Confirma tu nueva contraseña"
-            >
-            <label name="password_confirm-error" class="text-red-500 hidden">
-                Las contraseñas no coinciden.
-            </label>
-            
-            <button 
-                class="cursor-pointer bg-[#E3FFCD] p-4 rounded w-[15svw] self-center border border-emerald-500 hover:bg-emerald-500 hover:text-white hover:border-emerald-700 mt-4" 
-                type="submit"
-            >
-                Actualizar Contraseña
-            </button>
-        </form>
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="bg-red-500/20 border border-red-500/50 text-white px-4 py-3 rounded-xl relative mb-6 backdrop-blur-sm flex items-center gap-2" role="alert">
+                    <span class="material-icons text-white">error_outline</span>
+                    <span class="block sm:inline"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></span>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
 
+            <form action="<?= url('resetear/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="space-y-6">
+                
+                <input type="hidden" name="token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>">
+                
+                <div class="space-y-2">
+                    <label for="password" class="block text-sm font-medium text-white ml-1">Nueva Contraseña</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons text-white/60 group-focus-within:text-white transition-colors">lock</span>
+                        </div>
+                        <input 
+                            name="password" 
+                            id="password"
+                            type="password" 
+                            class="block w-full pl-10 pr-3 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm" 
+                            placeholder="••••••••"
+                        >
+                    </div>
+                    <label name="password-error" class="text-red-200 text-xs ml-1 font-medium flex items-center gap-1 hidden">
+                        <span class="material-icons text-[14px]">error</span>
+                        La contraseña es obligatoria
+                    </label>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password_confirm" class="block text-sm font-medium text-white ml-1">Confirmar Contraseña</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons text-white/60 group-focus-within:text-white transition-colors">lock_reset</span>
+                        </div>
+                        <input 
+                            name="password_confirm" 
+                            id="password_confirm"
+                            type="password" 
+                            class="block w-full pl-10 pr-3 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm" 
+                            placeholder="••••••••"
+                        >
+                    </div>
+                    <label name="password_confirm-error" class="text-red-200 text-xs ml-1 font-medium flex items-center gap-1 hidden">
+                        <span class="material-icons text-[14px]">error</span>
+                        Las contraseñas no coinciden
+                    </label>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 text-white font-bold rounded-xl border border-white/40 shadow-lg backdrop-blur-sm transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+                >
+                    <span>Actualizar Contraseña</span>
+                    <span class="material-icons text-sm">save</span>
+                </button>
+
+            </form>
+
+        </div>
     </div>
-</div>
+</main>
 
 <script>
     function verifyForm(event) {
@@ -73,37 +103,36 @@ if (!isset($token)) {
 
         // Validar contraseña
         if (password.value === "") {
-            password.classList.add("border-red-500");
+            password.classList.add("border-red-400", "ring-2", "ring-red-400/50");
             passwordError.classList.remove("hidden");
-            passwordError.textContent = "La contraseña es obligatoria.";
+            passwordError.innerHTML = '<span class="material-icons text-[14px]">error</span> La contraseña es obligatoria';
             isValid = false;
         } else if (password.value.length < 8) {
-            password.classList.add("border-red-500");
+            password.classList.add("border-red-400", "ring-2", "ring-red-400/50");
             passwordError.classList.remove("hidden");
-            passwordError.textContent = "La contraseña debe tener al menos 8 caracteres.";
+            passwordError.innerHTML = '<span class="material-icons text-[14px]">error</span> Mínimo 8 caracteres';
             isValid = false;
         } else {
-            password.classList.remove("border-red-500");
+            password.classList.remove("border-red-400", "ring-2", "ring-red-400/50");
             passwordError.classList.add("hidden");
         }
 
         // Validar confirmación
         if (confirm.value === "") {
-            confirm.classList.add("border-red-500");
+            confirm.classList.add("border-red-400", "ring-2", "ring-red-400/50");
             confirmError.classList.remove("hidden");
-            confirmError.textContent = "Debes confirmar la contraseña.";
+            confirmError.innerHTML = '<span class="material-icons text-[14px]">error</span> Confirma tu contraseña';
             isValid = false;
         } else if (password.value !== confirm.value) {
-            confirm.classList.add("border-red-500");
+            confirm.classList.add("border-red-400", "ring-2", "ring-red-400/50");
             confirmError.classList.remove("hidden");
-            confirmError.textContent = "Las contraseñas no coinciden.";
+            confirmError.innerHTML = '<span class="material-icons text-[14px]">error</span> Las contraseñas no coinciden';
             isValid = false;
         } else {
-            confirm.classList.remove("border-red-500");
+            confirm.classList.remove("border-red-400", "ring-2", "ring-red-400/50");
             confirmError.classList.add("hidden");
         }
 
-        // Si todo es válido, enviar formulario
         if (isValid) {
             event.target.submit();
         }
