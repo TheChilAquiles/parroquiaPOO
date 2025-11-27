@@ -400,4 +400,165 @@ class ReporteModelo
             'fecha_generacion' => date('Y-m-d H:i:s')
         ];
     }
+    /**
+     * Cuenta el total de sacramentos registrados
+     * @return int
+     */
+    public function contarSacramentosTotal()
+    {
+        try {
+            $sql = "SELECT COUNT(*) FROM sacramentos";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            Logger::error("Error al contar sacramentos:", ['error' => $e->getMessage()]);
+            return 0;
+        }
+    }
+
+    /**
+     * Cuenta el total de feligreses registrados
+     * @return int
+     */
+    public function contarFeligresesTotal()
+    {
+        try {
+            $sql = "SELECT COUNT(*) FROM feligreses";
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            Logger::error("Error al contar feligreses:", ['error' => $e->getMessage()]);
+            return 0;
+        }
+    }
+
+    /**
+     * Suma los ingresos en un rango de fechas
+     * @param string $fechaInicio
+     * @param string $fechaFin
+     * @return float
+     */
+    public function sumarIngresos($fechaInicio, $fechaFin)
+    {
+        try {
+            $sql = "SELECT SUM(valor) FROM pagos WHERE fecha_pago BETWEEN :inicio AND :fin AND estado IN ('aprobado', 'completado', 'pagado')";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':inicio', $fechaInicio);
+            $stmt->bindValue(':fin', $fechaFin);
+            $stmt->execute();
+            return (float) $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            Logger::error("Error al sumar ingresos:", ['error' => $e->getMessage()]);
+            return 0.0;
+        }
+    }
+
+    /**
+     * Cuenta los certificados generados en un rango de fechas
+     * @param string $fechaInicio
+     * @param string $fechaFin
+     * @return int
+     */
+    public function contarCertificados($fechaInicio, $fechaFin)
+    {
+        try {
+            $sql = "SELECT COUNT(*) FROM certificados WHERE fecha_generacion BETWEEN :inicio AND :fin";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':inicio', $fechaInicio);
+            $stmt->bindValue(':fin', $fechaFin);
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            Logger::error("Error al contar certificados:", ['error' => $e->getMessage()]);
+            return 0;
+        }
+    }
+
+    /**
+     * Obtiene el desglose de sacramentos por tipo para un año
+     * @param int $anio
+     * @return array
+     */
+    public function obtenerDesgloseSacramentos($anio)
+    {
+        try {
+            $sql = "SELECT st.tipo, COUNT(s.id) as cantidad 
+                    FROM sacramentos s 
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id 
+                    WHERE YEAR(s.fecha_generacion) = :anio 
+                    GROUP BY st.tipo";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':anio', $anio);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener desglose de sacramentos:", ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene los ingresos desglosados por concepto para un año
+     * @param int $anio
+     * @return array
+     */
+    public function obtenerIngresosPorConcepto($anio)
+    {
+        try {
+            $sql = "SELECT tipo_concepto, SUM(valor) as total 
+                    FROM pagos 
+                    WHERE YEAR(fecha_pago) = :anio AND estado IN ('aprobado', 'completado', 'pagado')
+                    GROUP BY tipo_concepto";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':anio', $anio);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener ingresos por concepto:", ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene reporte detallado de sacramentos
+     */
+    public function obtenerReporteSacramentos($fechaInicio, $fechaFin)
+    {
+        try {
+            $sql = "SELECT s.id, st.tipo, s.fecha_generacion, s.acta, s.folio 
+                    FROM sacramentos s 
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id 
+                    WHERE s.fecha_generacion BETWEEN :inicio AND :fin
+                    ORDER BY s.fecha_generacion DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':inicio', $fechaInicio);
+            $stmt->bindValue(':fin', $fechaFin);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener reporte de sacramentos:", ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    /**
+     * Obtiene reporte financiero detallado
+     */
+    public function obtenerReporteFinanciero($fechaInicio, $fechaFin)
+    {
+        try {
+            $sql = "SELECT id, fecha_pago, valor, tipo_concepto, estado, transaction_id 
+                    FROM pagos 
+                    WHERE fecha_pago BETWEEN :inicio AND :fin 
+                    ORDER BY fecha_pago DESC";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':inicio', $fechaInicio);
+            $stmt->bindValue(':fin', $fechaFin);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener reporte financiero:", ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
 }
