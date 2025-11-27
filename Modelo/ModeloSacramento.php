@@ -186,18 +186,6 @@ class ModeloSacramento
                     $stmt_participante = $this->conexion->prepare($sql_participante);
                     $stmt_participante->execute([
                         $feligresId,
-                        $sacramentoID,
-                        $integrante['rolParticipante']
-                    ]);
-                }
-            }
-
-            $this->conexion->commit();
-            return $sacramentoID;
-        } catch (PDOException $e) {
-            $this->conexion->rollBack();
-            Logger::error("Error al crear sacramento:", ['error' => $e->getMessage()]);
-            return false;
         }
     }
 

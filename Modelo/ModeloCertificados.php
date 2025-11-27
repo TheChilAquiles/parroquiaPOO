@@ -33,7 +33,14 @@ class ModeloCertificados
                 $data['observaciones']
             ]);
 
-            return $this->db->lastInsertId();
+            $id = $this->db->lastInsertId();
+            Logger::info("Certificado creado exitosamente", [
+                'certificado_id' => $id,
+                'usuario_id' => $data['usuario_id'],
+                'feligres_id' => $data['feligres_id'],
+                'sacramento' => $data['sacramento']
+            ]);
+            return $id;
         } catch (PDOException $e) {
             Logger::error("Error al crear certificado:", ['error' => $e->getMessage()]);
             return false;

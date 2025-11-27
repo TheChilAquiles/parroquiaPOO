@@ -46,6 +46,12 @@ class ConfiguracionController extends BaseController
             // Obtener datos del formulario
             $configuraciones = $_POST['config'] ?? [];
 
+            Logger::info("Intento de actualización de configuraciones", [
+                'user_id' => $_SESSION['user-id'] ?? 'unknown',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+                'cantidad_campos' => count($configuraciones)
+            ]);
+
             if (empty($configuraciones)) {
                 $_SESSION['error'] = 'No se recibieron configuraciones para actualizar.';
                 header('Location: ?route=admin/configuraciones');

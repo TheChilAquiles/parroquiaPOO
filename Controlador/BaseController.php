@@ -21,6 +21,13 @@ abstract class BaseController
 
         if (!isset($_SESSION['user-rol']) ||
             !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+            
+            Logger::warning("Acceso denegado a ruta protegida (requiereAdmin)", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'rol_actual' => $_SESSION['user-rol'] ?? 'none',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+
             $_SESSION['error'] = 'No tienes permisos para esta acción.';
             redirect('dashboard');
             
@@ -38,6 +45,11 @@ abstract class BaseController
     protected function requiereAutenticacion($permitirPerfilIncompleto = false)
     {
         if (!isset($_SESSION['logged']) || $_SESSION['logged'] !== true) {
+            Logger::info("Redirección a login por falta de sesión", [
+                'route_attempted' => $_GET['route'] ?? 'unknown',
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+            
             $_SESSION['error'] = 'Debes iniciar sesión.';
             redirect('login');
             
@@ -80,6 +92,13 @@ abstract class BaseController
         $rolUsuario = $_SESSION['user-rol'] ?? '';
 
         if (!in_array($rolUsuario, $rolesPermitidos)) {
+            Logger::warning("Acceso denegado por rol insuficiente", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'rol_actual' => $rolUsuario,
+                'roles_requeridos' => $rolesPermitidos,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+            
             $_SESSION['error'] = 'No tienes permisos para acceder a esta sección.';
             redirect('dashboard');
             
