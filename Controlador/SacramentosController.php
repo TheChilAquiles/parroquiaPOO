@@ -45,6 +45,10 @@ class SacramentosController extends BaseController
     public function crear()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            Logger::warning("Intento de acceso directo a crear sacramento", [
+                'method' => $_SERVER['REQUEST_METHOD'],
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
             $this->index();
             return;
         }
@@ -77,6 +81,14 @@ class SacramentosController extends BaseController
 
             $sacramento = new ModeloSacramento($tipo, $numero);
 
+            Logger::info("Procesando sacramento", [
+                'accion' => $accion,
+                'tipo_libro' => $tipo,
+                'numero_libro' => $numero,
+                'sacramento_id' => $sacramentoId,
+                'user_id' => $_SESSION['user-id'] ?? 'guest'
+            ]);
+
             if ($accion === 'editRecord' && !empty($sacramentoId)) {
                 // Actualizar sacramento existente
                 $resultado = $sacramento->ActualizarSacramento($sacramentoId, $_POST);
@@ -108,6 +120,12 @@ class SacramentosController extends BaseController
             if (ob_get_level()) {
                 ob_clean();
             }
+
+            Logger::error("Error al procesar sacramento", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'datos_post' => $_POST
+            ]);
 
             header('Content-Type: application/json');
             http_response_code(500);

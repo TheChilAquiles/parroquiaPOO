@@ -57,6 +57,11 @@ class ModeloFeligres
             ]);
 
             if ($stmt->rowCount() > 0) {
+                Logger::info("Feligrés registrado exitosamente", [
+                    'tipo_doc' => $datos['tipo-doc'],
+                    'numero_doc_prefix' => substr($datos['documento'], 0, 3) . '***',
+                    'nombre_completo' => $datos['primer-nombre'] . ' ' . $datos['primer-apellido']
+                ]);
                 return ['status' => 'success', 'message' => 'Feligrés registrado correctamente'];
             }
             return ['status' => 'error', 'message' => 'No se pudo registrar el feligrés'];
@@ -101,6 +106,11 @@ class ModeloFeligres
             ]);
 
             if ($stmt->rowCount() > 0) {
+                Logger::info("Feligrés actualizado exitosamente", [
+                    'id' => $datos['id'],
+                    'tipo_doc' => $datos['tipo-doc'],
+                    'numero_doc_prefix' => substr($datos['documento'], 0, 3) . '***'
+                ]);
                 return ['status' => 'success', 'message' => 'Feligrés actualizado correctamente'];
             }
             return ['status' => 'error', 'message' => 'No se pudo actualizar el feligrés'];
@@ -195,7 +205,17 @@ class ModeloFeligres
             $sql = "UPDATE feligreses SET estado_registro = NOW() WHERE id = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$id]);
-            return $stmt->rowCount() > 0;
+            
+            $eliminado = $stmt->rowCount() > 0;
+            
+            if ($eliminado) {
+                Logger::info("Feligrés eliminado (soft delete)", [
+                    'id' => $id,
+                    'user_id' => $_SESSION['user-id'] ?? 'unknown'
+                ]);
+            }
+            
+            return $eliminado;
         } catch (PDOException $e) {
             Logger::error("Error al eliminar feligrés:", ['error' => $e->getMessage()]);
             return false;

@@ -102,6 +102,11 @@ class ModeloPago
             $stmt->execute($params);
 
             if ($stmt->rowCount() > 0) {
+                Logger::info("Pago creado exitosamente", [
+                    'certificado_id' => $data['certificado_id'],
+                    'valor' => $data['valor'],
+                    'tipo_pago_id' => $tipoPagoId
+                ]);
                 return ['exito' => true, 'mensaje' => 'Pago creado correctamente'];
             }
             return ['exito' => false, 'mensaje' => 'No se pudo crear el pago'];
@@ -130,6 +135,10 @@ class ModeloPago
             ]);
 
             if ($stmt->rowCount() > 0) {
+                Logger::info("Pago actualizado exitosamente", [
+                    'pago_id' => $id,
+                    'nuevo_estado' => $data['estado']
+                ]);
                 return ['exito' => true, 'mensaje' => 'Pago actualizado correctamente'];
             }
             return ['exito' => false, 'mensaje' => 'No se pudo actualizar el pago'];
@@ -161,6 +170,10 @@ class ModeloPago
             $stmt->execute([$id]);
 
             if ($stmt->rowCount() > 0) {
+                Logger::info("Pago eliminado exitosamente", [
+                    'pago_id' => $id,
+                    'user_id' => $_SESSION['user-id'] ?? 'unknown'
+                ]);
                 return ['exito' => true, 'mensaje' => 'Pago eliminado correctamente'];
             }
             return ['exito' => false, 'mensaje' => 'No se pudo eliminar el pago'];

@@ -10,7 +10,7 @@ class DashboardController extends BaseController
 
     public function __construct()
     {
-        $this->modelo = new DashboardModel();
+        $this->modelo = new ModeloDashboard();
     }
 
     /**

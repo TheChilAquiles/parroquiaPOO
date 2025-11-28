@@ -4,7 +4,7 @@
 // ModeloDashboard.php - Modelo para estadísticas del dashboard
 // ============================================================================
 
-class DashboardModel
+class ModeloDashboard
 {
     private $conexion;
 
