@@ -240,115 +240,82 @@ class ModeloUsuario
     }
 
     // ========================================================================
-    // MÉTODOS NUEVOS PARA RECUPERAR CONTRASEÑA
+    // CORRECCIÓN DE RECUPERACIÓN DE CONTRASEÑA (SOLUCIÓN DEFINITIVA)
     // ========================================================================
 
     /**
-     * Guarda el token de reseteo y su expiración en la BD
+     * Guarda el token y le dice a MySQL que calcule 1 hora desde "AHORA"
+     * Eliminamos el parámetro $expires de PHP para evitar conflicto de horas
      */
-    public function mdlGuardarTokenReset($email, $token, $expires)
+    public function mdlGuardarTokenReset($email, $token) // Quitamos $expires de aquí
     {
         try {
-            $sql = "UPDATE usuarios
-                    SET reset_token = ?, reset_token_expires = ?
-                    WHERE email = ?";
+            // USAMOS DATE_ADD(NOW(), INTERVAL 1 HOUR) para que sea la hora exacta de la BD
+            $sql = "UPDATE usuarios 
+                    SET reset_token = :token, 
+                        reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) 
+                    WHERE email = :email";
+            
             $stmt = $this->conexion->prepare($sql);
-            $result = $stmt->execute([$token, $expires, $email]);
+            
+            $stmt->bindParam(":token", $token, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+            
+            return $stmt->execute();
 
-            if ($result) {
-                Logger::info("Token de reseteo de contraseña guardado", [
-                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
-                    'token_prefix' => substr($token, 0, 8) . '...',
-                    'expires' => $expires
-                ]);
-            } else {
-                Logger::warning("No se pudo guardar token de reseteo - email no encontrado", [
-                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
-                ]);
-            }
-
-            return $result;
         } catch (PDOException $e) {
-            Logger::error("Error al guardar token de reseteo:", [
-                'error' => $e->getMessage(),
-                'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1)
-            ]);
+            Logger::error("Error al guardar token:", ['error' => $e->getMessage()]);
             return false;
         }
     }
 
     /**
-     * Busca un usuario por un token de reseteo VÁLIDO (no expirado)
+     * Busca por token y verifica que la fecha de expiración sea mayor a la hora actual de la BD
      */
     public function mdlBuscarUsuarioPorToken($token)
     {
         try {
-            $sql = "SELECT * FROM usuarios
-                    WHERE reset_token = ? AND reset_token_expires > NOW()";
+            $sql = "SELECT * FROM usuarios 
+                    WHERE reset_token = :token 
+                    AND reset_token_expires > NOW()"; // Compara peras con peras (hora BD vs hora BD)
+            
             $stmt = $this->conexion->prepare($sql);
-            $stmt->execute([$token]);
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt->bindParam(":token", $token, PDO::PARAM_STR);
+            $stmt->execute();
+            
+            return $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($usuario) {
-                Logger::info("Usuario encontrado por token válido", [
-                    'user_id' => $usuario['id'],
-                    'email' => substr($usuario['email'], 0, 3) . '***@' . substr(strstr($usuario['email'], '@'), 1),
-                    'token_prefix' => substr($token, 0, 8) . '...'
-                ]);
-            } else {
-                Logger::warning("Token de reseteo inválido o expirado", [
-                    'token_prefix' => substr($token, 0, 8) . '...'
-                ]);
-            }
-
-            return $usuario;
         } catch (PDOException $e) {
-            Logger::error("Error al buscar por token:", [
-                'error' => $e->getMessage(),
-                'token_prefix' => substr($token, 0, 8) . '...'
-            ]);
+            Logger::error("Error al buscar token:", ['error' => $e->getMessage()]);
             return null;
         }
     }
 
     /**
-     * Actualiza la contraseña del usuario y limpia el token
+     * Actualiza la contraseña. 
+     * IMPORTANTE: La columna en tu tabla se llama `contraseña` (con ñ).
      */
     public function mdlActualizarContrasenaPorToken($token, $nuevaPassword)
     {
         try {
-            // Primero obtenemos el usuario para logging
-            $usuario = $this->mdlBuscarUsuarioPorToken($token);
-
-            if (!$usuario) {
-                Logger::warning("Intento de actualizar contraseña con token inválido", [
-                    'token_prefix' => substr($token, 0, 8) . '...'
-                ]);
-                return false;
-            }
-
-            // Hashear la nueva contraseña
+            // Hashear password
             $hashedPassword = password_hash($nuevaPassword, PASSWORD_DEFAULT);
 
-            $sql = "UPDATE usuarios
-                    SET contraseña = ?, reset_token = NULL, reset_token_expires = NULL
-                    WHERE reset_token = ?";
+            $sql = "UPDATE usuarios 
+                    SET contraseña = :password, 
+                        reset_token = NULL, 
+                        reset_token_expires = NULL 
+                    WHERE reset_token = :token";
+            
             $stmt = $this->conexion->prepare($sql);
-            $result = $stmt->execute([$hashedPassword, $token]);
+            
+            $stmt->bindParam(":password", $hashedPassword, PDO::PARAM_STR);
+            $stmt->bindParam(":token", $token, PDO::PARAM_STR);
+            
+            return $stmt->execute();
 
-            if ($result) {
-                Logger::info("Contraseña actualizada exitosamente", [
-                    'user_id' => $usuario['id'],
-                    'email' => substr($usuario['email'], 0, 3) . '***@' . substr(strstr($usuario['email'], '@'), 1)
-                ]);
-            }
-
-            return $result;
         } catch (PDOException $e) {
-            Logger::error("Error al actualizar contraseña:", [
-                'error' => $e->getMessage(),
-                'token_prefix' => substr($token, 0, 8) . '...'
-            ]);
+            Logger::error("Error al actualizar pass:", ['error' => $e->getMessage()]);
             return false;
         }
     }

@@ -1,4 +1,7 @@
 <?php
+
+
+define('BASE_URL', $_ENV['APP_URL'] ?? 'http://parroquiapoo.test');
 // Database configuration
 // Leemos desde $_ENV en lugar de getenv()
 define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');

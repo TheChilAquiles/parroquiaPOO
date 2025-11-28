@@ -92,9 +92,8 @@ class LoginController
             ]);
 
             redirect('dashboard');
-            
-            exit();
 
+            exit();
         } catch (Exception $e) {
             Logger::error("Error crítico en proceso de login", [
                 'error' => $e->getMessage(),
@@ -120,9 +119,8 @@ class LoginController
 
             session_destroy();
             redirect('inicio');
-            
-            exit();
 
+            exit();
         } catch (Exception $e) {
             Logger::error("Error durante logout", [
                 'error' => $e->getMessage(),
@@ -159,7 +157,7 @@ class LoginController
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 redirect('olvido');
-                
+
                 exit();
             }
 
@@ -190,18 +188,18 @@ class LoginController
             }
 
             // 2. Generar un token seguro
+            // 2. Generar un token seguro
             $token = bin2hex(random_bytes(32));
-            $expires = date('Y-m-d H:i:s', time() + 3600); // Expira en 1 hora
+            // (Borramos $expires porque MySQL se encarga)
 
             Logger::info("Token de recuperación generado", [
                 'user_id' => $usuario['id'],
                 'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
                 'token_prefix' => substr($token, 0, 8) . '...',
-                'expires_at' => $expires
             ]);
 
             // 3. Guardar el token en la BD
-            if (!$this->modelo->mdlGuardarTokenReset($email, $token, $expires)) {
+            if (!$this->modelo->mdlGuardarTokenReset($email, $token)) {
                 Logger::error("Error al guardar token de recuperación en BD", [
                     'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
                     'user_id' => $usuario['id']
@@ -212,8 +210,7 @@ class LoginController
             }
 
             // 4. Enviar el email con PHPMailer
-            $urlReseteo = "http://localhost/parroquiaPOO/index.php?route=resetear&token=" . $token;
-
+            $urlReseteo = BASE_URL . "/index.php?route=resetear&token=" . $token;
             $mail = new PHPMailer(true);
 
             try {
@@ -250,7 +247,6 @@ class LoginController
                 $_SESSION['success'] = 'Si tu email está registrado, recibirás un enlace para recuperar tu contraseña.';
                 redirect('olvido');
                 exit();
-
             } catch (Exception $e) {
                 Logger::error("Error al enviar email de recuperación", [
                     'error' => $mail->ErrorInfo,
@@ -262,7 +258,6 @@ class LoginController
                 redirect('olvido');
                 exit();
             }
-
         } catch (Exception $e) {
             Logger::error("Error crítico en proceso de recuperación de contraseña", [
                 'error' => $e->getMessage(),
@@ -285,7 +280,7 @@ class LoginController
         if (empty($token)) {
             $_SESSION['error'] = 'Token inválido o no proporcionado.';
             redirect('login');
-            
+
             exit();
         }
 
@@ -295,7 +290,7 @@ class LoginController
         if (!$usuario) {
             $_SESSION['error'] = 'El token es inválido o ha expirado. Por favor, solicita un nuevo reseteo.';
             redirect('olvido');
-            
+
             exit();
         }
 
@@ -316,7 +311,7 @@ class LoginController
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 redirect('login');
-                
+
                 exit();
             }
 
@@ -364,7 +359,7 @@ class LoginController
                 ]);
                 $_SESSION['error'] = 'El token es inválido o ha expirado.';
                 redirect('olvido');
-                
+
                 exit();
             }
 
@@ -377,7 +372,7 @@ class LoginController
                 ]);
                 $_SESSION['success'] = '¡Tu contraseña ha sido actualizada! Ya puedes iniciar sesión.';
                 redirect('login');
-                
+
                 exit();
             } else {
                 Logger::error("Error al actualizar contraseña en BD", [
@@ -388,7 +383,6 @@ class LoginController
                 header('Location: ?route=resetear&token=' . urlencode($token));
                 exit();
             }
-
         } catch (Exception $e) {
             Logger::error("Error crítico en proceso de reseteo de contraseña", [
                 'error' => $e->getMessage(),
@@ -397,7 +391,7 @@ class LoginController
             ]);
             $_SESSION['error'] = 'Error al procesar tu solicitud. Por favor, intenta de nuevo.';
             redirect('olvido');
-            
+
             exit();
         }
     }

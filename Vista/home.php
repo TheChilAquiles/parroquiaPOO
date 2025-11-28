@@ -4,8 +4,8 @@
 
     <section class="relative h-screen parallax-bg bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 bg-black/40"></div>
-        <link rel="stylesheet" href="Vista/css/estilos.css">
-        <script src="Vista/js/home.js"></script>
+        <link rel="stylesheet" href="assets/css/estilos.css">
+        <script src="assets/js/home.js"></script>
 
         <div class="absolute top-20 left-10 floating-animation">
             <div class="w-20 h-20 bg-white/10 rounded-full glass-effect"></div>
@@ -25,10 +25,10 @@
                 Descubre nuestra historia, ministerios y comunidad de fe
             </p>
             <div class="pulse-glow inline-block">
-                <button onclick="scrollToSection('historia')" class="bg-white text-[#ab876f] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300 shadow-2xl flex items-center justify-center mx-auto">
+                <a href="#historia" class="bg-white text-[#ab876f] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300 shadow-2xl flex items-center justify-center mx-auto cursor-pointer">
                     <span class="material-icons mr-2">church</span>
                     Explorar Nuestra Historia
-                </button>
+                </a>
             </div>
         </div>
 

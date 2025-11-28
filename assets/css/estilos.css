@@ -1,7 +1,16 @@
 /* ================================
-   ESTILOS PERSONALIZADOS PARA LA PARROQUIA
+    ESTILOS PERSONALIZADOS PARA LA PARROQUIA
    ================================ */
-
+/* ================================
+    CONFIGURACIÓN GENERAL Y SCROLL
+   ================================ */
+html {
+    /* Esto activa el desplazamiento suave */
+    scroll-behavior: smooth; 
+    
+    /* Esto deja un espacio arriba para que el menú fijo no tape el título */
+    scroll-padding-top: 100px; 
+}
 /* Parallax Background */
 .parallax-bg {
     background-attachment: fixed;
