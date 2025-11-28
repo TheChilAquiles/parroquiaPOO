@@ -1,28 +1,28 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual de Usuario - Sistema Parroquial</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        * { font-family: 'Inter', sans-serif; }
-        
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
         .fade-in {
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
         }
-        
+
         @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .section-card {
             transition: all 0.3s ease;
         }
-        
+
         .section-card:hover {
             transform: translateY(-8px);
             box-shadow: 0 20px 40px rgba(171, 135, 111, 0.15);
@@ -32,19 +32,21 @@
             background: linear-gradient(135deg, #f5f3f0 0%, #e8e4df 100%);
         }
     </style>
-</head>
+
+
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
 
     <!-- Hero Section -->
     <header class="relative bg-gradient-to-r from-[#D0B8A8] via-[#b5a394] to-[#ab876f] text-white overflow-hidden">
         <div class="absolute inset-0 bg-black/10"></div>
-        
+
         <!-- Elementos decorativos -->
         <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
         <div class="absolute bottom-20 right-16 w-16 h-16 bg-white/10 rounded-full animate-bounce"></div>
-        
+
         <div class="relative max-w-7xl mx-auto px-6 py-20 text-center">
-            <div class="inline-flex items-center justify-center w-24 h-24 bg-white/20 rounded-full mb-8 backdrop-blur-sm">
+            <div
+                class="inline-flex items-center justify-center w-24 h-24 bg-white/20 rounded-full mb-8 backdrop-blur-sm">
                 <span class="material-icons text-5xl">menu_book</span>
             </div>
             <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-2xl">
@@ -54,19 +56,23 @@
                 Guía completa del Sistema de Gestión Parroquial San Francisco de Asís
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#inicio" class="bg-white text-[#ab876f] px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-xl">
+                <a href="#inicio"
+                    class="bg-white text-[#ab876f] px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition duration-300 shadow-xl">
                     Comenzar
                 </a>
-                <a href="#secciones" class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-[#ab876f] transition duration-300">
+                <a href="#secciones"
+                    class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-[#ab876f] transition duration-300">
                     Ver Secciones
                 </a>
             </div>
         </div>
-        
+
         <!-- Ola decorativa -->
         <div class="absolute bottom-0 left-0 right-0">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-16 fill-white">
-                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+                <path
+                    d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z">
+                </path>
             </svg>
         </div>
     </header>
@@ -75,39 +81,48 @@
     <nav id="inicio" class="sticky top-0 z-40 bg-white shadow-md">
         <div class="max-w-full justify-self-center mx-auto px-6">
             <div class="flex overflow-x-auto py-4 space-x-6 scrollbar-hide">
-                <a href="#home" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-[#D0B8A8] text-white hover:bg-[#ab876f] transition whitespace-nowrap">
+                <a href="#home"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-[#D0B8A8] text-white hover:bg-[#ab876f] transition whitespace-nowrap">
                     <span class="material-icons">home</span>
                     <span>Inicio</span>
                 </a>
-                <a href="#historia" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#historia"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">history</span>
                     <span>Historia</span>
                 </a>
-                <a href="#noticias" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#noticias"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">article</span>
                     <span>Noticias</span>
                 </a>
-                <a href="#contacto" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#contacto"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">phone</span>
                     <span>Contacto</span>
                 </a>
-                <a href="#dashboard" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#dashboard"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="#grupos" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#grupos"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">groups</span>
                     <span>Grupos</span>
                 </a>
-                <a href="#reportes" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#reportes"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">assessment</span>
                     <span>Reportes</span>
                 </a>
-                <a href="#pagos" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#pagos"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">payments</span>
                     <span>Pagos</span>
                 </a>
-                <a href="#auth" class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
+                <a href="#auth"
+                    class="flex items-center space-x-2 px-4 py-2 rounded-full bg-gray-100 hover:bg-[#D0B8A8] hover:text-white transition whitespace-nowrap">
                     <span class="material-icons">lock</span>
                     <span>Autenticación</span>
                 </a>
@@ -131,7 +146,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">home</span>
                         </div>
                         <div>
@@ -149,7 +165,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                La página de inicio es el punto de entrada principal del sitio web. Presenta información general sobre la Parroquia San Francisco de Asís, incluyendo la misión, horarios de misa, servicios disponibles y formas de contacto.
+                                La página de inicio es el punto de entrada principal del sitio web. Presenta información
+                                general sobre la Parroquia San Francisco de Asís, incluyendo la misión, horarios de
+                                misa, servicios disponibles y formas de contacto.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -159,7 +177,8 @@
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">check_circle</span>
-                                    <span><strong>Hero Section:</strong> Presentación principal con imagen de fondo</span>
+                                    <span><strong>Hero Section:</strong> Presentación principal con imagen de
+                                        fondo</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">check_circle</span>
@@ -183,7 +202,8 @@
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Vista Previa Visual</h4>
                             <div class="bg-white rounded-xl overflow-hidden shadow-lg">
-                                <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] h-32 flex items-center justify-center text-white">
+                                <div
+                                    class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] h-32 flex items-center justify-center text-white">
                                     <div class="text-center">
                                         <h5 class="text-2xl font-bold">San Francisco de Asís</h5>
                                         <p class="text-sm opacity-90">Bienvenidos</p>
@@ -227,7 +247,9 @@
                             Consejo para Usuarios
                         </h5>
                         <p class="text-blue-800">
-                            Usa el botón "Ver Todas las Noticias" para mantenerte actualizado sobre eventos y actividades de la parroquia. Los horarios de misa están siempre visibles en la sección central.
+                            Usa el botón "Ver Todas las Noticias" para mantenerte actualizado sobre eventos y
+                            actividades de la parroquia. Los horarios de misa están siempre visibles en la sección
+                            central.
                         </p>
                     </div>
                 </div>
@@ -239,7 +261,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">history</span>
                         </div>
                         <div>
@@ -257,7 +280,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Una línea de tiempo visual que narra la historia de 27 años de la Parroquia San Francisco de Asís, desde sus humildes inicios en 1996 hasta la actualidad. Cada hito importante está destacado con iconos y descripciones detalladas.
+                                Una línea de tiempo visual que narra la historia de 27 años de la Parroquia San
+                                Francisco de Asís, desde sus humildes inicios en 1996 hasta la actualidad. Cada hito
+                                importante está destacado con iconos y descripciones detalladas.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -296,25 +321,33 @@
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Diseño Visual</h4>
                             <div class="bg-white rounded-xl overflow-hidden shadow-lg p-4">
                                 <div class="relative">
-                                    <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D0B8A8] to-[#ab876f]"></div>
-                                    
+                                    <div
+                                        class="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#D0B8A8] to-[#ab876f]">
+                                    </div>
+
                                     <!-- Timeline items -->
                                     <div class="space-y-8">
                                         <div class="flex items-center relative">
                                             <div class="w-1/2 pr-8 text-right">
-                                                <div class="bg-gradient-to-l from-[#D0B8A8] to-[#ab876f] p-3 rounded-lg text-white text-xs">
+                                                <div
+                                                    class="bg-gradient-to-l from-[#D0B8A8] to-[#ab876f] p-3 rounded-lg text-white text-xs">
                                                     <strong>1996</strong> - Los inicios
                                                 </div>
                                             </div>
-                                            <div class="absolute left-1/2 w-4 h-4 bg-[#D0B8A8] rounded-full -ml-2 border-2 border-white"></div>
+                                            <div
+                                                class="absolute left-1/2 w-4 h-4 bg-[#D0B8A8] rounded-full -ml-2 border-2 border-white">
+                                            </div>
                                             <div class="w-1/2"></div>
                                         </div>
-                                        
+
                                         <div class="flex items-center relative">
                                             <div class="w-1/2"></div>
-                                            <div class="absolute left-1/2 w-4 h-4 bg-[#ab876f] rounded-full -ml-2 border-2 border-white"></div>
+                                            <div
+                                                class="absolute left-1/2 w-4 h-4 bg-[#ab876f] rounded-full -ml-2 border-2 border-white">
+                                            </div>
                                             <div class="w-1/2 pl-8">
-                                                <div class="bg-gradient-to-r from-[#ab876f] to-[#D0B8A8] p-3 rounded-lg text-white text-xs">
+                                                <div
+                                                    class="bg-gradient-to-r from-[#ab876f] to-[#D0B8A8] p-3 rounded-lg text-white text-xs">
                                                     <strong>2023</strong> - Actualidad
                                                 </div>
                                             </div>
@@ -353,7 +386,8 @@
                             Dato Interesante
                         </h5>
                         <p class="text-purple-800">
-                            La parroquia creció de 50 familias fundadoras en 1996 a más de 800 familias activas hoy. Cada card de la línea de tiempo es interactiva y muestra más detalles al hacer clic.
+                            La parroquia creció de 50 familias fundadoras en 1996 a más de 800 familias activas hoy.
+                            Cada card de la línea de tiempo es interactiva y muestra más detalles al hacer clic.
                         </p>
                     </div>
                 </div>
@@ -365,7 +399,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">article</span>
                         </div>
                         <div>
@@ -383,7 +418,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Sistema completo para gestionar noticias y anuncios parroquiales. Los administradores pueden crear, editar y eliminar noticias, mientras que todos los usuarios pueden buscar y visualizar las publicaciones en un diseño moderno tipo tarjetas.
+                                Sistema completo para gestionar noticias y anuncios parroquiales. Los administradores
+                                pueden crear, editar y eliminar noticias, mientras que todos los usuarios pueden buscar
+                                y visualizar las publicaciones en un diseño moderno tipo tarjetas.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -393,7 +430,8 @@
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">add_circle</span>
-                                    <span><strong>Crear:</strong> Publicar noticias con título, descripción e imagen</span>
+                                    <span><strong>Crear:</strong> Publicar noticias con título, descripción e
+                                        imagen</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-blue-600 mr-2 mt-0.5">edit</span>
@@ -416,25 +454,28 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Interfaz Visual</h4>
-                            
+
                             <!-- Card de noticia simulada -->
                             <div class="bg-white rounded-2xl overflow-hidden shadow-xl">
                                 <div class="h-32 bg-gradient-to-br from-blue-400 to-blue-600"></div>
                                 <div class="p-4">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">27 Oct, 2025</span>
+                                        <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">27 Oct,
+                                            2025</span>
                                         <span class="text-xs text-gray-500">Lectura: 2 min</span>
                                     </div>
                                     <h5 class="font-bold text-gray-900 mb-2">Título de la Noticia</h5>
                                     <p class="text-sm text-gray-600">Descripción breve del contenido...</p>
-                                    
+
                                     <!-- Botones admin -->
                                     <div class="flex gap-2 mt-4">
-                                        <button class="flex-1 bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold flex items-center justify-center">
+                                        <button
+                                            class="flex-1 bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold flex items-center justify-center">
                                             <span class="material-icons text-sm mr-1">edit</span>
                                             Editar
                                         </button>
-                                        <button class="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-semibold flex items-center justify-center">
+                                        <button
+                                            class="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-semibold flex items-center justify-center">
                                             <span class="material-icons text-sm mr-1">delete</span>
                                             Eliminar
                                         </button>
@@ -464,7 +505,9 @@
                             Mejores Prácticas
                         </h5>
                         <p class="text-green-800">
-                            Al crear noticias, usa imágenes de alta calidad (máx 5MB) y títulos descriptivos. El sistema valida automáticamente los formularios y muestra notificaciones de éxito/error después de cada acción.
+                            Al crear noticias, usa imágenes de alta calidad (máx 5MB) y títulos descriptivos. El sistema
+                            valida automáticamente los formularios y muestra notificaciones de éxito/error después de
+                            cada acción.
                         </p>
                     </div>
                 </div>
@@ -476,7 +519,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">phone</span>
                         </div>
                         <div>
@@ -494,7 +538,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Dashboard estilo profesional que muestra la información de contacto de la parroquia enlazada con Facebook. Incluye dirección física con integración a Google Maps y número telefónico con funciones de llamada directa y copia rápida.
+                                Dashboard estilo profesional que muestra la información de contacto de la parroquia
+                                enlazada con Facebook. Incluye dirección física con integración a Google Maps y número
+                                telefónico con funciones de llamada directa y copia rápida.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -512,7 +558,8 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-orange-600 mr-2 mt-0.5">phone</span>
-                                    <span><strong>Llamar Directamente:</strong> Inicia llamada desde el dispositivo</span>
+                                    <span><strong>Llamar Directamente:</strong> Inicia llamada desde el
+                                        dispositivo</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-purple-600 mr-2 mt-0.5">content_copy</span>
@@ -520,25 +567,28 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-red-600 mr-2 mt-0.5">bookmark</span>
-                                    <span><strong>Guardar/Compartir:</strong> Funciones para guardar o compartir info</span>
+                                    <span><strong>Guardar/Compartir:</strong> Funciones para guardar o compartir
+                                        info</span>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Elementos de Contacto</h4>
-                            
+
                             <!-- Dirección -->
                             <div class="bg-white rounded-xl p-4 shadow-lg mb-4">
                                 <div class="flex items-start space-x-3">
-                                    <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <div
+                                        class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <span class="material-icons text-slate-600">location_on</span>
                                     </div>
                                     <div class="flex-1">
                                         <h5 class="font-bold text-gray-900">Bosa San José</h5>
                                         <p class="text-sm text-gray-600">Calle 86 a sur #81-23</p>
                                         <div class="flex gap-2 mt-2">
-                                            <button class="text-xs bg-slate-900 text-white px-3 py-1 rounded-lg">Ver Mapa</button>
+                                            <button class="text-xs bg-slate-900 text-white px-3 py-1 rounded-lg">Ver
+                                                Mapa</button>
                                         </div>
                                     </div>
                                 </div>
@@ -547,15 +597,18 @@
                             <!-- Teléfono -->
                             <div class="bg-white rounded-xl p-4 shadow-lg">
                                 <div class="flex items-start space-x-3">
-                                    <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <div
+                                        class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <span class="material-icons text-slate-600">phone</span>
                                     </div>
                                     <div class="flex-1">
                                         <h5 class="font-bold text-gray-900">Teléfono</h5>
                                         <p class="text-sm text-gray-700 font-mono">601 402 3526</p>
                                         <div class="flex gap-2 mt-2">
-                                            <button class="text-xs bg-slate-200 text-gray-800 px-3 py-1 rounded-lg">Copiar</button>
-                                            <button class="text-xs bg-slate-900 text-white px-3 py-1 rounded-lg">Llamar</button>
+                                            <button
+                                                class="text-xs bg-slate-200 text-gray-800 px-3 py-1 rounded-lg">Copiar</button>
+                                            <button
+                                                class="text-xs bg-slate-900 text-white px-3 py-1 rounded-lg">Llamar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -579,7 +632,9 @@
                             Experiencia Móvil
                         </h5>
                         <p class="text-cyan-800">
-                            En dispositivos móviles, los botones de "Llamar" y "Ver en Mapa" abren automáticamente las aplicaciones nativas del teléfono (Teléfono, Google Maps, etc.), proporcionando una experiencia fluida y rápida.
+                            En dispositivos móviles, los botones de "Llamar" y "Ver en Mapa" abren automáticamente las
+                            aplicaciones nativas del teléfono (Teléfono, Google Maps, etc.), proporcionando una
+                            experiencia fluida y rápida.
                         </p>
                     </div>
                 </div>
@@ -591,7 +646,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">dashboard</span>
                         </div>
                         <div>
@@ -609,7 +665,10 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Panel de control completo que muestra estadísticas en tiempo real de todo el sistema parroquial. Conecta directamente con la base de datos para mostrar métricas actualizadas de usuarios, libros, documentos, reportes, pagos y contactos mediante gráficos interactivos.
+                                Panel de control completo que muestra estadísticas en tiempo real de todo el sistema
+                                parroquial. Conecta directamente con la base de datos para mostrar métricas actualizadas
+                                de usuarios, libros, documentos, reportes, pagos y contactos mediante gráficos
+                                interactivos.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -646,12 +705,13 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Visualización de Datos</h4>
-                            
+
                             <!-- Gráficos simulados -->
                             <div class="grid grid-cols-2 gap-3 mb-4">
                                 <div class="bg-white p-3 rounded-lg shadow">
                                     <div class="text-center">
-                                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <div
+                                            class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                                             <span class="material-icons text-blue-600">people</span>
                                         </div>
                                         <p class="text-2xl font-bold text-gray-900">850</p>
@@ -660,7 +720,8 @@
                                 </div>
                                 <div class="bg-white p-3 rounded-lg shadow">
                                     <div class="text-center">
-                                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <div
+                                            class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                                             <span class="material-icons text-green-600">check_circle</span>
                                         </div>
                                         <p class="text-2xl font-bold text-gray-900">245</p>
@@ -692,9 +753,11 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                            <div
+                                class="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
                                 <p class="text-xs text-purple-900">
-                                    <strong>⚡ Actualización:</strong> Los datos se actualizan automáticamente cada 5 minutos
+                                    <strong>⚡ Actualización:</strong> Los datos se actualizan automáticamente cada 5
+                                    minutos
                                 </p>
                             </div>
                         </div>
@@ -706,14 +769,16 @@
                                 <span class="material-icons mr-2 text-sm">speed</span>
                                 Rendimiento
                             </h5>
-                            <p class="text-sm text-blue-800">Usa Chart.js para renderizado rápido de gráficos con animaciones fluidas</p>
+                            <p class="text-sm text-blue-800">Usa Chart.js para renderizado rápido de gráficos con
+                                animaciones fluidas</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
                             <h5 class="font-bold text-green-900 mb-2 flex items-center">
                                 <span class="material-icons mr-2 text-sm">security</span>
                                 Seguridad
                             </h5>
-                            <p class="text-sm text-green-800">Conexión PDO con manejo de errores y consultas preparadas</p>
+                            <p class="text-sm text-green-800">Conexión PDO con manejo de errores y consultas preparadas
+                            </p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
                             <h5 class="font-bold text-purple-900 mb-2 flex items-center">
@@ -732,7 +797,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">groups</span>
                         </div>
                         <div>
@@ -750,7 +816,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Sistema completo para crear y administrar grupos parroquiales (coros, catequesis, grupos juveniles, etc.). Permite gestionar miembros, visualizar información detallada y realizar operaciones CRUD completas con confirmaciones de seguridad.
+                                Sistema completo para crear y administrar grupos parroquiales (coros, catequesis, grupos
+                                juveniles, etc.). Permite gestionar miembros, visualizar información detallada y
+                                realizar operaciones CRUD completas con confirmaciones de seguridad.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -760,7 +828,8 @@
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">add_circle</span>
-                                    <span><strong>Crear Grupo:</strong> Modal rápido con validación de nombre único</span>
+                                    <span><strong>Crear Grupo:</strong> Modal rápido con validación de nombre
+                                        único</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-blue-600 mr-2 mt-0.5">visibility</span>
@@ -783,23 +852,26 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Card de Grupo</h4>
-                            
+
                             <!-- Card simulada -->
                             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                                 <div class="p-5">
                                     <div class="flex items-start justify-between mb-4">
-                                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <div
+                                            class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                                             <span class="material-icons text-purple-600">groups</span>
                                         </div>
-                                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-semibold">
+                                        <span
+                                            class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-semibold">
                                             25 miembros
                                         </span>
                                     </div>
-                                    
+
                                     <h5 class="font-bold text-gray-900 mb-4">Coro Parroquial</h5>
-                                    
+
                                     <div class="space-y-2">
-                                        <button class="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-semibold">
+                                        <button
+                                            class="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-semibold">
                                             Ver Detalles
                                         </button>
                                         <div class="flex gap-2">
@@ -862,7 +934,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">assessment</span>
                         </div>
                         <div>
@@ -880,7 +953,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Dashboard profesional que muestra reportes con sus pagos asociados en tiempo real. Permite gestionar completamente los reportes con sistema CRUD, búsqueda avanzada, filtros por estado y visualización elegante con estadísticas integradas.
+                                Dashboard profesional que muestra reportes con sus pagos asociados en tiempo real.
+                                Permite gestionar completamente los reportes con sistema CRUD, búsqueda avanzada,
+                                filtros por estado y visualización elegante con estadísticas integradas.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -890,11 +965,13 @@
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">add_box</span>
-                                    <span><strong>Crear:</strong> Nuevo reporte con título, descripción, categoría y valor</span>
+                                    <span><strong>Crear:</strong> Nuevo reporte con título, descripción, categoría y
+                                        valor</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-blue-600 mr-2 mt-0.5">visibility</span>
-                                    <span><strong>Leer:</strong> Visualización completa con estado de pago y certificado</span>
+                                    <span><strong>Leer:</strong> Visualización completa con estado de pago y
+                                        certificado</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-orange-600 mr-2 mt-0.5">edit</span>
@@ -913,18 +990,21 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Panel de Estadísticas</h4>
-                            
+
                             <!-- Estadísticas simuladas -->
                             <div class="grid grid-cols-3 gap-3 mb-4">
-                                <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200 text-center">
+                                <div
+                                    class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200 text-center">
                                     <div class="text-2xl font-bold text-slate-800">45</div>
                                     <div class="text-xs font-medium text-blue-600">Total</div>
                                 </div>
-                                <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 border border-green-200 text-center">
+                                <div
+                                    class="bg-gradient-to-r from-green-50 to-green-100 rounded-xl p-4 border border-green-200 text-center">
                                     <div class="text-2xl font-bold text-slate-800">38</div>
                                     <div class="text-xs font-medium text-green-600">Pagados</div>
                                 </div>
-                                <div class="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200 text-center">
+                                <div
+                                    class="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-4 border border-yellow-200 text-center">
                                     <div class="text-2xl font-bold text-slate-800">$2.5M</div>
                                     <div class="text-xs font-medium text-yellow-600">Total</div>
                                 </div>
@@ -939,14 +1019,18 @@
                                 </div>
                                 <div class="space-y-2">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">1</span>
+                                        <span
+                                            class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">1</span>
                                         <span class="text-gray-700 flex-1 mx-2">Reporte Ejemplo</span>
-                                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Pagado</span>
+                                        <span
+                                            class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">Pagado</span>
                                     </div>
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">2</span>
+                                        <span
+                                            class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">2</span>
                                         <span class="text-gray-700 flex-1 mx-2">Otro Reporte</span>
-                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pendiente</span>
+                                        <span
+                                            class="px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-bold">Pendiente</span>
                                     </div>
                                 </div>
                             </div>
@@ -970,7 +1054,9 @@
                             Integración con Pagos
                         </h5>
                         <p class="text-emerald-800">
-                            Cada reporte está vinculado a un pago específico. El sistema muestra el estado del pago (completo/pendiente) y permite acceder directamente al certificado asociado cuando el pago está completado. Los filtros permiten ver reportes por estado de pago.
+                            Cada reporte está vinculado a un pago específico. El sistema muestra el estado del pago
+                            (completo/pendiente) y permite acceder directamente al certificado asociado cuando el pago
+                            está completado. Los filtros permiten ver reportes por estado de pago.
                         </p>
                     </div>
                 </div>
@@ -982,7 +1068,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">payments</span>
                         </div>
                         <div>
@@ -1000,7 +1087,10 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Sistema completo de gestión financiera con diseño vibrante y gradientes coloridos. Controla todos los pagos de certificados con información detallada: valor, estado, tipo de pago, fecha y certificado asociado. Incluye CRUD completo y estadísticas en tiempo real.
+                                Sistema completo de gestión financiera con diseño vibrante y gradientes coloridos.
+                                Controla todos los pagos de certificados con información detallada: valor, estado, tipo
+                                de pago, fecha y certificado asociado. Incluye CRUD completo y estadísticas en tiempo
+                                real.
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -1010,7 +1100,8 @@
                             <ul class="space-y-3">
                                 <li class="flex items-start">
                                     <span class="material-icons text-green-600 mr-2 mt-0.5">add_circle</span>
-                                    <span><strong>Agregar Pago:</strong> Registro con certificado, valor y tipo de pago</span>
+                                    <span><strong>Agregar Pago:</strong> Registro con certificado, valor y tipo de
+                                        pago</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-blue-600 mr-2 mt-0.5">visibility</span>
@@ -1022,7 +1113,8 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-red-600 mr-2 mt-0.5">delete</span>
-                                    <span><strong>Eliminar:</strong> Borrado con confirmación y limpieza de reportes</span>
+                                    <span><strong>Eliminar:</strong> Borrado con confirmación y limpieza de
+                                        reportes</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-purple-600 mr-2 mt-0.5">search</span>
@@ -1033,18 +1125,21 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Tarjetas de Estadísticas</h4>
-                            
+
                             <!-- Cards de estadísticas -->
                             <div class="grid grid-cols-3 gap-2 mb-4">
-                                <div class="bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl p-3 border-l-4 border-blue-400 text-center">
+                                <div
+                                    class="bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl p-3 border-l-4 border-blue-400 text-center">
                                     <div class="text-2xl font-black text-gray-800">156</div>
                                     <div class="text-xs font-semibold text-gray-600">Total</div>
                                 </div>
-                                <div class="bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl p-3 border-l-4 border-emerald-400 text-center">
+                                <div
+                                    class="bg-gradient-to-br from-emerald-100 to-green-100 rounded-xl p-3 border-l-4 border-emerald-400 text-center">
                                     <div class="text-2xl font-black text-emerald-700">142</div>
                                     <div class="text-xs font-semibold text-gray-600">Pagados</div>
                                 </div>
-                                <div class="bg-gradient-to-br from-purple-100 to-purple-100 rounded-xl p-3 border-l-4 border-purple-400 text-center">
+                                <div
+                                    class="bg-gradient-to-br from-purple-100 to-purple-100 rounded-xl p-3 border-l-4 border-purple-400 text-center">
                                     <div class="text-xl font-black text-purple-700">$8.2M</div>
                                     <div class="text-xs font-semibold text-gray-600">Valor</div>
                                 </div>
@@ -1073,9 +1168,12 @@
                                 </div>
                             </div>
 
-                            <div class="mt-4 p-3 bg-gradient-to-r from-pink-50 to-rose-50 rounded-lg border border-pink-200">
+                            <div
+                                class="mt-4 p-3 bg-gradient-to-r from-pink-50 to-rose-50 rounded-lg border border-pink-200">
                                 <p class="text-xs text-pink-900">
-                                    <strong>🎨 Diseño Único:</strong> Usa gradientes vibrantes (amarillo, naranja, rosa, púrpura) con animación de fondo y efectos glass-morphism para una experiencia visual premium.
+                                    <strong>🎨 Diseño Único:</strong> Usa gradientes vibrantes (amarillo, naranja, rosa,
+                                    púrpura) con animación de fondo y efectos glass-morphism para una experiencia visual
+                                    premium.
                                 </p>
                             </div>
                         </div>
@@ -1087,21 +1185,24 @@
                                 <span class="material-icons mr-2 text-sm">auto_awesome</span>
                                 Efectos Visuales
                             </h5>
-                            <p class="text-sm text-orange-800">Animaciones de shimmer en botones, hover effects en filas y gradientes dinámicos en el fondo</p>
+                            <p class="text-sm text-orange-800">Animaciones de shimmer en botones, hover effects en filas
+                                y gradientes dinámicos en el fondo</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-pink-50 to-rose-100 rounded-xl">
                             <h5 class="font-bold text-rose-900 mb-2 flex items-center">
                                 <span class="material-icons mr-2 text-sm">trending_up</span>
                                 Estadísticas
                             </h5>
-                            <p class="text-sm text-rose-800">Calcula automáticamente totales, pagos completados y valores acumulados</p>
+                            <p class="text-sm text-rose-800">Calcula automáticamente totales, pagos completados y
+                                valores acumulados</p>
                         </div>
                         <div class="p-4 bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl">
                             <h5 class="font-bold text-indigo-900 mb-2 flex items-center">
                                 <span class="material-icons mr-2 text-sm">security</span>
                                 Seguridad
                             </h5>
-                            <p class="text-sm text-indigo-800">Validación de fechas, manejo seguro de NULL y confirmación antes de eliminar</p>
+                            <p class="text-sm text-indigo-800">Validación de fechas, manejo seguro de NULL y
+                                confirmación antes de eliminar</p>
                         </div>
                     </div>
                 </div>
@@ -1113,7 +1214,8 @@
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden section-card">
                 <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] p-8 text-white">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <div
+                            class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                             <span class="material-icons text-3xl">lock</span>
                         </div>
                         <div>
@@ -1131,7 +1233,9 @@
                                 ¿Qué es?
                             </h4>
                             <p class="text-gray-700 leading-relaxed mb-6">
-                                Sistema completo de autenticación con dos vistas: Login (inicio de sesión) y Registro (crear cuenta). Incluye validación en tiempo real con JavaScript, manejo seguro de errores PHP y uso de rutas modernas (?route=login/procesar).
+                                Sistema completo de autenticación con dos vistas: Login (inicio de sesión) y Registro
+                                (crear cuenta). Incluye validación en tiempo real con JavaScript, manejo seguro de
+                                errores PHP y uso de rutas modernas (?route=login/procesar).
                             </p>
 
                             <h4 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -1145,7 +1249,8 @@
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-blue-600 mr-2 mt-0.5">email</span>
-                                    <span><strong>Emails Verificados:</strong> Validación de formato (@, dominio, etc.)</span>
+                                    <span><strong>Emails Verificados:</strong> Validación de formato (@, dominio,
+                                        etc.)</span>
                                 </li>
                                 <li class="flex items-start">
                                     <span class="material-icons text-purple-600 mr-2 mt-0.5">password</span>
@@ -1164,18 +1269,20 @@
 
                         <div class="code-preview p-6 rounded-2xl">
                             <h4 class="text-lg font-bold text-gray-900 mb-4">Formularios</h4>
-                            
+
                             <!-- Login simulado -->
                             <div class="bg-white rounded-xl shadow-lg p-5 mb-4">
                                 <h5 class="text-lg font-bold text-gray-900 mb-4 text-center">Iniciar Sesión</h5>
                                 <div class="space-y-3">
                                     <div>
                                         <label class="text-sm font-medium text-gray-700">Correo electrónico</label>
-                                        <input type="email" placeholder="usuario@ejemplo.com" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" disabled>
+                                        <input type="email" placeholder="usuario@ejemplo.com"
+                                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm" disabled>
                                     </div>
                                     <div>
                                         <label class="text-sm font-medium text-gray-700">Contraseña</label>
-                                        <input type="password" placeholder="••••••••" class="w-full border border-gray-300 rounded px-3 py-2 text-sm" disabled>
+                                        <input type="password" placeholder="••••••••"
+                                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm" disabled>
                                     </div>
                                     <button class="w-full bg-emerald-500 text-white py-2 rounded font-semibold text-sm">
                                         Entrar
@@ -1187,9 +1294,12 @@
                             <div class="bg-white rounded-xl shadow-lg p-5">
                                 <h5 class="text-lg font-bold text-gray-900 mb-4 text-center">Registrarse</h5>
                                 <div class="space-y-2">
-                                    <input type="email" placeholder="Email" class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
-                                    <input type="password" placeholder="Contraseña" class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
-                                    <input type="password" placeholder="Confirmar" class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
+                                    <input type="email" placeholder="Email"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
+                                    <input type="password" placeholder="Contraseña"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
+                                    <input type="password" placeholder="Confirmar"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-xs" disabled>
                                     <button class="w-full bg-emerald-500 text-white py-2 rounded font-semibold text-xs">
                                         Registrar
                                     </button>
@@ -1232,39 +1342,17 @@
             </div>
         </section>
 
+
+        <!-- Footer -->
+        <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-black py-2">
+                <div class="border-t border-white/20  text-center opacity-90">
+                    <p class="text-sm mt-2">Manual de Usuario v1.0 | Última actualización: Octubre 2025</p>
+                </div>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-black py-12">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-8 mb-8">
-                <div>
-                    <h4 class="text-xl font-bold mb-4">Sistema Parroquial</h4>
-                    <p class="opacity-90">Solución completa para la gestión administrativa y comunicacional de la Parroquia San Francisco de Asís.</p>
-                </div>
-                <div>
-                    <h4 class="text-xl font-bold mb-4">Contacto</h4>
-                    <div class="space-y-2 opacity-90">
-                        <p>📧 parroquiasanfrancisco@gmail.com</p>
-                        <p>📞 601 402 3526</p>
-                        <p>📍 Bosa San José, Bogotá</p>
-                    </div>
-                </div>
-                <div>
-                    <h4 class="text-xl font-bold mb-4">Recursos</h4>
-                    <ul class="space-y-2 opacity-90">
-                        <li><a href="#" class="hover:underline">Documentación técnica</a></li>
-                        <li><a href="#" class="hover:underline">Preguntas frecuentes</a></li>
-                        <li><a href="#" class="hover:underline">Soporte</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-white/20 pt-8 text-center opacity-90">
-                <p>&copy; 2025 Parroquia San Francisco de Asís. Todos los derechos reservados.</p>
-                <p class="text-sm mt-2">Manual de Usuario v1.0 | Última actualización: Octubre 2025</p>
-            </div>
-        </div>
-    </footer>
+
+
 
     <script>
         // Animación de entrada para secciones
@@ -1304,7 +1392,7 @@
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('section[id]');
             const navLinks = document.querySelectorAll('nav a[href^="#"]');
-            
+
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
@@ -1356,7 +1444,7 @@
                     }
                 });
             }, { threshold: 0.5 });
-            
+
             sectionObserver.observe(section);
         });
 
@@ -1369,5 +1457,3 @@
         console.log('💡 Tip: Usa la navegación superior para saltar entre secciones');
         console.log('🎯 Total de secciones: 9 (Home, Historia, Noticias, Contacto, Dashboard, Grupos, Reportes, Pagos, Auth)');
     </script>
-</body>
-</html>

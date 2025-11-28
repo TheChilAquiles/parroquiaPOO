@@ -14,17 +14,6 @@ $categoriasTitulos = [
     'notificaciones' => 'Notificaciones'
 ];
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuraciones del Sistema</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
 
 <main class="min-h-screen relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] overflow-hidden">
     <!-- Background Elements -->
@@ -45,10 +34,7 @@ $categoriasTitulos = [
                     <p class="text-white/80">Administración del sistema</p>
                 </div>
             </div>
-            <a href="<?= url('dashboard') ?>" class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl border border-white/40 shadow-sm backdrop-blur-sm transition-all flex items-center gap-2">
-                <span class="material-icons text-sm">arrow_back</span>
-                Volver al Dashboard
-            </a>
+
         </div>
 
         <!-- Mensajes -->
