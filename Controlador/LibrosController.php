@@ -23,12 +23,8 @@ class LibrosController extends BaseController
 
     public function seleccionarTipo()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->index();
-            return;
-        }
-
-        $tipo = $_POST['tipo'] ?? null;
+        // Se permite GET y POST para flexibilidad en las vistas
+        $tipo = $_REQUEST['tipo'] ?? null;
 
         if (empty($tipo) || !is_numeric($tipo)) {
             $_SESSION['error'] = 'Tipo de libro inválido.';
@@ -46,12 +42,9 @@ class LibrosController extends BaseController
 
     public function crear()
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->index();
-            return;
-        }
-
-        $tipo = $_POST['tipo'] ?? null;
+        // Se permite GET y POST para flexibilidad en las vistas
+        // NOTA: Idealmente las acciones de creación deberían ser POST, pero se ajusta por requerimiento de navegación
+        $tipo = $_REQUEST['tipo'] ?? null;
 
         if (empty($tipo) || !is_numeric($tipo)) {
             $_SESSION['error'] = 'Tipo de libro inválido.';
