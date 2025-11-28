@@ -196,6 +196,7 @@ class Router
             // RUTAS DE ADMINISTRACIÓN (Solo Administradores)
             // ================================================================
             'admin/configuraciones' => ['controlador' => 'ConfiguracionController', 'accion' => 'configuraciones'],
+            'configuracion' => ['controlador' => 'ConfiguracionController', 'accion' => 'configuraciones'],
         ];
     }
 

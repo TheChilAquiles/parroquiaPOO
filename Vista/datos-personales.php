@@ -1,5 +1,5 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<main class="min-h-screen relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden py-10">
+<main class="flex-1 relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden py-10">
     <!-- Background Elements -->
     <div class="absolute inset-0 bg-black/20"></div>
     <div class="absolute top-20 left-10 floating-animation">
