@@ -53,26 +53,25 @@ class PerfilController extends BaseController
 
             $feligres = $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
 
-            if ($feligres['status'] === 'error') {
+            if ($feligres === false) {
                 Logger::warning("Feligrés no encontrado", [
                     'user_id' => $_SESSION['user-id'],
                     'tipo_doc' => $tipoDoc,
-                    'numero_doc_prefix' => substr($numeroDoc, 0, 3) . '***',
-                    'error' => $feligres['error']
+                    'numero_doc_prefix' => substr($numeroDoc, 0, 3) . '***'
                 ]);
-                $_SESSION['error'] = $feligres['error'];
+                $_SESSION['error'] = 'No se encontró un feligrés con estos datos. Puedes registrarte llenando el formulario.';
                 $this->mostrar();
                 return;
             }
 
             Logger::info("Feligrés encontrado exitosamente", [
                 'user_id' => $_SESSION['user-id'],
-                'feligres_id' => $feligres['data']['id'] ?? 'unknown',
+                'feligres_id' => $feligres['id'] ?? 'unknown',
                 'tipo_doc' => $tipoDoc,
                 'numero_doc_prefix' => substr($numeroDoc, 0, 3) . '***'
             ]);
 
-            $_SESSION['feligres_temporal'] = $feligres['data'];
+            $_SESSION['feligres_temporal'] = $feligres;
             include_once __DIR__ . '/../Vista/datos-personales.php';
 
         } catch (Exception $e) {

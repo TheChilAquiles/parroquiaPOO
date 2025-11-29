@@ -217,67 +217,16 @@
 
 
 
-            <form action="" method="POST" class="inline-flex items-center bg-white text-[#ab876f] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 shadow-lg">
-                <input type="hidden" name="menu-item" value="Noticias">
-
-                <button class="flex py-2 px-2 hover:bg-[#DFD3C3] cursor-pointer rounded " type="submit">
-
+            <a href="/noticias" class="inline-flex items-center bg-white text-[#ab876f] px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition duration-300 shadow-lg cursor-pointer">
 
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
 
-
-                    Ver Todas las Noticias </button>
-
-
-
-            </form>
+                Ver Todas las Noticias
+                </a>
         </div>
     </section>
 
-    <!-- Contacto -->
-    <section id="contacto" class="py-16 bg-gray-50">
-        <div class="mx-auto max-w-7xl px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Visítanos</h2>
-                <p class="text-lg text-gray-600">Estamos aquí para acompañarte en tu camino de fe</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Dirección</h3>
-                    <p class="text-gray-600"> <b>DESPACHO</b> Calle 85A sur # 78 79 INT 120<br>Bogotá, Colombia</p>
-                    <p class="text-gray-600"> <b>PARROQUIA</b> Calle 86 sur # 80I 23<br>Bogotá, Colombia</p>
-
-                </div>
-
-                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Teléfono</h3>
-                    <p class="text-gray-600"><br><b>Tel:</b> (601) 402 30-26</p>
-                </div>
-
-                <div class="bg-white p-8 rounded-xl shadow-lg text-center">
-                    <div class="w-16 h-16 bg-[#D0B8A8] rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Email</h3>
-                    <p class="text-gray-600">parroquiasanfrancisco.soacha@gmail.com<br></p>
-                </div>
-            </div>
-        </div>
-    </section>
+    
 </main>

@@ -1,16 +1,15 @@
 </div>
 
-<footer class="bg-[#D0B8A8] h-full">
-    <div>
-        <h3>Redes Sociales</h3>
-        <div>
-            hola
-        </div>
+
+
+<footer class="bg-[#D0B8A8] border-t border-slate-200">
+    <div class="max-w-7xl mx-auto px-6 py-8 text-center text-white text-black">
+        <p>&copy; 2025 Sistema de Gestión Parroquial. Samuelito Team</p>
     </div>
 </footer>
 
 
-
 <!-- <script type="module" src="vista/js/ajax.js"></script> -->
 </body>
+
 </html>

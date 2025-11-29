@@ -319,12 +319,7 @@
         </section>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-16">
-        <div class="max-w-7xl mx-auto px-6 py-8 text-center text-gray-500">
-            <p>&copy; 2025 Dashboard Parroquia. Sistema de Gestión Parroquial.</p>
-        </div>
-    </footer>
+
 
     <!-- Scripts -->
     <script>
