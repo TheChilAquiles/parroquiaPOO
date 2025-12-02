@@ -336,77 +336,425 @@ class ReportesController extends BaseController
     }
 
     /**
-     * Genera HTML para el PDF
-     * @param array $reportes
-     * @param array $estadisticas
+     * Genera HTML dinámico para el PDF basado en los datos
+     * @param array $datos
+     * @param string $tipo
      * @return string
      */
-    private function generarHTMLParaPDF($reportes, $estadisticas)
+    private function generarHTMLParaPDF($datos, $tipo)
     {
+        $titulo = ucfirst($tipo);
+        $fecha = date('d/m/Y H:i');
+        
+        // Obtener encabezados dinámicamente del primer elemento
+        $headers = [];
+        if (!empty($datos)) {
+            $headers = array_keys($datos[0]);
+        }
+
         $html = '
         <!DOCTYPE html>
         <html>
         <head>
             <meta charset="UTF-8">
             <style>
-                body { font-family: Arial, sans-serif; font-size: 10px; }
-                h1 { text-align: center; color: #333; }
-                .stats { margin: 20px 0; padding: 10px; background: #f0f0f0; }
-                .stats span { margin-right: 20px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th { background: #4a5568; color: white; padding: 8px; text-align: left; }
-                td { padding: 6px; border-bottom: 1px solid #ddd; }
-                tr:nth-child(even) { background: #f9f9f9; }
-                .badge { padding: 3px 8px; border-radius: 3px; font-size: 9px; }
-                .badge-success { background: #10b981; color: white; }
-                .badge-warning { background: #f59e0b; color: white; }
+                body { font-family: Arial, sans-serif; font-size: 10px; color: #333; }
+                h1 { text-align: center; color: #2c3e50; margin-bottom: 5px; }
+                .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 20px; font-size: 12px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                th { background: #2c3e50; color: white; padding: 8px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 9px; }
+                td { padding: 8px; border-bottom: 1px solid #ddd; }
+                tr:nth-child(even) { background: #f8f9fa; }
+                .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 9px; color: #999; padding: 10px 0; }
             </style>
         </head>
         <body>
-            <h1>Reporte de Pagos - ' . date('d/m/Y H:i') . '</h1>
-
-            <div class="stats">
-                <span><strong>Total Reportes:</strong> ' . $estadisticas['totalReportes'] . '</span>
-                <span><strong>Pagos Completados:</strong> ' . $estadisticas['pagosCompletados'] . '</span>
-                <span><strong>Pagos Pendientes:</strong> ' . $estadisticas['pagosPendientes'] . '</span>
-                <span><strong>Valor Total:</strong> $' . number_format($estadisticas['totalValor'], 0, ',', '.') . '</span>
-            </div>
+            <h1>Reporte de ' . $titulo . '</h1>
+            <div class="subtitle">Generado el ' . $fecha . '</div>
 
             <table>
                 <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Categoría</th>
-                        <th>Fecha</th>
-                        <th>Estado Pago</th>
-                        <th>Valor</th>
+                    <tr>';
+        
+        foreach ($headers as $header) {
+            $html .= '<th>' . htmlspecialchars(str_replace('_', ' ', ucfirst($header))) . '</th>';
+        }
+
+        $html .= '
                     </tr>
                 </thead>
                 <tbody>';
 
-        foreach ($reportes as $reporte) {
-            $estadoPago = $this->modelo->esPagoCompletado($reporte['estado_pago']) ? 'Pagado' : 'Pendiente';
-            $badgeClass = $this->modelo->esPagoCompletado($reporte['estado_pago']) ? 'badge-success' : 'badge-warning';
-            $fecha = date('d/m/Y', strtotime($reporte['fecha_reporte']));
-
-            $html .= '
-                    <tr>
-                        <td>' . htmlspecialchars($reporte['id_reporte']) . '</td>
-                        <td>' . htmlspecialchars($reporte['titulo']) . '</td>
-                        <td>' . htmlspecialchars($reporte['categoria']) . '</td>
-                        <td>' . $fecha . '</td>
-                        <td><span class="badge ' . $badgeClass . '">' . $estadoPago . '</span></td>
-                        <td>$' . number_format(floatval($reporte['valor']), 0, ',', '.') . '</td>
-                    </tr>';
+        foreach ($datos as $fila) {
+            $html .= '<tr>';
+            foreach ($fila as $valor) {
+                $html .= '<td>' . htmlspecialchars($valor ?? '') . '</td>';
+            }
+            $html .= '</tr>';
         }
 
         $html .= '
                 </tbody>
             </table>
+
+            <div class="footer">
+                Sistema de Gestión Parroquial - Reporte Generado Automáticamente
+            </div>
         </body>
         </html>';
 
         return $html;
+    }
+
+    // ========================================================================
+    // REPORTES ANALÍTICOS - PRIMERA GENERACIÓN
+    // ========================================================================
+
+    /**
+     * Reporte de certificados
+     */
+    public function reporteCertificados()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $porTipo = $this->modelo->reporteCertificadosPorTipo();
+            $porEstado = $this->modelo->reporteCertificadosPorEstado();
+            $tiempos = $this->modelo->reporteTiemposProcesamiento();
+            $masSolicitados = $this->modelo->reporteCertificadosMasSolicitados(10);
+
+            include __DIR__ . '/../Vista/reportes_certificados.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteCertificados:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de certificados.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de feligreses
+     */
+    public function reporteFeligreses()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $porTipoDoc = $this->modelo->reporteFeligresesPorTipoDocumento();
+            $masActivos = $this->modelo->reporteFeligresesMasActivos(10);
+            $nuevos = $this->modelo->reporteFeligresesNuevos(30);
+
+            include __DIR__ . '/../Vista/reportes_feligreses.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteFeligreses:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de feligreses.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de sacramentos
+     */
+    public function reporteSacramentos()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $porTipo = $this->modelo->reporteSacramentosPorTipo();
+            $porLibro = $this->modelo->reporteSacramentosPorLibro();
+            $tendencias = $this->modelo->reporteTendenciasSacramentos(12);
+
+            include __DIR__ . '/../Vista/reportes_sacramentos.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteSacramentos:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de sacramentos.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte financiero
+     */
+    public function reporteFinanciero()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $ingresos = $this->modelo->reporteIngresosPorConcepto();
+            $estadoPagos = $this->modelo->reporteEstadoPagos();
+            $metodosPago = $this->modelo->reporteMetodosPago();
+            $valoresPromedio = $this->modelo->reporteValoresPromedio();
+
+            include __DIR__ . '/../Vista/reportes_financiero.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteFinanciero:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte financiero.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de actividad del sistema
+     */
+    public function reporteActividad()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $usuariosActivos = $this->modelo->reporteUsuariosMasActivos(10);
+            $actividadRol = $this->modelo->reporteActividadPorRol();
+            $tasaConversion = $this->modelo->reporteTasaConversion();
+
+            include __DIR__ . '/../Vista/reportes_actividad.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteActividad:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de actividad.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    // ========================================================================
+    // NUEVOS REPORTES ANALÍTICOS
+    // ========================================================================
+
+    // ========================================================================
+    // NUEVOS REPORTES ANALÍTICOS
+    // ========================================================================
+
+    /**
+     * Reporte de libros parroquiales
+     */
+    public function reporteLibros()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $porTipo = $this->modelo->reporteLibrosPorTipo();
+            $capacidad = $this->modelo->reporteCapacidadLibros();
+            $activos = $this->modelo->reporteLibrosActivos();
+
+            include __DIR__ . '/../Vista/reportes_libros.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteLibros:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de libros.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de usuarios
+     */
+    public function reporteUsuarios()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $fechaInicio = $_GET['fecha_inicio'] ?? date('Y-m-01');
+            $fechaFin = $_GET['fecha_fin'] ?? date('Y-m-d');
+
+            $porRol = $this->modelo->reporteUsuariosPorRol();
+            $sinDatos = $this->modelo->reporteUsuariosSinDatosCompletos();
+            $registros = $this->modelo->reporteRegistrosUsuarios($fechaInicio, $fechaFin);
+
+            include __DIR__ . '/../Vista/reportes_usuarios.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteUsuarios:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de usuarios.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de noticias
+     */
+    public function reporteNoticias()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $fechaInicio = $_GET['fecha_inicio'] ?? null;
+            $fechaFin = $_GET['fecha_fin'] ?? null;
+
+            $porPeriodo = $this->modelo->reporteNoticiasPorPeriodo($fechaInicio, $fechaFin);
+            $autoresActivos = $this->modelo->reporteAutoresMasActivos(10);
+
+            include __DIR__ . '/../Vista/reportes_noticias.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteNoticias:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de noticias.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte de contactos
+     */
+    public function reporteContactos()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $fechaInicio = $_GET['fecha_inicio'] ?? null;
+            $fechaFin = $_GET['fecha_fin'] ?? null;
+
+            $porPeriodo = $this->modelo->reporteContactosPorPeriodo($fechaInicio, $fechaFin);
+
+            include __DIR__ . '/../Vista/reportes_contactos.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteContactos:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte de contactos.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte comparativo
+     */
+    public function reporteComparativo()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $anio1 = $_GET['anio1'] ?? date('Y') - 1;
+            $anio2 = $_GET['anio2'] ?? date('Y');
+
+            $comparativo = $this->modelo->reporteComparativoAnual($anio1, $anio2);
+
+            include __DIR__ . '/../Vista/reportes_comparativo.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteComparativo:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte comparativo.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Reporte ejecutivo general
+     */
+    public function reporteEjecutivo()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $resumen = $this->modelo->reporteResumenGeneral();
+
+            include __DIR__ . '/../Vista/reportes_ejecutivo.php';
+        } catch (Exception $e) {
+            Logger::error("Error en reporteEjecutivo:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al generar reporte ejecutivo.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    // ========================================================================
+    // MÉTODOS DE EXPORTACIÓN
+    // ========================================================================
+
+    /**
+     * Exporta datos a CSV
+     */
+    public function exportarCSV()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $tipo = $_GET['tipo'] ?? 'general';
+            $datos = $this->obtenerDatosParaExportar($tipo);
+
+            if (empty($datos)) {
+                $_SESSION['error'] = 'No hay datos disponibles para exportar.';
+                header('Location: index.php?route=reportes');
+                exit;
+            }
+
+            $csv = $this->modelo->exportarCSV($datos);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="reporte_' . $tipo . '_' . date('Y-m-d') . '.csv"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+
+            echo "\xEF\xBB\xBF"; // UTF-8 BOM
+            echo $csv;
+            exit;
+        } catch (Exception $e) {
+            Logger::error("Error en exportarCSV:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al exportar datos a CSV.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Exporta datos a JSON
+     */
+    public function exportarJSON()
+    {
+        $this->requiereAutenticacion();
+
+        try {
+            $tipo = $_GET['tipo'] ?? 'general';
+            $datos = $this->obtenerDatosParaExportar($tipo);
+
+            if (empty($datos)) {
+                $_SESSION['error'] = 'No hay datos disponibles para exportar.';
+                header('Location: index.php?route=reportes');
+                exit;
+            }
+
+            $json = $this->modelo->exportarJSON($datos);
+
+            header('Content-Type: application/json; charset=utf-8');
+            header('Content-Disposition: attachment; filename="reporte_' . $tipo . '_' . date('Y-m-d') . '.json"');
+            header('Pragma: no-cache');
+            header('Expires: 0');
+
+            echo $json;
+            exit;
+        } catch (Exception $e) {
+            Logger::error("Error en exportarJSON:", ['error' => $e->getMessage()]);
+            $_SESSION['error'] = 'Error al exportar datos a JSON.';
+            header('Location: index.php?route=reportes');
+            exit;
+        }
+    }
+
+    /**
+     * Obtiene datos según el tipo de reporte para exportar
+     */
+    private function obtenerDatosParaExportar($tipo)
+    {
+        switch ($tipo) {
+            case 'certificados':
+                return $this->modelo->reporteCertificadosPorTipo();
+            case 'feligreses':
+                return $this->modelo->reporteFeligresesPorTipoDocumento();
+            case 'sacramentos':
+                return $this->modelo->reporteSacramentosPorTipo();
+            case 'financiero':
+                return $this->modelo->reporteIngresosPorConcepto();
+            case 'actividad':
+                return $this->modelo->reporteUsuariosMasActivos(10);
+            case 'libros':
+                return $this->modelo->reporteLibrosPorTipo();
+            case 'usuarios':
+                return $this->modelo->reporteUsuariosPorRol();
+            case 'noticias':
+                return $this->modelo->reporteNoticiasPorPeriodo();
+            case 'contactos':
+                return $this->modelo->reporteContactosPorPeriodo();
+            default:
+                return $this->modelo->obtenerDatosParaExportacion();
+        }
     }
 }

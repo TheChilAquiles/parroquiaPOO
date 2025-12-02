@@ -191,6 +191,21 @@ class Router
             'reportes/eliminar' => ['controlador' => 'ReportesController', 'accion' => 'eliminar'],
             'reportes/exportarPDF' => ['controlador' => 'ReportesController', 'accion' => 'exportarPDF'],
             'reportes/filtrar' => ['controlador' => 'ReportesController', 'accion' => 'filtrar'],
+            
+            // Nuevos reportes analíticos
+            'reportes/reporteCertificados' => ['controlador' => 'ReportesController', 'accion' => 'reporteCertificados'],
+            'reportes/reporteFeligreses' => ['controlador' => 'ReportesController', 'accion' => 'reporteFeligreses'],
+            'reportes/reporteSacramentos' => ['controlador' => 'ReportesController', 'accion' => 'reporteSacramentos'],
+            'reportes/reporteFinanciero' => ['controlador' => 'ReportesController', 'accion' => 'reporteFinanciero'],
+            'reportes/reporteActividad' => ['controlador' => 'ReportesController', 'accion' => 'reporteActividad'],
+            'reportes/reporteLibros' => ['controlador' => 'ReportesController', 'accion' => 'reporteLibros'],
+            'reportes/reporteUsuarios' => ['controlador' => 'ReportesController', 'accion' => 'reporteUsuarios'],
+            'reportes/reporteNoticias' => ['controlador' => 'ReportesController', 'accion' => 'reporteNoticias'],
+            'reportes/reporteContactos' => ['controlador' => 'ReportesController', 'accion' => 'reporteContactos'],
+            'reportes/reporteComparativo' => ['controlador' => 'ReportesController', 'accion' => 'reporteComparativo'],
+            'reportes/reporteEjecutivo' => ['controlador' => 'ReportesController', 'accion' => 'reporteEjecutivo'],
+            'reportes/exportarCSV' => ['controlador' => 'ReportesController', 'accion' => 'exportarCSV'],
+            'reportes/exportarJSON' => ['controlador' => 'ReportesController', 'accion' => 'exportarJSON'],
 
             // ================================================================
             // RUTAS DE ADMINISTRACIÓN (Solo Administradores)
