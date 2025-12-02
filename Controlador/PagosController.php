@@ -550,6 +550,42 @@ class PagosController extends BaseController
 
             // Verificar si el gateway requiere redirección (PaymentsWay, etc)
             if (isset($gatewayResponse['data']['requires_redirect']) && $gatewayResponse['data']['requires_redirect']) {
+                // Crear orden de pago en la base de datos antes de redirigir
+                $orderNumber = $gatewayResponse['transaction_id'];
+                $metadata = json_encode([
+                    'certificado_id' => $certificadoId,
+                    'feligres_id' => $feligresId,
+                    'tipo_certificado' => $certificado['tipo_certificado'] ?? 'no especificado',
+                    'gateway_mode' => $gatewayResponse['data']['mode'] ?? 'sandbox'
+                ]);
+
+                try {
+                    $conexion = Conexion::conectar();
+                    $sql = "INSERT INTO pago_ordenes (certificado_id, order_number, amount, estado, metadata, fecha_creacion)
+                            VALUES (?, ?, ?, 'pendiente', ?, NOW())";
+                    $stmt = $conexion->prepare($sql);
+                    $stmt->execute([
+                        $certificadoId,
+                        $orderNumber,
+                        $paymentData['amount'],
+                        $metadata
+                    ]);
+
+                    Logger::info("Orden de pago creada", [
+                        'order_number' => $orderNumber,
+                        'certificado_id' => $certificadoId,
+                        'amount' => $paymentData['amount']
+                    ]);
+                } catch (PDOException $e) {
+                    Logger::error("Error al crear orden de pago", [
+                        'error' => $e->getMessage(),
+                        'certificado_id' => $certificadoId
+                    ]);
+                    $_SESSION['error'] = 'Error al procesar la orden de pago.';
+                    header('Location: ?route=pagos/pagar-certificado&id=' . $certificadoId);
+                    exit;
+                }
+
                 // Mostrar página de redirección con formulario
                 $paymentUrl = $gatewayResponse['data']['payment_url'];
                 $formData = $gatewayResponse['data']['form_data'];
@@ -956,6 +992,172 @@ class PagosController extends BaseController
 
         // Redirigir a mis solicitudes
         header('Location: ?route=certificados/mis-solicitudes');
+        exit;
+    }
+
+    /**
+     * Webhook para recibir notificaciones de PaymentsWay (VePay)
+     * Este endpoint es llamado por VePay cuando cambia el estado de un pago
+     */
+    public function webhookPaymentsWay()
+    {
+        // Configurar respuesta JSON
+        header('Content-Type: application/json');
+
+        try {
+            // Obtener datos del webhook
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+
+            // Si no hay datos JSON, intentar con POST
+            if (empty($data)) {
+                $data = $_POST;
+            }
+
+            Logger::info("Webhook PaymentsWay recibido", [
+                'data' => $data,
+                'raw_input' => $input
+            ]);
+
+            // Validar datos requeridos
+            if (empty($data['externalorder'])) {
+                Logger::warning("Webhook PaymentsWay: falta externalorder", ['data' => $data]);
+                http_response_code(400);
+                echo json_encode(['message' => 'Datos inválidos: falta externalorder']);
+                exit;
+            }
+
+            $orderNumber = $data['externalorder'];
+            $paymentId = $data['id'] ?? null;
+            $statusId = $data['idstatus']['id'] ?? $data['idstatus'] ?? null;
+            $amount = $data['ammount'] ?? $data['amount'] ?? null;
+
+            // Buscar la orden en la base de datos
+            $conexion = Conexion::conectar();
+            $sql = "SELECT * FROM pago_ordenes WHERE order_number = ? LIMIT 1";
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([$orderNumber]);
+            $orden = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$orden) {
+                Logger::warning("Webhook PaymentsWay: orden no encontrada", [
+                    'order_number' => $orderNumber
+                ]);
+                http_response_code(404);
+                echo json_encode(['message' => 'Orden no encontrada']);
+                exit;
+            }
+
+            // Determinar nuevo estado según idstatus de VePay
+            // 34 = Aprobado
+            // 35, 40 = Rechazado
+            // 36, 37, 38 = Pendiente
+            // 39 = Cancelado/Reembolso
+            $nuevoEstado = 'pendiente';
+            $procesarPago = false;
+
+            switch ($statusId) {
+                case 34:
+                    $nuevoEstado = 'aprobado';
+                    $procesarPago = true;
+                    break;
+                case 35:
+                case 40:
+                    $nuevoEstado = 'rechazado';
+                    break;
+                case 39:
+                    $nuevoEstado = 'cancelado';
+                    break;
+                case 36:
+                case 37:
+                case 38:
+                default:
+                    $nuevoEstado = 'pendiente';
+                    break;
+            }
+
+            // Actualizar estado de la orden
+            $sqlUpdate = "UPDATE pago_ordenes 
+                          SET estado = ?, transaction_id = ?, fecha_actualizacion = NOW() 
+                          WHERE id = ?";
+            $stmtUpdate = $conexion->prepare($sqlUpdate);
+            $stmtUpdate->execute([$nuevoEstado, $paymentId, $orden['id']]);
+
+            Logger::info("Orden actualizada", [
+                'order_id' => $orden['id'],
+                'order_number' => $orderNumber,
+                'nuevo_estado' => $nuevoEstado,
+                'status_id' => $statusId
+            ]);
+
+            // Si el pago fue aprobado, procesar el pago
+            if ($procesarPago && $orden['estado'] !== 'aprobado') {
+                $certificadoId = $orden['certificado_id'];
+
+                // Crear registro de pago
+                $resultadoPago = $this->modelo->mdlCrear([
+                    'certificado_id' => $certificadoId,
+                    'valor' => $orden['amount'],
+                    'estado' => 'pagado',
+                    'metodo_de_pago' => 'online',
+                    'transaction_id' => $paymentId
+                ]);
+
+                if ($resultadoPago['exito']) {
+                    // Marcar certificado como pagado
+                    $this->modeloSolicitud->mdlMarcarPagado($certificadoId);
+
+                    // Generar PDF automáticamente
+                    $pdfGenerado = $this->controladorCertificados->generarAutomatico($certificadoId);
+
+                    Logger::info("Pago procesado por webhook", [
+                        'certificado_id' => $certificadoId,
+                        'order_number' => $orderNumber,
+                        'transaction_id' => $paymentId,
+                        'pdf_generado' => $pdfGenerado
+                    ]);
+
+                    http_response_code(200);
+                    echo json_encode([
+                        'message' => 'Recibido',
+                        'status' => 'processed',
+                        'certificado_generado' => $pdfGenerado
+                    ]);
+                } else {
+                    Logger::error("Error al crear pago desde webhook", [
+                        'certificado_id' => $certificadoId,
+                        'order_number' => $orderNumber,
+                        'error' => $resultadoPago['mensaje']
+                    ]);
+
+                    http_response_code(500);
+                    echo json_encode([
+                        'message' => 'Error al procesar pago',
+                        'error' => $resultadoPago['mensaje']
+                    ]);
+                }
+            } else {
+                // Pago no aprobado o ya procesado
+                http_response_code(200);
+                echo json_encode([
+                    'message' => 'Recibido',
+                    'status' => $nuevoEstado
+                ]);
+            }
+
+        } catch (Exception $e) {
+            Logger::error("Error en webhook PaymentsWay", [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            http_response_code(500);
+            echo json_encode([
+                'message' => 'Error interno',
+                'error' => $e->getMessage()
+            ]);
+        }
+
         exit;
     }
 

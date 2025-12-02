@@ -178,6 +178,7 @@ class Router
 
             // Webhook para confirmación de pagos externos (PÚBLICA)
             'pagos/webhook-confirmacion' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
+            'pagos/webhook-paymentsway' => ['controlador' => 'PagosController', 'accion' => 'webhookPaymentsWay'], // Webhook PaymentsWay
             'pagos/respuesta' => ['controlador' => 'PagosController', 'accion' => 'respuestaPaymentsWay'], // Callback PaymentsWay
 
             // ================================================================
@@ -364,7 +365,8 @@ class Router
             'resetear',
             'resetear/procesar',
             'certificados/verificar', // Verificación pública de certificados por QR
-            'pagos/webhook-confirmacion' // Webhook para pasarela de pago externa
+            'pagos/webhook-confirmacion', // Webhook para pasarela de pago externa
+            'pagos/webhook-paymentsway' // Webhook PaymentsWay (VePay)
         ];
         return !in_array($route, $publicRoutes);
     }
