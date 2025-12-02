@@ -55,7 +55,15 @@ CREATE TABLE IF NOT EXISTS `certificados` (
   CONSTRAINT `certificados_solicitante_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `feligreses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.certificados: ~6 rows (aproximadamente)
+INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
+	(101, 10, 1, NULL, 1, '2024-01-15', NULL, NULL, '2025-01-15', 'bautizo', NULL, '2025-11-03 09:53:07', 3, '/archivos/cert101.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(102, 11, 1, NULL, 1, '2023-12-10', NULL, NULL, '2024-12-10', 'confirmacion', NULL, '2025-11-03 09:53:07', 4, '/archivos/cert102.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(103, 12, 1, NULL, 1, '2023-11-20', NULL, NULL, '2024-11-20', 'matrimonio', NULL, '2025-11-03 09:53:07', 5, '/archivos/cert103.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(104, 13, 1, NULL, 1, '2024-02-05', NULL, NULL, '2025-02-05', 'bautizo', NULL, '2025-11-03 09:53:07', 6, '/archivos/cert104.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(105, 14, 1, NULL, 1, '2024-03-10', NULL, NULL, '2025-03-10', 'confirmacion', NULL, '2025-11-03 09:53:07', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(106, 15, 1, NULL, 1, '2024-04-15', NULL, NULL, '2025-04-15', 'bautizo', NULL, '2025-11-03 09:53:07', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00');
+- La exportación de datos fue deseleccionada.
 
 -- Volcando estructura para tabla parroquia.configuraciones
 DROP TABLE IF EXISTS `configuraciones`;
@@ -76,17 +84,23 @@ CREATE TABLE IF NOT EXISTS `configuraciones` (
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='Configuraciones generales del sistema';
 
 -- La exportación de datos fue deseleccionada.
-
 -- Volcando estructura para tabla parroquia.documento_tipos
 DROP TABLE IF EXISTS `documento_tipos`;
 CREATE TABLE IF NOT EXISTS `documento_tipos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
   `estado_registro` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.documento_tipos: ~6 rows (aproximadamente)
+INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
+	(1, 'Cedula Ciudadania ', NULL),
+	(2, 'Tarjeta Identidad', NULL),
+	(3, 'Cedula extranjeria', NULL),
+	(4, 'Registro Civil', NULL),
+	(5, 'Permiso Especial', NULL),
+	(6, 'Numero Identificación Tributaria', NULL);
 
 -- Volcando estructura para tabla parroquia.feligreses
 DROP TABLE IF EXISTS `feligreses`;
@@ -108,7 +122,20 @@ CREATE TABLE IF NOT EXISTS `feligreses` (
   CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.feligreses: ~12 rows (aproximadamente)
+INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `estado_registro`) VALUES
+	(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(2, NULL, 2, '123', NULL, NULL, 'asd', 'asd', 'asd', 'asd', NULL),
+	(3, NULL, 1, '123654', NULL, NULL, 'aas', 'asd', 'asd', 'asd', NULL),
+	(4, NULL, 1, '6465', NULL, NULL, 'aas', '6546', 'asdasd', 'asd', NULL),
+	(5, NULL, 1, '12354', NULL, NULL, 'Daniel', '12', 'asdasd', 'duran', NULL),
+	(6, NULL, 1, '123485', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(7, NULL, 1, '1236', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(8, NULL, 1, '1239678', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(9, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL),
+	(10, NULL, 3, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:47'),
+	(11, NULL, 1, '123456', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:42'),
+	(12, NULL, 1, '12389', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:30');
 
 -- Volcando estructura para tabla parroquia.grupos
 DROP TABLE IF EXISTS `grupos`;
@@ -119,7 +146,10 @@ CREATE TABLE IF NOT EXISTS `grupos` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.grupos: ~2 rows (aproximadamente)
+INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
+	(1, 'sasda', NULL),
+	(2, 'aadsad', NULL);
 
 -- Volcando estructura para tabla parroquia.grupo_roles
 DROP TABLE IF EXISTS `grupo_roles`;
@@ -130,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `grupo_roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.grupo_roles: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.libros
 DROP TABLE IF EXISTS `libros`;
@@ -144,7 +174,19 @@ CREATE TABLE IF NOT EXISTS `libros` (
   CONSTRAINT `libros_ibfk_1` FOREIGN KEY (`libro_tipo_id`) REFERENCES `libro_tipo` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.libros: ~11 rows (aproximadamente)
+INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
+	(2, 1, 1, NULL),
+	(3, 1, 2, NULL),
+	(4, 1, 3, NULL),
+	(5, 1, 4, NULL),
+	(6, 1, 5, NULL),
+	(7, 1, 6, NULL),
+	(8, 1, 7, NULL),
+	(9, 1, 8, NULL),
+	(10, 2, 1, NULL),
+	(11, 3, 1, NULL),
+	(12, 4, 1, NULL);
 
 -- Volcando estructura para tabla parroquia.libro_tipo
 DROP TABLE IF EXISTS `libro_tipo`;
@@ -155,7 +197,12 @@ CREATE TABLE IF NOT EXISTS `libro_tipo` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.libro_tipo: ~4 rows (aproximadamente)
+INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
+	(1, 'Bautizos', NULL),
+	(2, 'Confirmaciones', NULL),
+	(3, 'Defunciones', NULL),
+	(4, 'Matrimonios', NULL);
 
 -- Volcando estructura para tabla parroquia.noticias
 DROP TABLE IF EXISTS `noticias`;
@@ -171,7 +218,16 @@ CREATE TABLE IF NOT EXISTS `noticias` (
   KEY `id_usuario` (`id_usuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.noticias: ~8 rows (aproximadamente)
+INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `fecha_publicacion`, `estado_registro`) VALUES
+	(1, 11, 'Hola5', 'Hola Hola Hola Hola Hola Hola Hola', 'assets/img/noticias/68d9814e7604e-Diagrama_Lógico_v11.png', '2025-09-18 00:28:46', '2025-09-28 23:40:09'),
+	(2, 11, 'sadasd', 'asdas', 'assets/img/noticias/noticia_68d9bef0721ae5.27953340-MerParroquiav9.png', '2025-09-28 18:04:16', '2025-09-29 01:17:45'),
+	(3, 11, 'dsfsf', 'dfsdf asdasd asd', 'assets/img/noticias/noticia_68d9c1d7d61ed6.49839548-Diagrama_Lógico_v11.png', '2025-09-28 18:16:39', '2025-10-24 03:29:02'),
+	(4, 20, 'asdsad', 'asdasd  sadasd asdas d asd asda sdad sd', 'assets/img/noticias/noticia_68fad44ea36a88.56064286.png', '2025-10-23 20:20:14', NULL),
+	(5, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad496ab18f5.58084807.png', '2025-10-23 20:21:26', NULL),
+	(6, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad5a2923111.00968383.png', '2025-10-23 20:25:54', NULL),
+	(7, 20, 'asdsad', 'asdasd asd sad sads adas d', 'assets/img/noticias/noticia_68fad5bf7c0e54.83656461.png', '2025-10-23 20:26:23', NULL),
+	(8, 20, 'asdasdasdasd', 'asd asda sda sasdasdasd', 'assets/img/noticias/noticia_68fad63cb9e9c2.26316607.png', '2025-10-23 20:28:28', NULL);
 
 -- Volcando estructura para tabla parroquia.pagos
 DROP TABLE IF EXISTS `pagos`;
@@ -192,7 +248,14 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   CONSTRAINT `pagos_ibfk_2` FOREIGN KEY (`tipo_pago_id`) REFERENCES `tipos_pago` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.pagos: ~6 rows (aproximadamente)
+INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `tipo_concepto`) VALUES
+	(3, 103, 1800.75, 'completo', '2025-09-03 16:34:45', 1, 'certificado'),
+	(4, 104, 3200, 'cancelado', NULL, 3, 'certificado'),
+	(5, 105, 2100, 'completo', NULL, 2, 'certificado'),
+	(7, 103, 1800.75, 'completo', NULL, 1, 'certificado'),
+	(17, 104, 255, 'PAGADO', '2025-09-25 16:37:11', 3, 'certificado'),
+	(21, 106, 2500, 'PAGADO', '2025-09-25 16:48:37', 3, 'certificado');
 
 -- Volcando estructura para tabla parroquia.parentescos
 DROP TABLE IF EXISTS `parentescos`;
@@ -203,7 +266,24 @@ CREATE TABLE IF NOT EXISTS `parentescos` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.parentescos: ~16 rows (aproximadamente)
+INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
+	(1, 'Abuela', NULL),
+	(2, 'Abuelo', NULL),
+	(3, 'Madre', NULL),
+	(4, 'Padre', NULL),
+	(5, 'Hermano', NULL),
+	(6, 'Hermana', NULL),
+	(7, 'Tío', NULL),
+	(8, 'Tía', NULL),
+	(9, 'Primo', NULL),
+	(10, 'Prima', NULL),
+	(11, 'Hijo', NULL),
+	(12, 'Hija', NULL),
+	(13, 'Esposo', NULL),
+	(14, 'Esposa', NULL),
+	(15, 'Madrina', NULL),
+	(16, 'Padrino', NULL);
 
 -- Volcando estructura para tabla parroquia.parientes
 DROP TABLE IF EXISTS `parientes`;
@@ -222,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `parientes` (
   CONSTRAINT `parientes_ibfk_3` FOREIGN KEY (`feligres_pariente_id`) REFERENCES `feligreses` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.parientes: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.participantes
 DROP TABLE IF EXISTS `participantes`;
@@ -241,7 +321,23 @@ CREATE TABLE IF NOT EXISTS `participantes` (
   CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`rol_participante_id`) REFERENCES `participantes_rol` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.participantes: ~15 rows (aproximadamente)
+INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
+	(9, 1, 33, 10, NULL),
+	(10, 1, 37, 10, NULL),
+	(11, 3, 37, 1, NULL),
+	(12, 4, 37, 8, NULL),
+	(13, 5, 37, 11, NULL),
+	(14, 6, 37, 9, NULL),
+	(15, 1, 38, 1, NULL),
+	(16, 3, 38, 6, NULL),
+	(17, 7, 38, 9, NULL),
+	(18, 8, 38, 8, NULL),
+	(19, 2, 39, 10, NULL),
+	(20, 1, 39, 1, NULL),
+	(21, 10, 39, 11, NULL),
+	(22, 11, 39, 9, NULL),
+	(23, 12, 39, 8, NULL);
 
 -- Volcando estructura para tabla parroquia.participantes_rol
 DROP TABLE IF EXISTS `participantes_rol`;
@@ -252,7 +348,23 @@ CREATE TABLE IF NOT EXISTS `participantes_rol` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.participantes_rol: ~15 rows (aproximadamente)
+INSERT INTO `participantes_rol` (`id`, `rol`, `estado_registro`) VALUES
+	(1, 'Bautizado', NULL),
+	(2, 'Confirmando', NULL),
+	(3, 'Difunto', NULL),
+	(4, 'Esposo', NULL),
+	(5, 'Esposa', NULL),
+	(6, 'Padre', NULL),
+	(7, 'Madre', NULL),
+	(8, 'Padrino', NULL),
+	(9, 'Madrina', NULL),
+	(10, 'Abuelo', NULL),
+	(11, 'Abuela', NULL),
+	(12, 'Esposo Padrino', NULL),
+	(13, 'Esposo Madrina', NULL),
+	(14, 'Esposa Padrino', NULL),
+	(15, 'Esposa Madrina', NULL);
 
 -- Volcando estructura para tabla parroquia.reportes
 DROP TABLE IF EXISTS `reportes`;
@@ -269,7 +381,12 @@ CREATE TABLE IF NOT EXISTS `reportes` (
   CONSTRAINT `reportes_ibfk_1` FOREIGN KEY (`id_pagos`) REFERENCES `pagos` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.reportes: ~4 rows (aproximadamente)
+INSERT INTO `reportes` (`id`, `id_pagos`, `titulo`, `descripcion`, `categoria`, `fecha`, `estado_registro`) VALUES
+	(1, 3, 'Pago completo certificado 103', 'Pago recibido por valor de 1800.75', 'Finanzas', '2025-09-01 05:00:00', '0000-00-00 00:00:00'),
+	(2, 4, 'Pago cancelado certificado 104', 'Se canceló el pago de 3200', 'Administración', '2025-09-02 05:00:00', '0000-00-00 00:00:00'),
+	(3, 5, 'Pago completo certificado 105', 'Pago recibido por valor de 2100', 'Finanzas', '2025-09-03 05:00:00', '0000-00-00 00:00:00'),
+	(4, 7, 'Pago duplicado certificado 103', 'Pago duplicado detectado por 1800.75', 'Auditoría', '2025-09-04 05:00:00', '0000-00-00 00:00:00');
 
 -- Volcando estructura para tabla parroquia.sacramentos
 DROP TABLE IF EXISTS `sacramentos`;
@@ -288,7 +405,45 @@ CREATE TABLE IF NOT EXISTS `sacramentos` (
   CONSTRAINT `sacramentos_ibfk_2` FOREIGN KEY (`tipo_sacramento_id`) REFERENCES `sacramento_tipo` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.sacramentos: ~37 rows (aproximadamente)
+INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`, `estado_registro`) VALUES
+	(3, 2, 1, 10, 5, '2025-08-20', NULL),
+	(4, 3, 1, 10, 5, '2025-08-20', NULL),
+	(5, 3, 1, 10, 5, '2025-08-20', NULL),
+	(6, 3, 1, 10, 5, '2025-08-20', NULL),
+	(7, 3, 1, 10, 5, '2025-08-20', NULL),
+	(8, 3, 1, 10, 5, '2025-08-20', NULL),
+	(9, 3, 1, 10, 5, '2025-08-20', NULL),
+	(10, 2, 1, 10, 5, '2025-08-20', NULL),
+	(11, 2, 1, 10, 5, '2025-08-20', NULL),
+	(12, 2, 1, 10, 5, '2025-08-20', NULL),
+	(13, 2, 1, 10, 5, '2025-08-20', NULL),
+	(14, 2, 1, 10, 5, '2025-08-20', NULL),
+	(15, 2, 1, 10, 5, '2025-08-20', NULL),
+	(16, 2, 1, 10, 5, '2025-08-20', NULL),
+	(17, 2, 1, 10, 5, '2025-08-20', NULL),
+	(18, 2, 1, 10, 5, '2025-08-20', NULL),
+	(19, 2, 1, 10, 5, '2025-08-20', NULL),
+	(20, 2, 1, 10, 5, '2025-08-20', NULL),
+	(21, 12, 4, 10, 5, '2025-08-20', NULL),
+	(22, 12, 4, 10, 5, '2025-08-20', NULL),
+	(23, 12, 4, 10, 5, '2025-08-20', NULL),
+	(24, 12, 4, 10, 5, '2025-08-20', NULL),
+	(25, 2, 1, 10, 5, '2025-08-20', NULL),
+	(26, 2, 1, 10, 5, '2025-08-20', NULL),
+	(27, 2, 1, 10, 5, '2025-08-20', NULL),
+	(28, 2, 1, 10, 5, '2025-08-20', NULL),
+	(29, 2, 1, 10, 5, '2025-08-20', NULL),
+	(30, 2, 1, 10, 5, '2025-08-20', NULL),
+	(31, 2, 1, 10, 5, '2025-08-20', NULL),
+	(32, 2, 1, 10, 5, '2025-08-20', NULL),
+	(33, 2, 1, 10, 5, '2025-08-20', NULL),
+	(34, 2, 1, 10, 5, '2025-08-20', NULL),
+	(35, 2, 1, 10, 5, '2025-08-20', NULL),
+	(36, 2, 1, 10, 5, '2025-08-20', NULL),
+	(37, 2, 1, 0, 0, '2025-11-03', NULL),
+	(38, 2, 1, 0, 0, '2025-11-03', NULL),
+	(39, 2, 1, 0, 0, '2025-11-03', NULL);
 
 -- Volcando estructura para tabla parroquia.sacramento_tipo
 DROP TABLE IF EXISTS `sacramento_tipo`;
@@ -299,7 +454,12 @@ CREATE TABLE IF NOT EXISTS `sacramento_tipo` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.sacramento_tipo: ~4 rows (aproximadamente)
+INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
+	(1, 'Bautizos', NULL),
+	(2, 'Confirmaciones', NULL),
+	(3, 'Defunciones', NULL),
+	(4, 'Matrimonios', NULL);
 
 -- Volcando estructura para tabla parroquia.tipos_pago
 DROP TABLE IF EXISTS `tipos_pago`;
@@ -309,7 +469,13 @@ CREATE TABLE IF NOT EXISTS `tipos_pago` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.tipos_pago: ~5 rows (aproximadamente)
+INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
+	(1, 'Tarjeta Crédito'),
+	(2, 'Tarjeta Débito'),
+	(3, 'Efectivo'),
+	(4, 'Transferencia Bancaria'),
+	(5, 'Paypal');
 
 -- Volcando estructura para tabla parroquia.usuarios
 DROP TABLE IF EXISTS `usuarios`;
@@ -328,7 +494,20 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`usuario_rol_id`) REFERENCES `usuario_roles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.usuarios: ~12 rows (aproximadamente)
+INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
+	(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+	(11, 2, 'jrobgal@gmail.com', NULL, '$2y$10$0hELomG/FpvYcq9NkXFdBuDzdtiKUgR3vqmvb6zRqdbKH412LQfpy', 0, NULL, NULL, NULL),
+	(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+	(13, 1, 'admin@beehive.com', 0, '$2y$10$wljgdto1Yb7pXJ21IphKyuOKzmVX5oJC8SQbAHwQKv2Q/S02yAI/K', 0, NULL, NULL, NULL),
+	(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+	(15, 1, 'nuevo.usuario1@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+	(16, 2, 'otro.usuario2@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+	(17, 1, 'tercer.usuario3@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
+	(18, 2, 'cuarto.usuario4@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+	(19, 1, 'quinto.usuario5@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
+	(20, 2, 'jose@example.com', 0, 'ed2b1f468c5f915f3f1cf75d7068baae', 0, NULL, NULL, NULL),
+	(21, 1, 'aquilesbedoya37@gmail.com', 0, '$2y$10$DYuEGC.Xvj1g/9B9ejZ2Oe5pSZWzGvULNtJ9JfKoZB75vzLeRRw9C', 0, NULL, 'ee33cc42317b671cb18a56ddd00d814e702ef1e2361bff3229b5ae6d69e9efd7', '2025-10-28 03:45:43');
 
 -- Volcando estructura para tabla parroquia.usuario_grupos
 DROP TABLE IF EXISTS `usuario_grupos`;
@@ -347,7 +526,7 @@ CREATE TABLE IF NOT EXISTS `usuario_grupos` (
   CONSTRAINT `usuario_grupos_ibfk_3` FOREIGN KEY (`grupo_rol_id`) REFERENCES `grupo_roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.usuario_grupos: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla parroquia.usuario_roles
 DROP TABLE IF EXISTS `usuario_roles`;
@@ -358,7 +537,11 @@ CREATE TABLE IF NOT EXISTS `usuario_roles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.usuario_roles: ~3 rows (aproximadamente)
+INSERT INTO `usuario_roles` (`id`, `rol`, `estado_registro`) VALUES
+	(1, 'Feligres', NULL),
+	(2, 'Administrador', NULL),
+	(3, 'Secretario', NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
