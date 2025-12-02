@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS `certificados` (
 ) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.certificados: ~6 rows (aproximadamente)
+DELETE FROM `certificados`;
 INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
 	(101, 10, 1, NULL, 1, '2024-01-15', NULL, NULL, '2025-01-15', 'bautizo', NULL, '2025-11-03 09:53:07', 3, '/archivos/cert101.pdf', 'vigente', '0000-00-00 00:00:00'),
 	(102, 11, 1, NULL, 1, '2023-12-10', NULL, NULL, '2024-12-10', 'confirmacion', NULL, '2025-11-03 09:53:07', 4, '/archivos/cert102.pdf', 'vigente', '0000-00-00 00:00:00'),
@@ -63,7 +64,6 @@ INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `par
 	(104, 13, 1, NULL, 1, '2024-02-05', NULL, NULL, '2025-02-05', 'bautizo', NULL, '2025-11-03 09:53:07', 6, '/archivos/cert104.pdf', 'vigente', '0000-00-00 00:00:00'),
 	(105, 14, 1, NULL, 1, '2024-03-10', NULL, NULL, '2025-03-10', 'confirmacion', NULL, '2025-11-03 09:53:07', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00'),
 	(106, 15, 1, NULL, 1, '2024-04-15', NULL, NULL, '2025-04-15', 'bautizo', NULL, '2025-11-03 09:53:07', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00');
-- La exportación de datos fue deseleccionada.
 
 -- Volcando estructura para tabla parroquia.configuraciones
 DROP TABLE IF EXISTS `configuraciones`;
@@ -83,17 +83,52 @@ CREATE TABLE IF NOT EXISTS `configuraciones` (
   KEY `categoria` (`categoria`)
 ) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='Configuraciones generales del sistema';
 
--- La exportación de datos fue deseleccionada.
+-- Volcando datos para la tabla parroquia.configuraciones: ~31 rows (aproximadamente)
+DELETE FROM `configuraciones`;
+INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`, `fecha_creacion`, `fecha_actualizacion`, `usuario_actualizacion`) VALUES
+	(1, 'parroquia_nombre', 'Parroquia San José', 'texto', 'parroquia', 'Nombre completo de la parroquia', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(2, 'parroquia_direccion', 'Calle Principal #123', 'texto', 'parroquia', 'Dirección de la parroquia', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(3, 'parroquia_ciudad', 'Bogotá', 'texto', 'parroquia', 'Ciudad donde se encuentra la parroquia', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(4, 'parroquia_departamento', 'Cundinamarca', 'texto', 'parroquia', 'Departamento/Estado', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(5, 'parroquia_pais', 'Colombia', 'texto', 'parroquia', 'País', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(6, 'parroquia_telefono', '+57 1 234 5678', 'texto', 'parroquia', 'Teléfono de contacto', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(7, 'parroquia_email', 'contacto@parroquia.co', 'email', 'parroquia', 'Email de contacto', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(8, 'parroquia_nit', '900.123.456-7', 'texto', 'parroquia', 'NIT o identificación fiscal', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(9, 'cert_precio_bautismo', '10000', 'numero', 'certificados', 'Precio del certificado de bautismo (COP)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(10, 'cert_precio_confirmacion', '10000', 'numero', 'certificados', 'Precio del certificado de confirmación (COP)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(11, 'cert_precio_matrimonio', '15000', 'numero', 'certificados', 'Precio del certificado de matrimonio (COP)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(12, 'cert_precio_defuncion', '12000', 'numero', 'certificados', 'Precio del certificado de defunción (COP)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(13, 'cert_precio_general', '10000', 'numero', 'certificados', 'Precio por defecto para otros certificados (COP)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(14, 'cert_validez_dias', '30', 'numero', 'certificados', 'Días de validez del certificado', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(15, 'cert_requiere_pago', '1', 'booleano', 'certificados', 'Si los certificados requieren pago (1=Sí, 0=No)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(16, 'sistema_url', 'http://localhost', 'url', 'sistema', 'URL base del sistema', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(17, 'sistema_nombre', 'Sistema Parroquial', 'texto', 'sistema', 'Nombre del sistema', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(18, 'sistema_mantenimiento', '0', 'booleano', 'sistema', 'Modo mantenimiento (1=Activo, 0=Inactivo)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(19, 'sistema_registro_abierto', '1', 'booleano', 'sistema', 'Permitir registro de nuevos usuarios (1=Sí, 0=No)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(20, 'parroco_nombre', 'Padre Juan Pérez', 'texto', 'firmantes', 'Nombre completo del párroco actual', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(21, 'parroco_titulo', 'Párroco', 'texto', 'firmantes', 'Título del párroco', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(22, 'secretario_nombre', 'María González', 'texto', 'firmantes', 'Nombre del secretario(a) actual', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(23, 'secretario_titulo', 'Secretaria', 'texto', 'firmantes', 'Título del secretario(a)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(24, 'pago_gateway', 'mock', 'texto', 'pagos', 'Proveedor de pagos (mock, paymentway, stripe, paypal)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(25, 'pago_modo', 'sandbox', 'texto', 'pagos', 'Modo de pago (sandbox, production)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(26, 'pago_moneda', 'COP', 'texto', 'pagos', 'Moneda por defecto (COP, USD, EUR, etc)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(27, 'pago_iva_porcentaje', '19', 'numero', 'pagos', 'Porcentaje de IVA a aplicar', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(28, 'pago_aplicar_iva', '0', 'booleano', 'pagos', 'Si se debe aplicar IVA a los certificados (1=Sí, 0=No)', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(29, 'notif_email_certificado_generado', '1', 'booleano', 'notificaciones', 'Enviar email cuando se genera un certificado', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(30, 'notif_email_pago_confirmado', '1', 'booleano', 'notificaciones', 'Enviar email cuando se confirma un pago', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11),
+	(31, 'notif_email_nuevo_usuario', '1', 'booleano', 'notificaciones', 'Notificar al admin cuando hay nuevo usuario', 1, '2025-11-25 19:47:48', '2025-11-27 19:11:48', 11);
+
 -- Volcando estructura para tabla parroquia.documento_tipos
 DROP TABLE IF EXISTS `documento_tipos`;
 CREATE TABLE IF NOT EXISTS `documento_tipos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `tipo` varchar(255) COLLATE utf8mb4_spanish2_ci NOT NULL,
+  `tipo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish2_ci NOT NULL,
   `estado_registro` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.documento_tipos: ~6 rows (aproximadamente)
+DELETE FROM `documento_tipos`;
 INSERT INTO `documento_tipos` (`id`, `tipo`, `estado_registro`) VALUES
 	(1, 'Cedula Ciudadania ', NULL),
 	(2, 'Tarjeta Identidad', NULL),
@@ -120,11 +155,12 @@ CREATE TABLE IF NOT EXISTS `feligreses` (
   KEY `usuario_id` (`usuario_id`),
   KEY `tipo_documento_id` (`tipo_documento_id`),
   CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.feligreses: ~12 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.feligreses: ~13 rows (aproximadamente)
+DELETE FROM `feligreses`;
 INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `estado_registro`) VALUES
-	(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-25 19:41:08'),
 	(2, NULL, 2, '123', NULL, NULL, 'asd', 'asd', 'asd', 'asd', NULL),
 	(3, NULL, 1, '123654', NULL, NULL, 'aas', 'asd', 'asd', 'asd', NULL),
 	(4, NULL, 1, '6465', NULL, NULL, 'aas', '6546', 'asdasd', 'asd', NULL),
@@ -135,7 +171,9 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 	(9, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL),
 	(10, NULL, 3, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:47'),
 	(11, NULL, 1, '123456', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:42'),
-	(12, NULL, 1, '12389', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:30');
+	(12, NULL, 1, '12389', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:30'),
+	(13, NULL, 1, '123', 'a12 Galaxy ultra', 'Calle 1234', 'Rusbel', 'Daniel', 'Godoy', 'Duran', NULL),
+	(14, 11, 1, '123', '30021100', 'cra 12', 'Daniel', 'asd', 'godoy', 'duran', NULL);
 
 -- Volcando estructura para tabla parroquia.grupos
 DROP TABLE IF EXISTS `grupos`;
@@ -147,6 +185,7 @@ CREATE TABLE IF NOT EXISTS `grupos` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.grupos: ~2 rows (aproximadamente)
+DELETE FROM `grupos`;
 INSERT INTO `grupos` (`id`, `nombre`, `estado_registro`) VALUES
 	(1, 'sasda', NULL),
 	(2, 'aadsad', NULL);
@@ -161,6 +200,7 @@ CREATE TABLE IF NOT EXISTS `grupo_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.grupo_roles: ~0 rows (aproximadamente)
+DELETE FROM `grupo_roles`;
 
 -- Volcando estructura para tabla parroquia.libros
 DROP TABLE IF EXISTS `libros`;
@@ -175,6 +215,7 @@ CREATE TABLE IF NOT EXISTS `libros` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.libros: ~11 rows (aproximadamente)
+DELETE FROM `libros`;
 INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
 	(2, 1, 1, NULL),
 	(3, 1, 2, NULL),
@@ -198,6 +239,7 @@ CREATE TABLE IF NOT EXISTS `libro_tipo` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.libro_tipo: ~4 rows (aproximadamente)
+DELETE FROM `libro_tipo`;
 INSERT INTO `libro_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 	(1, 'Bautizos', NULL),
 	(2, 'Confirmaciones', NULL),
@@ -219,6 +261,7 @@ CREATE TABLE IF NOT EXISTS `noticias` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.noticias: ~8 rows (aproximadamente)
+DELETE FROM `noticias`;
 INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `fecha_publicacion`, `estado_registro`) VALUES
 	(1, 11, 'Hola5', 'Hola Hola Hola Hola Hola Hola Hola', 'assets/img/noticias/68d9814e7604e-Diagrama_Lógico_v11.png', '2025-09-18 00:28:46', '2025-09-28 23:40:09'),
 	(2, 11, 'sadasd', 'asdas', 'assets/img/noticias/noticia_68d9bef0721ae5.27953340-MerParroquiav9.png', '2025-09-28 18:04:16', '2025-09-29 01:17:45'),
@@ -227,7 +270,7 @@ INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `
 	(5, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad496ab18f5.58084807.png', '2025-10-23 20:21:26', NULL),
 	(6, 20, 'dsfsf', 'asdsadasd', 'assets/img/noticias/noticia_68fad5a2923111.00968383.png', '2025-10-23 20:25:54', NULL),
 	(7, 20, 'asdsad', 'asdasd asd sad sads adas d', 'assets/img/noticias/noticia_68fad5bf7c0e54.83656461.png', '2025-10-23 20:26:23', NULL),
-	(8, 20, 'asdasdasdasd', 'asd asda sda sasdasdasd', 'assets/img/noticias/noticia_68fad63cb9e9c2.26316607.png', '2025-10-23 20:28:28', NULL);
+	(8, 20, 'asdasdasdasd', 'asd asda sda sasdasdasd', 'assets/img/noticias/noticia_692650ce4c7258.95146118.png', '2025-10-23 20:28:28', NULL);
 
 -- Volcando estructura para tabla parroquia.pagos
 DROP TABLE IF EXISTS `pagos`;
@@ -249,13 +292,14 @@ CREATE TABLE IF NOT EXISTS `pagos` (
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.pagos: ~6 rows (aproximadamente)
-INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `tipo_concepto`) VALUES
-	(3, 103, 1800.75, 'completo', '2025-09-03 16:34:45', 1, 'certificado'),
-	(4, 104, 3200, 'cancelado', NULL, 3, 'certificado'),
-	(5, 105, 2100, 'completo', NULL, 2, 'certificado'),
-	(7, 103, 1800.75, 'completo', NULL, 1, 'certificado'),
-	(17, 104, 255, 'PAGADO', '2025-09-25 16:37:11', 3, 'certificado'),
-	(21, 106, 2500, 'PAGADO', '2025-09-25 16:48:37', 3, 'certificado');
+DELETE FROM `pagos`;
+INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `transaction_id`, `tipo_concepto`) VALUES
+	(3, 103, 1800.75, 'completo', '2025-09-03 16:34:45', 1, NULL, 'certificado'),
+	(4, 104, 3200, 'cancelado', NULL, 3, NULL, 'certificado'),
+	(5, 105, 2100, 'completo', NULL, 2, NULL, 'certificado'),
+	(7, 103, 1800.75, 'completo', NULL, 1, NULL, 'certificado'),
+	(17, 104, 255, 'PAGADO', '2025-09-25 16:37:11', 3, NULL, 'certificado'),
+	(21, 106, 2500, 'PAGADO', '2025-09-25 16:48:37', 3, NULL, 'certificado');
 
 -- Volcando estructura para tabla parroquia.parentescos
 DROP TABLE IF EXISTS `parentescos`;
@@ -267,6 +311,7 @@ CREATE TABLE IF NOT EXISTS `parentescos` (
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.parentescos: ~16 rows (aproximadamente)
+DELETE FROM `parentescos`;
 INSERT INTO `parentescos` (`id`, `parentesco`, `estado_registro`) VALUES
 	(1, 'Abuela', NULL),
 	(2, 'Abuelo', NULL),
@@ -303,6 +348,7 @@ CREATE TABLE IF NOT EXISTS `parientes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.parientes: ~0 rows (aproximadamente)
+DELETE FROM `parientes`;
 
 -- Volcando estructura para tabla parroquia.participantes
 DROP TABLE IF EXISTS `participantes`;
@@ -322,6 +368,7 @@ CREATE TABLE IF NOT EXISTS `participantes` (
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.participantes: ~15 rows (aproximadamente)
+DELETE FROM `participantes`;
 INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
 	(9, 1, 33, 10, NULL),
 	(10, 1, 37, 10, NULL),
@@ -349,6 +396,7 @@ CREATE TABLE IF NOT EXISTS `participantes_rol` (
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.participantes_rol: ~15 rows (aproximadamente)
+DELETE FROM `participantes_rol`;
 INSERT INTO `participantes_rol` (`id`, `rol`, `estado_registro`) VALUES
 	(1, 'Bautizado', NULL),
 	(2, 'Confirmando', NULL),
@@ -382,6 +430,7 @@ CREATE TABLE IF NOT EXISTS `reportes` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.reportes: ~4 rows (aproximadamente)
+DELETE FROM `reportes`;
 INSERT INTO `reportes` (`id`, `id_pagos`, `titulo`, `descripcion`, `categoria`, `fecha`, `estado_registro`) VALUES
 	(1, 3, 'Pago completo certificado 103', 'Pago recibido por valor de 1800.75', 'Finanzas', '2025-09-01 05:00:00', '0000-00-00 00:00:00'),
 	(2, 4, 'Pago cancelado certificado 104', 'Se canceló el pago de 3200', 'Administración', '2025-09-02 05:00:00', '0000-00-00 00:00:00'),
@@ -406,6 +455,7 @@ CREATE TABLE IF NOT EXISTS `sacramentos` (
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.sacramentos: ~37 rows (aproximadamente)
+DELETE FROM `sacramentos`;
 INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`, `estado_registro`) VALUES
 	(3, 2, 1, 10, 5, '2025-08-20', NULL),
 	(4, 3, 1, 10, 5, '2025-08-20', NULL),
@@ -455,6 +505,7 @@ CREATE TABLE IF NOT EXISTS `sacramento_tipo` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.sacramento_tipo: ~4 rows (aproximadamente)
+DELETE FROM `sacramento_tipo`;
 INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 	(1, 'Bautizos', NULL),
 	(2, 'Confirmaciones', NULL),
@@ -470,6 +521,7 @@ CREATE TABLE IF NOT EXISTS `tipos_pago` (
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.tipos_pago: ~5 rows (aproximadamente)
+DELETE FROM `tipos_pago`;
 INSERT INTO `tipos_pago` (`id`, `descripcion`) VALUES
 	(1, 'Tarjeta Crédito'),
 	(2, 'Tarjeta Débito'),
@@ -495,9 +547,10 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.usuarios: ~12 rows (aproximadamente)
+DELETE FROM `usuarios`;
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
-	(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
-	(11, 2, 'jrobgal@gmail.com', NULL, '$2y$10$0hELomG/FpvYcq9NkXFdBuDzdtiKUgR3vqmvb6zRqdbKH412LQfpy', 0, NULL, NULL, NULL),
+	(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '$2y$10$U6QWvkduIkm6QC..p7otUeqg2dThYMMEf3s8KDAn.EpdxGeleTnEC', 0, NULL, NULL, NULL),
+	(11, 2, 'jrobgal@gmail.com', NULL, '$2y$10$0hELomG/FpvYcq9NkXFdBuDzdtiKUgR3vqmvb6zRqdbKH412LQfpy', 1, NULL, NULL, NULL),
 	(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
 	(13, 1, 'admin@beehive.com', 0, '$2y$10$wljgdto1Yb7pXJ21IphKyuOKzmVX5oJC8SQbAHwQKv2Q/S02yAI/K', 0, NULL, NULL, NULL),
 	(14, 2, 'gestorbar11@gmail.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
@@ -506,7 +559,7 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 	(17, 1, 'tercer.usuario3@email.com', 0, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
 	(18, 2, 'cuarto.usuario4@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
 	(19, 1, 'quinto.usuario5@email.com', 0, '202cb962ac59075b964b07152d234b70', 0, NULL, NULL, NULL),
-	(20, 2, 'jose@example.com', 0, 'ed2b1f468c5f915f3f1cf75d7068baae', 0, NULL, NULL, NULL),
+	(20, 2, 'jose@example.com', 0, 'ed2b1f468c5f915f3f1cf75d7068baae', 0, NULL, 'a58dce64b4b1100243d49b77a525b37df01c1b4f271e3ed7caf1be4a83c4be8e', '2025-11-28 01:53:23'),
 	(21, 1, 'aquilesbedoya37@gmail.com', 0, '$2y$10$DYuEGC.Xvj1g/9B9ejZ2Oe5pSZWzGvULNtJ9JfKoZB75vzLeRRw9C', 0, NULL, 'ee33cc42317b671cb18a56ddd00d814e702ef1e2361bff3229b5ae6d69e9efd7', '2025-10-28 03:45:43');
 
 -- Volcando estructura para tabla parroquia.usuario_grupos
@@ -527,6 +580,7 @@ CREATE TABLE IF NOT EXISTS `usuario_grupos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.usuario_grupos: ~0 rows (aproximadamente)
+DELETE FROM `usuario_grupos`;
 
 -- Volcando estructura para tabla parroquia.usuario_roles
 DROP TABLE IF EXISTS `usuario_roles`;
@@ -538,6 +592,7 @@ CREATE TABLE IF NOT EXISTS `usuario_roles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- Volcando datos para la tabla parroquia.usuario_roles: ~3 rows (aproximadamente)
+DELETE FROM `usuario_roles`;
 INSERT INTO `usuario_roles` (`id`, `rol`, `estado_registro`) VALUES
 	(1, 'Feligres', NULL),
 	(2, 'Administrador', NULL),
