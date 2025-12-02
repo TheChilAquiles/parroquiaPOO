@@ -580,7 +580,7 @@ class CertificadosController extends BaseController
 
                 <div class="footer">
                     <p>Fecha de emisión: ' . date('d/m/Y H:i') . '</p>
-                    <p class="codigo-certificado">Sacramento ID: ' . str_pad($sacramentoId, 8, '0', STR_PAD_LEFT) . '</p>
+                    <p class="codigo-certificado">Sacramento ID: ' . str_pad((string)$sacramentoId, 8, '0', STR_PAD_LEFT) . '</p>
                 </div>
             </body>
             </html>';

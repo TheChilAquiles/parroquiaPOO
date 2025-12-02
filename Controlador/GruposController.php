@@ -303,7 +303,7 @@ class GruposController extends BaseController
             Logger::error("Error en GruposController::agregarMiembro -", ['error' => $e->getMessage()]);
         }
 
-        redirect('grupos', ['id' => ($grupo_id ?? '')]);
+        redirect('grupos', ['id' => $grupo_id]);
         exit();
     }
 
@@ -344,7 +344,7 @@ class GruposController extends BaseController
             $_SESSION['tipo_mensaje'] = 'error';
             Logger::error("Error en GruposController::eliminarMiembro -", ['error' => $e->getMessage()]);
         }
-            redirect('grupos',[ 'id' => ($grupo_id ?? '')  ]);
+            redirect('grupos',[ 'id' => $grupo_id  ]);
         exit();
     }
 
@@ -398,7 +398,7 @@ class GruposController extends BaseController
             $_SESSION['tipo_mensaje'] = 'error';
             Logger::error("Error en GruposController::actualizarRol -", ['error' => $e->getMessage()]);
         }
-            redirect('grupos',[ 'id' => ($grupo_id ?? '')  ]);
+            redirect('grupos',[ 'id' => $grupo_id  ]);
         exit();
     }
 

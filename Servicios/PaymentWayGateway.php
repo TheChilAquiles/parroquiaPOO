@@ -21,7 +21,7 @@ class PaymentWayGateway implements PaymentGatewayInterface
     const SANDBOX_URL = 'https://merchantpruebas.vepay.com.co/cartaspago/redirect';
     const PRODUCTION_URL = 'https://merchant.vepay.com.co/cartaspago/redirect';
 
-    public function __construct(string $merchantId = null, string $formId = null, string $terminalId = null, string $mode = 'sandbox')
+    public function __construct(?string $merchantId = null, ?string $formId = null, ?string $terminalId = null, string $mode = 'sandbox')
     {
         // Usar constantes de config si no se pasan parámetros
         $this->merchantId = $merchantId ?? PAYMENTSWAY_MERCHANT_ID;
@@ -95,7 +95,7 @@ class PaymentWayGateway implements PaymentGatewayInterface
             if (isset($paymentData['customer_name'])) {
                 // Dividir nombre completo en nombre y apellido
                 $nameParts = explode(' ', $paymentData['customer_name'], 2);
-                $formData['client_firstname'] = $nameParts[0] ?? '';
+                $formData['client_firstname'] = $nameParts[0];
                 $formData['client_lastname'] = $nameParts[1] ?? '';
             }
             if (isset($paymentData['customer_doctype'])) {
@@ -168,7 +168,7 @@ class PaymentWayGateway implements PaymentGatewayInterface
      * @param float|null $amount
      * @return array
      */
-    public function refundPayment(string $transactionId, float $amount = null): array
+    public function refundPayment(string $transactionId, ?float $amount = null): array
     {
         Logger::warning("PaymentsWay: refundPayment no implementado", [
             'transaction_id' => $transactionId

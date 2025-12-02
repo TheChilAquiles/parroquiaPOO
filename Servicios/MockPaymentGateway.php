@@ -114,7 +114,7 @@ class MockPaymentGateway implements PaymentGatewayInterface
     /**
      * Simula un reembolso
      */
-    public function refundPayment(string $transactionId, float $amount = null): array
+    public function refundPayment(string $transactionId, ?float $amount = null): array
     {
         // Validar formato del ID
         if (!str_starts_with($transactionId, 'MOCK_')) {

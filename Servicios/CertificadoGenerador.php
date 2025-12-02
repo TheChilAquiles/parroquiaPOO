@@ -75,7 +75,7 @@ class CertificadoGenerador
             }
 
             // Generar código de certificado
-            $codigo = 'CERT-' . str_pad($certificadoId, 8, '0', STR_PAD_LEFT);
+            $codigo = 'CERT-' . str_pad((string)$certificadoId, 8, '0', STR_PAD_LEFT);
             $datos['CODIGO_CERTIFICADO'] = $codigo;
 
             // Fecha de expedición

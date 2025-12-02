@@ -29,7 +29,7 @@ interface PaymentGatewayInterface
      * @param float $amount Monto a reembolsar (opcional, si no se especifica reembolsa todo)
      * @return array ['success' => bool, 'refund_id' => string, 'message' => string]
      */
-    public function refundPayment(string $transactionId, float $amount = null): array;
+    public function refundPayment(string $transactionId, ?float $amount = null): array;
 
     /**
      * Obtiene el nombre del proveedor

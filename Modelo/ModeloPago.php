@@ -223,9 +223,9 @@ class ModeloPago
     /**
      * Convierte método de pago (texto o ID) a ID de tipos_pago
      * @param mixed $metodoPago Puede ser ID numérico o texto ("efectivo", "tarjeta", etc)
-     * @return int|null ID del tipo de pago o null
+     * @return int ID del tipo de pago
      */
-    private function obtenerTipoPagoId($metodoPago)
+    private function obtenerTipoPagoId($metodoPago): int
     {
         // Si ya es numérico y válido, devolverlo
         if (is_numeric($metodoPago) && $metodoPago > 0) {

@@ -46,18 +46,14 @@ class ModeloNoticia
      * Implementa transacción para garantizar atomicidad de la operación.
      * Si algo falla, se revierte automáticamente.
      * 
-     * @param array $datos Datos de la noticia a crear
-     * @param int    $datos['id_usuario']  ID del usuario que crea la noticia
-     * @param string $datos['titulo']      Título de la noticia
-     * @param string $datos['descripcion'] Contenido descriptivo
-     * @param string $datos['imagen']      Ruta de la imagen
+     * @param array $datos Datos de la noticia a crear (id_usuario, titulo, descripcion, imagen)
      * 
      * @return array Resultado de la operación
      *               ['exito' => bool, 'mensaje' => string]
      * 
      * @throws PDOException En caso de error de base de datos
      */
-    public function mdlCrearNoticia($datos)
+    public function mdlCrearNoticia(array $datos)
     {
         $stmt = null; // Inicializar para acceso en finally
         
@@ -168,17 +164,14 @@ class ModeloNoticia
      * Usa transacción para garantizar consistencia.
      * 
      * @param int $id El ID de la noticia a actualizar
-     * @param array $datos Datos a actualizar
-     * @param string $datos['titulo']      Nuevo título
-     * @param string $datos['descripcion'] Nueva descripción
-     * @param string $datos['imagen']      Nueva ruta de imagen
+     * @param array $datos Datos a actualizar (titulo, descripcion, imagen)
      * 
      * @return array Resultado de la operación
      *               ['exito' => bool, 'mensaje' => string]
      * 
      * @note Si no se modifican filas (mismos valores), retorna exito=false
      */
-    public function mdlActualizarNoticia($id, $datos)
+    public function mdlActualizarNoticia(int $id, array $datos)
     {
         $stmt = null;
         

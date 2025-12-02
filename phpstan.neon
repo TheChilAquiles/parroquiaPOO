@@ -1,0 +1,18 @@
+parameters:
+    level: 5
+    paths:
+        - Controlador
+        - Modelo
+        - Servicios
+    excludePaths:
+        - vendor
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        # Ignore errors related to missing vendor classes during analysis
+        - '#Constant [A-Z_]+ not found#'
+        # Ignore helper functions defined in helpers.php
+        - '#Function redirect not found#'
+        # Ignore unused methods/properties (may be used dynamically or in future)
+        - '#is unused#'
+        - '#is never read, only written#'
+    reportUnmatchedIgnoredErrors: false
