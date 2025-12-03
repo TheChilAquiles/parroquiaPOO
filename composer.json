@@ -12,6 +12,14 @@
         ]
     },
     "require-dev": {
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "codeception/codeception": "^5.3",
+        "codeception/module-phpbrowser": "*",
+        "codeception/module-asserts": "*"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }

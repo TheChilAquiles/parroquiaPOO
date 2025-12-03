@@ -1,0 +1,34 @@
+namespace: Tests
+support_namespace: Support
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/Support/Data
+    support: tests/Support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+
+suites:
+    Acceptance:
+        actor: AcceptanceTester
+        path: Acceptance
+        modules:
+            enabled:
+                - PhpBrowser:
+                    url: http://parroquiaPOO.test
+    Functional:
+        actor: FunctionalTester
+        path: Functional
+        modules:
+            enabled:
+                - Tests\Support\Helper\Functional
+    Unit:
+        actor: UnitTester
+        path: Unit
+        modules:
+            enabled:
+                - Asserts
+
