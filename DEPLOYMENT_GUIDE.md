@@ -36,7 +36,9 @@ Dado que la subida automática falló, por favor sigue estos pasos manuales pero
 7.  Una vez subido, si usas el File Manager de VistaPanel:
     *   Haz clic derecho sobre `deploy.zip`.
     *   Elige la opción **Extract**.
-8.  **IMPORTANTE:** Busca el archivo `.env.production` (que ahora estará extraído). **Renómbralo** a `.env`.
+8.  **IMPORTANTE (Configuración):**
+    *   Busca el archivo `.env.production` y **renómbralo** a `.env`.
+    *   Busca el archivo `.htaccess.production` y **renómbralo** a `.htaccess` (esto asegura que las rutas funcionen en la subcarpeta).
 
 ## 4. Verificación
 
