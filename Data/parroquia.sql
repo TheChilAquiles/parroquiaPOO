@@ -53,9 +53,9 @@ CREATE TABLE IF NOT EXISTS `certificados` (
   CONSTRAINT `certificados_ibfk_3` FOREIGN KEY (`sacramento_id`) REFERENCES `sacramentos` (`id`),
   CONSTRAINT `certificados_parentesco_fk` FOREIGN KEY (`parentesco_id`) REFERENCES `parentescos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `certificados_solicitante_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `feligreses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.certificados: ~6 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.certificados: ~9 rows (aproximadamente)
 DELETE FROM `certificados`;
 INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
 	(101, 10, 1, NULL, 1, '2024-01-15', NULL, NULL, '2025-01-15', 'bautizo', NULL, '2025-11-03 09:53:07', 3, '/archivos/cert101.pdf', 'vigente', '0000-00-00 00:00:00'),
@@ -63,7 +63,10 @@ INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `par
 	(103, 12, 1, NULL, 1, '2023-11-20', NULL, NULL, '2024-11-20', 'matrimonio', NULL, '2025-11-03 09:53:07', 5, '/archivos/cert103.pdf', 'vigente', '0000-00-00 00:00:00'),
 	(104, 13, 1, NULL, 1, '2024-02-05', NULL, NULL, '2025-02-05', 'bautizo', NULL, '2025-11-03 09:53:07', 6, '/archivos/cert104.pdf', 'vigente', '0000-00-00 00:00:00'),
 	(105, 14, 1, NULL, 1, '2024-03-10', NULL, NULL, '2025-03-10', 'confirmacion', NULL, '2025-11-03 09:53:07', 7, '/archivos/cert105.pdf', 'vigente', '0000-00-00 00:00:00'),
-	(106, 15, 1, NULL, 1, '2024-04-15', NULL, NULL, '2025-04-15', 'bautizo', NULL, '2025-11-03 09:53:07', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00');
+	(106, 15, 1, NULL, 1, '2024-04-15', NULL, NULL, '2025-04-15', 'bautizo', NULL, '2025-11-03 09:53:07', 8, '/archivos/cert106.pdf', 'vigente', '0000-00-00 00:00:00'),
+	(107, 11, 3, NULL, 3, NULL, '2025-12-01 19:46:43', '2025-12-01 19:46:45', '2025-12-31', 'Bautizos', 'Generación directa', '2025-12-01 19:46:43', 37, 'certificados_generados/cert_107_bautismo_20251202_004645.pdf', 'generado', NULL),
+	(108, 11, 3, NULL, 3, NULL, '2025-12-01 19:47:51', '2025-12-01 19:47:51', '2025-12-31', 'Bautizos', 'Generación directa', '2025-12-01 19:47:51', 37, 'certificados_generados/cert_108_bautismo_20251202_004751.pdf', 'generado', NULL),
+	(109, NULL, 15, NULL, 15, NULL, NULL, NULL, NULL, 'Bautizos', 'Solicitud de certificado', '2025-12-01 20:17:53', 37, NULL, 'pendiente_pago', NULL);
 
 -- Volcando estructura para tabla parroquia.configuraciones
 DROP TABLE IF EXISTS `configuraciones`;
@@ -155,9 +158,9 @@ CREATE TABLE IF NOT EXISTS `feligreses` (
   KEY `usuario_id` (`usuario_id`),
   KEY `tipo_documento_id` (`tipo_documento_id`),
   CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.feligreses: ~13 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.feligreses: ~15 rows (aproximadamente)
 DELETE FROM `feligreses`;
 INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `estado_registro`) VALUES
 	(1, NULL, 1, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-25 19:41:08'),
@@ -169,11 +172,12 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 	(7, NULL, 1, '1236', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
 	(8, NULL, 1, '1239678', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', NULL),
 	(9, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL),
-	(10, NULL, 3, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:47'),
+	(10, 13, 3, '123', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:47'),
 	(11, NULL, 1, '123456', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:42'),
 	(12, NULL, 1, '12389', NULL, NULL, 'Daniel', 'asd', 'godoy', 'duran', '2025-11-03 17:38:30'),
 	(13, NULL, 1, '123', 'a12 Galaxy ultra', 'Calle 1234', 'Rusbel', 'Daniel', 'Godoy', 'Duran', NULL),
-	(14, 11, 1, '123', '30021100', 'cra 12', 'Daniel', 'asd', 'godoy', 'duran', NULL);
+	(14, 11, 1, '123', '30021100', 'cra 12', 'Daniel', 'asd', 'godoy', 'duran', NULL),
+	(15, 10, 1, '123', '', 'cra 12', 'Daniel', 'asd', 'godoy', 'duran', NULL);
 
 -- Volcando estructura para tabla parroquia.grupos
 DROP TABLE IF EXISTS `grupos`;
@@ -372,7 +376,7 @@ DELETE FROM `participantes`;
 INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
 	(9, 1, 33, 10, NULL),
 	(10, 1, 37, 10, NULL),
-	(11, 3, 37, 1, NULL),
+	(11, 15, 37, 1, NULL),
 	(12, 4, 37, 8, NULL),
 	(13, 5, 37, 11, NULL),
 	(14, 6, 37, 9, NULL),
@@ -549,7 +553,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Volcando datos para la tabla parroquia.usuarios: ~12 rows (aproximadamente)
 DELETE FROM `usuarios`;
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
-	(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '$2y$10$U6QWvkduIkm6QC..p7otUeqg2dThYMMEf3s8KDAn.EpdxGeleTnEC', 0, NULL, NULL, NULL),
+	(10, 1, 'SANTIAGOBENAVIDES132@GMAIL.COM', NULL, '$2y$10$U6QWvkduIkm6QC..p7otUeqg2dThYMMEf3s8KDAn.EpdxGeleTnEC', 1, NULL, NULL, NULL),
 	(11, 2, 'jrobgal@gmail.com', NULL, '$2y$10$0hELomG/FpvYcq9NkXFdBuDzdtiKUgR3vqmvb6zRqdbKH412LQfpy', 1, NULL, NULL, NULL),
 	(12, 1, 'williammayorga@gmail.com', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 0, NULL, NULL, NULL),
 	(13, 1, 'admin@beehive.com', 0, '$2y$10$wljgdto1Yb7pXJ21IphKyuOKzmVX5oJC8SQbAHwQKv2Q/S02yAI/K', 0, NULL, NULL, NULL),

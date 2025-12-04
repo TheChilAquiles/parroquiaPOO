@@ -1,0 +1,13 @@
+{
+    "ftpManager.connections": [
+        {
+            "name": "serviror",
+            "host": "ftpupload.net",
+            "port": 21,
+            "username": "b7_40249021",
+            "password": "Aquiles117.",
+            "path": "/",
+            "secure": true
+        }
+    ]
+}
