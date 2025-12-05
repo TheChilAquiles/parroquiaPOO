@@ -365,45 +365,6 @@
         $('#primerNombre').val('');
         $('#segundoNombre').val('');
         $('#primerApellido').val('');
-        $('#segundoApellido').val('');
-        $('#rolParticipante').val('').removeClass('border-red-500');
-        $('#feligresNoExiste').addClass('hidden');
-    }
-
-    // ============================================================================
-    // GESTIÓN DINÁMICA DE ROLES EN SELECT
-    // ============================================================================
-
-    /**
-     * Actualiza las opciones disponibles del select de roles
-     * Oculta los roles que ya han sido añadidos
-     */
-    function actualizarOpcionesRol() {
-        const rolesAñadidos = [];
-
-        // Obtener todos los roles ya añadidos
-    function resetVacio(con) {
-        if (con > 0) {
-            document.getElementById('integranteVacio').classList.add('hidden');;
-        } else {
-            document.getElementById('integranteVacio').classList.remove('hidden');;
-        }
-    }
-
-
-    function resaltarCampo(idCampo) {
-
-        $(idCampo).addClass('border-orange-300 bg-orange-50 animate-pulse text-orange-600');
-        setTimeout(function() {
-            $(idCampo).removeClass('animate-pulse bg-orange-50 border-orange-300 text-orange-600');
-        }, 5000);
-
-    }
-
-
-
-    function agregarIntegrante() {
-
         const rolParticipante = document.getElementById('rolParticipante').value.trim();
         const tipoDoc = document.getElementById('tipo-doc').value.trim();
         const numeroDoc = document.getElementById('numero-doc').value.trim();
