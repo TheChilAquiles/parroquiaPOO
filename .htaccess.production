@@ -4,7 +4,7 @@
 
 RewriteEngine On
 # IMPORTANTE: Si está en la raíz del dominio, la base es /
-RewriteBase /
+RewriteBase /parroquiaPOO/
 
 # ============================================================================
 # EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES

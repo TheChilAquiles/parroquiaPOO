@@ -17,7 +17,8 @@ function url($route, $params = []) {
     
     if ($useCleanUrls) {
         // Formato amigable: /certificados/verificar/ABC123
-        $url = '/' . ltrim($route, '/');
+        $base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\');
+        $url = $base . '/' . ltrim($route, '/');
         
         // Si hay un parámetro 'id' o 'codigo', agregarlo como parte de la ruta
         if (isset($params['id'])) {

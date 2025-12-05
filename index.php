@@ -37,10 +37,21 @@ require_once __DIR__ . '/vendor/autoload.php';
 // 2. [NUEVO] Cargar las variables de entorno del archivo .env
 // Esto es gracias a la librería que instalaste (vlucas/phpdotenv)
 try {
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-    $dotenv->load();
-} catch (Dotenv\Exception\InvalidPathException $e) {
-    die('Error: No se pudo encontrar el archivo .env. Asegúrate de que esté en la raíz.');
+    // Intentar cargar .env primero (desarrollo local)
+    if (file_exists(__DIR__ . '/.env')) {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+        $dotenv->load();
+    } 
+    // Si no existe, intentar cargar .env.production (producción)
+    elseif (file_exists(__DIR__ . '/.env.production')) {
+        $dotenv = Dotenv\Dotenv::createImmutable(__DIR__, '.env.production');
+        $dotenv->load();
+    } else {
+        // Si no hay ninguno, advertir pero no morir (podrían estar en variables de servidor reales)
+        // die('Error: No se pudo encontrar el archivo .env ni .env.production.');
+    }
+} catch (Exception $e) {
+    // Silenciar error si no se puede cargar, asumiendo que las variables están en el entorno del servidor
 }
 
 // 3. [NUEVO] Cargar tu archivo de configuración
