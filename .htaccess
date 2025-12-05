@@ -3,7 +3,8 @@
 # ============================================================================
 
 RewriteEngine On
-RewriteBase /
+# IMPORTANTE: Ajustado para subdirectorio /parroquiaPOO
+RewriteBase /parroquiaPOO/
 
 # ============================================================================
 # EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
@@ -17,12 +18,12 @@ RewriteRule ^ - [L]
 # ============================================================================
 # BLOQUEAR ACCESO A CARPETAS SENSIBLES
 # ============================================================================
-RewriteRule ^(Modelo|Controlador|logs)/ - [F,L]
+RewriteRule ^(Modelo|Controlador|logs|Data|vendor)/ - [F,L]
 
 # ============================================================================
 # BLOQUEAR ARCHIVOS SENSIBLES
 # ============================================================================
-<FilesMatch "\.(env|config|inc|sql)$">
+<FilesMatch "\.(env|config|inc|sql|lock|json)$">
     Require all denied
 </FilesMatch>
 
@@ -32,28 +33,28 @@ RewriteRule ^(Modelo|Controlador|logs)/ - [F,L]
 
 # Regla especial: Verificación de certificados (usa parámetro "codigo" en lugar de "id")
 # Ejemplo: /certificados/verificar/ABC123
-RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^certificados/verificar/([a-zA-Z0-9]+)/?$ index.php?route=certificados/verificar&codigo=$1 [QSA,L]
 
 # Regla 1: URLs con 3 segmentos (ej: /grupos/ver/5)
 # Patrón: /controlador/accion/parametro
-RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2&id=$3 [QSA,L]
 
 # Regla 2: URLs con 2 segmentos (ej: /sacramentos/crear)
 # Patrón: /controlador/accion
-RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2 [QSA,L]
 
 # Regla 3: URLs con 1 segmento (ej: /login, /dashboard)
 # Patrón: /controlador
-RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?route=$1 [QSA,L]
@@ -66,57 +67,3 @@ Options -Indexes
 <Files .htaccess>
     Require all denied
 </Files>
-
-# ============================================================================
-# COMPRESIÓN GZIP
-# ============================================================================
-<IfModule mod_deflate.c>
-    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
-</IfModule>
-
-# ============================================================================
-# CACHÉ DE NAVEGADOR
-# ============================================================================
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresDefault "access plus 2 days"
-    
-    # Imágenes
-    ExpiresByType image/jpeg "access plus 1 month"
-    ExpiresByType image/gif "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType image/webp "access plus 1 month"
-    ExpiresByType image/svg+xml "access plus 1 month"
-    ExpiresByType image/x-icon "access plus 1 month"
-    
-    # CSS y JavaScript
-    ExpiresByType text/css "access plus 1 year"
-    ExpiresByType application/javascript "access plus 1 year"
-    ExpiresByType text/javascript "access plus 1 year"
-    
-    # Fuentes
-    ExpiresByType font/ttf "access plus 1 year"
-    ExpiresByType font/otf "access plus 1 year"
-    ExpiresByType font/woff "access plus 1 year"
-    ExpiresByType font/woff2 "access plus 1 year"
-    
-    # HTML (no cachear)
-    ExpiresByType text/html "access plus 0 seconds"
-</IfModule>
-
-# ============================================================================
-# HEADERS DE SEGURIDAD
-# ============================================================================
-<IfModule mod_headers.c>
-    # Prevenir clickjacking
-    Header always set X-Frame-Options "SAMEORIGIN"
-    
-    # Prevenir MIME-sniffing
-    Header always set X-Content-Type-Options "nosniff"
-    
-    # Prevenir XSS
-    Header always set X-XSS-Protection "1; mode=block"
-    
-    # Política de referrer
-    Header always set Referrer-Policy "strict-origin-when-cross-origin"
-</IfModule>
