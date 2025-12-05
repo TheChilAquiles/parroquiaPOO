@@ -9,8 +9,8 @@
                     <!-- Logo con tamaño fijo -->
                     <div class="flex-shrink-0">
                         <img class="h-14 w-14 rounded-lg object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
-                             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-As_mLQ9e2pUmMq1yfIbaHVeZ43CPnSnOOg&s"
-                             alt="Logo Parroquia">
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-As_mLQ9e2pUmMq1yfIbaHVeZ43CPnSnOOg&s"
+                                alt="Logo Parroquia">
                     </div>
                     <!-- Nombre de la parroquia -->
                     <div class="hidden lg:block">
@@ -34,10 +34,11 @@
                         'Reportes' => ['Administrador'],
                         'Pagos' => ['Administrador'],
                         'Certificados' => ['all'],
-                        'Configuración' => ['Administrador']
+                        'Configuración' => ['Administrador'],
+                        'Pqr' => ['all']
                     ];
                 } else {
-                    $menu = ['Inicio', 'Noticias', 'Información', 'Contacto'];
+                    $menu = ['Inicio', 'Noticias', 'Información', 'Contacto', 'Pqr'];
                 }
 
                 foreach ($menu as $item => $roles) {
