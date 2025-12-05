@@ -187,7 +187,7 @@ $(document).ready(function() {
                     let html = '<div class="flex gap-2 justify-center">';
 
                     if (data.ruta_archivo) {
-                        html += `<a href="<?= url('certificados/descargar') ?>&id=${data.id}"
+                        html += `<a href="<?= url('certificados/descargar') ?>?id=${data.id}"
                                     class="px-3 py-1.5 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded text-sm font-medium transition"
                                     title="Descargar PDF">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

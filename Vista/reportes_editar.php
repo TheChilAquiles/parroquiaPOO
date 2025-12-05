@@ -204,7 +204,12 @@ require_once __DIR__ . '/../helpers.php';
 
             if (categoria.value === 'otra' && categoriaPersonalizada.value.trim() === '') {
                 e.preventDefault();
-                alert('Por favor, ingrese una categoría personalizada.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campo requerido',
+                    text: 'Por favor, ingrese una categoría personalizada.',
+                    confirmButtonColor: '#667eea'
+                });
                 categoriaPersonalizada.focus();
                 return false;
             }

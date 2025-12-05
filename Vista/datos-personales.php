@@ -215,7 +215,12 @@
         
         if(!tipo || !doc) {
             e.preventDefault();
-            alert('Por favor ingresa el tipo y número de documento para buscar.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos requeridos',
+                text: 'Por favor ingresa el tipo y número de documento para buscar.',
+                confirmButtonColor: '#ab876f'
+            });
             return false;
         }
         return true;
@@ -228,7 +233,12 @@
         // Validar que se haya buscado primero (o que los hidden tengan valor)
         if(!hiddenTipo.value || !hiddenDoc.value) {
             e.preventDefault();
-            alert('Por favor realiza la búsqueda de tu documento primero (panel izquierdo).');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Búsqueda requerida',
+                text: 'Por favor realiza la búsqueda de tu documento primero (panel izquierdo).',
+                confirmButtonColor: '#ab876f'
+            });
             return false;
         }
 

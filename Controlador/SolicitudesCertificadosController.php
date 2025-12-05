@@ -219,10 +219,13 @@ class SolicitudesCertificadosController extends BaseController
             exit;
         }
 
-        // Validar que el usuario sea el solicitante
+        // Validar permisos: el usuario debe ser el solicitante O ser administrador/secretario
         $feligresId = $this->obtenerFeligresIdUsuario($_SESSION['user-id']);
+        $rolUsuario = $_SESSION['user-rol'] ?? 'Feligrés';
+        $esAdminOSecretario = in_array($rolUsuario, ['Administrador', 'Secretario']);
 
-        if ($certificado['solicitante_id'] != $feligresId) {
+        // Si no es admin/secretario, debe ser el solicitante
+        if (!$esAdminOSecretario && $certificado['solicitante_id'] != $feligresId) {
             $_SESSION['error'] = 'No tiene permiso para descargar este certificado.';
             header('Location: ?route=certificados/mis-solicitudes');
             exit;

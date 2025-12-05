@@ -208,12 +208,22 @@ function cargarSacramentosFamiliar() {
                     sacramentoSelect.innerHTML = '<option value="">No tiene sacramentos registrados</option>';
                 }
             } else {
-                alert(response.message || 'Error al cargar sacramentos');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message || 'Error al cargar sacramentos',
+                    confirmButtonColor: '#3085d6'
+                });
                 sacramentoSelect.innerHTML = '<option value="">Error al cargar</option>';
             }
         },
         error: function() {
-            alert('Error de conexión al cargar sacramentos');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor para cargar los sacramentos',
+                confirmButtonColor: '#3085d6'
+            });
             sacramentoSelect.innerHTML = '<option value="">Error de conexión</option>';
         }
     });
