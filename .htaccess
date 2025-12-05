@@ -1,10 +1,10 @@
 # ============================================================================
-# CONFIGURACIÓN PARA APLICACIÓN MVC - URLs AMIGABLES
+# CONFIGURACIÓN PARA APLICACIÓN MVC - URLs AMIGABLES (LOCAL)
 # ============================================================================
 
 RewriteEngine On
-# IMPORTANTE: Ajustado para subdirectorio /parroquiaPOO
-RewriteBase /parroquiaPOO/
+# IMPORTANTE: En local (Laragon) la base suele ser /
+RewriteBase /
 
 # ============================================================================
 # EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
@@ -33,28 +33,28 @@ RewriteRule ^(Modelo|Controlador|logs|Data|vendor)/ - [F,L]
 
 # Regla especial: Verificación de certificados (usa parámetro "codigo" en lugar de "id")
 # Ejemplo: /certificados/verificar/ABC123
-RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
+RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^certificados/verificar/([a-zA-Z0-9]+)/?$ index.php?route=certificados/verificar&codigo=$1 [QSA,L]
 
 # Regla 1: URLs con 3 segmentos (ej: /grupos/ver/5)
 # Patrón: /controlador/accion/parametro
-RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
+RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2&id=$3 [QSA,L]
 
 # Regla 2: URLs con 2 segmentos (ej: /sacramentos/crear)
 # Patrón: /controlador/accion
-RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
+RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2 [QSA,L]
 
 # Regla 3: URLs con 1 segmento (ej: /login, /dashboard)
 # Patrón: /controlador
-RewriteCond %{REQUEST_URI} !^/parroquiaPOO/index\.php
+RewriteCond %{REQUEST_URI} !^/index\.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?route=$1 [QSA,L]

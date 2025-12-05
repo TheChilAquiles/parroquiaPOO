@@ -1,5 +1,5 @@
 <main class="min-h-screen">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+BZxgPHs44uWIX+LLMDJ8f6y/YJ3iEIAgCg1QYI4m7fQ2a4gR2n7aT5D0W2mB75K2I5M94v9j6Z8hYQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-SnH5WK+BZxgPHs44uWIX+LLMDJ8f6y/YJ3iEIAgCg1QYI4m7fQ2a4gR2n7aT5D0W2mB75K2I5M94v9j6Z8hYQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <section class="relative h-screen parallax-bg bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden">

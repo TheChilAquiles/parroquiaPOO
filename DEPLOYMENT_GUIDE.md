@@ -38,7 +38,8 @@ Dado que la subida automática falló, por favor sigue estos pasos manuales pero
     *   Elige la opción **Extract**.
 8.  **IMPORTANTE (Configuración):**
     *   Busca el archivo `.env.production` y **renómbralo** a `.env`.
-    *   Busca el archivo `.htaccess.production` y **renómbralo** a `.htaccess` (esto asegura que las rutas funcionen en la subcarpeta).
+    *   Busca el archivo `.htaccess.production` y **renómbralo** a `.htaccess`.
+    *   *Nota:* El `.htaccess` local es diferente al de producción. **NO** uses el local en el servidor.
 
 ## 4. Verificación
 
