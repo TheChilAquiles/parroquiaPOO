@@ -257,10 +257,17 @@ class SolicitudesCertificadosController extends BaseController
             $this->modeloSolicitud->mdlMarcarDescargado($certificadoId);
         }
 
+        // Limpiar cualquier salida previa del buffer
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+
         // Servir archivo
         header('Content-Type: application/pdf');
         header('Content-Disposition: attachment; filename="certificado_' . $certificadoId . '.pdf"');
         header('Content-Length: ' . filesize($certificado['ruta_archivo']));
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
         readfile($certificado['ruta_archivo']);
         exit;
     }
