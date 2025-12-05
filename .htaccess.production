@@ -1,0 +1,69 @@
+# ============================================================================
+# CONFIGURACIÓN PARA APLICACIÓN MVC - URLs AMIGABLES (PRODUCCIÓN ROOT)
+# ============================================================================
+
+RewriteEngine On
+# IMPORTANTE: Si está en la raíz del dominio, la base es /
+RewriteBase /
+
+# ============================================================================
+# EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
+# ============================================================================
+# No reescribir si es un archivo real
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+# No reescribir si es un directorio real
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ============================================================================
+# BLOQUEAR ACCESO A CARPETAS SENSIBLES
+# ============================================================================
+RewriteRule ^(Modelo|Controlador|logs|Data|vendor)/ - [F,L]
+
+# ============================================================================
+# BLOQUEAR ARCHIVOS SENSIBLES
+# ============================================================================
+<FilesMatch "\.(env|config|inc|sql|lock|json)$">
+    Require all denied
+</FilesMatch>
+
+# ============================================================================
+# REESCRITURA PRINCIPAL - URLs AMIGABLES
+# ============================================================================
+
+# Regla especial: Verificación de certificados (usa parámetro "codigo" en lugar de "id")
+# Ejemplo: /certificados/verificar/ABC123
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^certificados/verificar/([a-zA-Z0-9]+)/?$ index.php?route=certificados/verificar&codigo=$1 [QSA,L]
+
+# Regla 1: URLs con 3 segmentos (ej: /grupos/ver/5)
+# Patrón: /controlador/accion/parametro
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2&id=$3 [QSA,L]
+
+# Regla 2: URLs con 2 segmentos (ej: /sacramentos/crear)
+# Patrón: /controlador/accion
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2 [QSA,L]
+
+# Regla 3: URLs con 1 segmento (ej: /login, /dashboard)
+# Patrón: /controlador
+RewriteCond %{REQUEST_URI} !^/index\.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?route=$1 [QSA,L]
+
+# ============================================================================
+# SEGURIDAD ADICIONAL
+# ============================================================================
+Options -Indexes
+
+<Files .htaccess>
+    Require all denied
+</Files>

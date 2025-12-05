@@ -21,26 +21,6 @@ Sigue estos pasos detallados para subir tu proyecto a ByetHost.
 
 1.  En tu proyecto local, abre el archivo `.env.production` que acabo de crear.
 2.  **IMPORTANTE:** Verifica que `DB_HOST` y `DB_NAME` coincidan EXACTAMENTE con los que anotaste en el paso 1.4. Si son diferentes, edita el archivo.
-3.  Guarda los cambios.
-
-## 3. Subida de Archivos (FTP)
-
-Dado que la subida automática falló, por favor sigue estos pasos manuales pero simplificados:
-
-1.  He creado un archivo llamado **`deploy.zip`** en la carpeta de tu proyecto. Este archivo contiene TODO lo necesario.
-2.  Abre tu cliente FTP (FileZilla) o usa el **File Manager** de VistaPanel.
-3.  Navega a la carpeta `htdocs`.
-4.  Crea una carpeta llamada `parroquiaPOO` (si no existe).
-5.  Entra en `htdocs/parroquiaPOO`.
-6.  Sube el archivo **`deploy.zip`**.
-7.  Una vez subido, si usas el File Manager de VistaPanel:
-    *   Haz clic derecho sobre `deploy.zip`.
-    *   Elige la opción **Extract**.
-8.  **IMPORTANTE (Configuración):**
-    *   Busca el archivo `.env.production` y **renómbralo** a `.env`.
-    *   Busca el archivo `.htaccess.production` y **renómbralo** a `.htaccess`.
-    *   *Nota:* El `.htaccess` local es diferente al de producción. **NO** uses el local en el servidor.
-
 ## 4. Verificación
 
 1.  Abre tu navegador y entra a: `http://b7_40249021.byethost7.com/parroquiaPOO`
