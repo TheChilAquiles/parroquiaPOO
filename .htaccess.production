@@ -1,69 +1,81 @@
 # ============================================================================
-# CONFIGURACIÓN PARA APLICACIÓN MVC - URLs AMIGABLES (PRODUCCIÓN ROOT)
+# CONFIGURACIÓN MVC - SUBDIRECTORIO /parroquiaPOO/
 # ============================================================================
 
+Options -MultiViews
 RewriteEngine On
-# IMPORTANTE: Si está en la raíz del dominio, la base es /
+# IMPORTANTE: Esto le dice al servidor que estamos dentro de esta carpeta
 RewriteBase /parroquiaPOO/
 
 # ============================================================================
-# EXCEPCIONES: ARCHIVOS Y DIRECTORIOS EXISTENTES
+# 1. SEGURIDAD (BLOQUEOS) - ESTO VA PRIMERO
 # ============================================================================
-# No reescribir si es un archivo real
+
+# Bloquear acceso directo a carpetas del sistema
+RewriteRule ^(Modelo|Controlador|logs|includes)/ - [F,L]
+
+# Bloquear archivos de configuración y sensibles
+<FilesMatch "\.(env|config|ini|inc|sql)$">
+    Require all denied
+</FilesMatch>
+
+# Bloquear acceso al propio .htaccess
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# Evitar listado de directorios
+Options -Indexes
+
+# ============================================================================
+# 2. EXCEPCIONES (ARCHIVOS REALES)
+# ============================================================================
+
+# Si el usuario pide un archivo (imagen, css, js) que SÍ existe, no hacer nada
 RewriteCond %{REQUEST_FILENAME} -f [OR]
-# No reescribir si es un directorio real
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # ============================================================================
-# BLOQUEAR ACCESO A CARPETAS SENSIBLES
-# ============================================================================
-RewriteRule ^(Modelo|Controlador|logs|Data|vendor)/ - [F,L]
-
-# ============================================================================
-# BLOQUEAR ARCHIVOS SENSIBLES
-# ============================================================================
-<FilesMatch "\.(env|config|inc|sql|lock|json)$">
-    Require all denied
-</FilesMatch>
-
-# ============================================================================
-# REESCRITURA PRINCIPAL - URLs AMIGABLES
+# 3. ENRUTAMIENTO (ROUTER) - DEL MÁS ESPECÍFICO AL MÁS GENERAL
 # ============================================================================
 
-# Regla especial: Verificación de certificados (usa parámetro "codigo" en lugar de "id")
-# Ejemplo: /certificados/verificar/ABC123
-RewriteCond %{REQUEST_URI} !^/index\.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# A. Regla Especial: Certificados (con parámetro 'codigo')
+# URL: /parroquiaPOO/certificados/verificar/ABC123
 RewriteRule ^certificados/verificar/([a-zA-Z0-9]+)/?$ index.php?route=certificados/verificar&codigo=$1 [QSA,L]
 
-# Regla 1: URLs con 3 segmentos (ej: /grupos/ver/5)
-# Patrón: /controlador/accion/parametro
-RewriteCond %{REQUEST_URI} !^/index\.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# B. Regla Estándar: 3 Segmentos (Controlador/Accion/ID)
+# URL: /parroquiaPOO/grupos/ver/5
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2&id=$3 [QSA,L]
 
-# Regla 2: URLs con 2 segmentos (ej: /sacramentos/crear)
-# Patrón: /controlador/accion
-RewriteCond %{REQUEST_URI} !^/index\.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# C. Regla Estándar: 2 Segmentos (Controlador/Accion)
+# URL: /parroquiaPOO/sacramentos/crear
 RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)/?$ index.php?route=$1/$2 [QSA,L]
 
-# Regla 3: URLs con 1 segmento (ej: /login, /dashboard)
-# Patrón: /controlador
-RewriteCond %{REQUEST_URI} !^/index\.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# D. Regla Estándar: 1 Segmento (Controlador o Página simple)
+# URL: /parroquiaPOO/login
 RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.php?route=$1 [QSA,L]
 
-# ============================================================================
-# SEGURIDAD ADICIONAL
-# ============================================================================
-Options -Indexes
+# E. Regla "Comodín" (Catch-All) - Solo si nada de lo anterior coincidió
+# Esta regla es útil si tu Router.php maneja la URL manualmente
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
 
-<Files .htaccess>
-    Require all denied
-</Files>
+# ============================================================================
+# 4. OPTIMIZACIÓN Y CACHÉ (SOLO SI EL SERVER LO SOPORTA)
+# ============================================================================
+# Nota: Si el sitio te da "Error 500", borra desde aquí hacia abajo.
+
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 2 days"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
