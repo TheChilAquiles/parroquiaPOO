@@ -24,6 +24,12 @@ class LoginController
 
     public function mostrarFormulario()
     {
+        // Si ya está logueado, redirigir al dashboard
+        if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) {
+            redirect('dashboard');
+            exit();
+        }
+        
         include_once __DIR__ . '/../Vista/login.php';
     }
 

@@ -690,7 +690,7 @@ class CertificadosController extends BaseController
                 $data[] = [
                     'id' => $cert['id'],
                     'tipo_sacramento' => $cert['tipo_sacramento'],
-                    'nombre_feligres' => $cert['nombre_feligres'],
+                    'nombre_feligres' => $cert['feligres_nombre'],
                     'tipo_documento' => $cert['tipo_documento'],
                     'numero_documento' => $cert['numero_documento'],
                     'solicitante_nombre' => $cert['solicitante_nombre'] ?? null,

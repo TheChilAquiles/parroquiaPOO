@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `certificados` (
   CONSTRAINT `certificados_solicitante_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `feligreses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.certificados: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.certificados: ~6 rows (aproximadamente)
 DELETE FROM `certificados`;
 INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
 	(1, NULL, 1, NULL, 1, '2025-12-06', NULL, NULL, NULL, 'Bautismo', NULL, '2025-12-06 13:49:22', 1, NULL, 'generado', NULL),
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `configuraciones` (
   KEY `categoria` (`categoria`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='Configuraciones generales del sistema';
 
--- Volcando datos para la tabla parroquia.configuraciones: ~7 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.configuraciones: ~9 rows (aproximadamente)
 DELETE FROM `configuraciones`;
 INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`, `fecha_creacion`, `fecha_actualizacion`, `usuario_actualizacion`) VALUES
 	(1, 'parroquia_nombre', 'Parroquia San Francisco de Asís', 'texto', 'parroquia', 'Nombre de la parroquia', 1, '2025-12-06 13:49:15', '2025-12-06 13:49:15', NULL),
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `feligreses` (
   CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.feligreses: ~13 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.feligreses: ~15 rows (aproximadamente)
 DELETE FROM `feligreses`;
 INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `fecha_nacimiento`, `estado_registro`) VALUES
 	(1, 10, 1, '1001', '3001234567', 'Calle Falsa 123', 'Juan', '', 'Perez', '', NULL, NULL),
@@ -483,7 +483,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 -- Volcando datos para la tabla parroquia.usuarios: ~8 rows (aproximadamente)
 DELETE FROM `usuarios`;
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
-	(1, 2, 'admin@parroquia.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
+	(1, 2, 'admin@parroquia.com', 1, '$2y$12$u.R9bZ9oK8ksMXCK/wJ0ne5DxMuRrC4WqFPKMQWBx9j7l2QTuo6Fu', 1, NULL, NULL, NULL),
 	(2, 3, 'secretaria@parroquia.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
 	(10, 1, 'juan@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
 	(11, 1, 'maria@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),

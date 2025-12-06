@@ -422,9 +422,11 @@ class ModeloSolicitudCertificado
                         gen.email AS generador_nombre,
                         pa.parentesco AS relacion,
                         s.fecha_generacion AS fecha_sacramento,
-                        st.tipo AS tipo_sacramento
+                        st.tipo AS tipo_sacramento,
+                        td.tipo AS tipo_documento
                     FROM certificados c
                     JOIN feligreses f ON c.feligres_certificado_id = f.id
+                    JOIN documento_tipos td ON f.tipo_documento_id = td.id
                     JOIN feligreses sol ON c.solicitante_id = sol.id
                     LEFT JOIN usuarios gen ON c.usuario_generador_id = gen.id
                     LEFT JOIN parentescos pa ON c.parentesco_id = pa.id
