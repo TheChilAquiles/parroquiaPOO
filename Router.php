@@ -165,9 +165,15 @@ class Router
             'grupos/actualizar-rol' => ['controlador' => 'GruposController', 'accion' => 'actualizarRol'],
             'grupos/crear-rol' => ['controlador' => 'GruposController', 'accion' => 'crearRol'],
 
-            // ================================================================
             // RUTAS AUTENTICADAS - PAGOS
             // ================================================================
+            'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
+            'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
+            'pagos/actualizar' => ['controlador' => 'PagosController', 'accion' => 'actualizar'],
+            'pagos/pagar-certificado' => ['controlador' => 'PagosController', 'accion' => 'pagarCertificado'],
+            'pagos/procesar-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
+            'pagos/registrar-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],
+            'pagos/webhook' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
             'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
             'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
             'pagos/actualizar' => ['controlador' => 'PagosController', 'accion' => 'actualizar'],

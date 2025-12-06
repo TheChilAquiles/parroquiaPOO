@@ -186,6 +186,15 @@ $(document).ready(function() {
                 render: function(data) {
                     let html = '<div class="flex gap-2 justify-center">';
 
+                    // Botón de Pagar (Solo si está pendiente)
+                    if (data.estado === 'pendiente_pago') {
+                         html += `<button onclick="registrarPago(${data.id}, ${data.precio})" 
+                                    class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition flex items-center"
+                                    title="Recibir Pago en Efectivo">
+                                    <span class="material-icons text-sm mr-1">payments</span> Recibir Pago
+                                </button>`;
+                    }
+
                     if (data.ruta_archivo) {
                         html += `<a href="<?= url('certificados/descargar') ?>?id=${data.id}"
                                     class="px-3 py-1.5 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded text-sm font-medium transition"
@@ -194,7 +203,7 @@ $(document).ready(function() {
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
                                 </a>`;
-                    } else {
+                    } else if (data.estado !== 'pendiente_pago') {
                         html += '<span class="text-xs text-gray-400">PDF no generado</span>';
                     }
 
@@ -230,6 +239,62 @@ $(document).ready(function() {
         order: [[0, 'desc']],
         pageLength: 25
     });
+
+    // Función Global para registrar pago
+    window.registrarPago = function(id, precio) {
+        // Formatear precio para mostrar
+        const precioFormateado = new Intl.NumberFormat('es-CO', { 
+            style: 'currency', 
+            currency: 'COP',
+            minimumFractionDigits: 0
+        }).format(precio);
+
+        Swal.fire({
+            title: 'Registrar Pago en Efectivo',
+            html: `
+                <p class="mb-4">¿Confirmas recibir el pago por este certificado?</p>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <span class="text-gray-600">Valor a cobrar:</span>
+                    <div class="text-3xl font-bold text-green-600 mt-1">${precioFormateado}</div>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, recibir pago',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#10B981',
+            cancelButtonColor: '#6B7280'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar cargando
+                Swal.fire({
+                    title: 'Procesando...',
+                    didOpen: () => Swal.showLoading()
+                });
+
+                $.ajax({
+                    url: '<?= url('pagos/registrar-efectivo') ?>',
+                    method: 'POST',
+                    data: {
+                        certificado_id: id,
+                        monto: precio
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('¡Pago registrado!', response.message, 'success');
+                            table.ajax.reload();
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+                    }
+                });
+            }
+        });
+    };
 
     // Controles del Modal
     $('#btnAbrirModal').click(function() {

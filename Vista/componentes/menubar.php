@@ -32,7 +32,6 @@
                         'Sacramentos' => ['Feligres'],
                         'Grupos' =>  ['Secretario', 'Administrador'],
                         'Reportes' => ['Administrador'],
-                        'Pagos' => ['Administrador'],
                         'Certificados' => ['all'],
                         'Configuración' => ['Administrador'],
                         'pqrs' => ['all']

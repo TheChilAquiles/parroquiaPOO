@@ -367,9 +367,14 @@ class CertificadosController extends BaseController
      * Llamado cuando se hace clic en "Generar Certificado" desde la vista de sacramentos
      * @param int $sacramentoId ID del sacramento
      */
+    /**
+     * Genera solicitud de certificado desde un sacramento_id
+     * Llamado cuando se hace clic en "Generar Certificado" desde la vista de sacramentos
+     * @param int $sacramentoId ID del sacramento
+     */
     private function generarDesdeSacramento($sacramentoId)
     {
-        Logger::info("Intento de generación de certificado desde sacramento", [
+        Logger::info("Intento de solicitud de certificado desde sacramento", [
             'user_id' => $_SESSION['user-id'] ?? 'guest',
             'sacramento_id' => $sacramentoId,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
@@ -380,14 +385,8 @@ class CertificadosController extends BaseController
             $sacramento = $this->modeloSacramento->mdlObtenerPorId($sacramentoId);
 
             if (!$sacramento) {
-                Logger::warning("Sacramento no encontrado para generar certificado", [
-                    'user_id' => $_SESSION['user-id'] ?? 'guest',
-                    'sacramento_id' => $sacramentoId,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
                 $_SESSION['error'] = "Sacramento no encontrado con ID: $sacramentoId";
                 redirect('sacramentos');
-                
                 exit();
             }
 
@@ -395,11 +394,6 @@ class CertificadosController extends BaseController
             $participantes = $this->modeloSacramento->getParticipantes($sacramentoId);
 
             if (empty($participantes)) {
-                Logger::warning("No se encontraron participantes para sacramento", [
-                    'user_id' => $_SESSION['user-id'] ?? 'guest',
-                    'sacramento_id' => $sacramentoId,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
                 $_SESSION['error'] = "No se encontraron participantes para este sacramento";
                 header('Location: ?route=sacramentos');
                 exit();
@@ -408,23 +402,13 @@ class CertificadosController extends BaseController
             // Determinar el participante principal según el tipo de sacramento
             $tipoSacramentoId = (int)$sacramento['tipo_sacramento_id'];
             $participantePrincipal = null;
-            $tipoSacramento = '';
-
-            // Mapear tipo de sacramento
-            $tiposSacramento = [
-                1 => 'Bautismo',
-                2 => 'Confirmación',
-                3 => 'Defunción',
-                4 => 'Matrimonio'
-            ];
-            $tipoSacramento = $tiposSacramento[$tipoSacramentoId] ?? 'Sacramento';
 
             // Buscar participante principal por rol
             $rolesPrincipales = [
                 1 => 'Bautizado',      // Bautismo
-                2 => 'Confirmando',     // Confirmación
-                3 => 'Difunto',         // Defunción
-                4 => 'Esposo'           // Matrimonio (tomar esposo como principal)
+                2 => 'Confirmando',    // Confirmación
+                3 => 'Difunto',        // Defunción
+                4 => 'Esposo'          // Matrimonio (tomar esposo como principal o cualquiera)
             ];
 
             $rolBuscado = $rolesPrincipales[$tipoSacramentoId] ?? null;
@@ -441,182 +425,72 @@ class CertificadosController extends BaseController
                 $participantePrincipal = $participantes[0];
             }
 
-            // Construir nombre completo
-            $nombreCompleto = trim(
-                $participantePrincipal['primer_nombre'] . ' ' .
-                ($participantePrincipal['segundo_nombre'] ?? '') . ' ' .
-                $participantePrincipal['primer_apellido'] . ' ' .
-                ($participantePrincipal['segundo_apellido'] ?? '')
-            );
+            $feligresId = $participantePrincipal['feligres_id'];
 
-            $fechaSacramento = date('d/m/Y', strtotime($sacramento['fecha_generacion']));
-            $lugarSacramento = $sacramento['lugar'] ?? 'Parroquia';
+            // Mapear tipo de sacramento a string para la DB
+            $tiposSacramento = [
+                1 => 'Bautismo',
+                2 => 'Confirmación',
+                3 => 'Defunción',
+                4 => 'Matrimonio'
+            ];
+            $tipoSacramentoStr = $tiposSacramento[$tipoSacramentoId] ?? 'Sacramento';
 
-            // Generar PDF con DomPDF
-            require_once __DIR__ . '/../vendor/autoload.php';
-
-            $options = new Options();
-            $options->set('isHtml5ParserEnabled', true);
-            $options->set('isRemoteEnabled', true);
-
-            $dompdf = new Dompdf($options);
-
-            // Construir HTML del certificado
-            $html = '
-            <!DOCTYPE html>
-            <html lang="es">
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body {
-                        font-family: "Times New Roman", serif;
-                        padding: 60px;
-                        text-align: center;
-                        background: #fff;
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 40px;
-                    }
-                    h1 {
-                        color: #1a1a1a;
-                        font-size: 32px;
-                        margin-bottom: 10px;
-                        text-transform: uppercase;
-                        letter-spacing: 2px;
-                    }
-                    h2 {
-                        color: #444;
-                        font-size: 24px;
-                        margin-bottom: 30px;
-                        font-weight: normal;
-                    }
-                    .content {
-                        font-size: 18px;
-                        line-height: 2.0;
-                        text-align: justify;
-                        margin: 50px 0;
-                        padding: 0 40px;
-                    }
-                    .nombre-feligres {
-                        font-weight: bold;
-                        text-decoration: underline;
-                    }
-                    .participantes-list {
-                        margin: 30px 0;
-                        text-align: left;
-                        padding-left: 80px;
-                    }
-                    .participante-item {
-                        margin: 10px 0;
-                        font-size: 16px;
-                    }
-                    .firma {
-                        text-align: center;
-                        margin-top: 80px;
-                        font-style: italic;
-                    }
-                    .firma-line {
-                        width: 300px;
-                        border-top: 1px solid #000;
-                        margin: 60px auto 10px auto;
-                    }
-                    .footer {
-                        text-align: center;
-                        margin-top: 40px;
-                        font-size: 12px;
-                        color: #666;
-                    }
-                    .codigo-certificado {
-                        font-family: monospace;
-                        font-size: 10px;
-                        color: #999;
-                        margin-top: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h1>Certificado de ' . htmlspecialchars($tipoSacramento) . '</h1>
-                    <h2>Parroquia</h2>
-                </div>
-
-                <div class="content">
-                    <p>
-                        Por medio de la presente se certifica que
-                        <span class="nombre-feligres">' . htmlspecialchars($nombreCompleto) . '</span>
-                        ha recibido el Sacramento de <strong>' . htmlspecialchars($tipoSacramento) . '</strong>
-                        en fecha <strong>' . htmlspecialchars($fechaSacramento) . '</strong>
-                        en <strong>' . htmlspecialchars($lugarSacramento) . '</strong>.
-                    </p>';
-
-            // Agregar lista de participantes si hay más de uno
-            if (count($participantes) > 1) {
-                $html .= '<div class="participantes-list"><p><strong>Participantes:</strong></p>';
-                foreach ($participantes as $participante) {
-                    $nombreParticipante = trim(
-                        $participante['primer_nombre'] . ' ' .
-                        ($participante['segundo_nombre'] ?? '') . ' ' .
-                        $participante['primer_apellido'] . ' ' .
-                        ($participante['segundo_apellido'] ?? '')
-                    );
-                    $html .= '<div class="participante-item">• <strong>' . htmlspecialchars($participante['rol']) . ':</strong> ' . htmlspecialchars($nombreParticipante) . '</div>';
-                }
-                $html .= '</div>';
+            // Verificar si ya existe solicitud pendiente
+            if ($this->modeloSolicitud->mdlVerificarSolicitudExistente($sacramentoId, $feligresId, $tipoSacramentoId)) {
+                $_SESSION['warning'] = "Ya existe una solicitud activa o un certificado generado para este sacramento. Revise la lista de certificados.";
+                header('Location: ?route=certificados');
+                exit();
             }
 
-            $html .= '
-                    <p>
-                        Se expide el presente certificado a solicitud del interesado
-                        para los fines que estime conveniente.
-                    </p>
-                </div>
+            // Crear solicitud de certificado "Pendiente de Pago"
+            // Usamos modeloSolicitud->mdlCrearSolicitud o insertamos directamente si necesitamos campos específicos de admin
+            // Reutilizaremos mdlCrearCertificadoDirecto que ya tenemos para simplificar, pero adaptando los datos
+            
+            $datos = [
+                'usuario_generador_id' => $_SESSION['user-id'],
+                'tipo_documento_id' => $participantePrincipal['tipo_documento_id'], // No usado x mdlCrearCertificadoDirecto en select feligres, pero...
+                // mdlCrearCertificadoDirecto busca por documento. Mejor insertamos usando el ID de feligres que ya tenemos.
+                // Insertamos manualmente aquí para controlar el ID exacto del feligres y sacramento
+            ];
 
-                <div class="firma">
-                    <div class="firma-line"></div>
-                    <p>Firma del Párroco</p>
-                    <p>Parroquia</p>
-                </div>
-
-                <div class="footer">
-                    <p>Fecha de emisión: ' . date('d/m/Y H:i') . '</p>
-                    <p class="codigo-certificado">Sacramento ID: ' . str_pad((string)$sacramentoId, 8, '0', STR_PAD_LEFT) . '</p>
-                </div>
-            </body>
-            </html>';
-
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
-
-            // Nombre del archivo
-            $safeName = preg_replace('/[^A-Za-z0-9_-]/', '', str_replace(' ', '_', $nombreCompleto));
-            $filename = 'certificado_' . $tipoSacramento . '_' . $safeName . '.pdf';
-
-            Logger::info("Certificado generado exitosamente desde sacramento", [
-                'user_id' => $_SESSION['user-id'] ?? 'guest',
-                'sacramento_id' => $sacramentoId,
-                'tipo_sacramento' => $tipoSacramento,
-                'participantes_count' => count($participantes),
-                'archivo' => $filename,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            // Inserción manual para garantizar integridad con los IDs que ya recuperamos
+            $sql = "INSERT INTO certificados (
+                        usuario_generador_id, solicitante_id, feligres_certificado_id,
+                        parentesco_id, fecha_solicitud, tipo_certificado,
+                        motivo_solicitud, sacramento_id, estado
+                    ) VALUES (?, ?, ?, NULL, NOW(), ?, 'Solicitud desde Sacramentos', ?, 'pendiente_pago')";
+            
+            // Nota: Asumimos que el solicitante es el Admin que está logueado haciendo la gestión? 
+            // NO, la tabla pide un feligres_id como solicitante. Si es un Admin, usuario_generador_id queda set, y solicitante_id...
+            // En lógica anterior de 'crear', se usaba el feligres del certificado como solicitante si era directo.
+            
+            $conexion = Conexion::conectar();
+            $stmt = $conexion->prepare($sql);
+            $stmt->execute([
+                $_SESSION['user-id'],     // Usuario generador (Admin/Secretario)
+                $feligresId,              // Solicitante (El feligrés dueño del sacramento, asumido por defecto)
+                $feligresId,              // Feligrés certificado
+                $tipoSacramentoStr,       // Tipo certificado
+                $sacramentoId             // Sacramento ID
             ]);
 
-            // Forzar descarga
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="' . $filename . '"');
-            echo $dompdf->output();
+            Logger::info("Solicitud de certificado creada desde sacramentos", [
+                'sacramento_id' => $sacramentoId,
+                'feligres_id' => $feligresId,
+                'estado' => 'pendiente_pago'
+            ]);
+
+            $_SESSION['success'] = "Solicitud creada. El certificado está PENDIENTE DE PAGO. Por favor proceda a registrar el pago.";
+            header('Location: ?route=certificados');
             exit();
 
         } catch (Exception $e) {
-            Logger::error("Error al generar certificado desde sacramento:", [
-                'user_id' => $_SESSION['user-id'] ?? 'guest',
-                'sacramento_id' => $sacramentoId ?? null,
+            Logger::error("Error al generar solicitud desde sacramento:", [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+                'trace' => $e->getTraceAsString()
             ]);
-            $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
+            $_SESSION['error'] = 'Error al procesar la solicitud: ' . $e->getMessage();
             header('Location: ?route=sacramentos');
             exit();
         }
@@ -780,69 +654,65 @@ class CertificadosController extends BaseController
      */
     public function listarTodos()
     {
-        // Limpiar buffer de salida
-        if (ob_get_level()) {
-            ob_clean();
+        // Limpiar cualquier salida previa
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        
+        Logger::info("Listado de certificados solicitado", [
+            'user_id' => $_SESSION['user-id'] ?? 'guest',
+            'rol' => $_SESSION['user-rol'] ?? 'none'
+        ]);
+
+        // Verificar permisos (Admin/Secretario)
+        if (!isset($_SESSION['user-rol']) || !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+            Logger::warning("Acceso denegado a listado de certificados", [
+                'user_id' => $_SESSION['user-id'] ?? 'guest',
+                'rol' => $_SESSION['user-rol'] ?? 'none'
+            ]);
+            http_response_code(403);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Acceso denegado']);
+            exit;
         }
 
-        header('Content-Type: application/json');
-
         try {
-            Logger::info("Intento de acceso a listarTodos", [
-                'logged' => isset($_SESSION['logged']) ? $_SESSION['logged'] : 'not set',
-                'user_rol' => isset($_SESSION['user-rol']) ? $_SESSION['user-rol'] : 'not set',
-                'session_id' => session_id()
-            ]);
-
-            // Verificar autenticación
-            if (!isset($_SESSION['logged']) || !in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
-                Logger::error("Acceso denegado a listarTodos - no autorizado");
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'No autorizado'
-                ]);
-                exit;
-            }
-
-            // Obtener todos los certificados
+            // Instanciar modelo de configuración para obtener precios
+            $modeloConfig = new ModeloConfiguracion();
+            
             $certificados = $this->modeloSolicitud->mdlObtenerTodosLosCertificados();
 
-            Logger::info("Certificados listados para admin", [
-                'cantidad' => count($certificados)
-            ]);
-
-            // Formatear datos para DataTables
             $data = [];
             foreach ($certificados as $cert) {
+                // Obtener precio según tipo de sacramento
+                $precio = $modeloConfig->obtenerPrecioCertificado($cert['tipo_sacramento']);
+                
                 $data[] = [
                     'id' => $cert['id'],
-                    'tipo_certificado' => $cert['tipo_certificado'],
-                    'feligres_nombre' => $cert['feligres_nombre'],
+                    'tipo_sacramento' => $cert['tipo_sacramento'],
+                    'nombre_feligres' => $cert['nombre_feligres'],
+                    'tipo_documento' => $cert['tipo_documento'],
                     'numero_documento' => $cert['numero_documento'],
-                    'solicitante_nombre' => $cert['solicitante_nombre'],
-                    'generador_nombre' => $cert['generador_nombre'] ?? 'Sistema',
-                    'relacion' => $cert['relacion'] ?? 'Propio',
-                    'fecha_solicitud' => date('d/m/Y', strtotime($cert['fecha_solicitud'])),
+                    'solicitante_nombre' => $cert['solicitante_nombre'] ?? null,
+                    'estado' => $cert['estado'],
+                    'fecha_solicitud' => $cert['fecha_solicitud'],
                     'fecha_generacion' => $cert['fecha_generacion'] ? date('d/m/Y', strtotime($cert['fecha_generacion'])) : 'N/A',
                     'fecha_expiracion' => $cert['fecha_expiracion'] ? date('d/m/Y', strtotime($cert['fecha_expiracion'])) : 'N/A',
-                    'estado' => ucfirst(str_replace('_', ' ', $cert['estado'])),
                     'ruta_archivo' => $cert['ruta_archivo'],
-                    'tipo_sacramento' => $cert['tipo_sacramento'],
-                    'fecha_sacramento' => date('d/m/Y', strtotime($cert['fecha_sacramento']))
+                    'precio' => $precio  // Precio dinámico desde configuración
                 ];
             }
 
-            echo json_encode([
-                'success' => true,
-                'data' => $data
-            ]);
+            header('Content-Type: application/json');
+            echo json_encode(['data' => $data]);
 
         } catch (Exception $e) {
-            Logger::error("Error en listarTodos:", ['error' => $e->getMessage()]);
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error al listar certificados'
+            Logger::error("Error al listar certificados", [
+                'error' => $e->getMessage()
             ]);
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Error al obtener certificados']);
         }
 
         exit;

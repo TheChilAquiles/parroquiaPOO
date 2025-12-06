@@ -43,6 +43,7 @@ class ModeloSacramento
         $sql = "SELECT
                     pr.rol,
                     pr.id AS rol_id,
+                    p.feligres_id,
                     f.tipo_documento_id,
                     f.numero_documento,
                     f.primer_nombre,
