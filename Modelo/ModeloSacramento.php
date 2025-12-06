@@ -337,7 +337,7 @@ class ModeloSacramento
      * @param int $numero Número del libro
      * @return array Lista de sacramentos con participantes
      */
-    public function mdlObtenerPorLibro($tipo, $numero)
+    public function mdlObtenerPorLibro($tipo, $numero, $search = null, $start = 0, $length = 10)
     {
         try {
             // Primero obtenemos el ID del libro
@@ -355,20 +355,45 @@ class ModeloSacramento
 
             $libroId = $libro['id'];
 
-            // Ahora obtenemos los sacramentos de ese libro
-            $sql = "SELECT
+            // Query base
+            $sql = "SELECT DISTINCT
                         s.id,
                         s.fecha_generacion,
                         s.tipo_sacramento_id,
                         st.tipo AS tipo_sacramento
                     FROM sacramentos s
                     JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                    LEFT JOIN participantes p ON p.sacramento_id = s.id AND p.estado_registro IS NULL
+                    LEFT JOIN feligreses f ON f.id = p.feligres_id
                     WHERE s.libro_id = ?
-                    AND s.estado_registro IS NULL
-                    ORDER BY s.fecha_generacion DESC";
+                    AND s.estado_registro IS NULL";
+
+            $params = [$libroId];
+
+            // Filtro de Búsqueda
+            if (!empty($search)) {
+                $sql .= " AND (
+                    st.tipo LIKE ? OR 
+                    s.fecha_generacion LIKE ? OR 
+                    CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre,''), ' ', f.primer_apellido, ' ', COALESCE(f.segundo_apellido,'')) LIKE ? OR
+                    f.numero_documento LIKE ?
+                )";
+                $searchTerm = "%$search%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $sql .= " ORDER BY s.fecha_generacion DESC";
+
+            // Paginación
+            if ($length != -1) {
+                $sql .= " LIMIT $start, $length";
+            }
 
             $stmt = $this->conexion->prepare($sql);
-            $stmt->execute([$libroId]);
+            $stmt->execute($params);
             $sacramentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Para cada sacramento, obtener el participante principal y todos los participantes
@@ -393,6 +418,65 @@ class ModeloSacramento
         } catch (PDOException $e) {
             Logger::error("Error al obtener sacramentos por libro:", ['error' => $e->getMessage()]);
             return [];
+        }
+    }
+
+    public function contarPorLibro($tipo, $numero)
+    {
+        try {
+            $sql = "SELECT COUNT(s.id) 
+                    FROM sacramentos s
+                    JOIN libros l ON s.libro_id = l.id
+                    WHERE l.libro_tipo_id = ? AND l.numero = ? AND s.estado_registro IS NULL";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$tipo, $numero]);
+            return $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            return 0;
+        }
+    }
+
+    public function contarPorLibroFiltrado($tipo, $numero, $search)
+    {
+        try {
+            $sqlLibro = "SELECT id FROM libros WHERE libro_tipo_id = ? AND numero = ? AND estado_registro IS NULL";
+            $stmtLibro = $this->conexion->prepare($sqlLibro);
+            $stmtLibro->execute([$tipo, $numero]);
+            $libro = $stmtLibro->fetch(PDO::FETCH_ASSOC);
+
+            if (!$libro) return 0;
+            $libroId = $libro['id'];
+
+            $sql = "SELECT COUNT(DISTINCT s.id)
+                    FROM sacramentos s
+                    JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
+                    LEFT JOIN participantes p ON p.sacramento_id = s.id AND p.estado_registro IS NULL
+                    LEFT JOIN feligreses f ON f.id = p.feligres_id
+                    WHERE s.libro_id = ?
+                    AND s.estado_registro IS NULL";
+            
+            $params = [$libroId];
+
+            if (!empty($search)) {
+                $sql .= " AND (
+                    st.tipo LIKE ? OR 
+                    s.fecha_generacion LIKE ? OR 
+                    CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre,''), ' ', f.primer_apellido, ' ', COALESCE(f.segundo_apellido,'')) LIKE ? OR
+                    f.numero_documento LIKE ?
+                )";
+                $searchTerm = "%$search%";
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchColumn();
+
+        } catch (PDOException $e) {
+            return 0;
         }
     }
 
@@ -435,7 +519,7 @@ class ModeloSacramento
                     FROM participantes p
                     JOIN feligreses f ON f.id = p.feligres_id
                     JOIN participantes_rol pr ON pr.id = p.rol_participante_id
-                    LEFT JOIN tipo_documento td ON td.id = f.tipo_documento_id
+                    LEFT JOIN documento_tipos td ON td.id = f.tipo_documento_id
                     WHERE p.sacramento_id = ?
                     AND pr.rol IN ($placeholders)
                     AND p.estado_registro IS NULL

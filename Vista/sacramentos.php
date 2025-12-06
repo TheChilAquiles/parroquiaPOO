@@ -1150,13 +1150,11 @@
             Toast.fire({
                 icon: "warning",
                 title: "\n Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "),
-                timer: 100000,
+                timer: 5000,
             });
 
 
-            alert("Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "));
-
-
+ 
 
             return; // No se envía el formulario
         }
@@ -1221,6 +1219,43 @@
 
 
     });
+    // ============================================================================
+    // FUNCIONES AUXILIARES
+    // ============================================================================
+
+    /**
+     * Actualiza las opciones del select de roles
+     * Deshabilita los roles que ya han sido seleccionados (si son únicos)
+     */
+    function actualizarOpcionesRol() {
+        const rolesSeleccionados = [];
+        
+        // Obtener roles ya presentes en la lista
+        $('#contenedor-integrantes li').each(function() {
+            const rolInput = $(this).find('input[name$="[rolParticipante]"]');
+            if (rolInput.length > 0) {
+                rolesSeleccionados.push(parseInt(rolInput.val()));
+            }
+        });
+
+        // Roles que solo pueden aparecer una vez
+        // 1=Bautizado, 2=Confirmando, 3=Difunto, 4=Esposo, 5=Esposa, 
+        // 6=Padre, 7=Madre, 8=Padrino, 9=Madrina 
+        const rolesUnicos = [1, 2, 3, 4, 5, 6, 7]; 
+        
+        $('#rolParticipante option').each(function() {
+            const val = parseInt($(this).val());
+            
+            if (rolesSeleccionados.includes(val) && rolesUnicos.includes(val)) {
+                $(this).prop('disabled', true);
+                if ($('#rolParticipante').val() == val) {
+                    $('#rolParticipante').val('');
+                }
+            } else {
+                $(this).prop('disabled', false);
+            }
+        });
+    }
 </script>
 
 <?php include_once __DIR__ . '/componentes/plantillaBottom.php'; ?>

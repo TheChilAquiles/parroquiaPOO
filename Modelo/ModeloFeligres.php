@@ -140,17 +140,38 @@ class ModeloFeligres
      * Lista todos los feligreses activos (sin soft delete)
      * @return array Lista de feligreses
      */
-    public function mdlListarTodos()
+    public function mdlListarTodos($start = 0, $length = 10, $search = null)
     {
         try {
             $sql = "SELECT f.*,
                     CONCAT(f.primer_nombre, ' ', IFNULL(f.segundo_nombre, ''), ' ',
                            f.primer_apellido, ' ', IFNULL(f.segundo_apellido, '')) AS nombre_completo
                     FROM feligreses f
-                    WHERE f.estado_registro IS NULL
-                    ORDER BY f.id DESC";
+                    WHERE f.estado_registro IS NULL";
+
+            $params = [];
+
+            if (!empty($search)) {
+                $sql .= " AND (
+                    f.primer_nombre LIKE ? OR 
+                    f.segundo_nombre LIKE ? OR 
+                    f.primer_apellido LIKE ? OR 
+                    f.segundo_apellido LIKE ? OR 
+                    f.numero_documento LIKE ? OR 
+                    f.direccion LIKE ?
+                )";
+                $searchTerm = "%$search%";
+                $params = array_fill(0, 6, $searchTerm);
+            }
+
+            $sql .= " ORDER BY f.id DESC";
+
+            if ($length != -1) {
+                $sql .= " LIMIT $start, $length";
+            }
+
             $stmt = $this->conexion->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($params);
 
             // Mapear tipos de documento (sin tabla tipos_documento)
             $tiposDoc = [
@@ -173,6 +194,34 @@ class ModeloFeligres
         } catch (PDOException $e) {
             Logger::error("Error al listar feligreses:", ['error' => $e->getMessage()]);
             return [];
+        }
+    }
+
+    public function mdlContarFiltrados($search)
+    {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM feligreses f WHERE f.estado_registro IS NULL";
+            $params = [];
+
+            if (!empty($search)) {
+                $sql .= " AND (
+                    f.primer_nombre LIKE ? OR 
+                    f.segundo_nombre LIKE ? OR 
+                    f.primer_apellido LIKE ? OR 
+                    f.segundo_apellido LIKE ? OR 
+                    f.numero_documento LIKE ? OR 
+                    f.direccion LIKE ?
+                )";
+                $searchTerm = "%$search%";
+                $params = array_fill(0, 6, $searchTerm);
+            }
+
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            return 0;
         }
     }
 
@@ -218,6 +267,22 @@ class ModeloFeligres
             return $eliminado;
         } catch (PDOException $e) {
             Logger::error("Error al eliminar feligrés:", ['error' => $e->getMessage()]);
+            return false;
+        }
+    }
+
+    /**
+     * Obtiene un feligrés por su ID de Usuario asociado
+     */
+    public function mdlObtenerPorUsuarioId($usuarioId)
+    {
+        try {
+            $sql = "SELECT * FROM feligreses WHERE usuario_id = ? AND estado_registro IS NULL";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$usuarioId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener feligrés por usuario:", ['error' => $e->getMessage()]);
             return false;
         }
     }

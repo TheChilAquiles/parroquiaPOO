@@ -81,7 +81,20 @@ class LoginController
             $_SESSION['user-id'] = $usuario['id'];
             $_SESSION['user-datos'] = $usuario['datos_completos'] ?? false;
             $_SESSION['user-rol'] = $usuario['rol'];
-            $_SESSION['success'] = '¡Bienvenido!';
+            
+            // Obtener nombre real del usuario (si es Feligrés)
+            $modeloFeligres = new ModeloFeligres();
+            $feligres = $modeloFeligres->mdlObtenerPorUsuarioId($usuario['id']);
+            
+            if ($feligres) {
+                $_SESSION['user-name'] = $feligres['primer_nombre'] . ' ' . $feligres['primer_apellido'];
+            } else {
+                // Si no es feligrés (Admin sin perfil), usar la parte del email antes del @
+                $emailParts = explode('@', $usuario['email']);
+                $_SESSION['user-name'] = ucfirst($emailParts[0]);
+            }
+
+            $_SESSION['success'] = '¡Bienvenido ' . $_SESSION['user-name'] . '!';
 
             Logger::info("Login exitoso", [
                 'user_id' => $usuario['id'],

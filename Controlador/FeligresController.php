@@ -53,8 +53,22 @@ class FeligresController extends BaseController
         }
 
         try {
-            $feligreses = $this->modelo->mdlListarTodos();
+            // Parámetros de DataTables
+            $draw = intval($_POST['draw'] ?? 1);
+            $start = intval($_POST['start'] ?? 0);
+            $length = intval($_POST['length'] ?? 10);
+            $search = $_POST['search']['value'] ?? null;
+
+            // Obtener registros filtrados y paginados
+            $feligreses = $this->modelo->mdlListarTodos($start, $length, $search);
+            
+            // Total sin filtro
             $total = $this->modelo->mdlContarTodos();
+            
+            // Total filtrado
+            $totalFiltrado = !empty($search) 
+                ? $this->modelo->mdlContarFiltrados($search) 
+                : $total;
 
             // Formatear datos para DataTables (incluir todos los campos para edición)
             $data = [];
@@ -76,9 +90,9 @@ class FeligresController extends BaseController
 
             header('Content-Type: application/json');
             echo json_encode([
-                'draw' => intval($_POST['draw'] ?? 1),
+                'draw' => $draw,
                 'recordsTotal' => $total,
-                'recordsFiltered' => $total,
+                'recordsFiltered' => $totalFiltrado,
                 'data' => $data
             ]);
             exit();

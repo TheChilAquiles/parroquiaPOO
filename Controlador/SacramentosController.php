@@ -361,6 +361,10 @@ class SacramentosController extends BaseController
         // Obtener parámetros de POST (AJAX)
         $tipo = $_POST['tipo'] ?? null;
         $numero = $_POST['numero'] ?? null;
+        $draw = $_POST['draw'] ?? 1;
+        $start = $_POST['start'] ?? 0;
+        $length = $_POST['length'] ?? 10;
+        $searchValue = $_POST['search']['value'] ?? null;
 
         if (empty($tipo) || !is_numeric($tipo) || empty($numero) || !is_numeric($numero)) {
             http_response_code(400);
@@ -373,12 +377,33 @@ class SacramentosController extends BaseController
             ob_clean();
         }
 
-        // Obtener sacramentos del modelo
-        $sacramentos = $this->modeloSacramento->mdlObtenerPorLibro((int)$tipo, (int)$numero);
+        // 1. Obtener TOTAL de registros (sin filtro)
+        $totalRecords = $this->modeloSacramento->contarPorLibro((int)$tipo, (int)$numero);
+
+        // 2. Obtener registros FILTRADOS y PAGINADOS
+        $sacramentos = $this->modeloSacramento->mdlObtenerPorLibro(
+            (int)$tipo, 
+            (int)$numero, 
+            $searchValue, 
+            (int)$start, 
+            (int)$length
+        );
+
+        // 3. Contar registros filtrados (si hay búsqueda, es diferente al total)
+        if (!empty($searchValue)) {
+            $filteredRecords = $this->modeloSacramento->contarPorLibroFiltrado((int)$tipo, (int)$numero, $searchValue);
+        } else {
+            $filteredRecords = $totalRecords;
+        }
 
         // Devolver JSON para DataTables
         header('Content-Type: application/json');
-        echo json_encode(['data' => $sacramentos]);
+        echo json_encode([
+            'draw' => (int)$draw,
+            'recordsTotal' => $totalRecords,
+            'recordsFiltered' => $filteredRecords,
+            'data' => $sacramentos
+        ]);
         exit();
     }
 

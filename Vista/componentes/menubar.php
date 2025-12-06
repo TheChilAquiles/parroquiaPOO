@@ -42,6 +42,7 @@
                 }
 
                 foreach ($menu as $item => $roles) {
+                    $is_mobile = false; // Desktop
                     if (is_array($roles)) {
                         foreach ($roles as $role) {
                             if ($_SESSION["user-rol"] == $role || $role == 'all') {
@@ -69,7 +70,7 @@
                                 <i class="fas fa-user text-white text-sm"></i>
                             </div>
                             <span class="hidden lg:block font-medium text-gray-700">
-                                <?= htmlspecialchars($_SESSION['user-email'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?>
+                                <?= htmlspecialchars($_SESSION['user-name'] ?? $_SESSION['user-email'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?>
                             </span>
                             <i class="fas fa-chevron-down text-gray-500 text-xs transition-transform duration-200"
                                :class="{ 'rotate-180': open }"></i>
@@ -89,7 +90,7 @@
                             <!-- Información del usuario -->
                             <div class="px-4 py-3 border-b border-gray-100">
                                 <p class="text-sm font-semibold text-gray-900">
-                                    <?= htmlspecialchars($_SESSION['user-email'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?>
+                                    <?= htmlspecialchars($_SESSION['user-name'] ?? $_SESSION['user-email'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?>
                                 </p>
                                 <p class="text-xs text-gray-500 mt-1">
                                     Rol: <?= htmlspecialchars($_SESSION['user-rol'] ?? 'Sin rol', ENT_QUOTES, 'UTF-8') ?>
@@ -163,6 +164,7 @@
                     ];
 
                     foreach ($menu_mobile as $item => $roles) {
+                        $is_mobile = true; // Mobile
                         if (is_array($roles)) {
                             foreach ($roles as $role) {
                                 if ($_SESSION["user-rol"] == $role || $role == 'all') {
@@ -179,6 +181,7 @@
 
                     $user_menu = ['Perfil' => 'perfil', 'Manual' => 'manual', 'Salir' => 'salir'];
                     foreach ($user_menu as $item => $route) {
+                        $is_mobile = true; // Mobile
                         $item_route = $route;
                         include('link-menu.php');
                     }
@@ -186,6 +189,7 @@
                 } else {
                     $menu_mobile = ['Inicio', 'Noticias', 'Información', 'Contacto'];
                     foreach ($menu_mobile as $item) {
+                        $is_mobile = true; // Mobile
                         include('link-menu.php');
                     }
 

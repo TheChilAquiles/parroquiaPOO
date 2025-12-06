@@ -566,18 +566,29 @@
         // Efectos adicionales
         document.addEventListener('DOMContentLoaded', function () {
             // Contador animado para números grandes
+            // Contador animado para números grandes optimizado con requestAnimationFrame
             function animateCounter(element, target, duration = 2000) {
-                let start = 0;
-                const increment = target / (duration / 16);
-                const timer = setInterval(() => {
-                    start += increment;
-                    if (start >= target) {
-                        element.textContent = target;
-                        clearInterval(timer);
+                const startTimestamp = performance.now();
+                const startValue = 0;
+                
+                function step(currentTime) {
+                    const elapsed = currentTime - startTimestamp;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Función de easing suave (easeOutQuart)
+                    const ease = 1 - Math.pow(1 - progress, 4);
+                    
+                    const current = Math.floor(startValue + (target - startValue) * ease);
+                    element.textContent = current;
+    
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
                     } else {
-                        element.textContent = Math.floor(start);
+                        element.textContent = target; // Asegurar valor final exacto
                     }
-                }, 16);
+                }
+                
+                window.requestAnimationFrame(step);
             }
 
             // Animar contadores principales
