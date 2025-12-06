@@ -345,9 +345,14 @@
         actualizarOpcionesRol(); // Actualizar roles disponibles
     });
 
-    // Cerrar mini-modal
+    // Cerrar mini-modal (solo cerrar, sin guardar)
     $(document).on('click', '#cerrarMiniModal, #cancelarParticipante', function() {
         cerrarMiniModal();
+    });
+
+    // Intentar agregar participante al hacer clic en "Añadir"
+    $(document).on('click', '#AddNew', function() {
+        agregarParticipante();
     });
 
     // Cerrar mini-modal al hacer clic fuera
@@ -362,85 +367,108 @@
         $('#miniModalParticipante').addClass('hidden');
         $('#tipo-doc').val('').removeClass('border-red-500');
         $('#numero-doc').val('').removeClass('border-red-500');
-        $('#primerNombre').val('');
-        $('#segundoNombre').val('');
-        $('#primerApellido').val('');
+        $('#primerNombre').val('').removeClass('border-red-500');
+        $('#segundoNombre').val('').removeClass('border-red-500');
+        $('#primerApellido').val('').removeClass('border-red-500');
+        $('#segundoApellido').val('').removeClass('border-red-500');
+        $('#rolParticipante').val('').removeClass('border-red-500');
+        $('#feligresNoExiste').addClass('hidden');
+    }
+
+    // Función para resaltar campos obligatorios faltantes
+    function resaltarCampo(selector) {
+        $(selector).addClass('border-red-500 animate-pulse');
+        setTimeout(() => {
+            $(selector).removeClass('animate-pulse');
+        }, 2000);
+    }
+
+    // Función principal para agregar participante a la lista provisional
+    function agregarParticipante() {
         const rolParticipante = document.getElementById('rolParticipante').value.trim();
         const tipoDoc = document.getElementById('tipo-doc').value.trim();
         const numeroDoc = document.getElementById('numero-doc').value.trim();
-
-
 
         const primerNombre = document.getElementById('primerNombre').value.trim();
         const segundoNombre = document.getElementById('segundoNombre').value.trim();
         const primerApellido = document.getElementById('primerApellido').value.trim();
         const segundoApellido = document.getElementById('segundoApellido').value.trim();
 
-
-        if (!tipoDoc || !numeroDoc || !rolParticipante || !primerNombre || !primerApellido) {
-
-            resaltarCampo('#primerNombre');
-            resaltarCampo('#primerApellido');
-            resaltarCampo('#tipo-doc');
-            resaltarCampo('#numero-doc');
-            resaltarCampo('#rolParticipante');
+        // 1. Validaciones de campos obligatorios
+        // Nota: El número de documento puede no ser obligatorio si es un menor sin documento aún,
+        // pero generalmente se pide. Asumiremos obligatorio si se selecciona tipo de documento.
+        if (!rolParticipante || !primerNombre || !primerApellido) {
+            if(!primerNombre) resaltarCampo('#primerNombre');
+            if(!primerApellido) resaltarCampo('#primerApellido');
+            if(!rolParticipante) resaltarCampo('#rolParticipante');
+            
+            // Si hay tipo de documento pero no número, o viceversa
+            if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
+                 resaltarCampo('#tipo-doc');
+                 resaltarCampo('#numero-doc');
+            }
 
             Swal.fire({
                 icon: 'warning',
                 title: 'Campos incompletos',
-                text: 'Por favor, complete todos los campos obligatorios',
+                text: 'Por favor, complete los campos obligatorios (Nombre, Apellido, Rol).',
                 confirmButtonColor: '#D0B8A8'
             });
-
             return false;
         }
 
+        // 2. Validar duplicados de Documento (si se ingresó documento)
+        if (tipoDoc && numeroDoc) {
+             const existeDoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
+                const tipo = li.querySelector('input[name$="[tipoDoc]"]')?.value;
+                const numero = li.querySelector('input[name$="[numeroDoc]"]')?.value;
+                return tipo == tipoDoc && numero == numeroDoc;
+            });
+
+            if (existeDoc) {
+                resaltarCampo('#tipo-doc');
+                resaltarCampo('#numero-doc');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Documento duplicado',
+                    text: 'Ya hay un participante con ese documento en la lista.',
+                    confirmButtonColor: '#D0B8A8'
+                });
+                return false;
+            }
+        }
+
+        // 3. Validar duplicados de Rol (para roles únicos)
+        /* Nota: La función actualizarOpcionesRol() ya deshabilita opciones, 
+           pero validamos por seguridad del backend manual */
         const inputs = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]'));
-
         const inputEncontrado = inputs.find(input => input.value === rolParticipante);
+        
+        // Roles que permiten multiples personas (ej: abuelos, padrinos si son varios)
+        // Pero roles únicos como 'Bautizado', 'Padre', 'Madre' deben validarse.
+        const rolesUnicos = ['1', '2', '3', '4', '5', '6', '7']; // IDs como strings
+        
+        if (inputEncontrado && rolesUnicos.includes(rolParticipante)) {
+             resaltarCampo('#rolParticipante');
+             const select = document.getElementById('rolParticipante');
+             const textoSeleccionado = select.options[select.selectedIndex].text;
 
-
-        const existe = !!inputEncontrado; // true o false
-
-        const existedoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
-            const tipo = li.querySelector('input[name$="[tipoDoc]"]')?.value;
-            const numero = li.querySelector('input[name$="[numeroDoc]"]')?.value;
-            return tipo == tipoDoc && numero == numeroDoc;
-        });
-
-        if (existedoc) {
-            resaltarCampo('#tipo-doc');
-            resaltarCampo('#numero-doc');
-
-            Swal.fire({
-                icon: 'warning',
-                title: 'Documento duplicado',
-                text: 'Ya hay un participante con ese documento',
-                confirmButtonColor: '#D0B8A8'
-            });
-
-            return false;
-        }
-
-        if (existe) {
-            resaltarCampo('#rolParticipante');
-
-            const select = document.getElementById('rolParticipante');
-            const textoSeleccionado = select.options[select.selectedIndex].text;
-
-            Swal.fire({
+             Swal.fire({
                 icon: 'warning',
                 title: 'Rol duplicado',
-                text: `El rol "${textoSeleccionado}" ya ha sido añadido`,
+                text: `El rol "${textoSeleccionado}" ya ha sido añadido.`,
                 confirmButtonColor: '#D0B8A8'
             });
-
             return false;
         }
 
-
+        // 4. Agregar a la lista
         contador++;
-
+        
+        // Eliminar mensaje de "Vacio" si existe
+        if ($('#integranteVacio').length) {
+            $('#integranteVacio').remove();
+        }
 
         const tiposDocs = {
             1: "Cedula Ciudadania",
@@ -450,53 +478,52 @@
             5: "Permiso Especial",
             6: "Numero Identificación Tributaria"
         };
-
-        // Usar 'roles' global definido al inicio del script
-
+        
+        // Colores para visualización
         const colores = {
-            1: 'bg-blue-50',
-            2: 'bg-red-50',
-            3: 'bg-violet-50',
-            4: 'bg-yellow-50',
-            5: 'bg-pink-50',
-            6: 'bg-indigo-50',
-            7: 'bg-lime-50',
-            8: 'bg-cyan-50',
-            9: 'bg-emerald-50',
-            10: 'bg-violet-50',
-            11: 'bg-fuchsia-50'
+            1: 'bg-blue-50 text-blue-700 border-blue-200',
+            2: 'bg-red-50 text-red-700 border-red-200',
+            3: 'bg-violet-50 text-violet-700 border-violet-200',
+            4: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+            5: 'bg-pink-50 text-pink-700 border-pink-200',
+            6: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+            7: 'bg-lime-50 text-lime-700 border-lime-200',
+            8: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+            9: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+            10: 'bg-violet-50 text-violet-700 border-violet-200',
+            11: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200'
         };
 
         const grupoRol = roles[rolParticipante] || 'Desconocido';
-        const grupoColor = colores[rolParticipante] || 'Desconocido';
-
-        const tipDoc = tiposDocs[tipoDoc] || 'Desconocido';
+        const claseColor = colores[rolParticipante] || 'bg-gray-50 text-gray-700 border-gray-200';
+        const tipDocTexto = tiposDocs[tipoDoc] || '';
+        const docTexto = (tipoDoc && numeroDoc) ? `${tipDocTexto} - ${numeroDoc}` : 'Sin Documento';
+        const nombreCompleto = [primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ');
 
         const li = document.createElement('li');
         li.innerHTML = `
+            <div class="bg-white border border-gray-200 rounded-lg mb-2 mx-1 p-3 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center gap-3">
+                     <span class="font-bold px-3 py-1 rounded-full text-xs border ${claseColor} ">${grupoRol}</span>
+                     <div class="flex flex-col">
+                        <span class="font-semibold text-gray-800">${nombreCompleto}</span>
+                        <span class="text-xs text-gray-500">${docTexto}</span>
+                     </div>
+                </div>
+                
+                <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
+                <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDoc}">
+                <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${numeroDoc}">
+                <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${primerNombre}">
+                <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${segundoNombre}">
+                <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
+                <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
 
-
-        <div class="bg-gray-100 border border-gray-300 rounded mb-2 mx-1 flex justify-between items-center">
-        
-        <span class="font-bold p-2  ${grupoColor} " id="${grupoRol}-rol" >${grupoRol}</span>
-
-        <span class="font-medium">  ${tipDoc} - ${numeroDoc}  </span>
-        <span class="font-medium">  ${[primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ')}  </span>
-   
-          <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
-          <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDoc}">
-          <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${numeroDoc}">
-          <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${primerNombre}">
-          <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${segundoNombre}">
-          <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
-          <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
-
-
-
-          <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
-          </div>
-
-      `;
+                <button type="button" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition" onclick="eliminarIntegrante(this)" title="Eliminar">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            </div>
+        `;
 
         document.getElementById('contenedor-integrantes').appendChild(li);
 
@@ -506,16 +533,29 @@
         // Mostrar mensaje de éxito
         Toast.fire({
             icon: 'success',
-            title: 'Participante añadido correctamente'
+            title: 'Participante añadido'
         });
+
+        // CERRAR EL MODAL AL FINALIZAR
+        cerrarMiniModal();
 
         return true;
     }
 
     function eliminarIntegrante(boton) {
         boton.closest('li').remove();
-        contador--;
-        resetVacio(contador);
+        // No decrementamos contador para evitar colisiones de índices si se borra uno intermedio.
+        // Solo verificamos si quedó vacío.
+        
+        if ($('#contenedor-integrantes li').length === 0) {
+             $('#contenedor-integrantes').html(`
+                <li id="integranteVacio">
+                    <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+                        <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
+                    </div>
+                </li>
+            `);
+        }
 
         // Actualizar opciones disponibles después de eliminar
         actualizarOpcionesRol();
