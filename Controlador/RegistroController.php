@@ -117,10 +117,10 @@ class RegistroController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
 
-            $_SESSION['success'] = 'Registro completado. Por favor inicia sesión.';
-            header('Location: ?route=login');
+            $_SESSION['temp_email'] = $email;
+            // $_SESSION['success'] = 'Registro completado. Por favor inicia sesión.'; // Se mostrará en la vista dedicada
+            header('Location: ?route=registro/exito');
             exit();
-
         } catch (Exception $e) {
             Logger::error("Error crítico en proceso de registro", [
                 'error' => $e->getMessage(),
@@ -131,5 +131,10 @@ class RegistroController
             $_SESSION['error_email'] = 'Error al procesar tu registro. Por favor, intenta de nuevo.';
             $this->mostrarFormulario();
         }
+    }
+
+    public function mostrarExito()
+    {
+        include_once __DIR__ . '/../Vista/registroCompleto.php';
     }
 }

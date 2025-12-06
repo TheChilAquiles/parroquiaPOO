@@ -9,6 +9,10 @@
 </footer>
 
 
+
+<!-- Global Flash Messages -->
+<?php include_once __DIR__ . '/flash-messages.php'; ?>
+
 <!-- <script type="module" src="vista/js/ajax.js"></script> -->
 </body>
 

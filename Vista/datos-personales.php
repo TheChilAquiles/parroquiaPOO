@@ -273,19 +273,6 @@ $direccion = $feligres['direccion'] ?? '';
             </form>
         </div>
         
-        <!-- Mensajes de Error/Exito (Session) -->
-        <?php if (isset($_SESSION['error'])): ?>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: '<?= $_SESSION['error'] ?>',
-                        confirmButtonColor: '#ab876f'
-                    });
-                });
-            </script>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
+
     </div>
 </main>

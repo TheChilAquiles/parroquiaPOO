@@ -81,6 +81,7 @@ class Router
             'resetear/procesar' => ['controlador' => 'LoginController', 'accion' => 'procesarReseteo'],
             'registro' => ['controlador' => 'RegistroController', 'accion' => 'mostrarFormulario'],
             'registro/procesar' => ['controlador' => 'RegistroController', 'accion' => 'procesar'],
+            'registro/exito' => ['controlador' => 'RegistroController', 'accion' => 'mostrarExito'],
             'contacto' => ['controlador' => 'ContactoController', 'accion' => 'mostrar'],
             'informacion' => ['controlador' => 'InformacionController', 'accion' => 'mostrar'],
             'pqrs' => ['controlador' => 'PqrsController', 'accion' => 'mostrar'],

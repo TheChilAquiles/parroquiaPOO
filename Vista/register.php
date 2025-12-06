@@ -166,5 +166,4 @@ if (isset($_SESSION['error_confirm'])) unset($_SESSION['error_confirm']);
         if (isValid) {
             event.target.submit();
         }
-    }
 </script>

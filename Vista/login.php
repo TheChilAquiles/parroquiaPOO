@@ -145,5 +145,4 @@ if (isset($_SESSION['error_login'])) {
         if (isValid) {
             event.target.submit();
         }
-    }
 </script>
