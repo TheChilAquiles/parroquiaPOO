@@ -1,287 +1,291 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<main class="flex-1 relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden py-10">
-    <!-- Background Elements -->
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="absolute top-20 left-10 floating-animation">
-        <div class="w-32 h-32 bg-white/10 rounded-full glass-effect"></div>
-    </div>
-    <div class="absolute bottom-32 right-16 floating-animation" style="animation-delay: -2s">
-        <div class="w-24 h-24 bg-white/10 rounded-full glass-effect"></div>
-    </div>
+<?php
+// Determinar si es modo edición o nuevo registro
+$hasData = isset($feligres) && !empty($feligres);
+$modoEdicion = $hasData;
 
-    <div class="relative w-full max-w-4xl px-4 z-10">
-        <!-- Header -->
+// Valores iniciales
+$tipoDoc = $feligres['tipo_documento_id'] ?? '';
+$numDoc = $feligres['numero_documento'] ?? '';
+$primerNombre = $feligres['primer_nombre'] ?? '';
+$segundoNombre = $feligres['segundo_nombre'] ?? '';
+$primerApellido = $feligres['primer_apellido'] ?? '';
+$segundoApellido = $feligres['segundo_apellido'] ?? '';
+$fechaNacimiento = isset($feligres['fecha_nacimiento']) ? date('Y-m-d', strtotime($feligres['fecha_nacimiento'])) : '';
+$telefono = $feligres['telefono'] ?? '';
+$direccion = $feligres['direccion'] ?? '';
+?>
+
+<!-- Estilos Específicos -->
+<style>
+    .step-circle {
+        transition: all 0.3s ease;
+    }
+    .step-line {
+        transition: all 0.3s ease;
+    }
+    [x-cloak] { display: none !important; }
+</style>
+
+<main class="flex-1 relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center py-10 min-h-screen px-4">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl animate-pulse"></div>
+    <div class="absolute bottom-32 right-16 w-40 h-40 bg-[#8D7B68]/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+    <div class="relative w-full max-w-3xl z-10" x-data="{ 
+        step: 1,
+        totalSteps: 3,
+        isEdit: <?= $modoEdicion ? 'true' : 'false' ?>,
+        
+        // Form Data Models
+        data: {
+            primerNombre: '<?= htmlspecialchars($primerNombre) ?>',
+            primerApellido: '<?= htmlspecialchars($primerApellido) ?>',
+            fechaNacimiento: '<?= $fechaNacimiento ?>',
+            tipoDocumento: '<?= $tipoDoc ?>',
+            numeroDocumento: '<?= $numDoc ?>',
+            telefono: '<?= htmlspecialchars($telefono) ?>',
+            direccion: '<?= htmlspecialchars($direccion) ?>'
+        },
+
+        init() {
+            // Si es edición, mostramos todo de una vez (no wizard)
+            if(this.isEdit) this.step = 4;
+        },
+
+        validateStep(currentStep) {
+            // STEP 1: Datos Básicos
+            if(currentStep === 1) {
+                if(!this.data.primerNombre || this.data.primerNombre.length < 3) { 
+                    this.showError('El primer nombre debe tener al menos 3 letras.'); return false; 
+                }
+                if(!this.data.primerApellido || this.data.primerApellido.length < 3) { 
+                    this.showError('El primer apellido debe tener al menos 3 letras.'); return false; 
+                }
+                if(!this.data.fechaNacimiento) { 
+                    this.showError('La fecha de nacimiento es obligatoria.'); return false; 
+                }
+                
+                const birthDate = new Date(this.data.fechaNacimiento);
+                const today = new Date();
+                if(birthDate > today) {
+                    this.showError('La fecha de nacimiento no puede ser en el futuro.'); return false;
+                }
+                if(birthDate.getFullYear() < 1900) {
+                     this.showError('Fecha de nacimiento no válida.'); return false;
+                }
+                return true;
+            }
+
+            // STEP 2: Identificación
+            if(currentStep === 2) {
+                if(!this.data.tipoDocumento) { 
+                    this.showError('Selecciona el tipo de documento.'); return false; 
+                }
+                if(!this.data.numeroDocumento || this.data.numeroDocumento.length < 5) { 
+                    this.showError('El número de documento debe tener al menos 5 dígitos.'); return false; 
+                }
+                if(!/^\d+$/.test(this.data.numeroDocumento)) {
+                    this.showError('El número de documento solo debe contener números.'); return false;
+                }
+                return true;
+            }
+
+            // STEP 3: Contacto
+            if(currentStep === 3) {
+                if(this.data.telefono && !/^\d{7,10}$/.test(this.data.telefono.replace(/\s/g, ''))) {
+                    this.showError('El teléfono debe tener entre 7 y 10 dígitos.'); return false;
+                }
+                if(!this.data.direccion || this.data.direccion.length < 5) { 
+                    this.showError('Ingresa una dirección válida (ej: Calle 10 # 20-30).'); return false; 
+                }
+                return true;
+            }
+            return true;
+        },
+
+        showError(msg) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: msg,
+                confirmButtonColor: '#ab876f'
+            });
+        },
+
+        nextStep() {
+            if(this.validateStep(this.step)) {
+                if(this.step < this.totalSteps) {
+                    this.step++;
+                } else {
+                   // Submit form
+                   document.getElementById('profileForm').submit();
+                }
+            }
+        }
+    }">
+        
+        <!-- Header Section -->
         <div class="text-center mb-8 text-white">
-            <h1 class="text-4xl md:text-5xl font-bold mb-2 drop-shadow-lg">Perfil</h1>
-            <p class="text-lg opacity-90">Ayúdanos a encontrarte o regístrate en nuestra comunidad</p>
+            <h1 class="text-4xl font-bold mb-2 drop-shadow-md">
+                <?= $modoEdicion ? 'Tu Perfil' : 'Completa tu Registro' ?>
+            </h1>
+            <p class="text-lg opacity-90 font-light">
+                <?= $modoEdicion ? 'Mantén tu información actualizada' : 'Solo te tomará unos minutos' ?>
+            </p>
         </div>
 
-        <!-- Main Card -->
-        <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden">
-            <div class="grid md:grid-cols-5 min-h-[600px]">
-                
-                <!-- Left Side: Search/Info -->
-                <div class="md:col-span-2 bg-gradient-to-br from-[#ab876f] to-[#8a6a55] p-8 text-white flex flex-col justify-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-full opacity-10">
-                        <span class="material-icons text-[200px] absolute -top-10 -left-10">church</span>
-                    </div>
-                    
-                    <div class="relative z-10">
-                        <h2 class="text-2xl font-bold mb-6 flex items-center">
-                            <span class="material-icons mr-2">search</span>
-                            Buscar Feligrés
-                        </h2>
-                        <p class="mb-6 opacity-90 text-sm">
-                            Si ya has participado en nuestra parroquia, es posible que tus datos ya estén registrados. 
-                            Ingresa tu documento para verificar.
-                        </p>
+        <!-- Wizard Progress Bar (Solo nuevos) -->
+        <div x-show="!isEdit" class="mb-8" x-transition>
+            <div class="flex items-center justify-between relative max-w-xl mx-auto px-4">
+                <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-white/30 rounded-full -z-0"></div>
+                <div class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-white rounded-full -z-0 transition-all duration-500"
+                     :style="'width: ' + ((step - 1) / (totalSteps - 1) * 100) + '%'"></div>
 
-                        <form method="POST" action="?route=perfil/buscar" onsubmit="return validateSearch(event)" class="space-y-4">
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider mb-1 opacity-80">Tipo Documento</label>
-                                <div class="relative">
-                                    <select name="tipoDocumento" id="searchTipoDoc" class="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:bg-white/30 transition appearance-none cursor-pointer">
-                                        <option value="" class="text-gray-800">Seleccionar...</option>
-                                        <option value="1" class="text-gray-800" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == '1') ? 'selected' : '' ?>>Cédula Ciudadanía</option>
-                                        <option value="2" class="text-gray-800" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == '2') ? 'selected' : '' ?>>Tarjeta Identidad</option>
-                                        <option value="3" class="text-gray-800" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == '3') ? 'selected' : '' ?>>Cédula Extranjería</option>
-                                        <option value="4" class="text-gray-800" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == '4') ? 'selected' : '' ?>>Registro Civil</option>
-                                        <option value="5" class="text-gray-800" <?= (isset($_POST['tipoDocumento']) && $_POST['tipoDocumento'] == '5') ? 'selected' : '' ?>>Permiso Especial</option>
-                                    </select>
-                                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                                        <span class="material-icons text-white">expand_more</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-bold uppercase tracking-wider mb-1 opacity-80">Número Documento</label>
-                                <div class="relative">
-                                    <input type="text" name="numeroDocumento" id="searchNumDoc" 
-                                           value="<?= $_POST['numeroDocumento'] ?? '' ?>"
-                                           class="w-full bg-white/20 border border-white/30 rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:bg-white/30 transition"
-                                           placeholder="Ej: 1020304050">
-                                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
-                                        <span class="material-icons text-white opacity-70">badge</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input type="hidden" name="Buscar" value="Buscar">
-                            
-                            <button type="submit" class="w-full bg-white text-[#ab876f] font-bold py-3 rounded-xl hover:bg-gray-100 transition shadow-lg flex items-center justify-center group">
-                                <span>Buscar</span>
-                                <span class="material-icons ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                            </button>
-                        </form>
-
-                        <?php if (isset($_SESSION['error'])): ?>
-                            <div class="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-xl text-sm flex items-start animate-fade-in">
-                                <span class="material-icons text-red-200 text-lg mr-2 mt-0.5">error_outline</span>
-                                <span><?= $_SESSION['error']; unset($_SESSION['error']); ?></span>
-                            </div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <!-- Right Side: Personal Data Form -->
-                <div class="md:col-span-3 p-8 bg-gray-50 overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-800">Datos Personales</h2>
-                        <?php if (isset($_SESSION['feligres_temporal'])): ?>
-                            <span class="bg-green-100 text-green-800 text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                                <span class="material-icons text-sm mr-1">check_circle</span>
-                                Encontrado
-                            </span>
-                        <?php else: ?>
-                            <span class="bg-gray-200 text-gray-600 text-xs font-bold px-3 py-1 rounded-full">
-                                Nuevo Registro
-                            </span>
-                        <?php endif; ?>
-                    </div>
-
-                    <form method="POST" action="?route=perfil/actualizar" id="formDatos" onsubmit="return validateData(event)" class="space-y-5">
-                        
-                        <!-- Hidden fields to persist search data -->
-                        <input type="hidden" name="tipoDocumento" id="hiddenTipo" value="<?= $_POST['tipoDocumento'] ?? ($_SESSION['feligres_temporal']['tipo_documento'] ?? '') ?>">
-                        <input type="hidden" name="numeroDocumento" id="hiddenDoc" value="<?= $_POST['numeroDocumento'] ?? ($_SESSION['feligres_temporal']['numero_documento'] ?? '') ?>">
-                        <input type="hidden" name="Añadir" value="Añadir">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <!-- Nombres -->
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Primer Nombre <span class="text-red-500">*</span></label>
-                                <input type="text" name="primerNombre" id="primerNombre" 
-                                       value="<?= $_POST['primerNombre'] ?? ($_SESSION['feligres_temporal']['primer_nombre'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition bg-white"
-                                       placeholder="Juan">
-                                <p class="text-red-500 text-xs mt-1 hidden" id="error-primerNombre">Campo requerido</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Segundo Nombre</label>
-                                <input type="text" name="segundoNombre" 
-                                       value="<?= $_POST['segundoNombre'] ?? ($_SESSION['feligres_temporal']['segundo_nombre'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition bg-white"
-                                       placeholder="Carlos">
-                            </div>
-
-                            <!-- Apellidos -->
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Primer Apellido <span class="text-red-500">*</span></label>
-                                <input type="text" name="primerApellido" id="primerApellido" 
-                                       value="<?= $_POST['primerApellido'] ?? ($_SESSION['feligres_temporal']['primer_apellido'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition bg-white"
-                                       placeholder="Pérez">
-                                <p class="text-red-500 text-xs mt-1 hidden" id="error-primerApellido">Campo requerido</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Segundo Apellido</label>
-                                <input type="text" name="segundoApellido" 
-                                       value="<?= $_POST['segundoApellido'] ?? ($_SESSION['feligres_temporal']['segundo_apellido'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition bg-white"
-                                       placeholder="Gómez">
-                            </div>
-
-                            <!-- Contacto -->
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Fecha Nacimiento <span class="text-red-500">*</span></label>
-                                <input type="date" name="fechaNacimiento" id="fechaNacimiento" 
-                                       value="<?= $_POST['fechaNacimiento'] ?? ($_SESSION['feligres_temporal']['fecha_nacimiento'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition bg-white">
-                                <p class="text-red-500 text-xs mt-1 hidden" id="error-fechaNacimiento">Campo requerido</p>
-                            </div>
-                            <div class="form-group">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
-                                <div class="relative">
-                                    <input type="tel" name="telefono" 
-                                           value="<?= $_POST['telefono'] ?? ($_SESSION['feligres_temporal']['telefono'] ?? '') ?>"
-                                           class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] pl-10 transition bg-white"
-                                           placeholder="300 123 4567">
-                                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                        <span class="material-icons text-gray-400 text-sm">phone</span>
-                                    </div>
-                                </div>
-                            </div>
+                <template x-for="i in totalSteps">
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 transform"
+                             :class="step >= i ? 'bg-white text-[#ab876f] scale-110 shadow-lg' : 'bg-[#ab876f] text-white/70 border-2 border-white/30'">
+                            <span x-text="i"></span>
                         </div>
-
-                        <div class="form-group">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1">Dirección <span class="text-red-500">*</span></label>
-                            <div class="relative">
-                                <input type="text" name="direccion" id="direccion" 
-                                       value="<?= $_POST['direccion'] ?? ($_SESSION['feligres_temporal']['direccion'] ?? '') ?>"
-                                       class="w-full border-gray-300 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] pl-10 transition bg-white"
-                                       placeholder="Calle 123 # 45 - 67">
-                                <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                                    <span class="material-icons text-gray-400 text-sm">location_on</span>
-                                </div>
-                            </div>
-                            <p class="text-red-500 text-xs mt-1 hidden" id="error-direccion">Campo requerido</p>
-                        </div>
-
-                        <div class="pt-4">
-                            <button type="submit" class="w-full bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-white font-bold py-4 rounded-xl hover:shadow-lg hover:scale-[1.01] transition duration-300 flex items-center justify-center">
-                                <span class="material-icons mr-2">save</span>
-                                Guardar y Continuar
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                        <span class="mt-2 text-xs font-medium text-white/90" 
+                              x-text="i===1 ? 'Básicos' : (i===2 ? 'Identidad' : 'Contacto')"></span>
+                    </div>
+                </template>
             </div>
         </div>
+
+        <!-- Main Form Card -->
+        <div class="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-10 border border-white/50">
+            
+            <form action="?route=perfil/actualizar" method="POST" id="profileForm" class="space-y-6">
+                
+                <!-- STEP 1: Datos Básicos -->
+                <div x-show="step === 1 || isEdit" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
+                    <div class="mb-6 border-b border-gray-100 pb-2" x-show="isEdit">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <span class="material-icons mr-2 text-[#ab876f]">person</span> Datos Básicos
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Primer Nombre <span class="text-red-500">*</span></label>
+                            <input type="text" name="primerNombre" x-model="data.primerNombre" required
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Segundo Nombre</label>
+                            <input type="text" name="segundoNombre" value="<?= htmlspecialchars($segundoNombre) ?>"
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Primer Apellido <span class="text-red-500">*</span></label>
+                            <input type="text" name="primerApellido" x-model="data.primerApellido" required
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Segundo Apellido</label>
+                            <input type="text" name="segundoApellido" value="<?= htmlspecialchars($segundoApellido) ?>"
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                        <div class="form-group md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Fecha Nacimiento <span class="text-red-500">*</span></label>
+                            <input type="date" name="fechaNacimiento" x-model="data.fechaNacimiento" required
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Identidad -->
+                <div x-show="step === 2 || isEdit" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
+                    <div class="mb-6 border-b border-gray-100 pb-2 mt-6" x-show="isEdit">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <span class="material-icons mr-2 text-[#ab876f]">badge</span> Identificación
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Tipo Documento <span class="text-red-500">*</span></label>
+                            <select name="tipoDocumento" x-model="data.tipoDocumento" required
+                                    class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                                <option value="">Seleccione...</option>
+                                <option value="1">Cédula de Ciudadanía</option>
+                                <option value="2">Tarjeta de Identidad</option>
+                                <option value="3">Cédula de Extranjería</option>
+                                <option value="4">Registro Civil</option>
+                                <option value="5">Permiso Especial</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Número Documento <span class="text-red-500">*</span></label>
+                            <input type="text" name="numeroDocumento" x-model="data.numeroDocumento" required
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Contacto -->
+                <div x-show="step === 3 || isEdit" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
+                    <div class="mb-6 border-b border-gray-100 pb-2 mt-6" x-show="isEdit">
+                        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                            <span class="material-icons mr-2 text-[#ab876f]">contact_mail</span> Contacto
+                        </h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
+                            <input type="tel" name="telefono" x-model="data.telefono"
+                                   placeholder="Ej: 300 123 4567"
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+                        <div class="form-group md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Dirección <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <span class="material-icons absolute left-3 top-3.5 text-gray-400">location_on</span>
+                                <input type="text" name="direccion" x-model="data.direccion" required
+                                       placeholder="Ej: Calle 123 # 45 - 67"
+                                       class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3 pl-10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex items-center justify-between pt-8 border-t border-gray-100 mt-6">
+                    <button type="button" x-show="step > 1 && !isEdit" @click="step--"
+                            class="px-6 py-2.5 rounded-xl text-gray-600 font-semibold hover:bg-gray-100 transition flex items-center">
+                        <span class="material-icons mr-1">arrow_back</span>
+                        Atrás
+                    </button>
+                    
+                    <div class="flex-1"></div>
+
+                    <button type="button" @click="nextStep()"
+                            class="bg-[#ab876f] text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-[#8D7B68] hover:shadow-xl transition transform hover:-translate-y-0.5 flex items-center">
+                        <span x-text="step === 3 || isEdit ? 'Guardar Información' : 'Siguiente'"></span>
+                        <span class="material-icons ml-2" x-text="step === 3 || isEdit ? 'save' : 'arrow_forward'"></span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+        
+        <!-- Mensajes de Error/Exito (Session) -->
+        <?php if (isset($_SESSION['error'])): ?>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: '<?= $_SESSION['error'] ?>',
+                        confirmButtonColor: '#ab876f'
+                    });
+                });
+            </script>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
     </div>
 </main>
-
-<script>
-    // Sincronizar campos de búsqueda con hidden fields
-    const searchTipo = document.getElementById('searchTipoDoc');
-    const searchDoc = document.getElementById('searchNumDoc');
-    const hiddenTipo = document.getElementById('hiddenTipo');
-    const hiddenDoc = document.getElementById('hiddenDoc');
-
-    if(searchTipo) {
-        searchTipo.addEventListener('change', (e) => {
-            if(hiddenTipo) hiddenTipo.value = e.target.value;
-        });
-    }
-    if(searchDoc) {
-        searchDoc.addEventListener('input', (e) => {
-            if(hiddenDoc) hiddenDoc.value = e.target.value;
-        });
-    }
-
-    function validateSearch(e) {
-        const tipo = document.getElementById('searchTipoDoc').value;
-        const doc = document.getElementById('searchNumDoc').value;
-        
-        if(!tipo || !doc) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Campos requeridos',
-                text: 'Por favor ingresa el tipo y número de documento para buscar.',
-                confirmButtonColor: '#ab876f'
-            });
-            return false;
-        }
-        return true;
-    }
-
-    function validateData(e) {
-        let isValid = true;
-        const requiredFields = ['primerNombre', 'primerApellido', 'fechaNacimiento', 'direccion'];
-        
-        // Validar que se haya buscado primero (o que los hidden tengan valor)
-        if(!hiddenTipo.value || !hiddenDoc.value) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'warning',
-                title: 'Búsqueda requerida',
-                text: 'Por favor realiza la búsqueda de tu documento primero (panel izquierdo).',
-                confirmButtonColor: '#ab876f'
-            });
-            return false;
-        }
-
-        requiredFields.forEach(field => {
-            const input = document.getElementById(field);
-            const error = document.getElementById('error-' + field);
-            
-            if (!input.value.trim()) {
-                input.classList.add('border-red-500', 'ring-1', 'ring-red-500');
-                error.classList.remove('hidden');
-                isValid = false;
-            } else {
-                input.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
-                error.classList.add('hidden');
-            }
-        });
-
-        if (!isValid) {
-            e.preventDefault();
-            // Shake effect or toast could be added here
-        }
-        return isValid;
-    }
-</script>
-
-<style>
-    .glass-effect {
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-    }
-    .floating-animation {
-        animation: float 6s ease-in-out infinite;
-    }
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-        100% { transform: translateY(0px); }
-    }
-    .animate-fade-in {
-        animation: fadeIn 0.5s ease-out;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>

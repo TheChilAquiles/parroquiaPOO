@@ -4,7 +4,7 @@
 // ContactoController.php
 // ============================================================================
 
-class PqrController
+class PqrsController
 {
     public function mostrar()
     {
@@ -15,13 +15,13 @@ class PqrController
 
             if (empty($nombre) || empty($email) || empty($mensaje)) {
                 $_SESSION['error'] = 'Todos los campos son obligatorios.';
-                include __DIR__ . '/../Vista/pqr.php';
+                include __DIR__ . '/../Vista/pqrs.php';
                 return;
             }
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $_SESSION['error'] = 'El email no es válido.';
-                include __DIR__ . '/../Vista/pqr.php';
+                include __DIR__ . '/../Vista/pqrs.php';
                 return;
             }
 
@@ -33,13 +33,13 @@ class PqrController
                 mail($destinatario, $asunto, $contenido);
 
                 $_SESSION['success'] = 'Mensaje enviado exitosamente.';
-                include __DIR__ . '/../Vista/pqr.php';
+                include __DIR__ . '/../Vista/pqrs.php';
             } catch (Exception $e) {
                 $_SESSION['error'] = 'Error al enviar mensaje.';
-                include __DIR__ . '/../Vista/pqr.php';
+                include __DIR__ . '/../Vista/pqrs.php';
             }
         } else {
-            include __DIR__ . '/../Vista/pqr.php';
+            include __DIR__ . '/../Vista/pqrs.php';
         }
     }
 }

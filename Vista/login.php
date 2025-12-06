@@ -4,13 +4,16 @@
     <div class="absolute -top-20 -left-20 w-96 h-96 bg-[#8D7B68] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
     <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-[#C8B6A6] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
-    <div class="relative z-10 w-full max-w-md p-8 mx-4">
-        <div class="bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl p-8">
-            
-            <div class="text-center mb-8">
+
+                <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-white mb-2">Bienvenido</h1>
                 <p class="text-white/80">Ingresa a tu cuenta para continuar</p>
             </div>
+
+    <div class="relative z-10 w-full max-w-md p-8 mx-4">
+        <div class="bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl p-8">
+            
+
 
             <form action="<?= url('login/procesar') ?>" method="post" onsubmit="return verifyForm(event)" class="space-y-6">
                 

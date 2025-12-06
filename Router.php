@@ -83,7 +83,7 @@ class Router
             'registro/procesar' => ['controlador' => 'RegistroController', 'accion' => 'procesar'],
             'contacto' => ['controlador' => 'ContactoController', 'accion' => 'mostrar'],
             'informacion' => ['controlador' => 'InformacionController', 'accion' => 'mostrar'],
-            'pqr' => ['controlador' => 'PqrController', 'accion' => 'mostrar'],
+            'pqrs' => ['controlador' => 'PqrsController', 'accion' => 'mostrar'],
             
 
             // ================================================================

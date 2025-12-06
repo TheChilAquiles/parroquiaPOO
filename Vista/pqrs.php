@@ -1,86 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema PQR - Profesional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        .animate-slide-in {
-            animation: slideIn 0.4s ease-out;
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .status-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        .hover-lift {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function() {
-            // 🟢 CLAVE PÚBLICA INTEGRADA 🟢
-            emailjs.init('owC7KfZGuYHlyQwj1');
-        })();
-    </script>
-</head>
-
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
-
-   
     <main class="max-w-5xl mx-auto p-4 md:p-8 w-full">
 
         <section class="mb-6 md:mb-8 rounded-2xl bg-white p-6 md:p-8 shadow-lg border border-slate-200 hover-lift animate-slide-in">
@@ -94,7 +13,7 @@
 
                     <div class="flex-1">
                         <div class="mb-2 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-3">
-                            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Sistema PQR</h1>
+                            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Sistema PQRS</h1>
                             <span class="inline-flex items-center rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-200 text-center">
                                 Peticiones, Quejas y Reclamos
                             </span>
@@ -227,7 +146,7 @@
                             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
-                            <span>Enviar PQR</span>
+                            <span>Enviar PQRS</span>
                         </button>
                     </div>
                 </form>
@@ -262,12 +181,12 @@
                     </svg>
                 </div>
 
-                <h3 class="text-xl font-bold text-slate-900 mb-2">¡PQR Enviado Exitosamente!</h3>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">¡PQRS Enviado Exitosamente!</h3>
                 <p class="text-sm text-slate-600 mb-4">Su solicitud ha sido registrada correctamente.</p>
 
                 <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 mb-6">
                     <p class="text-xs text-slate-500 mb-1">Número de Radicado</p>
-                    <p id="numeroRadicado" class="text-lg font-bold text-slate-900 font-mono">PQR-2024-0000</p>
+                    <p id="numeroRadicado" class="text-lg font-bold text-slate-900 font-mono">PQRS-2024-0000</p>
                 </div>
 
                 <button id="btnCerrarModal"
@@ -391,6 +310,3 @@
             }
         });
     </script>
-</body>
-
-</html>

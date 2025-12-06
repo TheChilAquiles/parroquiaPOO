@@ -19,6 +19,9 @@ class PerfilController extends BaseController
         // Verificar autenticación pero permitir perfil incompleto
         $this->requiereAutenticacion(true);
 
+        // Obtener datos del feligrés actual si existen
+        $feligres = $this->modeloFeligres->mdlObtenerPorUsuarioId($_SESSION['user-id']);
+
         include_once __DIR__ . '/../Vista/datos-personales.php';
     }
 
@@ -149,21 +152,27 @@ class PerfilController extends BaseController
                     'tipo_doc' => $datosFeligres['tipo-doc'],
                     'numero_doc_prefix' => substr($datosFeligres['documento'], 0, 3) . '***'
                 ]);
-                // Obtener ID del feligrés por usuario_id
-                $feligres = $this->modeloFeligres->mdlConsultarFeligres($datosFeligres['tipo-doc'], $datosFeligres['documento']);
+                
+                // Obtener ID del feligrés por usuario_id para asegurar que actualizamos el correcto
+                $feligres = $this->modeloFeligres->mdlObtenerPorUsuarioId($_SESSION['user-id']);
+                
                 if ($feligres) {
                     $datosFeligres['id'] = $feligres['id'];
+                    $status = $this->modeloFeligres->mdlUpdateFeligres($datosFeligres);
+                } else {
+                     // Si dice que tiene datos completos pero no encontramos feligrés, crearlo.
+                     // Esto corrige inconsistencias de datos antiguos
+                     $status = $this->modeloFeligres->mdlCrearFeligres($datosFeligres);
                 }
-                $status = $this->modeloFeligres->mdlUpdateFeligres($datosFeligres);
             }
 
             if ($status['status'] === 'error') {
                 Logger::error("Error al actualizar/crear perfil de feligrés", [
                     'user_id' => $_SESSION['user-id'],
                     'es_nuevo' => $esNuevo,
-                    'error' => $status['error']
+                    'error' => $status['message']
                 ]);
-                $_SESSION['error'] = $status['error'];
+                $_SESSION['error'] = $status['message'];
                 $this->mostrar();
                 return;
             }

@@ -35,10 +35,10 @@
                         'Pagos' => ['Administrador'],
                         'Certificados' => ['all'],
                         'Configuración' => ['Administrador'],
-                        'Pqr' => ['all']
+                        'pqrs' => ['all']
                     ];
                 } else {
-                    $menu = ['Inicio', 'Noticias', 'Información', 'Contacto', 'Pqr'];
+                    $menu = ['Inicio', 'Noticias', 'Información', 'Contacto', 'pqrs'];
                 }
 
                 foreach ($menu as $item => $roles) {

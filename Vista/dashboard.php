@@ -1,63 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Parroquia - Panel de Control</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .fade-in {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-        }
-
-        .gradient-bg {
-            background: linear-gradient(135deg, #D0B8A8 0%, #ab876f 100%);
-        }
-
-        .chart-container {
-            position: relative;
-            height: 250px;
-        }
-
-        .stat-number {
-            font-feature-settings: 'tnum';
-            letter-spacing: -0.05em;
-        }
-
-        .loading {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-    </style>
-</head>
-
-<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+<div class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
     <!-- Header Superior -->
     <header class="gradient-bg text-white shadow-xl">
         <div class="max-w-7xl mx-auto px-6 py-8">
@@ -634,6 +576,5 @@
 
         console.log('Dashboard Parroquia inicializado correctamente ✅');
     </script>
-</body>
+</div>
 
-</html>

@@ -70,7 +70,8 @@ abstract class BaseController
             ];
 
             if (!in_array($rutaActual, $rutasPermitidas)) {
-                if (!isset($_SESSION['user-datos']) || $_SESSION['user-datos'] === false) {
+                // Verificar si el perfil está incompleto (0, false, null)
+                if (empty($_SESSION['user-datos'])) {
                     $_SESSION['info'] = 'Por favor, completa tus datos personales para continuar.';
                     redirect('perfil');
                     
