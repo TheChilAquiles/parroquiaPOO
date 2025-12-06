@@ -55,10 +55,15 @@ CREATE TABLE IF NOT EXISTS `certificados` (
   CONSTRAINT `certificados_solicitante_fk` FOREIGN KEY (`solicitante_id`) REFERENCES `feligreses` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.certificados: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.certificados: ~1 rows (aproximadamente)
 DELETE FROM `certificados`;
 INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
-	(1, NULL, 1, NULL, 1, '2025-12-06', NULL, NULL, NULL, 'Bautismo', NULL, '2025-12-06 13:49:22', 1, NULL, 'generado', NULL);
+	(1, NULL, 1, NULL, 1, '2025-12-06', NULL, NULL, NULL, 'Bautismo', NULL, '2025-12-06 13:49:22', 1, NULL, 'generado', NULL),
+	(2, 1, 1, NULL, 1, NULL, '2025-12-06 15:57:30', '2025-12-06 15:57:39', '2026-01-05', 'Bautizo', 'Generación directa', '2025-12-06 15:57:30', 1, 'certificados_generados/cert_2_bautismo_20251206_205739.pdf', 'descargado', NULL),
+	(3, 1, 1, NULL, 1, NULL, '2025-12-06 15:58:28', '2025-12-06 15:58:29', '2026-01-05', 'Bautizo', 'Generación directa', '2025-12-06 15:58:28', 1, 'certificados_generados/cert_3_bautismo_20251206_205829.pdf', 'descargado', NULL),
+	(4, 1, 1, NULL, 1, NULL, '2025-12-06 16:23:31', '2025-12-06 16:23:31', '2026-01-05', 'Bautizo', 'Generación directa', '2025-12-06 16:01:19', 1, 'certificados_generados/cert_4_bautismo_20251206_212331.pdf', 'generado', NULL),
+	(5, 1, 1, NULL, 1, NULL, '2025-12-06 16:07:48', '2025-12-06 16:07:48', '2026-01-05', 'Bautizo', 'Generación directa', '2025-12-06 16:07:47', 1, 'certificados_generados/cert_5_bautismo_20251206_210748.pdf', 'generado', NULL),
+	(6, 1, 1, NULL, 1, NULL, '2025-12-06 16:10:31', '2025-12-06 16:10:32', '2026-01-05', 'Bautizo', 'Generación directa', '2025-12-06 16:10:31', 1, 'certificados_generados/cert_6_bautismo_20251206_211032.pdf', 'generado', NULL);
 
 -- Volcando estructura para tabla parroquia.configuraciones
 DROP TABLE IF EXISTS `configuraciones`;
@@ -87,7 +92,9 @@ INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `des
 	(4, 'cert_precio_matrimonio', '35000', 'numero', 'certificados', 'Precio Matrimonio', 1, '2025-12-06 13:49:16', '2025-12-06 13:49:16', NULL),
 	(5, 'pago_moneda', 'COP', 'texto', 'pagos', 'Moneda', 1, '2025-12-06 13:49:16', '2025-12-06 13:49:16', NULL),
 	(6, 'pago_modo', 'sandbox', 'texto', 'pagos', 'Modo pasarela', 1, '2025-12-06 13:49:16', '2025-12-06 13:49:16', NULL),
-	(7, 'sistema_registro_abierto', '1', 'booleano', 'sistema', 'Registro abierto', 1, '2025-12-06 13:49:16', '2025-12-06 13:49:16', NULL);
+	(7, 'sistema_registro_abierto', '1', 'booleano', 'sistema', 'Registro abierto', 1, '2025-12-06 13:49:16', '2025-12-06 13:49:16', NULL),
+	(8, 'cert_precio_confirmacion', '20000', 'numero', 'certificados', 'Precio Confirmación', 1, '2025-12-06 16:35:44', '2025-12-06 16:35:44', NULL),
+	(9, 'cert_precio_defuncion', '15000', 'numero', 'certificados', 'Precio Defunción', 1, '2025-12-06 16:35:44', '2025-12-06 16:35:44', NULL);
 
 -- Volcando estructura para tabla parroquia.documento_tipos
 DROP TABLE IF EXISTS `documento_tipos`;
@@ -128,22 +135,24 @@ CREATE TABLE IF NOT EXISTS `feligreses` (
   CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.feligreses: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.feligreses: ~13 rows (aproximadamente)
 DELETE FROM `feligreses`;
-INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `estado_registro`) VALUES
-	(1, 10, 1, '1001', '3001234567', 'Calle Falsa 123', 'Juan', '', 'Perez', '', NULL),
-	(2, 11, 1, '1002', '3001234567', 'Calle Falsa 123', 'Maria', '', 'Gomez', '', NULL),
-	(3, 12, 1, '1003', '3001234567', 'Calle Falsa 123', 'Pedro', '', 'Rodriguez', '', NULL),
-	(4, 13, 1, '1004', '3001234567', 'Calle Falsa 123', 'Ana', '', 'Martinez', '', NULL),
-	(5, 14, 1, '1005', '3001234567', 'Calle Falsa 123', 'Roberto', '', 'Diaz', '', NULL),
-	(6, NULL, 1, '2001', '0000000', 'N/A', 'Carlos', '', 'Perez', '', NULL),
-	(7, NULL, 1, '2002', '0000000', 'N/A', 'Luisa', '', 'Mendez', '', NULL),
-	(8, NULL, 1, '2003', '0000000', 'N/A', 'Andres', '', 'Lopez', '', NULL),
-	(9, NULL, 1, '2004', '0000000', 'N/A', 'Elena', '', 'Gacia', '', NULL),
-	(10, NULL, 1, '2005', '0000000', 'N/A', 'Marcos', '', 'Ruiz', '', NULL),
-	(11, NULL, 1, '2006', '0000000', 'N/A', 'Sofia', '', 'Vargas', '', NULL),
-	(12, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL),
-	(13, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL);
+INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `fecha_nacimiento`, `estado_registro`) VALUES
+	(1, 10, 1, '1001', '3001234567', 'Calle Falsa 123', 'Juan', '', 'Perez', '', NULL, NULL),
+	(2, 11, 1, '1002', '3001234567', 'Calle Falsa 123', 'Maria', '', 'Gomez', '', NULL, NULL),
+	(3, 12, 1, '1003', '3001234567', 'Calle Falsa 123', 'Pedro', '', 'Rodriguez', '', NULL, NULL),
+	(4, 13, 1, '1004', '3001234567', 'Calle Falsa 123', 'Ana', '', 'Martinez', '', NULL, NULL),
+	(5, 14, 1, '1005', '3001234567', 'Calle Falsa 123', 'Roberto', '', 'Diaz', '', NULL, NULL),
+	(6, NULL, 1, '2001', '0000000', 'N/A', 'Carlos', '', 'Perez', '', NULL, NULL),
+	(7, NULL, 1, '2002', '0000000', 'N/A', 'Luisa', '', 'Mendez', '', NULL, NULL),
+	(8, NULL, 1, '2003', '0000000', 'N/A', 'Andres', '', 'Lopez', '', NULL, NULL),
+	(9, NULL, 1, '2004', '0000000', 'N/A', 'Elena', '', 'Gacia', '', NULL, NULL),
+	(10, NULL, 1, '2005', '0000000', 'N/A', 'Marcos', '', 'Ruiz', '', NULL, NULL),
+	(11, NULL, 1, '2006', '0000000', 'N/A', 'Sofia', '', 'Vargas', '', NULL, NULL),
+	(12, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL, NULL),
+	(13, NULL, 1, '12395', '3111111', 'sad asd asd assd ', 'asd', 'asdsad', 'sadsad', 'asdsad', NULL, NULL),
+	(14, 15, 1, '11', '3111111', 'sad asd asd assd ', 'asd', '', 'asd', '', NULL, NULL),
+	(15, 1, 1, '1231233', '123123123', 'sad asd asd assd ', 'asdqwe', '12', 'asqwe', 'Rusbel', '1997-03-01', NULL);
 
 -- Volcando estructura para tabla parroquia.grupos
 DROP TABLE IF EXISTS `grupos`;
@@ -251,10 +260,11 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   CONSTRAINT `pagos_ibfk_2` FOREIGN KEY (`tipo_pago_id`) REFERENCES `tipos_pago` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.pagos: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.pagos: ~2 rows (aproximadamente)
 DELETE FROM `pagos`;
 INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `transaction_id`, `tipo_concepto`) VALUES
-	(1, 1, 25000, 'pagado', '2025-12-06 13:49:22', 1, NULL, 'certificado');
+	(1, 1, 25000, 'pagado', '2025-12-06 13:49:22', 1, NULL, 'certificado'),
+	(2, 4, 10000, 'pagado', '2025-12-06 16:23:31', 3, NULL, 'certificado');
 
 -- Volcando estructura para tabla parroquia.pago_ordenes
 DROP TABLE IF EXISTS `pago_ordenes`;
@@ -277,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `pago_ordenes` (
   CONSTRAINT `pago_ordenes_ibfk_1` FOREIGN KEY (`certificado_id`) REFERENCES `certificados` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='??rdenes de pago procesadas a trav??s de PaymentsWay (VePay)';
 
--- Volcando datos para la tabla parroquia.pago_ordenes: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.pago_ordenes: ~1 rows (aproximadamente)
 DELETE FROM `pago_ordenes`;
 INSERT INTO `pago_ordenes` (`id`, `certificado_id`, `order_number`, `amount`, `estado`, `transaction_id`, `metadata`, `fecha_creacion`, `fecha_actualizacion`) VALUES
 	(1, 1, 'ORD-1765046962', 25000.00, 'pendiente', NULL, NULL, '2025-12-06 18:49:22', '2025-12-06 18:49:22');
@@ -338,7 +348,7 @@ CREATE TABLE IF NOT EXISTS `participantes` (
   CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`rol_participante_id`) REFERENCES `participantes_rol` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.participantes: ~5 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.participantes: ~12 rows (aproximadamente)
 DELETE FROM `participantes`;
 INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
 	(1, 1, 1, 1, NULL),
@@ -363,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `participantes_rol` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.participantes_rol: ~9 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.participantes_rol: ~10 rows (aproximadamente)
 DELETE FROM `participantes_rol`;
 INSERT INTO `participantes_rol` (`id`, `rol`, `estado_registro`) VALUES
 	(1, 'Bautizado', NULL),
@@ -470,7 +480,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   CONSTRAINT `usuarios_ibfk_1` FOREIGN KEY (`usuario_rol_id`) REFERENCES `usuario_roles` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
--- Volcando datos para la tabla parroquia.usuarios: ~7 rows (aproximadamente)
+-- Volcando datos para la tabla parroquia.usuarios: ~8 rows (aproximadamente)
 DELETE FROM `usuarios`;
 INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `contraseña`, `datos_completos`, `estado_registro`, `reset_token`, `reset_token_expires`) VALUES
 	(1, 2, 'admin@parroquia.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
@@ -479,7 +489,8 @@ INSERT INTO `usuarios` (`id`, `usuario_rol_id`, `email`, `email_confirmed`, `con
 	(11, 1, 'maria@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
 	(12, 1, 'pedro@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
 	(13, 1, 'ana@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
-	(14, 1, 'roberto@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL);
+	(14, 1, 'roberto@mail.com', 1, '$2y$12$NE1zMPwgcWnWzRkCEM14s.qPhQrgEZ/PDeztg.JSzBDZAWaBVR07G', 1, NULL, NULL, NULL),
+	(15, 1, 'rusbelit1@gmail.com', 0, '$2y$12$Vr.5brjeui14Qf1Q94LZfexLhdPlj1WELtkX/8h4/wB7pNdVb6tqW', 1, NULL, NULL, NULL);
 
 -- Volcando estructura para tabla parroquia.usuario_grupos
 DROP TABLE IF EXISTS `usuario_grupos`;
