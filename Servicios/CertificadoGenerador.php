@@ -21,7 +21,12 @@ class CertificadoGenerador
         $this->outputDir = __DIR__ . '/../certificados_generados/';
 
         // URL base para verificación de certificados
-        $this->baseUrl = $_ENV['APP_URL'] ?? 'http://localhost';
+        // Priorizar la constante BASE_URL definida en config.php
+        if (defined('BASE_URL')) {
+            $this->baseUrl = BASE_URL;
+        } else {
+            $this->baseUrl = $_ENV['APP_URL'] ?? 'http://localhost';
+        }
 
         // Crear directorio de salida si no existe
         if (!is_dir($this->outputDir)) {

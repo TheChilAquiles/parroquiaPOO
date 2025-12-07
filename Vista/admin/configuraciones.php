@@ -17,34 +17,6 @@ $categoriasTitulos = [
 
 <main class="max-w-7xl mx-auto p-4 md:p-8 w-full">
 
-    <!-- Header Section -->
-    <section class="mb-8 rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-stone-200">
-        <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F4EBE7] border border-[#E6D5CC] flex-shrink-0">
-                <svg class="h-10 w-10 text-[#8D7B68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-            </div>
-
-            <div class="flex-1 space-y-2">
-                <h1 class="text-3xl font-bold text-[#5A4D41] tracking-tight">Configuraciones del Sistema</h1>
-                <p class="text-lg text-gray-600 font-medium leading-relaxed">
-                    Administración y personalización del sistema.
-                    <span class="block text-gray-500 text-base">Configure los parámetros según sus necesidades.</span>
-                </p>
-            </div>
-
-            <div class="hidden md:block">
-                <a href="<?= url('dashboard') ?>" class="inline-flex items-center space-x-2 rounded-full bg-[#F4EBE7] px-5 py-3 border border-[#E6D5CC] transition-all hover:bg-[#E6D5CC]">
-                    <svg class="h-5 w-5 text-[#8D7B68]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <span class="text-sm font-bold text-[#8D7B68]">Volver al Dashboard</span>
-                </a>
-            </div>
-        </div>
-    </section>
 
     <!-- Mensajes -->
     <?php if (isset($_SESSION['success'])): ?>

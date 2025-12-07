@@ -8,33 +8,7 @@ require_once __DIR__ . '/../helpers.php';
 
     <main class="max-w-7xl mx-auto p-4 md:p-8 w-full">
 
-        <!-- Header Section -->
-        <section class="mb-8 rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-stone-200">
-            <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-                <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F4EBE7] border border-[#E6D5CC] flex-shrink-0">
-                    <svg class="h-10 w-10 text-[#8D7B68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-
-                <div class="flex-1 space-y-2">
-                    <h1 class="text-3xl font-bold text-[#5A4D41] tracking-tight">Reportes Analíticos</h1>
-                    <p class="text-lg text-gray-600 font-medium leading-relaxed">
-                        Sistema Integral de Análisis y Estadísticas.
-                        <span class="block text-gray-500 text-base">Acceda a información detallada de cada módulo.</span>
-                    </p>
-                </div>
-
-                <div class="hidden md:block">
-                    <a href="index.php?route=dashboard" class="inline-flex items-center space-x-2 rounded-full bg-[#F4EBE7] px-5 py-3 border border-[#E6D5CC] transition-all hover:bg-[#E6D5CC]">
-                        <svg class="h-5 w-5 text-[#8D7B68]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        <span class="text-sm font-bold text-[#8D7B68]">Volver al Dashboard</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+  
 
         <!-- Grid de Reportes -->
         <section class="rounded-3xl bg-white shadow-lg border border-stone-200 overflow-hidden">
@@ -43,7 +17,7 @@ require_once __DIR__ . '/../helpers.php';
                     <svg class="w-6 h-6 text-[#8D7B68]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
-                    Categorías de Reportes
+                    Reportes Analíticos
                 </h2>
                 <p class="mt-1 text-base text-gray-600">Seleccione el tipo de reporte que desea consultar</p>
             </div>

@@ -1342,13 +1342,6 @@
             </div>
         </section>
 
-
-        <!-- Footer -->
-        <div class="bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] text-black py-2">
-                <div class="border-t border-white/20  text-center opacity-90">
-                    <p class="text-sm mt-2">Manual de Usuario v1.0 | Última actualización: Octubre 2025</p>
-                </div>
-        </div>
     </main>
 
 

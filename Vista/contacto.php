@@ -378,10 +378,7 @@ DOCTYPE html>
             </div>
         </section>
 
-        <!-- Footer Note -->
-        <div class="mt-8 text-center">
-            <p class="text-sm text-slate-500">Última actualización: Hoy a las 11:30 AM • <span class="text-emerald-600 font-medium">Datos sincronizados</span></p>
-        </div>
+
     </main>
 
     <!-- Professional Modal -->

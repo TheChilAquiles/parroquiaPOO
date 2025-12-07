@@ -1,24 +1,6 @@
 <main class="max-w-7xl mx-auto p-4 md:p-8 w-full">
 
-    <!-- Header Section -->
-    <section class="mb-8 rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-stone-200">
-        <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F4EBE7] border border-[#E6D5CC] flex-shrink-0">
-                <svg class="h-10 w-10 text-[#8D7B68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-            </div>
-
-            <div class="flex-1 space-y-2">
-                <h1 class="text-3xl font-bold text-[#5A4D41] tracking-tight">Libros Sacramentales</h1>
-                <p class="text-lg text-gray-600 font-medium leading-relaxed">
-                    Seleccione el tipo de libro que desea consultar.
-                    <span class="block text-gray-500 text-base">Acceda a los registros de Bautizos, Confirmaciones, Matrimonios y Defunciones.</span>
-                </p>
-            </div>
-        </div>
-    </section>
-
+ 
     <!-- Sacraments Grid -->
     <section class="rounded-3xl bg-white shadow-lg border border-stone-200 p-6 md:p-8">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
