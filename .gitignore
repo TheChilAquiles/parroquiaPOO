@@ -1,9 +1,38 @@
+vendor/
+node_modules/
+.env
+.env.backup
+.env.production
+.DS_Store
 
-indexold
-Data/Registros_PSP
-vendor
-CLAUDE.md
-.claude
-logs/
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+Logs/
 *.log
-certificados_generados/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tests & Reports
+phpstan-report.json
+phpstan-report.txt
+tests/_output/
+tests/_support/_generated/
+.phpunit.result.cache
+
+# Temporary & Generated
+certificados_generados/*.pdf
+!certificados_generados/.gitkeep
+temp/
+tmp/
+*.tmp
+
+# Custom garbage
+check_users.php
+debug_pdf.php
+test_endpoint.php
