@@ -206,7 +206,15 @@ $(document).ready(function() {
                                     </svg>
                                 </a>`;
                     } else if (data.estado !== 'pendiente_pago') {
-                        html += '<span class="text-xs text-gray-400">PDF no generado</span>';
+                         html += `<div class="flex flex-col items-center gap-1">
+                                    <span class="text-xs text-red-400 font-medium">PDF no generado</span>
+                                    <button onclick="regenerarPDF(${data.id})" 
+                                            class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded text-xs font-semibold transition flex items-center gap-1"
+                                            title="Intentar regenerar el archivo PDF">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        Regenerar
+                                    </button>
+                                </div>`;
                     }
 
                     html += '</div>';
@@ -292,6 +300,43 @@ $(document).ready(function() {
                     },
                     error: function() {
                         Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+                    }
+                });
+            }
+        });
+    };
+
+    // Función Global para regenerar PDF
+    window.regenerarPDF = function(id) {
+        Swal.fire({
+            title: 'Regenerar Certificado',
+            text: "¿Desea intentar generar nuevamente el archivo PDF?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#D0B8A8',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, regenerar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Regenerando...',
+                    didOpen: () => Swal.showLoading()
+                });
+
+                $.ajax({
+                    url: '<?= url('certificados/regenerar') ?>',
+                    method: 'POST',
+                    data: { id: id },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire('¡Éxito!', response.message, 'success');
+                            table.ajax.reload();
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Error de conexión con el servidor', 'error');
                     }
                 });
             }

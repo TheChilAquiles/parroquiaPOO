@@ -753,6 +753,53 @@ class CertificadosController extends BaseController
     }
 
     /**
+     * Regenera el PDF de un certificado existente
+     * Útil cuando hubo un error en la generación inicial pero ya está pagado/generado en BD
+     */
+    public function regenerar()
+    {
+        // Limpiar buffer
+        if (ob_get_level()) ob_clean();
+        header('Content-Type: application/json');
+
+        // Verificar permisos
+        $this->requiereAutenticacion();
+        if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Sin permisos']);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Método inválido']);
+            exit;
+        }
+
+        $id = $_POST['id'] ?? null;
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'ID no proporcionado']);
+            exit;
+        }
+
+        try {
+            // Reutilizar la lógica de generación automática
+            $resultado = $this->generarAutomatico($id);
+
+            if ($resultado) {
+                Logger::info("Certificado regenerado manualmente", ['id' => $id, 'user' => $_SESSION['user-id']]);
+                echo json_encode(['success' => true, 'message' => 'PDF regenerado exitosamente']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Falló la regeneración del PDF']);
+            }
+
+        } catch (Exception $e) {
+            Logger::error("Excepción al regenerar certificado", ['id' => $id, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    /**
      * Lista todos los certificados (para vista admin con DataTables)
      * Responde con JSON para AJAX
      */

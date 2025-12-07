@@ -124,6 +124,7 @@ class Router
             'certificados/verificar' => ['controlador' => 'CertificadosController', 'accion' => 'verificar'],
             'certificados/generar' => ['controlador' => 'CertificadosController', 'accion' => 'generar'],
             'certificados/generar-simplificado' => ['controlador' => 'CertificadosController', 'accion' => 'generarSimplificado'],
+            'certificados/regenerar' => ['controlador' => 'CertificadosController', 'accion' => 'regenerar'],
             'certificados/listar-todos' => ['controlador' => 'CertificadosController', 'accion' => 'listarTodos'],
             'certificados/solicitar-desde-sacramento' => ['controlador' => 'CertificadosController', 'accion' => 'solicitarDesdeSacramento'],
             'certificados/obtener-familiares' => ['controlador' => 'CertificadosController', 'accion' => 'obtenerFamiliares'],
