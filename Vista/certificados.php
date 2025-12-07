@@ -196,7 +196,9 @@ $(document).ready(function() {
                     }
 
                     if (data.ruta_archivo) {
-                        html += `<a href="<?= url('certificados/descargar') ?>?id=${data.id}"
+                        let downloadUrl = "<?= url('certificados/descargar') ?>";
+                        let separator = downloadUrl.includes('?') ? '&' : '?';
+                        html += `<a href="${downloadUrl}${separator}id=${data.id}"
                                     class="px-3 py-1.5 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded text-sm font-medium transition"
                                     title="Descargar PDF">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

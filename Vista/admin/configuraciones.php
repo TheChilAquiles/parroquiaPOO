@@ -15,71 +15,91 @@ $categoriasTitulos = [
 ];
 ?>
 
-<main class="min-h-screen relative bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] overflow-hidden">
-    <!-- Background Elements -->
-    <div class="absolute inset-0 bg-black/20 fixed"></div>
-    <div class="absolute -top-20 -left-20 w-96 h-96 bg-[#8D7B68] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob fixed"></div>
-    <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-[#C8B6A6] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000 fixed"></div>
+<main class="max-w-7xl mx-auto p-4 md:p-8 w-full">
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-8 bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl p-6">
-            <div class="flex items-center mb-4 md:mb-0">
-                <div class="p-3 bg-white/20 rounded-full mr-4">
-                    <span class="material-icons text-white text-2xl">settings</span>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-white">Configuraciones</h1>
-                    <p class="text-white/80">Administración del sistema</p>
-                </div>
+    <!-- Header Section -->
+    <section class="mb-8 rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-stone-200">
+        <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+            <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#F4EBE7] border border-[#E6D5CC] flex-shrink-0">
+                <svg class="h-10 w-10 text-[#8D7B68]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
             </div>
 
+            <div class="flex-1 space-y-2">
+                <h1 class="text-3xl font-bold text-[#5A4D41] tracking-tight">Configuraciones del Sistema</h1>
+                <p class="text-lg text-gray-600 font-medium leading-relaxed">
+                    Administración y personalización del sistema.
+                    <span class="block text-gray-500 text-base">Configure los parámetros según sus necesidades.</span>
+                </p>
+            </div>
+
+            <div class="hidden md:block">
+                <a href="<?= url('dashboard') ?>" class="inline-flex items-center space-x-2 rounded-full bg-[#F4EBE7] px-5 py-3 border border-[#E6D5CC] transition-all hover:bg-[#E6D5CC]">
+                    <svg class="h-5 w-5 text-[#8D7B68]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span class="text-sm font-bold text-[#8D7B68]">Volver al Dashboard</span>
+                </a>
+            </div>
         </div>
+    </section>
 
-        <!-- Mensajes -->
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="bg-green-500/20 border border-green-500/50 text-white px-4 py-3 rounded-xl relative mb-6 backdrop-blur-sm flex items-center gap-2 animate-fade-in-down">
-                <span class="material-icons">check_circle</span>
-                <span class="block sm:inline"><?= htmlspecialchars($_SESSION['success']) ?></span>
+    <!-- Mensajes -->
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="mb-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg class="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-emerald-800 font-medium"><?= htmlspecialchars($_SESSION['success']) ?></span>
             </div>
-            <?php unset($_SESSION['success']); ?>
-        <?php endif; ?>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="bg-red-500/20 border border-red-500/50 text-white px-4 py-3 rounded-xl relative mb-6 backdrop-blur-sm flex items-center gap-2 animate-fade-in-down">
-                <span class="material-icons">error</span>
-                <span class="block sm:inline"><?= htmlspecialchars($_SESSION['error']) ?></span>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="mb-6 rounded-2xl bg-red-50 border border-red-200 p-4 shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-red-800 font-medium"><?= htmlspecialchars($_SESSION['error']) ?></span>
             </div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
-        <!-- Formulario -->
-        <form method="POST" action="<?= url('admin/configuraciones') ?>" class="space-y-8">
-            
-            <?php foreach ($configuraciones as $categoria => $configs): ?>
-                <div class="bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl p-6 md:p-8">
-                    <h2 class="text-xl font-bold text-white mb-6 flex items-center border-b border-white/20 pb-4">
+    <!-- Formulario -->
+    <form method="POST" action="<?= url('admin/configuraciones') ?>" class="space-y-6">
+        
+        <?php foreach ($configuraciones as $categoria => $configs): ?>
+            <section class="rounded-3xl bg-white shadow-lg border border-stone-200 overflow-hidden">
+                <div class="border-b border-stone-200 bg-[#F9F5F3] px-6 py-6 md:px-8 md:py-6">
+                    <h2 class="text-xl font-bold text-[#5A4D41] flex items-center gap-3">
                         <?php
                         $iconos = [
-                            'parroquia' => 'church',
-                            'certificados' => 'verified',
-                            'sistema' => 'dns',
-                            'firmantes' => 'draw',
-                            'pagos' => 'payments',
-                            'notificaciones' => 'notifications'
+                            'parroquia' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>',
+                            'certificados' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>',
+                            'sistema' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" /></svg>',
+                            'firmantes' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>',
+                            'pagos' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>',
+                            'notificaciones' => '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>'
                         ];
+                        echo $iconos[$categoria] ?? '<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>';
                         ?>
-                        <span class="material-icons mr-3 text-white/90"><?= $iconos[$categoria] ?? 'settings' ?></span>
-                        <?= $categoriasTitulos[$categoria] ?? ucfirst($categoria) ?>
+                        <span class="text-[#8D7B68]"><?= $categoriasTitulos[$categoria] ?? ucfirst($categoria) ?></span>
                     </h2>
+                </div>
 
+                <div class="p-6 md:p-8 bg-white">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <?php foreach ($configs as $config): ?>
                             <?php if (!$config['editable']) continue; ?>
 
-                            <div class="space-y-2 group">
-                                <label for="config_<?= $config['clave'] ?>" class="block text-sm font-medium text-white ml-1 group-hover:text-white/90 transition-colors">
+                            <div class="space-y-3">
+                                <label for="config_<?= $config['clave'] ?>" class="block text-lg font-bold text-[#5A4D41]">
                                     <?= htmlspecialchars($config['descripcion'] ?: $config['clave']) ?>
                                 </label>
 
@@ -87,12 +107,14 @@ $categoriasTitulos = [
                                     <div class="relative">
                                         <select name="config[<?= $config['clave'] ?>]"
                                                 id="config_<?= $config['clave'] ?>"
-                                                class="block w-full pl-4 pr-10 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm appearance-none cursor-pointer hover:bg-white/20">
-                                            <option value="1" <?= $config['valor'] == '1' ? 'selected' : '' ?> class="text-gray-800">Sí / Activo</option>
-                                            <option value="0" <?= $config['valor'] == '0' ? 'selected' : '' ?> class="text-gray-800">No / Inactivo</option>
+                                                class="w-full appearance-none rounded-xl border border-stone-300 bg-white px-5 py-4 text-lg font-medium text-gray-800 shadow-sm transition-all focus:border-[#8D7B68] focus:ring-4 focus:ring-[#E6D5CC] cursor-pointer">
+                                            <option value="1" <?= $config['valor'] == '1' ? 'selected' : '' ?>>Sí / Activo</option>
+                                            <option value="0" <?= $config['valor'] == '0' ? 'selected' : '' ?>>No / Inactivo</option>
                                         </select>
-                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-                                            <span class="material-icons">expand_more</span>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-[#8D7B68]">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
                                     </div>
 
@@ -102,22 +124,24 @@ $categoriasTitulos = [
                                            id="config_<?= $config['clave'] ?>"
                                            value="<?= htmlspecialchars($config['valor']) ?>"
                                            step="0.01"
-                                           class="block w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm hover:bg-white/20">
+                                           class="w-full rounded-xl border border-stone-300 bg-white px-5 py-4 text-lg font-medium text-gray-800 placeholder-gray-400 shadow-sm focus:border-[#8D7B68] focus:ring-4 focus:ring-[#E6D5CC]">
 
                                 <?php elseif ($config['clave'] === 'pago_gateway'): ?>
                                     <div class="relative">
                                         <select name="config[<?= $config['clave'] ?>]"
                                                 id="config_<?= $config['clave'] ?>"
-                                                class="block w-full pl-4 pr-10 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm appearance-none cursor-pointer hover:bg-white/20">
+                                                class="w-full appearance-none rounded-xl border border-stone-300 bg-white px-5 py-4 text-lg font-medium text-gray-800 shadow-sm transition-all focus:border-[#8D7B68] focus:ring-4 focus:ring-[#E6D5CC] cursor-pointer">
                                             <?php foreach ($proveedoresPago as $key => $proveedor): ?>
-                                                <option value="<?= $key ?>" <?= $config['valor'] === $key ? 'selected' : '' ?> class="text-gray-800">
+                                                <option value="<?= $key ?>" <?= $config['valor'] === $key ? 'selected' : '' ?>>
                                                     <?= htmlspecialchars($proveedor['name']) ?>
                                                     (<?= $proveedor['status'] === 'available' ? 'Disponible' : 'No implementado' ?>)
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
-                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-                                            <span class="material-icons">expand_more</span>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-[#8D7B68]">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
                                     </div>
 
@@ -125,12 +149,14 @@ $categoriasTitulos = [
                                     <div class="relative">
                                         <select name="config[<?= $config['clave'] ?>]"
                                                 id="config_<?= $config['clave'] ?>"
-                                                class="block w-full pl-4 pr-10 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm appearance-none cursor-pointer hover:bg-white/20">
-                                            <option value="sandbox" <?= $config['valor'] === 'sandbox' ? 'selected' : '' ?> class="text-gray-800">Pruebas (Sandbox)</option>
-                                            <option value="production" <?= $config['valor'] === 'production' ? 'selected' : '' ?> class="text-gray-800">Producción</option>
+                                                class="w-full appearance-none rounded-xl border border-stone-300 bg-white px-5 py-4 text-lg font-medium text-gray-800 shadow-sm transition-all focus:border-[#8D7B68] focus:ring-4 focus:ring-[#E6D5CC] cursor-pointer">
+                                            <option value="sandbox" <?= $config['valor'] === 'sandbox' ? 'selected' : '' ?>>Pruebas (Sandbox)</option>
+                                            <option value="production" <?= $config['valor'] === 'production' ? 'selected' : '' ?>>Producción</option>
                                         </select>
-                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
-                                            <span class="material-icons">expand_more</span>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-[#8D7B68]">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
                                     </div>
 
@@ -139,51 +165,58 @@ $categoriasTitulos = [
                                            name="config[<?= $config['clave'] ?>]"
                                            id="config_<?= $config['clave'] ?>"
                                            value="<?= htmlspecialchars($config['valor']) ?>"
-                                           class="block w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all backdrop-blur-sm hover:bg-white/20">
+                                           class="w-full rounded-xl border border-stone-300 bg-white px-5 py-4 text-lg font-medium text-gray-800 placeholder-gray-400 shadow-sm focus:border-[#8D7B68] focus:ring-4 focus:ring-[#E6D5CC]">
                                 <?php endif; ?>
 
-                                <p class="text-xs text-white/60 flex items-center gap-1">
-                                    <span class="material-icons text-[12px]">schedule</span>
+                                <p class="text-sm text-gray-500 font-medium flex items-center gap-1">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
                                     Actualizado: <?= date('d/m/Y H:i', strtotime($config['fecha_actualizacion'])) ?>
                                 </p>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </section>
+        <?php endforeach; ?>
 
-            <!-- Botones de acción -->
-            <div class="flex justify-end space-x-4 sticky bottom-6 z-20">
-                <div class="bg-white/30 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl p-2 flex space-x-4">
-                    <a href="<?= url('dashboard') ?>" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/10">
-                        <span class="material-icons text-sm">close</span>
-                        Cancelar
-                    </a>
-                    <button type="submit" class="px-6 py-3 bg-white/30 hover:bg-white/40 text-white font-bold rounded-xl border border-white/40 shadow-lg backdrop-blur-sm transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2">
-                        <span class="material-icons text-sm">save</span>
-                        Guardar Cambios
-                    </button>
-                </div>
-            </div>
+        <!-- Botones de acción -->
+        <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-6 pt-6 rounded-3xl bg-white p-6 md:p-8 shadow-lg border border-stone-200">
+            <a href="<?= url('dashboard') ?>" class="w-full md:w-auto inline-flex items-center justify-center space-x-3 rounded-xl border border-stone-300 bg-white px-8 py-4 text-base font-bold text-gray-700 shadow-sm transition-all hover:bg-[#F9F5F3] hover:border-[#8D7B68] hover:scale-[1.02] focus:ring-4 focus:ring-[#E6D5CC]">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Cancelar</span>
+            </a>
 
-        </form>
-
-        <!-- Información adicional -->
-        <div class="mt-8 bg-blue-500/20 border border-blue-500/30 p-6 rounded-2xl backdrop-blur-sm">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <span class="material-icons text-blue-200">info</span>
-                </div>
-                <div class="ml-3">
-                    <h3 class="text-sm font-medium text-blue-100">Información Importante</h3>
-                    <div class="mt-2 text-sm text-blue-50/80">
-                        <p>Las configuraciones se guardan en la base de datos. Para configurar credenciales sensibles (como API keys de pasarelas de pago), por seguridad se recomienda editar el archivo <code class="bg-blue-900/30 px-2 py-0.5 rounded text-blue-100">.env</code> en el servidor.</p>
-                    </div>
-                </div>
-            </div>
+            <button type="submit" class="w-full md:w-auto inline-flex items-center justify-center space-x-3 rounded-xl bg-gradient-to-r from-[#D0B8A8] to-[#8D7B68] px-10 py-5 text-lg font-bold text-white shadow-lg transition-transform hover:from-[#C8B6A6] hover:to-[#7a6a58] hover:scale-[1.02] active:scale-95 focus:ring-4 focus:ring-[#E6D5CC]">
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                <span>GUARDAR CAMBIOS</span>
+            </button>
         </div>
 
-    </div>
+    </form>
+
+    <!-- Info Footer -->
+    <section class="mt-8 rounded-3xl bg-gradient-to-r from-[#8D7B68] to-[#6b5d4f] p-8 shadow-xl">
+        <div class="flex flex-col md:flex-row items-start gap-6">
+            <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 flex-shrink-0">
+                <svg class="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-xl font-bold text-white">Información Importante</h3>
+                <p class="text-lg text-[#F4EBE7] leading-relaxed font-medium">
+                    Las configuraciones se guardan en la base de datos. Para configurar credenciales sensibles (como API keys de pasarelas de pago), por seguridad se recomienda editar el archivo <code class="bg-white/10 px-2 py-1 rounded text-white font-mono">.env</code> en el servidor.
+                </p>
+            </div>
+        </div>
+    </section>
+
 </main>
 
 <script>
@@ -199,11 +232,11 @@ $categoriasTitulos = [
         const originalValue = element.value;
         element.addEventListener('change', function() {
             if (this.value !== originalValue) {
-                this.classList.add('border-yellow-400', 'bg-yellow-500/20');
-                this.classList.remove('border-white/20', 'bg-white/10');
+                this.classList.add('border-yellow-400', 'ring-2', 'ring-yellow-200');
+                this.classList.remove('border-stone-300');
             } else {
-                this.classList.remove('border-yellow-400', 'bg-yellow-500/20');
-                this.classList.add('border-white/20', 'bg-white/10');
+                this.classList.remove('border-yellow-400', 'ring-2', 'ring-yellow-200');
+                this.classList.add('border-stone-300');
             }
         });
     });

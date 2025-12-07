@@ -95,4 +95,3 @@ include_once __DIR__ . '/Vista/componentes/plantillaBottom.php';
 
 // Enviar buffer de salida
 ob_end_flush();
-?>

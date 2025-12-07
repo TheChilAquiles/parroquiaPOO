@@ -70,6 +70,110 @@ class CertificadosController extends BaseController
     }
 
     /**
+     * Descarga un certificado (con validaciones)
+     */
+    public function descargar()
+    {
+        // Verificar autenticación
+        $this->requiereAutenticacion();
+
+        // Obtener ID del usuario y rol
+        $usuarioId = $_SESSION['user-id'];
+        $rolUsuario = $_SESSION['user-rol'] ?? 'Feligrés';
+        
+        // Obtener ID del certificado
+        $certificadoId = $_GET['id'] ?? null;
+
+        if (empty($certificadoId) || !is_numeric($certificadoId)) {
+            $_SESSION['error'] = 'ID de certificado inválido.';
+            $this->mostrar();
+            return;
+        }
+
+        // Obtener datos del certificado
+        $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+        if (!$certificado) {
+            $_SESSION['error'] = 'Certificado no encontrado.';
+            $this->mostrar();
+            return;
+        }
+
+        // Validar permisos: el usuario debe ser el solicitante, el dueño del sacramento (feligrés), o ser administrador/secretario
+        $esAdminOSecretario = in_array($rolUsuario, ['Administrador', 'Secretario']);
+        
+        $feligresIdUsuario = $this->obtenerFeligresIdUsuario($usuarioId);
+        $esPropio = ($certificado['feligres_certificado_id'] == $feligresIdUsuario);
+        $esSolicitante = ($certificado['solicitante_id'] == $feligresIdUsuario);
+
+        if (!$esAdminOSecretario && !$esPropio && !$esSolicitante) {
+            $_SESSION['error'] = 'No tiene permiso para descargar este certificado.';
+            $this->mostrar();
+            return;
+        }
+
+        // Validar que exista el archivo
+        if (empty($certificado['ruta_archivo'])) {
+             $_SESSION['error'] = 'El archivo no ha sido generado aún.';
+             $this->mostrar();
+             return;
+        }
+
+        // Construir rutas posibles (absoluta vs relativa)
+        $rutaArchivo = $certificado['ruta_archivo'];
+        
+        // Si es ruta relativa, prepend base dir
+        if (!file_exists($rutaArchivo)) {
+             // Intentar con __DIR__ si la ruta es relativa desde root
+             $rutaAlternativa = __DIR__ . '/../' . $rutaArchivo;
+             if (file_exists($rutaAlternativa)) {
+                 $rutaArchivo = $rutaAlternativa;
+             } elseif (file_exists(__DIR__ . '/../certificados_generados/' . basename($rutaArchivo))) {
+                 // Intentar buscar solo por nombre en carpeta de output
+                 $rutaArchivo = __DIR__ . '/../certificados_generados/' . basename($rutaArchivo);
+             } else {
+                Logger::error("Archivo físico no encontrado para descarga", [
+                    'ruta_bd' => $certificado['ruta_archivo'],
+                    'ruta_alt' => $rutaAlternativa,
+                    'id' => $certificadoId
+                ]);
+                $_SESSION['error'] = 'Archivo físico no encontrado en el servidor.';
+                $this->mostrar();
+                return;
+             }
+        }
+
+        // Marcar como descargado (si aún no lo está y es la primera vez que se descarga)
+        if ($certificado['estado'] === 'generado') {
+            $this->modeloSolicitud->mdlMarcarDescargado($certificadoId);
+        }
+
+        // Limpiar cualquier salida previa del buffer
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        // Servir archivo
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="certificado_' . $certificadoId . '.pdf"');
+        header('Content-Length: ' . filesize($rutaArchivo));
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+
+        // Log para depuración
+        Logger::info("Sirviendo descarga de certificado", [
+            'id' => $certificadoId,
+            'ruta_final' => $rutaArchivo,
+            'size' => filesize($rutaArchivo),
+            'mime' => mime_content_type($rutaArchivo),
+            'user' => $_SESSION['user-id']
+        ]);
+
+        readfile($rutaArchivo);
+        exit;
+    }
+
+    /**
      * Obtiene el ID del feligrés asociado a un usuario
      * @param int $usuarioId ID del usuario
      * @return int|null ID del feligrés o null
@@ -944,6 +1048,8 @@ class CertificadosController extends BaseController
 
         exit;
     }
+
+
 
     /**
      * Verifica la autenticidad de un certificado por código (ruta pública para QR)

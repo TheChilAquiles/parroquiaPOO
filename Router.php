@@ -133,7 +133,7 @@ class Router
             'certificados/crear' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'crear'],
             'certificados/buscar-sacramentos-familiar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'buscarSacramentosFamiliar'],
             'certificados/mis-solicitudes' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'misSolicitudes'],
-            'certificados/descargar' => ['controlador' => 'SolicitudesCertificadosController', 'accion' => 'descargar'],
+            'certificados/descargar' => ['controlador' => 'CertificadosController', 'accion' => 'descargar'],
 
             // ================================================================
             // RUTAS AUTENTICADAS - FELIGRESES
