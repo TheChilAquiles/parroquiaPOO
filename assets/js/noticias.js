@@ -3,13 +3,13 @@
  * @version 2.0 - REFACTORIZADO PARA MVC
  * @author Samuel Bedoya
  * @brief Sistema de administración de noticias con AJAX + Arquitectura MVC
- * 
+ *
  * CAMBIOS IMPORTANTES:
  * - ✅ Peticiones AJAX ahora van a rutas MVC (?route=noticias/crear)
  * - ✅ El controlador maneja la lógica y responde JSON
  * - ✅ Sin archivo ajaxNoticias.php separado
  * - ✅ Respeta la arquitectura Router → Controlador → Modelo
- * 
+ *
  * @architecture
  * - Event Delegation: Un listener centralizado
  * - AJAX Pattern: Comunicación asíncrona con rutas MVC
@@ -20,7 +20,6 @@
 // PUNTO DE ENTRADA
 // ============================================================================
 document.addEventListener("DOMContentLoaded", () => {
-    
     // ========================================================================
     // REFERENCIAS A ELEMENTOS DEL DOM
     // ========================================================================
@@ -34,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const imagenInput = document.getElementById("imagen");
     const imagenPreview = document.getElementById("imagenPreview");
     const imagenPlaceholder = document.getElementById("imagenPlaceholder");
+    const verNoticiaModal = document.getElementById("verNoticiaModal"); // NUEVO
+    const verTitulo = document.getElementById("verTitulo");
+    const verImagen = document.getElementById("verImagen");
+    const verDescripcion = document.getElementById("verDescripcion");
+    const verFecha = document.getElementById("verFecha");
 
     // ========================================================================
     // SISTEMA DE DELEGACIÓN DE EVENTOS
@@ -59,6 +63,17 @@ document.addEventListener("DOMContentLoaded", () => {
             abrirModalEliminar(id);
         }
 
+        // LÓGICA NUEVA: Abrir modal de "Leer más" (para cualquier usuario)
+        if (target.closest(".view-news-btn")) {
+            const btn = target.closest(".view-news-btn");
+            abrirModalVerNoticia(btn.dataset);
+        }
+
+        // LÓGICA NUEVA: Cerrar modal de visualización
+        if (target.closest("#closeVerModalBtn") || target.closest("#closeVerModalBtnBottom") || target === verNoticiaModal) {
+            cerrarModal(verNoticiaModal);
+        }
+
         // Cerrar modales
         if (target.closest("#closeModalBtn") || target === noticiaModal) {
             cerrarModal(noticiaModal);
@@ -77,11 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (noticiaForm) {
         noticiaForm.addEventListener("submit", handleGuardar);
     }
-    
+
     if (confirmDeleteBtn) {
         confirmDeleteBtn.addEventListener("click", handleEliminar);
     }
-    
+
     if (imagenInput) {
         imagenInput.addEventListener("change", handleImagenPreview);
     }
@@ -92,39 +107,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Maneja el guardado (crear/actualizar) de una noticia vía AJAX.
-     * 
+     *
      * 🔥 IMPORTANTE: Ahora envía a rutas MVC en lugar de ajaxNoticias.php
-     * 
+     *
      * @async
      * @param {Event} e - Evento de submit del formulario
      */
     async function handleGuardar(e) {
         e.preventDefault();
         console.log("💾 Guardando noticia...");
-        
+
         mostrarLoading();
 
         const formData = new FormData(noticiaForm);
         const noticiaId = document.getElementById("noticiaId").value;
-        
+
         // ✅ DETERMINAR RUTA MVC SEGÚN OPERACIÓN
         const route = noticiaId ? "noticias/actualizar" : "noticias/crear";
         const url = `?route=${route}`;
 
         console.log(`📡 Enviando a: ${url}`);
         console.log("📦 Datos:", {
-            id: formData.get('id'),
-            titulo: formData.get('titulo'),
-            descripcion: formData.get('descripcion'),
-            imagen: formData.get('imagen')?.name || 'sin imagen'
+            id: formData.get("id"),
+            titulo: formData.get("titulo"),
+            descripcion: formData.get("descripcion"),
+            imagen: formData.get("imagen")?.name || "sin imagen",
         });
 
         try {
             const response = await fetch(url, {
                 method: "POST",
                 body: formData,
-                headers: { 
-                    "X-Requested-With": "XMLHttpRequest"  // Identifica petición AJAX
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest", // Identifica petición AJAX
                 },
             });
 
@@ -139,13 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             console.log("✅ Datos JSON:", data);
 
-            if (data.exito || data.status === 'success') {
+            if (data.exito || data.status === "success") {
                 mostrarFeedback(
                     data.mensaje || data.message || "Operación exitosa",
                     "success"
                 );
                 cerrarModal(noticiaModal);
-                
+
                 // Recargar después de 1 segundo para mostrar el mensaje
                 setTimeout(() => location.reload(), 1000);
             } else {
@@ -167,9 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Maneja la confirmación y ejecución de eliminación de noticia.
-     * 
+     *
      * 🔥 IMPORTANTE: Envía a ?route=noticias/eliminar
-     * 
+     *
      * @async
      */
     async function handleEliminar() {
@@ -204,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             console.log("✅ Respuesta eliminación:", data);
 
-            if (data.exito || data.status === 'success') {
+            if (data.exito || data.status === "success") {
                 mostrarFeedback(
                     data.mensaje || data.message || "Noticia eliminada correctamente",
                     "success"
@@ -228,28 +243,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Genera vista previa de imagen seleccionada antes de subir.
-     * 
+     *
      * @note Solo procesa el primer archivo si se seleccionan múltiples
      */
     function handleImagenPreview() {
         const file = imagenInput.files[0];
         if (file) {
             // Validar tipo de archivo
-            if (!file.type.match('image.*')) {
+            if (!file.type.match("image.*")) {
                 mostrarFeedback("Por favor selecciona una imagen válida", "error");
-                imagenInput.value = '';
+                imagenInput.value = "";
                 return;
             }
 
             // Validar tamaño (5MB)
             if (file.size > 5 * 1024 * 1024) {
                 mostrarFeedback("La imagen no debe superar 5MB", "error");
-                imagenInput.value = '';
+                imagenInput.value = "";
                 return;
             }
 
             const reader = new FileReader();
-            
+
             reader.onload = (e) => {
                 imagenPreview.src = e.target.result;
                 imagenPreview.classList.remove("hidden");
@@ -257,11 +272,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     imagenPlaceholder.classList.add("hidden");
                 }
             };
-            
+
             reader.onerror = () => {
                 mostrarFeedback("Error al leer la imagen", "error");
             };
-            
+
             reader.readAsDataURL(file);
         }
     }
@@ -275,10 +290,10 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function abrirModal(modal) {
         if (!modal) return;
-        
+
         modal.classList.remove("hidden");
         modal.classList.add("flex");
-        
+
         setTimeout(() => {
             const content = modal.querySelector(".modal-content");
             if (content) {
@@ -293,13 +308,13 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function cerrarModal(modal) {
         if (!modal) return;
-        
+
         const content = modal.querySelector(".modal-content");
         if (content) {
             content.classList.remove("scale-100");
             content.classList.add("scale-95");
         }
-        
+
         setTimeout(() => {
             modal.classList.add("hidden");
             modal.classList.remove("flex");
@@ -317,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Prepara y abre modal para editar noticia existente.
-     * 
+     *
      * @param {Object} data - Data attributes del botón editar
      */
     function abrirModalEditar(data) {
@@ -366,6 +381,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /**
+     * Abre el modal de lectura con la información completa
+     * @param {Object} data - Dataset del botón con título, descripción, etc.
+     */
+    function abrirModalVerNoticia(data) {
+        // Llenar los datos
+        verTitulo.textContent = data.titulo;
+        // Usamos textContent para evitar inyección HTML, pero style white-space: pre-wrap en CSS respeta los saltos de línea
+        verDescripcion.textContent = data.descripcion; 
+        verFecha.textContent = data.fecha;
+
+        // Manejar imagen
+        if (data.imagen && data.imagen.trim() !== "") {
+            verImagen.src = data.imagen;
+            verImagen.parentElement.classList.remove("hidden"); // Asegurar que se vea el header
+        } else {
+            // Si no hay imagen, podrías poner una por defecto o ocultar la imagen header
+            verImagen.src = "ruta/a/imagen_por_defecto.jpg"; // Opcional
+        }
+
+        abrirModal(verNoticiaModal);
+    }
+
+    /**
      * Muestra overlay de carga durante operaciones asíncronas.
      */
     function mostrarLoading() {
@@ -387,16 +425,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /**
      * Muestra notificación toast flotante con feedback al usuario.
-     * 
+     *
      * @param {string} mensaje - Texto a mostrar en la notificación
      * @param {string} tipo - Tipo de mensaje: "success" o "error"
      */
     function mostrarFeedback(mensaje, tipo = "success") {
         if (!feedbackContainer) return;
 
-        const colorClasses = tipo === "success"
-            ? "bg-green-50 text-green-800 border-green-400"
-            : "bg-red-50 text-red-800 border-red-400";
+        const colorClasses =
+            tipo === "success"
+                ? "bg-green-50 text-green-800 border-green-400"
+                : "bg-red-50 text-red-800 border-red-400";
 
         const iconClass = tipo === "success" ? "check_circle" : "error";
 
@@ -430,20 +469,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function initializeAnimations() {
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            rootMargin: "0px 0px -50px 0px",
         };
 
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
+            entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
+                    entry.target.style.animationPlayState = "running";
                     observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        document.querySelectorAll('article[style*="animation"]').forEach(el => {
-            el.style.animationPlayState = 'paused';
+        document.querySelectorAll('article[style*="animation"]').forEach((el) => {
+            el.style.animationPlayState = "paused";
             observer.observe(el);
         });
     }
