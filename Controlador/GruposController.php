@@ -94,9 +94,8 @@ class GruposController extends BaseController
             if (empty($nombre)) {
                 $_SESSION['mensaje'] = 'El nombre del grupo es obligatorio.';
                 $_SESSION['tipo_mensaje'] = 'error';
-                $grupo = null;
-                include_once __DIR__ . '/../Vista/grupoFormulario.php';
-                return;
+                redirect('grupos'); // <--- SIMPLIFICADO: Vuelve a la lista
+                exit();
             }
 
             try {
@@ -105,20 +104,24 @@ class GruposController extends BaseController
                 if ($resultado) {
                     $_SESSION['mensaje'] = 'Grupo creado exitosamente.';
                     $_SESSION['tipo_mensaje'] = 'success';
-                    redirect('grupos');
-                    exit();
                 } else {
+                    // AQUÍ ESTABA EL PROBLEMA
+                    // Antes: Cargabas la vista manualmente y faltaban variables.
+                    // AHORA: Simplemente le dices que falló y lo mandas a la lista.
                     $_SESSION['mensaje'] = 'El grupo ya existe.';
                     $_SESSION['tipo_mensaje'] = 'error';
-                    $grupo = null;
-                    include_once __DIR__ . '/../Vista/grupoFormulario.php';
                 }
+                
+                // En ambos casos (éxito o fallo por duplicado), rediriges.
+                redirect('grupos'); 
+                exit();
+
             } catch (Exception $e) {
-                $_SESSION['mensaje'] = 'Error al crear el grupo.';
+                $_SESSION['mensaje'] = 'Error interno al crear el grupo.';
                 $_SESSION['tipo_mensaje'] = 'error';
-                Logger::error("Error en GruposController::crear -", ['error' => $e->getMessage()]);
-                $grupo = null;
-                include_once __DIR__ . '/../Vista/grupoFormulario.php';
+                Logger::error("Error...", ['error' => $e->getMessage()]);
+                redirect('grupos');
+                exit();
             }
         } else {
             // Mostrar formulario vacío
@@ -282,8 +285,12 @@ class GruposController extends BaseController
             $_SESSION['mensaje'] = 'Datos incompletos o inválidos.';
             $_SESSION['tipo_mensaje'] = 'error';
 
-
-            redirect('grupos', ['id' => ($grupo_id ?? '')]);
+            // CORRECCIÓN: Si falla, intentamos volver al detalle si tenemos ID, sino a la lista
+            if (!empty($grupo_id)) {
+                redirect('grupos/ver', ['id' => $grupo_id]); // <--- CORRECCIÓN AQUÍ
+            } else {
+                redirect('grupos');
+            }
             exit();
         }
 
@@ -303,7 +310,8 @@ class GruposController extends BaseController
             Logger::error("Error en GruposController::agregarMiembro -", ['error' => $e->getMessage()]);
         }
 
-        redirect('grupos', ['id' => $grupo_id]);
+        // CORRECCIÓN: Redirigir a 'grupos/ver' en lugar de 'grupos'
+        redirect('grupos/ver', ['id' => $grupo_id]); // <--- CORRECCIÓN AQUÍ
         exit();
     }
 
@@ -344,7 +352,9 @@ class GruposController extends BaseController
             $_SESSION['tipo_mensaje'] = 'error';
             Logger::error("Error en GruposController::eliminarMiembro -", ['error' => $e->getMessage()]);
         }
-            redirect('grupos',[ 'id' => $grupo_id  ]);
+
+        // CORRECCIÓN: Redirigir a 'grupos/ver' y arreglar indentación
+        redirect('grupos/ver', ['id' => $grupo_id]); // <--- CORRECCIÓN AQUÍ
         exit();
     }
 
@@ -370,27 +380,32 @@ class GruposController extends BaseController
         ) {
             $_SESSION['mensaje'] = 'Datos incompletos o inválidos.';
             $_SESSION['tipo_mensaje'] = 'error';
-            redirect('grupos');
+
+            // CORRECCIÓN: Volver al detalle si es posible
+            if (!empty($grupo_id)) {
+                redirect('grupos/ver', ['id' => $grupo_id]); // <--- CORRECCIÓN AQUÍ
+            } else {
+                redirect('grupos');
+            }
             exit();
         }
 
         try {
-            // Eliminar miembro con rol antiguo
+            // Nota: Mantenemos tu lógica original aquí, aunque recuerda el consejo del Error #3 sobre la atomicidad
             $elimino = $this->modelo->mdlEliminarMiembro((int) $grupo_id, (int) $usuario_id);
 
             if ($elimino) {
-                // Agregar con nuevo rol
                 $resultado = $this->modelo->mdlAgregarMiembro((int) $grupo_id, (int) $usuario_id, (int) $nuevo_rol_id);
 
                 if ($resultado) {
                     $_SESSION['mensaje'] = 'Rol actualizado exitosamente.';
                     $_SESSION['tipo_mensaje'] = 'success';
                 } else {
-                    $_SESSION['mensaje'] = 'Error al actualizar rol.';
+                    $_SESSION['mensaje'] = 'Error al asignar el nuevo rol.';
                     $_SESSION['tipo_mensaje'] = 'error';
                 }
             } else {
-                $_SESSION['mensaje'] = 'Error al actualizar rol.';
+                $_SESSION['mensaje'] = 'Error al actualizar rol (no se pudo eliminar el anterior).';
                 $_SESSION['tipo_mensaje'] = 'error';
             }
         } catch (Exception $e) {
@@ -398,7 +413,9 @@ class GruposController extends BaseController
             $_SESSION['tipo_mensaje'] = 'error';
             Logger::error("Error en GruposController::actualizarRol -", ['error' => $e->getMessage()]);
         }
-            redirect('grupos',[ 'id' => $grupo_id  ]);
+
+        // CORRECCIÓN: Redirigir a 'grupos/ver'
+        redirect('grupos/ver', ['id' => $grupo_id]); // <--- CORRECCIÓN AQUÍ
         exit();
     }
 

@@ -192,7 +192,7 @@ if (isset($_SESSION['mensaje'])) {
                                 // Mostrar máximo 5 miembros para no saturar la UI
                                 $miembrosMostrar = array_slice($miembros, 0, 5);
                                 foreach ($miembrosMostrar as $miembro):
-                                    ?>
+                                ?>
                                     <div class="flex items-center text-sm">
                                         <!-- Avatar con inicial -->
                                         <div
@@ -246,8 +246,8 @@ if (isset($_SESSION['mensaje'])) {
             <div class="flex flex-col sm:flex-row gap-4">
                 <!-- Formulario de eliminación -->
                 <form action="<?= url('grupos/eliminar', ['id' => $grupo['id']]) ?>" method="POST" class="flex-1">
-                    <button type="submit" id="btnConfirmarEliminacion" disabled
-                        class="w-full flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                    <button type="submit" name="confirmar_eliminacion" value="1" id="btnConfirmarEliminacion" disabled
+                    class="w-full flex justify-center items-center px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition duration-200 disabled:bg-gray-300 disabled:cursor-not-allowed">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -275,7 +275,7 @@ if (isset($_SESSION['mensaje'])) {
      Sistema de tres niveles de confirmación
 ============================================================================= -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         // ====================================================================
         // NIVEL 1: VALIDACIÓN DE INPUT DE TEXTO
         // Compara el texto ingresado con el nombre exacto del grupo
@@ -290,7 +290,7 @@ if (isset($_SESSION['mensaje'])) {
          * 
          * @security Requiere coincidencia exacta (case-sensitive)
          */
-        inputConfirmacion.addEventListener('input', function () {
+        inputConfirmacion.addEventListener('input', function() {
             const esValido = this.value.trim() === nombreGrupo;
             btnConfirmar.disabled = !esValido;
 
@@ -314,7 +314,7 @@ if (isset($_SESSION['mensaje'])) {
          * 
          * @pattern Confirmación en cascada (triple check)
          */
-        btnConfirmar.closest('form').addEventListener('submit', function (e) {
+        btnConfirmar.closest('form').addEventListener('submit', function(e) {
             if (!confirm('⚠️ ÚLTIMA CONFIRMACIÓN\n\n¿Estás absolutamente seguro de que deseas eliminar este grupo?\n\nEsta acción es IRREVERSIBLE.')) {
                 e.preventDefault();
             }
