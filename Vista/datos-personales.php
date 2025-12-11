@@ -321,7 +321,7 @@ $direccion = $feligres['direccion'] ?? '';
                                 Número Documento <span class="text-red-500">*</span>
                             </label>
                             <!-- Text input for document number (validated to be numeric) -->
-                            <input type="text" name="numeroDocumento" x-model="data.numeroDocumento" required
+                            <input type="text" name="numeroDocumento" x-model="data.numeroDocumento" maxlength="12" required
                                    class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
                         </div>
                     </div>
@@ -344,7 +344,7 @@ $direccion = $feligres['direccion'] ?? '';
                         <div class="form-group">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">Teléfono</label>
                             <!-- Tel input type for phone numbers (provides mobile keyboard optimization) -->
-                            <input type="tel" name="telefono" x-model="data.telefono"
+                            <input type="tel" name="telefono" x-model="data.telefono" maxlength="15"
                                    placeholder="Ej: 300 123 4567"
                                    class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
                         </div>
@@ -358,7 +358,7 @@ $direccion = $feligres['direccion'] ?? '';
                                 <!-- Location icon positioned absolutely inside input -->
                                 <span class="material-icons absolute left-3 top-3.5 text-gray-400">location_on</span>
                                 <!-- Input with left padding to accommodate icon (pl-10) -->
-                                <input type="text" name="direccion" x-model="data.direccion" required
+                                <input type="text" name="direccion" x-model="data.direccion" maxlength="40" required 
                                        placeholder="Ej: Calle 123 # 45 - 67"
                                        class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3 pl-10">
                             </div>
