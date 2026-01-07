@@ -1,0 +1,84 @@
+Módulos funcionales (propuestos)
+
+Nota: son candidatos típicos para un sistema parroquial. Los confirmaremos en el código cuando selecciones uno.
+
+
+
+Personas / Feligreses
+
+Registro de datos, historial, estado sacramental, certificados solicitados.
+
+
+
+Sacramentos
+
+Bautismo, Primera Comunión, Confirmación, Matrimonio, Unción de los enfermos.
+Reglas, requisitos, actas, certificaciones.
+
+
+
+Certificados
+
+Emisión de constancias: bautismo, confirmación, matrimonio, vida cristiana, etc.
+
+
+
+Agenda / Eventos
+
+Misas, catequesis, reuniones, reservas de salones; calendario y asistencia.
+
+
+
+Catequesis / Formación
+
+Inscripciones a cursos, control de grupos, evaluaciones (si aplica).
+
+
+
+Donaciones / Diezmo
+
+Registro de aportes, recibos, reportes de contribuciones.
+
+
+
+Caja / Ingresos & Egresos
+
+Arqueos, comprobantes, conciliaciones básicas (si el proyecto contempla contabilidad).
+
+
+
+Inventario / Recursos
+
+Salones, equipos, libros, hostias, vino, ornamentos; reservas y disponibilidad.
+
+
+
+Usuarios / Roles / Permisos
+
+Accesos para párroco, secretaria, catequista, tesorero, etc.
+
+
+
+Comunidades / Grupos
+
+Pastoral juvenil, liturgia, coro, grupos de oración.
+
+
+
+Reportes
+
+Estadísticas, listados por sacramento, aportes mensuales, actividades.
+
+
+
+Configuración
+
+Parámetros de parroquia, plantillas de certificados, datos de contacto, numeraciones.
+
+ Módulos transversales (soporte)
+
+Autenticación/Autorización
+Notificaciones (email/WhatsApp/SMS si existe en el código)
+Auditoría / Logs (ya vimos carpeta Logs)
+Backup / Export / Import (si existe en Servicios/Data)
+Integración (pagos, mensajería, etc., si aplica)
