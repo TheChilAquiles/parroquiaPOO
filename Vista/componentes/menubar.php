@@ -14,7 +14,7 @@
                     </div>
                     <!-- Nombre de la parroquia -->
                     <div class="hidden lg:block">
-                        <span class="font-bold text-lg text-gray-800">Parroquia San Francisco de Asís</span>
+                        <span class="font-bold text-lg text-gray-800">ParroquiaApp</span>
                     </div>
                 </a>
             </div>

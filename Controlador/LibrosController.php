@@ -42,25 +42,31 @@ class LibrosController extends BaseController
 
     public function crear()
     {
-        // Se permite GET y POST para flexibilidad en las vistas
-        // NOTA: Idealmente las acciones de creación deberían ser POST, pero se ajusta por requerimiento de navegación
         $tipo = $_REQUEST['tipo'] ?? null;
 
         if (empty($tipo) || !is_numeric($tipo)) {
             $_SESSION['error'] = 'Tipo de libro inválido.';
-            $this->index();
-            return;
+            // Redirigimos al listado general en caso de error
+            header("Location: " . url('libros'));
+            exit;
         }
 
         $tipo = (int)$tipo;
+        
+        // Consultar cuántos hay y sumar 1
         $cantidad = $this->modelo->mdlConsultarCantidadLibros($tipo);
         $resultado = $this->modelo->mdlAñadirLibro($tipo, $cantidad + 1);
 
-        $_SESSION['success'] = 'Libro creado exitosamente.';
-        $tipoId = $tipo; // ID numérico para los formularios
-        $cantidad = $this->modelo->mdlConsultarCantidadLibros($tipo);
-        $libroTipo = $this->obtenerNombreTipo($tipo);
-        include_once __DIR__ . '/../Vista/libros.php';
+        // Verificamos si realmente se insertó en la BD
+        if ($resultado) {
+            $_SESSION['success'] = 'Libro creado exitosamente.';
+        } else {
+            $_SESSION['error'] = 'Error al crear el libro. Verifica que los tipos existan en la base de datos.';
+        }
+
+        // REDIRECCIÓN: Forzamos al navegador a recargar la página correcta
+        header("Location: " . url('libros/seleccionar-tipo') . "?tipo=" . $tipo);
+        exit;
     }
 
     /**

@@ -203,42 +203,41 @@ class ModeloSacramento
     }
 
     /**
-     * Obtiene un feligrés existente o crea uno nuevo
-     * @param array $datos Datos del feligrés (tipoDoc, numeroDoc, nombres, apellidos)
+     * Obtiene un feligrés existente o crea uno nuevo (Permite documentos en blanco)
+     * @param array $datos Datos del feligrés
      * @return int|false ID del feligrés o false en caso de error
      */
     private function obtenerOCrearFeligres($datos)
     {
         try {
-            // Validar datos mínimos requeridos
-            if (empty($datos['tipoDoc']) || empty($datos['numeroDoc'])) {
-                Logger::error("Datos insuficientes para buscar/crear feligrés");
-                return false;
+            // Convertimos a null si vienen vacíos (ideal para bebés o padrinos sin ID a la mano)
+            $tipoDoc = !empty($datos['tipoDoc']) ? $datos['tipoDoc'] : null;
+            $numeroDoc = !empty($datos['numeroDoc']) ? $datos['numeroDoc'] : null;
+
+            // 1. Si enviaron documento completo, intentamos buscar si ya existe en la BD
+            if ($tipoDoc && $numeroDoc) {
+                $sql_buscar = "SELECT id FROM feligreses
+                              WHERE tipo_documento_id = ? AND numero_documento = ?
+                              AND estado_registro IS NULL
+                              LIMIT 1";
+                $stmt = $this->conexion->prepare($sql_buscar);
+                $stmt->execute([$tipoDoc, $numeroDoc]);
+                $feligres = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($feligres) {
+                    return $feligres['id']; // Ya existe, devolvemos su ID
+                }
             }
 
-            // 1. Buscar feligrés existente por documento
-            $sql_buscar = "SELECT id FROM feligreses
-                          WHERE tipo_documento_id = ? AND numero_documento = ?
-                          AND estado_registro IS NULL
-                          LIMIT 1";
-            $stmt = $this->conexion->prepare($sql_buscar);
-            $stmt->execute([$datos['tipoDoc'], $datos['numeroDoc']]);
-            $feligres = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($feligres) {
-                // Feligrés ya existe
-                return $feligres['id'];
-            }
-
-            // 2. Crear nuevo feligrés
+            // 2. Si no hay documento o es un feligrés nuevo, lo creamos
             $sql_crear = "INSERT INTO feligreses
                          (tipo_documento_id, numero_documento, primer_nombre,
                           segundo_nombre, primer_apellido, segundo_apellido)
                          VALUES (?, ?, ?, ?, ?, ?)";
             $stmt_crear = $this->conexion->prepare($sql_crear);
             $stmt_crear->execute([
-                $datos['tipoDoc'],
-                $datos['numeroDoc'],
+                $tipoDoc,
+                $numeroDoc,
                 $datos['primerNombre'] ?? '',
                 $datos['segundoNombre'] ?? '',
                 $datos['primerApellido'] ?? '',

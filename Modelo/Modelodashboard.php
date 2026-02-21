@@ -61,21 +61,25 @@ class ModeloDashboard
 
         // === CERTIFICADOS DEL USUARIO ===
         $userId = $_SESSION['user-id'] ?? 0;
-        
+
         // Solo obtener certificados si hay un usuario autenticado
         if ($userId > 0) {
             try {
-                $stmt = $this->conexion->prepare("SELECT COUNT(*) FROM certificados WHERE feligres_id IN (SELECT id FROM feligreses WHERE usuario_id = ?) AND estado = ?");
-                
-                $stmt->execute([$userId, 'aprobado']);
+                // Por esto:
+                $stmt = $this->conexion->prepare("SELECT COUNT(*) FROM certificados WHERE solicitante_id IN (SELECT id FROM feligreses WHERE usuario_id = ?) AND estado = ?");
+
+                // Contar los "generados" (equivalente a aprobados)
+                $stmt->execute([$userId, 'generado']);
                 $aprobados = (int)$stmt->fetchColumn();
                 
-                $stmt->execute([$userId, 'pendiente']);
+                // Contar los "pendientes_pago" (equivalente a pendientes)
+                $stmt->execute([$userId, 'pendiente_pago']);
                 $pendientes = (int)$stmt->fetchColumn();
                 
-                $stmt->execute([$userId, 'rechazado']);
+                // Contar los "expirados" (equivalente a rechazados/inactivos)
+                $stmt->execute([$userId, 'expirado']);
                 $rechazados = (int)$stmt->fetchColumn();
-                
+
                 $estadisticas['certificados'] = [
                     'aprobados' => $aprobados,
                     'pendientes' => $pendientes,
@@ -99,8 +103,9 @@ class ModeloDashboard
         }
 
         // === CONTACTOS ===
+        // TODO: Crear tabla contactos en la BD. Por ahora devolvemos 0 para evitar errores SQL.
         $estadisticas['contactos'] = [
-            'total' => $this->obtenerConteo("SELECT COUNT(id) FROM contactos")
+            'total' => 0 
         ];
 
         return $estadisticas;

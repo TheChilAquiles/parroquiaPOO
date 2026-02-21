@@ -48,7 +48,7 @@
 
 
 <!-- Modal para agregar/editar sacramento -->
-<div id="recordModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+<div id="recordModal" class="modal fixed inset-0  flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <!-- Header del Modal -->
         <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f] border-b border-[#8B6F47]">
@@ -153,9 +153,8 @@
 
 <!-- Mini-Modal para añadir participante -->
 <div id="miniModalParticipante" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
-    <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
-        <!-- Header del Mini-Modal -->
-        <div class="px-6 py-3 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f]">
+    <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f]">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-bold text-white">Añadir Participante</h3>
                 <button type="button" id="cerrarMiniModal" class="text-white hover:text-gray-200 transition">
@@ -166,78 +165,70 @@
             </div>
         </div>
 
-        <!-- Contenido del Mini-Modal -->
         <div class="overflow-y-auto flex-1 p-6">
-            <div class="space-y-4">
-                <!-- Búsqueda de participante -->
-                <div class="border border-[#D0B8A8] rounded-lg p-4 bg-[#F5F0EB]">
-                    <h4 class="font-semibold text-gray-800 mb-3">Buscar Feligrés</h4>
+            <div class="space-y-5">
+                
+                <div id="feligresNoExiste" class="text-center text-orange-700 font-medium bg-orange-50 border border-orange-200 rounded-lg p-3 hidden shadow-sm flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Feligrés no encontrado. Por favor, escriba sus nombres manualmente.</span>
+                </div>
 
-                    <div class="flex gap-3 items-end">
-                        <div class="flex-1">
-                            <label for="tipo-doc" class="block text-sm font-medium mb-1">Tipo Documento</label>
-                            <select id="tipo-doc" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                <div class="border border-gray-200 rounded-xl p-5 shadow-sm bg-white">
+                    
+                    <h4 class="font-bold text-gray-800 mb-4 border-b pb-2 text-lg">1. Identificación</h4>
+                    
+                    <div class="flex flex-wrap md:flex-nowrap gap-3 items-end mb-6 bg-[#F9F6F4] p-4 rounded-lg border border-[#E6D5CC]">
+                        <div class="flex-1 min-w-[150px]">
+                            <label for="tipo-doc" class="block text-sm font-bold text-gray-700 mb-1">Tipo Documento</label>
+                            <select id="tipo-doc" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none bg-white transition">
                                 <option value="" disabled selected>-- Selecciona --</option>
                                 <option value="1">Cedula Ciudadania</option>
                                 <option value="2">Tarjeta Identidad</option>
                                 <option value="3">Cedula Extranjeria</option>
                                 <option value="4">Registro Civil</option>
                                 <option value="5">Permiso Especial</option>
-                                <option value="6">Numero Identificación Tributaria</option>
+                                <option value="6">NIT</option>
                             </select>
                         </div>
 
-                        <div class="flex-1">
-                            <label for="numero-doc" class="block text-sm font-medium mb-1">Número de Documento</label>
-                            <input type="text" id="numero-doc" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                                   placeholder="Número de Documento" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <div class="flex-1 min-w-[150px]">
+                            <label for="numero-doc" class="block text-sm font-bold text-gray-700 mb-1">Número</label>
+                            <input type="text" id="numero-doc" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none bg-white transition"
+                                    placeholder="Ej: 1002345678" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
 
-                        <button type="button" id="BuscarUser" class="p-3 rounded-lg bg-[#D0B8A8] hover:bg-[#ab876f] transition duration-200">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <button type="button" id="BuscarUser" class="p-2.5 px-4 rounded-lg bg-[#ab876f] hover:bg-[#8D7B68] text-white flex items-center justify-center transition shadow-md h-[46px]" title="Autocompletar datos si ya existe">
+                            <svg class="w-5 h-5 md:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
+                            <span class="font-semibold hidden md:inline">Buscar</span>
                         </button>
                     </div>
 
-                    <div id="feligresNoExiste" class="text-center text-orange-600 font-semibold bg-orange-100 rounded-lg p-2 mt-3 hidden">
-                        <span>Feligrés no existe, completa sus datos manualmente</span>
-                    </div>
-                </div>
-
-                <!-- Datos del participante -->
-                <div class="border border-gray-300 rounded-lg p-4">
-                    <h4 class="font-semibold text-gray-800 mb-3">Datos del Participante</h4>
-
-                    <div class="grid grid-cols-2 gap-3">
+                    <h4 class="font-bold text-gray-800 mb-4 border-b pb-2 text-lg">2. Información Personal</h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="primerNombre" class="block text-sm font-medium mb-1">Primer Nombre *</label>
-                            <input type="text" id="primerNombre" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                                   placeholder="Primer Nombre">
+                            <label for="primerNombre" class="block text-sm font-medium mb-1 text-gray-700">Primer Nombre *</label>
+                            <input type="text" id="primerNombre" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Primer Nombre">
                         </div>
-
                         <div>
-                            <label for="segundoNombre" class="block text-sm font-medium mb-1">Segundo Nombre</label>
-                            <input type="text" id="segundoNombre" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                                   placeholder="Segundo Nombre">
+                            <label for="segundoNombre" class="block text-sm font-medium mb-1 text-gray-700">Segundo Nombre</label>
+                            <input type="text" id="segundoNombre" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Segundo Nombre">
                         </div>
-
                         <div>
-                            <label for="primerApellido" class="block text-sm font-medium mb-1">Primer Apellido *</label>
-                            <input type="text" id="primerApellido" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                                   placeholder="Primer Apellido">
+                            <label for="primerApellido" class="block text-sm font-medium mb-1 text-gray-700">Primer Apellido *</label>
+                            <input type="text" id="primerApellido" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Primer Apellido">
                         </div>
-
                         <div>
-                            <label for="segundoApellido" class="block text-sm font-medium mb-1">Segundo Apellido</label>
-                            <input type="text" id="segundoApellido" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                                   placeholder="Segundo Apellido">
+                            <label for="segundoApellido" class="block text-sm font-medium mb-1 text-gray-700">Segundo Apellido</label>
+                            <input type="text" id="segundoApellido" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Segundo Apellido">
                         </div>
                     </div>
 
-                    <div class="mt-3">
-                        <label for="rolParticipante" class="block text-sm font-medium mb-1">Rol en el Sacramento *</label>
-                        <select id="rolParticipante" class="border border-gray-300 rounded-lg p-2 w-full focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                    <div class="mt-5 pt-4 border-t border-gray-100">
+                        <label for="rolParticipante" class="block text-sm font-bold text-[#ab876f] mb-2">Rol en el Sacramento *</label>
+                        <select id="rolParticipante" class="border border-[#D0B8A8] rounded-lg p-3 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none bg-[#F9F6F4] text-gray-800 font-medium">
                             <option value="" disabled selected>-- Selecciona un Rol --</option>
                             <?php
                             if ($tipo == 1) {
@@ -269,13 +260,12 @@
             </div>
         </div>
 
-        <!-- Botones del Mini-Modal -->
-        <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white">
-            <button type="button" id="cancelarParticipante" class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium">
+        <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <button type="button" id="cancelarParticipante" class="flex-1 px-4 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200 font-medium shadow-sm">
                 Cancelar
             </button>
-            <button type="button" id="AddNew" class="flex-1 px-4 py-2 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold transition duration-200">
-                Añadir Participante
+            <button type="button" id="AddNew" class="flex-1 px-4 py-3 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold transition duration-200 shadow-md">
+                Añadir a la Lista
             </button>
         </div>
     </div>
@@ -360,6 +350,78 @@
         if (e.target.id === 'miniModalParticipante') {
             cerrarMiniModal();
         }
+    });
+
+    // ============================================================================
+    // FUNCIÓN PARA BUSCAR FELIGRÉS POR DOCUMENTO
+    // ============================================================================
+    $(document).on('click', '#BuscarUser', function() {
+        const tipoDoc = $('#tipo-doc').val();
+        const numeroDoc = $('#numero-doc').val();
+
+        // Validar que haya escrito algo antes de buscar
+        if (!tipoDoc || !numeroDoc) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'Por favor, selecciona el tipo de documento y escribe el número antes de buscar.',
+                confirmButtonColor: '#D0B8A8'
+            });
+            return;
+        }
+
+        const btn = $(this);
+        const iconOriginal = btn.html();
+        // Cambiar el ícono por un texto de carga temporal
+        btn.prop('disabled', true).html('<span class="text-white font-bold">...</span>'); 
+
+        $.ajax({
+            url: '?route=sacramentos/buscar-usuario',
+            method: 'POST',
+            data: {
+                tipoDoc: tipoDoc,
+                numeroDoc: numeroDoc
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Si lo encuentra, llenamos los campos automáticamente
+                    $('#primerNombre').val(response.data.primer_nombre).removeClass('border-red-500');
+                    $('#segundoNombre').val(response.data.segundo_nombre || '');
+                    $('#primerApellido').val(response.data.primer_apellido).removeClass('border-red-500');
+                    $('#segundoApellido').val(response.data.segundo_apellido || '');
+                    
+                    // Ocultamos el mensaje de que no existe
+                    $('#feligresNoExiste').addClass('hidden');
+                    
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Feligrés encontrado'
+                    });
+                } else {
+                    // Si no existe, limpiamos los campos para que los llene manualmente
+                    $('#primerNombre').val('');
+                    $('#segundoNombre').val('');
+                    $('#primerApellido').val('');
+                    $('#segundoApellido').val('');
+                    
+                    // Mostramos la alerta naranja
+                    $('#feligresNoExiste').removeClass('hidden');
+                }
+            },
+            error: function(xhr) {
+                console.error("Error en la búsqueda:", xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error de servidor',
+                    text: 'Hubo un problema de conexión al intentar buscar el feligrés.'
+                });
+            },
+            complete: function() {
+                // Restaurar el botón a su estado normal
+                btn.prop('disabled', false).html(iconOriginal);
+            }
+        });
     });
 
     // Función para cerrar mini-modal y limpiar campos

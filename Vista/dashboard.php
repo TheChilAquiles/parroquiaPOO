@@ -1,4 +1,3 @@
-
 <div class="bg-gradient-to-br from-[#F9F5F3] to-[#F4EBE7] min-h-screen">
     <!-- Header Superior -->
     <header class="bg-gradient-to-r from-[#8D7B68] to-[#6b5d4f] text-white shadow-xl">
@@ -219,7 +218,8 @@
 
 
 
-    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         // Configuración global de Chart.js
         Chart.defaults.font.family = 'Inter, sans-serif';
@@ -233,311 +233,77 @@
         function actualizarFecha() {
             const ahora = new Date();
             document.getElementById('fechaHora').textContent = ahora.toLocaleString('es-ES', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
             });
         }
         actualizarFecha();
         setInterval(actualizarFecha, 60000);
 
-        // Configuraciones de animación
-        const animationConfig = {
-            duration: 1500,
-            easing: 'easeInOutCubic'
-        };
+        const animationConfig = { duration: 1500, easing: 'easeInOutCubic' };
 
-        // Gráfico de Mis Certificados
-        new Chart(document.getElementById('graficoCertificados'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Aprobados', 'Pendientes', 'Rechazados'],
-                datasets: [{
-                    data: [
-                        <?= (int) ($estadisticas['certificados']['aprobados'] ?? 0) ?>,
-                        <?= (int) ($estadisticas['certificados']['pendientes'] ?? 0) ?>,
-                        <?= (int) ($estadisticas['certificados']['rechazados'] ?? 0) ?>
-                    ],
-                    backgroundColor: ['#10B981', '#8D7B68', '#EF4444'],
-                    borderWidth: 3,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                cutout: '60%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            usePointStyle: true,
-                            font: { size: 13 }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8,
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Gráfico de Pagos
-        new Chart(document.getElementById('graficoPagos'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Completos', 'Cancelados', 'Pendientes'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['pagos']['completos'] ?>, <?= (int) $estadisticas['pagos']['cancelados'] ?>, <?= (int) $estadisticas['pagos']['pendientes'] ?>],
-                    backgroundColor: ['#10B981', '#EF4444', '#8D7B68'],
-                    borderWidth: 3,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                cutout: '50%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 15,
-                            usePointStyle: true,
-                            font: { size: 13 }
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8,
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                return `${label}: ${value} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        // Animaciones de entrada
-            type: 'bar',
-            data: {
-                labels: ['Usuarios', 'Roles', 'Feligreses'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['usuarios']['total'] ?>, <?= (int) $estadisticas['usuarios']['roles'] ?>, <?= (int) $estadisticas['usuarios']['feligreses'] ?>],
-                    backgroundColor: ['#8D7B68', '#D0B8A8', '#C8B6A6'],
-                    borderRadius: 8,
-                    borderSkipped: false,
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        borderColor: '#374151',
-                        borderWidth: 1,
-                        cornerRadius: 8
-                    }
+        // ==========================================
+        // GRÁFICO 1: MIS CERTIFICADOS
+        // ==========================================
+        const ctxCertificados = document.getElementById('graficoCertificados');
+        if (ctxCertificados) {
+            new Chart(ctxCertificados, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aprobados', 'Pendientes', 'Rechazados'],
+                    datasets: [{
+                        // Usamos ?? 0 para evitar errores de sintaxis si PHP falla
+                        data: [
+                            <?= (int) ($estadisticas['certificados']['aprobados'] ?? 0) ?>,
+                            <?= (int) ($estadisticas['certificados']['pendientes'] ?? 0) ?>,
+                            <?= (int) ($estadisticas['certificados']['rechazados'] ?? 0) ?>
+                        ],
+                        backgroundColor: ['#10B981', '#8D7B68', '#EF4444'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#F3F4F6' },
-                        ticks: { color: '#6B7280' }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#6B7280' }
+                options: {
+                    animation: animationConfig,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 13 } } }
                     }
                 }
-            }
-        });
+            });
+        }
 
-        // Gráfico de Libros
-        new Chart(document.getElementById('graficoLibros'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Total', 'Tipos', 'Registros'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['libros']['total'] ?>, <?= (int) $estadisticas['libros']['tipos'] ?>, <?= (int) $estadisticas['libros']['registros'] ?>],
-                    backgroundColor: ['#8D7B68', '#D0B8A8', '#C8B6A6'],
-                    borderWidth: 3,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                cutout: '60%',
-                plugins: {
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8
-                    }
-                }
-            }
-        });
-
-        // Gráfico de Documentos
-        new Chart(document.getElementById('graficoDocumento'), {
-            type: 'pie',
-            data: {
-                labels: ['Tipos de Documento', 'Total Documentos'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['documentos']['tipos'] ?>, <?= (int) $estadisticas['documentos']['total'] ?>],
-                    backgroundColor: ['#8D7B68', '#D0B8A8'],
-                    borderWidth: 3,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                plugins: {
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8
-                    }
-                }
-            }
-        });
-
-        // Gráfico de Reportes
-        new Chart(document.getElementById('graficoReportes'), {
-            type: 'bar',
-            data: {
-                labels: ['Total Reportes', 'Categorías'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['reportes']['total'] ?>, <?= (int) $estadisticas['reportes']['categorias'] ?>],
-                    backgroundColor: ['#8D7B68', '#C8B6A6'],
-                    borderRadius: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8
-                    }
+        // ==========================================
+        // GRÁFICO 2: ESTADOS DE PAGOS
+        // ==========================================
+        const ctxPagos = document.getElementById('graficoPagos');
+        if (ctxPagos) {
+            new Chart(ctxPagos, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completos', 'Cancelados', 'Pendientes'],
+                    datasets: [{
+                        data: [
+                            <?= (int) ($estadisticas['pagos']['completos'] ?? 0) ?>, 
+                            <?= (int) ($estadisticas['pagos']['cancelados'] ?? 0) ?>, 
+                            <?= (int) ($estadisticas['pagos']['pendientes'] ?? 0) ?>
+                        ],
+                        backgroundColor: ['#10B981', '#EF4444', '#8D7B68'],
+                        borderWidth: 3,
+                        borderColor: '#ffffff'
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#F3F4F6' },
-                        ticks: { color: '#6B7280' }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#6B7280' }
+                options: {
+                    animation: animationConfig,
+                    cutout: '50%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, font: { size: 13 } } }
                     }
                 }
-            }
-        });
+            });
+        }
 
-        // Gráfico de Pagos
-        new Chart(document.getElementById('graficoPagos'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Completos', 'Cancelados', 'Pendientes'],
-                datasets: [{
-                    data: [<?= (int) $estadisticas['pagos']['completos'] ?>, <?= (int) $estadisticas['pagos']['cancelados'] ?>, <?= (int) $estadisticas['pagos']['pendientes'] ?>],
-                    backgroundColor: ['#10B981', '#EF4444', '#8D7B68'],
-                    borderWidth: 3,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                cutout: '50%',
-                plugins: {
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8
-                    }
-                }
-            }
-        });
-
-        // Gráfico General
-        new Chart(document.getElementById('graficoGeneral'), {
-            type: 'radar',
-            data: {
-                labels: ['Usuarios', 'Libros', 'Documentos', 'Reportes', 'Pagos', 'Contactos'],
-                datasets: [{
-                    label: 'Actividad General',
-                    data: [
-                        <?= (int) $estadisticas['usuarios']['total'] ?>,
-                        <?= (int) $estadisticas['libros']['total'] ?>,
-                        <?= (int) $estadisticas['documentos']['total'] ?>,
-                        <?= (int) $estadisticas['reportes']['total'] ?>,
-                        <?= (int) $estadisticas['pagos']['total'] ?>,
-                        <?= (int) $estadisticas['contactos']['total'] ?>
-                    ],
-                    backgroundColor: 'rgba(141, 123, 104, 0.1)',
-                    borderColor: '#8D7B68',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#8D7B68',
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6
-                }]
-            },
-            options: {
-                animation: animationConfig,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#fff',
-                        bodyColor: '#fff',
-                        cornerRadius: 8
-                    }
-                },
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        grid: { color: '#F3F4F6' },
-                        ticks: { color: '#6B7280', display: false },
-                        pointLabels: { color: '#6B7280', font: { size: 12 } }
-                    }
-                }
-            }
-        });
-
-        // Animaciones de entrada
+        // Animaciones de entrada de las tarjetas (fade-in)
         const fadeElements = document.querySelectorAll('.fade-in');
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -547,79 +313,38 @@
                 }
             });
         }, { threshold: 0.1 });
-
         fadeElements.forEach(el => observer.observe(el));
 
-        // Efectos adicionales
+        // Animación de los números contadores
         document.addEventListener('DOMContentLoaded', function () {
-            // Contador animado para números grandes
-            // Contador animado para números grandes optimizado con requestAnimationFrame
             function animateCounter(element, target, duration = 2000) {
                 const startTimestamp = performance.now();
                 const startValue = 0;
-                
                 function step(currentTime) {
                     const elapsed = currentTime - startTimestamp;
                     const progress = Math.min(elapsed / duration, 1);
-                    
-                    // Función de easing suave (easeOutQuart)
                     const ease = 1 - Math.pow(1 - progress, 4);
-                    
                     const current = Math.floor(startValue + (target - startValue) * ease);
                     element.textContent = current;
-    
                     if (progress < 1) {
                         window.requestAnimationFrame(step);
                     } else {
-                        element.textContent = target; // Asegurar valor final exacto
+                        element.textContent = target; 
                     }
                 }
-                
                 window.requestAnimationFrame(step);
             }
 
-            // Animar contadores principales
             const counters = document.querySelectorAll('.stat-number');
             counters.forEach(counter => {
-                const target = parseInt(counter.textContent);
+                const target = parseInt(counter.textContent) || 0;
                 if (target > 0) {
                     counter.textContent = '0';
                     setTimeout(() => animateCounter(counter, target), 500);
                 }
-            });
-
-            // Tooltip para gráficos
-            const chartContainers = document.querySelectorAll('.chart-container');
-            chartContainers.forEach(container => {
-                container.addEventListener('mouseenter', function () {
-                    this.style.transform = 'scale(1.02)';
-                    this.style.transition = 'transform 0.3s ease';
-                });
-
-                container.addEventListener('mouseleave', function () {
-                    this.style.transform = 'scale(1)';
-                });
-            });
-        });
-
-        // Manejo de errores para gráficos
-        window.addEventListener('error', function (e) {
-            if (e.target.tagName === 'CANVAS') {
-                console.error('Error en gráfico:', e);
-                e.target.parentElement.innerHTML =
-                    '<div class="flex items-center justify-center h-full text-gray-400">' +
-                    '<i class="fas fa-exclamation-triangle mr-2"></i>Error al cargar gráfico</div>';
-            }
-        });
-
-        // Responsive behavior
-        window.addEventListener('resize', function () {
-            Chart.instances.forEach(chart => {
-                chart.resize();
             });
         });
 
         console.log('Dashboard Parroquia inicializado correctamente ✅');
     </script>
 </div>
-
