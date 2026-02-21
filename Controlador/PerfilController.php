@@ -1,7 +1,4 @@
 <?php
-// ============================================================================
-// PerfilController.php
-// ============================================================================
 
 class PerfilController extends BaseController
 {
@@ -10,208 +7,179 @@ class PerfilController extends BaseController
 
     public function __construct()
     {
-        $this->modeloFeligres = new ModeloFeligres(); // ✅
-        $this->modeloUsuario = new ModeloUsuario();
+        $this->modeloFeligres = new ModeloFeligres();
+        $this->modeloUsuario  = new ModeloUsuario();
     }
+
+    // ================= MOSTRAR PERFIL =================
 
     public function mostrar()
     {
-        // Verificar autenticación pero permitir perfil incompleto
         $this->requiereAutenticacion(true);
 
-        // Obtener datos del feligrés actual si existen
-        $feligres = $this->modeloFeligres->mdlObtenerPorUsuarioId($_SESSION['user-id']);
+        $feligres = $this->modeloFeligres
+            ->mdlObtenerPorUsuarioId($_SESSION['user-id']);
 
         include_once __DIR__ . '/../Vista/datos-personales.php';
     }
 
-    public function buscar()
-    {
-        try {
-            // Verificar autenticación pero permitir perfil incompleto
-            $this->requiereAutenticacion(true);
-
-            Logger::info("Búsqueda de feligrés iniciada", [
-                'user_id' => $_SESSION['user-id'] ?? 'unknown',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
-
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                $this->mostrar();
-                return;
-            }
-
-            $tipoDoc = $_POST['tipoDocumento'] ?? null;
-            $numeroDoc = $_POST['numeroDocumento'] ?? null;
-
-            if (empty($tipoDoc) || empty($numeroDoc)) {
-                Logger::warning("Búsqueda de feligrés: campos vacíos", [
-                    'user_id' => $_SESSION['user-id'],
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
-                $_SESSION['error'] = 'Tipo y número de documento son requeridos.';
-                $this->mostrar();
-                return;
-            }
-
-            $feligres = $this->modeloFeligres->mdlConsultarFeligres($tipoDoc, $numeroDoc);
-
-            if ($feligres === false) {
-                Logger::warning("Feligrés no encontrado", [
-                    'user_id' => $_SESSION['user-id'],
-                    'tipo_doc' => $tipoDoc,
-                    'numero_doc_prefix' => substr($numeroDoc, 0, 3) . '***'
-                ]);
-                $_SESSION['error'] = 'No se encontró un feligrés con estos datos. Puedes registrarte llenando el formulario.';
-                $this->mostrar();
-                return;
-            }
-
-            Logger::info("Feligrés encontrado exitosamente", [
-                'user_id' => $_SESSION['user-id'],
-                'feligres_id' => $feligres['id'] ?? 'unknown',
-                'tipo_doc' => $tipoDoc,
-                'numero_doc_prefix' => substr($numeroDoc, 0, 3) . '***'
-            ]);
-
-            $_SESSION['feligres_temporal'] = $feligres;
-            include_once __DIR__ . '/../Vista/datos-personales.php';
-
-        } catch (Exception $e) {
-            Logger::error("Error crítico en búsqueda de feligrés", [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => $_SESSION['user-id'] ?? 'unknown',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
-            $_SESSION['error'] = 'Error al buscar tus datos. Por favor, intenta de nuevo.';
-            $this->mostrar();
-        }
-    }
+    // ================= ACTUALIZAR PERFIL =================
 
     public function actualizar()
     {
         try {
-            // Verificar autenticación pero permitir perfil incompleto
-            $this->requiereAutenticacion(true);
 
-            Logger::info("Actualización de perfil iniciada", [
-                'user_id' => $_SESSION['user-id'],
-                'datos_completos_previo' => $_SESSION['user-datos'] ?? false,
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
+            $this->requiereAutenticacion(true);
 
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 $this->mostrar();
                 return;
             }
 
+            // ================= CAPTURAR DATOS =================
+
             $datosFeligres = [
-                'idUser' => $_SESSION['user-id'],
-                'tipo-doc' => $_POST['tipoDocumento'] ?? null,
-                'documento' => $_POST['numeroDocumento'] ?? null,
-                'primer-nombre' => $_POST['primerNombre'] ?? null,
-                'segundo-nombre' => $_POST['segundoNombre'] ?? '',
-                'primer-apellido' => $_POST['primerApellido'] ?? null,
-                'segundo-apellido' => $_POST['segundoApellido'] ?? '',
-                'fecha-nacimiento' => $_POST['fechaNacimiento'] ?? null,
-                'telefono' => $_POST['telefono'] ?? '',
-                'direccion' => $_POST['direccion'] ?? null,
+                'idUser'            => $_SESSION['user-id'],
+                'tipo-doc'          => $_POST['tipoDocumento'] ?? null,
+                'documento'         => trim($_POST['numeroDocumento'] ?? ''),
+                'primer-nombre'     => trim($_POST['primerNombre'] ?? ''),
+                'segundo-nombre'    => trim($_POST['segundoNombre'] ?? ''),
+                'primer-apellido'   => trim($_POST['primerApellido'] ?? ''),
+                'segundo-apellido'  => trim($_POST['segundoApellido'] ?? ''),
+                'fecha-nacimiento'  => $_POST['fechaNacimiento'] ?? null,
+                'telefono'          => trim($_POST['telefono'] ?? ''),
+                'direccion'         => trim($_POST['direccion'] ?? ''),
             ];
 
-            // Validar campos requeridos
-            if (empty($datosFeligres['tipo-doc']) || empty($datosFeligres['documento']) ||
-                empty($datosFeligres['primer-nombre']) || empty($datosFeligres['primer-apellido']) ||
-                empty($datosFeligres['fecha-nacimiento']) || empty($datosFeligres['direccion'])) {
+            // ================= VALIDAR CAMPOS REQUERIDOS =================
 
-                Logger::warning("Actualización de perfil fallida: campos requeridos vacíos", [
-                    'user_id' => $_SESSION['user-id'],
-                    'campos_faltantes' => array_keys(array_filter($datosFeligres, function($val) {
-                        return empty($val);
-                    }))
-                ]);
-
+            if (
+                empty($datosFeligres['tipo-doc']) ||
+                empty($datosFeligres['documento']) ||
+                empty($datosFeligres['primer-nombre']) ||
+                empty($datosFeligres['primer-apellido']) ||
+                empty($datosFeligres['fecha-nacimiento']) ||
+                empty($datosFeligres['direccion'])
+            ) {
                 $_SESSION['error'] = 'Completa todos los campos requeridos.';
                 $this->mostrar();
                 return;
             }
 
-            // Crear o actualizar feligres
-            $esNuevo = ($_SESSION['user-datos'] == false);
+            // ================= VALIDAR SOLO LETRAS =================
 
-            if ($esNuevo) {
-                Logger::info("Creando nuevo perfil de feligrés", [
-                    'user_id' => $_SESSION['user-id'],
-                    'tipo_doc' => $datosFeligres['tipo-doc'],
-                    'numero_doc_prefix' => substr($datosFeligres['documento'], 0, 3) . '***'
-                ]);
-                $status = $this->modeloFeligres->mdlCrearFeligres($datosFeligres);
-            } else {
-                Logger::info("Actualizando perfil de feligrés existente", [
-                    'user_id' => $_SESSION['user-id'],
-                    'tipo_doc' => $datosFeligres['tipo-doc'],
-                    'numero_doc_prefix' => substr($datosFeligres['documento'], 0, 3) . '***'
-                ]);
-                
-                // Obtener ID del feligrés por usuario_id para asegurar que actualizamos el correcto
-                $feligres = $this->modeloFeligres->mdlObtenerPorUsuarioId($_SESSION['user-id']);
-                
-                if ($feligres) {
-                    $datosFeligres['id'] = $feligres['id'];
-                    $status = $this->modeloFeligres->mdlUpdateFeligres($datosFeligres);
-                } else {
-                     // Si dice que tiene datos completos pero no encontramos feligrés, crearlo.
-                     // Esto corrige inconsistencias de datos antiguos
-                     $status = $this->modeloFeligres->mdlCrearFeligres($datosFeligres);
+            $regexSoloLetras = '/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/u';
+
+            // Primer nombre
+            if (!preg_match($regexSoloLetras, $datosFeligres['primer-nombre'])) {
+                $_SESSION['error'] = 'El primer nombre solo puede contener letras.';
+                $this->mostrar();
+                return;
+            }
+
+            // Segundo nombre (opcional)
+            if (!empty($datosFeligres['segundo-nombre']) &&
+                !preg_match($regexSoloLetras, $datosFeligres['segundo-nombre'])) {
+                $_SESSION['error'] = 'El segundo nombre solo puede contener letras.';
+                $this->mostrar();
+                return;
+            }
+
+            // Primer apellido
+            if (!preg_match($regexSoloLetras, $datosFeligres['primer-apellido'])) {
+                $_SESSION['error'] = 'El primer apellido solo puede contener letras.';
+                $this->mostrar();
+                return;
+            }
+
+            // Segundo apellido (opcional)
+            if (!empty($datosFeligres['segundo-apellido']) &&
+                !preg_match($regexSoloLetras, $datosFeligres['segundo-apellido'])) {
+                $_SESSION['error'] = 'El segundo apellido solo puede contener letras.';
+                $this->mostrar();
+                return;
+            }
+
+            // ================= VALIDAR TELÉFONO =================
+
+            if (!empty($datosFeligres['telefono'])) {
+
+                if (!ctype_digit($datosFeligres['telefono'])) {
+                    $_SESSION['error'] = 'El teléfono solo puede contener números.';
+                    $this->mostrar();
+                    return;
+                }
+
+                if (strlen($datosFeligres['telefono']) < 7) {
+                    $_SESSION['error'] = 'El teléfono debe tener mínimo 7 dígitos.';
+                    $this->mostrar();
+                    return;
                 }
             }
 
+            // ================= VALIDAR FECHA =================
+
+            $fechaNacimiento = $datosFeligres['fecha-nacimiento'];
+            $fechaActual     = date('Y-m-d');
+            $fechaMinima     = '1900-01-01';
+
+            if ($fechaNacimiento > $fechaActual) {
+                $_SESSION['error'] = 'La fecha no puede ser futura.';
+                $this->mostrar();
+                return;
+            }
+
+            if ($fechaNacimiento < $fechaMinima) {
+                $_SESSION['error'] = 'La fecha no es válida.';
+                $this->mostrar();
+                return;
+            }
+
+            $edad = date_diff(
+                date_create($fechaNacimiento),
+                date_create($fechaActual)
+            )->y;
+
+            if ($edad > 120) {
+                $_SESSION['error'] = 'La fecha no es válida.';
+                $this->mostrar();
+                return;
+            }
+
+            // ================= GUARDAR =================
+
+            $feligresExistente = $this->modeloFeligres
+                ->mdlObtenerPorUsuarioId($_SESSION['user-id']);
+
+            if ($feligresExistente) {
+                $datosFeligres['id'] = $feligresExistente['id'];
+                $status = $this->modeloFeligres
+                    ->mdlUpdateFeligres($datosFeligres);
+            } else {
+                $status = $this->modeloFeligres
+                    ->mdlCrearFeligres($datosFeligres);
+            }
+
             if ($status['status'] === 'error') {
-                Logger::error("Error al actualizar/crear perfil de feligrés", [
-                    'user_id' => $_SESSION['user-id'],
-                    'es_nuevo' => $esNuevo,
-                    'error' => $status['message']
-                ]);
                 $_SESSION['error'] = $status['message'];
                 $this->mostrar();
                 return;
             }
 
-            // Actualizar el campo datos_completos en la tabla usuarios
-            $actualizado = $this->modeloUsuario->mdlMarcarDatosCompletos($_SESSION['user-id']);
+            // ================= ACTUALIZAR USUARIO =================
 
-            if ($actualizado) {
-                $_SESSION['user-datos'] = true;
-                $_SESSION['success'] = 'Datos actualizados correctamente.';
+            $this->modeloUsuario
+                ->mdlMarcarDatosCompletos($_SESSION['user-id']);
 
-                Logger::info("Perfil actualizado exitosamente", [
-                    'user_id' => $_SESSION['user-id'],
-                    'feligres_id' => $status['id'] ?? 'unknown',
-                    'es_nuevo' => $esNuevo,
-                    'datos_completos_actualizado' => true
-                ]);
-            } else {
-                // Aun así marcamos la sesión como completa
-                $_SESSION['user-datos'] = true;
-                $_SESSION['success'] = 'Datos actualizados correctamente.';
-
-                Logger::warning("No se pudo actualizar datos_completos en BD pero se marcó en sesión", [
-                    'usuario_id' => $_SESSION['user-id'],
-                    'feligres_id' => $status['id'] ?? 'unknown'
-                ]);
-            }
+            $_SESSION['user-datos'] = true;
+            $_SESSION['success']    = 'Datos actualizados correctamente.';
 
             header('Location: ?route=dashboard');
             exit();
 
         } catch (Exception $e) {
-            Logger::error("Error crítico en actualización de perfil", [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'user_id' => $_SESSION['user-id'] ?? 'unknown',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
-            $_SESSION['error'] = 'Error al actualizar tus datos. Por favor, intenta de nuevo.';
+
+            $_SESSION['error'] = 'Error al actualizar tus datos.';
             $this->mostrar();
         }
     }

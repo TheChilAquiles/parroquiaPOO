@@ -367,6 +367,7 @@ class Router
             'login',
             'login/procesar',
             'registro',
+            'registro/exito',
             'registro/procesar',
             'contacto',
             'informacion',
