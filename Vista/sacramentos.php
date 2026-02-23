@@ -9,7 +9,7 @@
         </div>
 
         <button id="addRecord"
-                class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+            class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
             <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
@@ -71,60 +71,60 @@
 
 
 
-            <!-- inputs de navegacion  -->
-            <input type="hidden" name="Tipo" value="<?= $tipo ?>">
-            <input type="hidden" name="Numero" value="<?= $numeroLibro ?>">
-            <!-- Fin inputs de navegacion  -->
+                    <!-- inputs de navegacion  -->
+                    <input type="hidden" name="Tipo" value="<?= $tipo ?>">
+                    <input type="hidden" name="Numero" value="<?= $numeroLibro ?>">
+                    <!-- Fin inputs de navegacion  -->
 
-            <input type="hidden" name="id" id="id" />
-            <input type="hidden" name="Doaction" id="Doaction" value="" />
+                    <input type="hidden" name="id" id="id" />
+                    <input type="hidden" name="Doaction" id="Doaction" value="" />
 
 
 
-            <!-- inicio campos Inputs  -->
+                    <!-- inicio campos Inputs  -->
 
-            <div id="Form1">
-                <div>
-                    <div class=" text-center text-lg font-bold my-4">
-                        Fecha Evento
-                    </div>
-                    <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
-                    <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
-                </div>
-            </div>
-
-            <div id="Form2" class="hidden py-4">
-
-                <div class="border border-[#D0B8A8] rounded-lg p-4">
-
-                    <div class="text-center text-lg font-bold my-2 text-gray-800">
-                        Participantes del Sacramento
-                    </div>
-
-                    <ul id="contenedor-integrantes" class="my-4">
-
-                        <li id="integranteVacio">
-                            <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
-                                <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
+                    <div id="Form1">
+                        <div>
+                            <div class=" text-center text-lg font-bold my-4">
+                                Fecha Evento
                             </div>
-                        </li>
+                            <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
+                            <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                        </div>
+                    </div>
 
-                        <!-- Aquí se mostrarán los integrantes -->
-                    </ul>
+                    <div id="Form2" class="hidden py-4">
 
-                    <button type="button" id="btnAbrirModalParticipante"
-                            class="w-full bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold py-3 cursor-pointer transition duration-200 flex items-center justify-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Añadir Participante
-                    </button>
-                </div>
+                        <div class="border border-[#D0B8A8] rounded-lg p-4">
 
-            </div>
+                            <div class="text-center text-lg font-bold my-2 text-gray-800">
+                                Participantes del Sacramento
+                            </div>
+
+                            <ul id="contenedor-integrantes" class="my-4">
+
+                                <li id="integranteVacio">
+                                    <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
+                                        <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
+                                    </div>
+                                </li>
+
+                                <!-- Aquí se mostrarán los integrantes -->
+                            </ul>
+
+                            <button type="button" id="btnAbrirModalParticipante"
+                                class="w-full bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded-lg font-bold py-3 cursor-pointer transition duration-200 flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Añadir Participante
+                            </button>
+                        </div>
+
+                    </div>
 
 
-            <!-- Eliminado todo el contenido del formulario de añadir participante que ahora estará en el mini-modal -->
+                    <!-- Eliminado todo el contenido del formulario de añadir participante que ahora estará en el mini-modal -->
 
                 </div> <!-- Cierre de space-y-5 -->
             </div> <!-- Cierre de overflow-y-auto -->
@@ -132,15 +132,15 @@
             <!-- Botones fijos en la parte inferior -->
             <div class="flex flex-wrap gap-3 px-6 py-4 border-t border-gray-200 bg-white">
                 <button type="button" id="Anterior"
-                        class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium hidden">
+                    class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200 font-medium hidden">
                     ← Anterior
                 </button>
                 <button type="button" id="Siguiente"
-                        class="flex-1 px-6 py-2.5 bg-[#D0B8A8] text-white rounded-lg hover:bg-[#ab876f] transition duration-200 font-medium">
+                    class="flex-1 px-6 py-2.5 bg-[#D0B8A8] text-white rounded-lg hover:bg-[#ab876f] transition duration-200 font-medium">
                     Siguiente →
                 </button>
                 <button type="submit" id="Guardar"
-                        class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-2.5 rounded-lg shadow-md font-semibold transition duration-200 hidden">
+                    class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-2.5 rounded-lg shadow-md font-semibold transition duration-200 hidden">
                     <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
@@ -152,7 +152,7 @@
 </div>
 
 <!-- Mini-Modal para añadir participante -->
-<div id="miniModalParticipante" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] hidden">
+<div id="miniModalParticipante" class="modal fixed inset-0  flex items-center justify-center z-[60] hidden">
     <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         <div class="px-6 py-4 bg-gradient-to-r from-[#D0B8A8] to-[#ab876f]">
             <div class="flex justify-between items-center">
@@ -167,16 +167,18 @@
 
         <div class="overflow-y-auto flex-1 p-6">
             <div class="space-y-5">
-                
+
                 <div id="feligresNoExiste" class="text-center text-orange-700 font-medium bg-orange-50 border border-orange-200 rounded-lg p-3 hidden shadow-sm flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                     <span>Feligrés no encontrado. Por favor, escriba sus nombres manualmente.</span>
                 </div>
 
                 <div class="border border-gray-200 rounded-xl p-5 shadow-sm bg-white">
-                    
+
                     <h4 class="font-bold text-gray-800 mb-4 border-b pb-2 text-lg">1. Identificación</h4>
-                    
+
                     <div class="flex flex-wrap md:flex-nowrap gap-3 items-end mb-6 bg-[#F9F6F4] p-4 rounded-lg border border-[#E6D5CC]">
                         <div class="flex-1 min-w-[150px]">
                             <label for="tipo-doc" class="block text-sm font-bold text-gray-700 mb-1">Tipo Documento</label>
@@ -194,7 +196,7 @@
                         <div class="flex-1 min-w-[150px]">
                             <label for="numero-doc" class="block text-sm font-bold text-gray-700 mb-1">Número</label>
                             <input type="text" id="numero-doc" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none bg-white transition"
-                                    placeholder="Ej: 1002345678" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                placeholder="Ej: 1002345678" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
 
                         <button type="button" id="BuscarUser" class="p-2.5 px-4 rounded-lg bg-[#ab876f] hover:bg-[#8D7B68] text-white flex items-center justify-center transition shadow-md h-[46px]" title="Autocompletar datos si ya existe">
@@ -206,7 +208,7 @@
                     </div>
 
                     <h4 class="font-bold text-gray-800 mb-4 border-b pb-2 text-lg">2. Información Personal</h4>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="primerNombre" class="block text-sm font-medium mb-1 text-gray-700">Primer Nombre *</label>
@@ -292,7 +294,7 @@
     const rolesObligatorios = (() => {
         const tipo = <?php echo json_encode($tipo); ?>;
 
-        switch(tipo) {
+        switch (tipo) {
             case 1: // Bautizos
                 return ['Bautizado', 'Padrino', 'Madrina'];
             case 2: // Confirmaciones
@@ -373,7 +375,7 @@
         const btn = $(this);
         const iconOriginal = btn.html();
         // Cambiar el ícono por un texto de carga temporal
-        btn.prop('disabled', true).html('<span class="text-white font-bold">...</span>'); 
+        btn.prop('disabled', true).html('<span class="text-white font-bold">...</span>');
 
         $.ajax({
             url: '?route=sacramentos/buscar-usuario',
@@ -390,13 +392,16 @@
                     $('#segundoNombre').val(response.data.segundo_nombre || '');
                     $('#primerApellido').val(response.data.primer_apellido).removeClass('border-red-500');
                     $('#segundoApellido').val(response.data.segundo_apellido || '');
-                    
+
                     // Ocultamos el mensaje de que no existe
                     $('#feligresNoExiste').addClass('hidden');
-                    
-                    Toast.fire({
+
+                    Swal.fire({
                         icon: 'success',
-                        title: 'Feligrés encontrado'
+                        title: 'Feligrés encontrado',
+                        text: 'Datos autocompletados',
+                        showConfirmButton: false,
+                        timer: 1500 // Se cierra solo en 1.5 segundos
                     });
                 } else {
                     // Si no existe, limpiamos los campos para que los llene manualmente
@@ -404,7 +409,7 @@
                     $('#segundoNombre').val('');
                     $('#primerApellido').val('');
                     $('#segundoApellido').val('');
-                    
+
                     // Mostramos la alerta naranja
                     $('#feligresNoExiste').removeClass('hidden');
                 }
@@ -460,14 +465,14 @@
         // Nota: El número de documento puede no ser obligatorio si es un menor sin documento aún,
         // pero generalmente se pide. Asumiremos obligatorio si se selecciona tipo de documento.
         if (!rolParticipante || !primerNombre || !primerApellido) {
-            if(!primerNombre) resaltarCampo('#primerNombre');
-            if(!primerApellido) resaltarCampo('#primerApellido');
-            if(!rolParticipante) resaltarCampo('#rolParticipante');
-            
+            if (!primerNombre) resaltarCampo('#primerNombre');
+            if (!primerApellido) resaltarCampo('#primerApellido');
+            if (!rolParticipante) resaltarCampo('#rolParticipante');
+
             // Si hay tipo de documento pero no número, o viceversa
             if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
-                 resaltarCampo('#tipo-doc');
-                 resaltarCampo('#numero-doc');
+                resaltarCampo('#tipo-doc');
+                resaltarCampo('#numero-doc');
             }
 
             Swal.fire({
@@ -481,7 +486,7 @@
 
         // 2. Validar duplicados de Documento (si se ingresó documento)
         if (tipoDoc && numeroDoc) {
-             const existeDoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
+            const existeDoc = Array.from(document.querySelectorAll('#contenedor-integrantes li')).some(li => {
                 const tipo = li.querySelector('input[name$="[tipoDoc]"]')?.value;
                 const numero = li.querySelector('input[name$="[numeroDoc]"]')?.value;
                 return tipo == tipoDoc && numero == numeroDoc;
@@ -505,17 +510,17 @@
            pero validamos por seguridad del backend manual */
         const inputs = Array.from(document.querySelectorAll('#contenedor-integrantes input[name$="[rolParticipante]"]'));
         const inputEncontrado = inputs.find(input => input.value === rolParticipante);
-        
+
         // Roles que permiten multiples personas (ej: abuelos, padrinos si son varios)
         // Pero roles únicos como 'Bautizado', 'Padre', 'Madre' deben validarse.
         const rolesUnicos = ['1', '2', '3', '4', '5', '6', '7']; // IDs como strings
-        
-        if (inputEncontrado && rolesUnicos.includes(rolParticipante)) {
-             resaltarCampo('#rolParticipante');
-             const select = document.getElementById('rolParticipante');
-             const textoSeleccionado = select.options[select.selectedIndex].text;
 
-             Swal.fire({
+        if (inputEncontrado && rolesUnicos.includes(rolParticipante)) {
+            resaltarCampo('#rolParticipante');
+            const select = document.getElementById('rolParticipante');
+            const textoSeleccionado = select.options[select.selectedIndex].text;
+
+            Swal.fire({
                 icon: 'warning',
                 title: 'Rol duplicado',
                 text: `El rol "${textoSeleccionado}" ya ha sido añadido.`,
@@ -526,7 +531,7 @@
 
         // 4. Agregar a la lista
         contador++;
-        
+
         // Eliminar mensaje de "Vacio" si existe
         if ($('#integranteVacio').length) {
             $('#integranteVacio').remove();
@@ -540,7 +545,7 @@
             5: "Permiso Especial",
             6: "Numero Identificación Tributaria"
         };
-        
+
         // Colores para visualización
         const colores = {
             1: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -593,9 +598,11 @@
         actualizarOpcionesRol();
 
         // Mostrar mensaje de éxito
-        Toast.fire({
+        Swal.fire({
             icon: 'success',
-            title: 'Participante añadido'
+            title: 'Participante añadido',
+            showConfirmButton: false,
+            timer: 1500
         });
 
         // CERRAR EL MODAL AL FINALIZAR
@@ -608,9 +615,9 @@
         boton.closest('li').remove();
         // No decrementamos contador para evitar colisiones de índices si se borra uno intermedio.
         // Solo verificamos si quedó vacío.
-        
+
         if ($('#contenedor-integrantes li').length === 0) {
-             $('#contenedor-integrantes').html(`
+            $('#contenedor-integrantes').html(`
                 <li id="integranteVacio">
                     <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
                         <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
@@ -622,9 +629,11 @@
         // Actualizar opciones disponibles después de eliminar
         actualizarOpcionesRol();
 
-        Toast.fire({
+        Swal.fire({
             icon: 'info',
-            title: 'Participante eliminado'
+            title: 'Participante eliminado',
+            showConfirmButton: false,
+            timer: 1500
         });
     }
 
@@ -739,13 +748,17 @@
         $.ajax({
             url: '<?= url('sacramentos/obtener') ?>',
             type: 'POST',
-            data: { sacramento_id: sacramentoId },
+            data: {
+                sacramento_id: sacramentoId
+            },
             dataType: 'json',
             beforeSend: function() {
                 Swal.fire({
                     title: 'Cargando...',
                     allowOutsideClick: false,
-                    didOpen: () => { Swal.showLoading(); }
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
                 });
             },
             success: function(response) {
@@ -799,9 +812,17 @@
                 contador++;
 
                 const colores = {
-                    1: 'bg-blue-50', 2: 'bg-red-50', 3: 'bg-violet-50', 4: 'bg-yellow-50',
-                    5: 'bg-pink-50', 6: 'bg-indigo-50', 7: 'bg-lime-50', 8: 'bg-cyan-50',
-                    9: 'bg-emerald-50', 10: 'bg-violet-50', 11: 'bg-fuchsia-50'
+                    1: 'bg-blue-50',
+                    2: 'bg-red-50',
+                    3: 'bg-violet-50',
+                    4: 'bg-yellow-50',
+                    5: 'bg-pink-50',
+                    6: 'bg-indigo-50',
+                    7: 'bg-lime-50',
+                    8: 'bg-cyan-50',
+                    9: 'bg-emerald-50',
+                    10: 'bg-violet-50',
+                    11: 'bg-fuchsia-50'
                 };
 
                 const li = document.createElement('li');
@@ -1063,7 +1084,7 @@
     $(document).on('click', '.btn-generar-certificado', function() {
         const sacramentoId = $(this).data('sacramento-id');
         const tipo = $(this).data('tipo');
-        
+
         // Confirmación antes de generar
         Swal.fire({
             title: '¿Solicitar certificado?',
@@ -1125,21 +1146,24 @@
         let faltantes = rolesObligatorios.filter(rol => !rolesActuales.includes(rol));
 
         if (faltantes.length > 0) {
-
-
-
-            Toast.fire({
+            // Usamos Swal.fire en lugar de Toast para mostrar listas de errores
+            Swal.fire({
                 icon: "warning",
-                title: "\n Faltan los siguientes roles obligatorios:\n- " + faltantes.join("\n- "),
-                timer: 5000,
+                title: "Faltan Participantes",
+                html: `
+                    <p class="mb-3 text-gray-700">Para poder guardar este sacramento, debes agregar a las siguientes personas:</p>
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 inline-block text-left w-full">
+                        <ul class="list-disc list-inside text-orange-800 font-semibold space-y-1">
+                            <li>${faltantes.join('</li><li>')}</li>
+                        </ul>
+                    </div>
+                `,
+                confirmButtonColor: '#D0B8A8',
+                confirmButtonText: 'Entendido'
             });
-
-
- 
 
             return; // No se envía el formulario
         }
-
 
 
         var formData = $(this).serialize();
@@ -1148,7 +1172,7 @@
             url: "?route=sacramentos/crear",
             method: "POST",
             data: formData,
-            dataType: "json",  // Expect JSON explicitly
+            dataType: "json", // Expect JSON explicitly
             beforeSend: function() {
                 $('#Guardar').prop('disabled', true).text('Guardando...');
             },
@@ -1179,7 +1203,11 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error AJAX:', {xhr, status, error});
+                console.error('Error AJAX:', {
+                    xhr,
+                    status,
+                    error
+                });
 
                 let mensaje = 'Error al guardar el sacramento';
                 if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -1210,7 +1238,7 @@
      */
     function actualizarOpcionesRol() {
         const rolesSeleccionados = [];
-        
+
         // Obtener roles ya presentes en la lista
         $('#contenedor-integrantes li').each(function() {
             const rolInput = $(this).find('input[name$="[rolParticipante]"]');
@@ -1222,11 +1250,11 @@
         // Roles que solo pueden aparecer una vez
         // 1=Bautizado, 2=Confirmando, 3=Difunto, 4=Esposo, 5=Esposa, 
         // 6=Padre, 7=Madre, 8=Padrino, 9=Madrina 
-        const rolesUnicos = [1, 2, 3, 4, 5, 6, 7]; 
-        
+        const rolesUnicos = [1, 2, 3, 4, 5, 6, 7];
+
         $('#rolParticipante option').each(function() {
             const val = parseInt($(this).val());
-            
+
             if (rolesSeleccionados.includes(val) && rolesUnicos.includes(val)) {
                 $(this).prop('disabled', true);
                 if ($('#rolParticipante').val() == val) {

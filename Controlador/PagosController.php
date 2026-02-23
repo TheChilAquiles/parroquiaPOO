@@ -698,10 +698,14 @@ class PagosController extends BaseController
     }
 
     /**
-     * Registra un pago en efectivo (solo Secretario/Admin)
+     * Registra un pago en efectivo (solo Secretario/Admin) - VERSIÓN AJAX JSON
      */
     public function registrarPagoEfectivo()
     {
+        // 1. Limpiamos buffer y forzamos salida JSON para que AJAX no falle
+        if (ob_get_level()) ob_clean();
+        header('Content-Type: application/json');
+
         // Verificar que sea Secretario o Admin
         if (!isset($_SESSION['user-rol']) || !in_array($_SESSION['user-rol'], ['Secretario', 'Administrador'])) {
             Logger::warning("Intento de registrar pago en efectivo sin permisos", [
@@ -709,19 +713,17 @@ class PagosController extends BaseController
                 'rol' => $_SESSION['user-rol'] ?? 'none',
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
-            $_SESSION['error'] = 'No tiene permisos para realizar esta acción.';
-            redirect('dashboard');
-            
+            echo json_encode(['success' => false, 'message' => 'No tiene permisos para realizar esta acción.']);
             exit;
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ?route=pagos');
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
             exit;
         }
 
         $certificadoId = $_POST['certificado_id'] ?? null;
-        $valor = $_POST['valor'] ?? null;
+        $valor = $_POST['monto'] ?? $_POST['valor'] ?? null; // Aceptamos 'monto' que es lo que manda tu AJAX
 
         Logger::info("Intento de registrar pago en efectivo", [
             'user_id' => $_SESSION['user-id'] ?? 'guest',
@@ -736,8 +738,7 @@ class PagosController extends BaseController
                 'user_id' => $_SESSION['user-id'] ?? 'guest',
                 'certificado_id_recibido' => $certificadoId
             ]);
-            $_SESSION['error'] = 'ID de certificado inválido.';
-            header('Location: ?route=pagos');
+            echo json_encode(['success' => false, 'message' => 'ID de certificado inválido.']);
             exit;
         }
 
@@ -747,8 +748,7 @@ class PagosController extends BaseController
                 'certificado_id' => $certificadoId,
                 'valor_recibido' => $valor
             ]);
-            $_SESSION['error'] = 'Valor de pago inválido.';
-            header('Location: ?route=pagos');
+            echo json_encode(['success' => false, 'message' => 'Valor de pago inválido.']);
             exit;
         }
 
@@ -762,8 +762,7 @@ class PagosController extends BaseController
                     'certificado_id' => $certificadoId,
                     'estado' => $certificado['estado'] ?? 'no encontrado'
                 ]);
-                $_SESSION['error'] = 'Certificado no válido para pago.';
-                header('Location: ?route=pagos');
+                echo json_encode(['success' => false, 'message' => 'Certificado no válido para pago.']);
                 exit;
             }
 
@@ -790,21 +789,19 @@ class PagosController extends BaseController
                 ]);
 
                 if ($pdfGenerado) {
-                    $_SESSION['success'] = 'Pago en efectivo registrado. Certificado generado exitosamente.';
+                    echo json_encode(['success' => true, 'message' => 'Pago en efectivo registrado y Certificado generado exitosamente.']);
                 } else {
-                    $_SESSION['success'] = 'Pago registrado. Error al generar certificado (revisar logs).';
+                    echo json_encode(['success' => true, 'message' => 'Pago registrado. Hubo un error al generar el PDF (revisar logs).']);
                 }
-
-                header('Location: ?route=pagos');
                 exit;
+
             } else {
                 Logger::warning("Registro de pago en efectivo fallido", [
                     'user_id' => $_SESSION['user-id'] ?? 'guest',
                     'certificado_id' => $certificadoId,
                     'mensaje' => $resultadoPago['mensaje']
                 ]);
-                $_SESSION['error'] = 'Error al registrar el pago.';
-                header('Location: ?route=pagos');
+                echo json_encode(['success' => false, 'message' => 'Error al registrar el pago en BD.']);
                 exit;
             }
 
@@ -815,12 +812,10 @@ class PagosController extends BaseController
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            $_SESSION['error'] = 'Error al registrar el pago.';
-            header('Location: ?route=pagos');
+            echo json_encode(['success' => false, 'message' => 'Error crítico al registrar el pago.']);
             exit;
         }
     }
-
     /**
      * Muestra los pagos pendientes del feligrés autenticado
      */

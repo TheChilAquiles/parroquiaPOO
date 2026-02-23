@@ -192,81 +192,65 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
 <script>
 // Wait for DOM to be fully loaded before executing JavaScript
 $(document).ready(function() {
-    // Initialize DataTables on the certificates table (OOP: calling method on jQuery object)
+    // ============================================================================
+    // 1. INICIALIZACIÓN DE DATATABLES
+    // ============================================================================
     const table = $('#tablaCertificados').DataTable({
-        // AJAX configuration to fetch data from server
         ajax: '<?= url('certificados/listar-todos') ?>',
-        // Define table columns and their data sources
         columns: [
-            // Column 1: Certificate ID
             { data: 'id' },
-            // Column 2: Sacrament type name
             { data: 'tipo_sacramento' },
-            // Column 3: Parishioner info with custom rendering
             {
-                data: null, // Use multiple data fields
-                render: function(data) { // Custom render function
-                    // Return HTML with name and document info
+                data: null, 
+                render: function(data) { 
                     return data.nombre_feligres + '<br><small class="text-gray-500">' + data.tipo_documento + ': ' + data.numero_documento + '</small>';
                 }
             },
-            // Column 4: Document number
             { data: 'numero_documento' },
-            // Column 5: Requester name with fallback
             {
                 data: null,
                 render: function(data) {
-                    // Show requester name or placeholder if empty
                     return data.solicitante_nombre || '<span class="text-gray-400">Sin solicitante</span>';
                 }
             },
-            // Column 6: Status with colored badges
             {
                 data: 'estado',
-                render: function(estado) { // Custom render for status badges
-                    // Object with badge HTML for each status (OOP-like: object as data structure)
+                render: function(estado) { 
                     const badges = {
                         'pendiente_pago': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pendiente Pago</span>',
                         'pagado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Pagado</span>',
                         'generado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Generado</span>',
                         'entregado': '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#E8DFD5] text-[#8B6F47]">Entregado</span>'
                     };
-                    // Return badge HTML or plain text if status not found
                     return badges[estado] || estado;
                 }
             },
-            // Column 7: Request date formatted
             {
                 data: 'fecha_solicitud',
                 render: function(fecha) {
-                    // Format date to Colombian locale with time
                     return new Date(fecha).toLocaleString('es-CO');
                 }
             },
-            // Column 8: Action buttons
             {
                 data: null,
+                className: 'text-center',
                 render: function(data) {
-                    // Start building HTML string for buttons
                     let html = '<div class="flex gap-2 justify-center">';
 
-                    // Show "Receive Payment" button only if status is pending payment
+                    // Botón Recibir Pago (Usando clases y data-attributes en vez de onclick)
                     if (data.estado === 'pendiente_pago') {
-                         // Button to register cash payment (calls global function)
-                         html += `<button onclick="registrarPago(${data.id}, ${data.precio})" 
-                                    class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition flex items-center"
+                         html += `<button type="button" class="btn-recibir-pago px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded text-sm font-medium transition flex items-center"
+                                    data-id="${data.id}"
+                                    data-precio="${data.precio || 0}"
                                     title="Recibir Pago en Efectivo">
                                     <span class="material-icons text-sm mr-1">payments</span> Recibir Pago
                                 </button>`;
                     }
 
-                    // Show download button if PDF file exists
+                    // Botón Descargar PDF
                     if (data.ruta_archivo) {
-                        // Build download URL with query parameters
                         let downloadUrl = "<?= url('certificados/descargar') ?>";
-                        // Check if URL already has parameters
                         let separator = downloadUrl.includes('?') ? '&' : '?';
-                        // Add download link button
                         html += `<a href="${downloadUrl}${separator}id=${data.id}"
                                     class="px-3 py-1.5 bg-[#D0B8A8] hover:bg-[#ab876f] text-white rounded text-sm font-medium transition"
                                     title="Descargar PDF">
@@ -275,11 +259,11 @@ $(document).ready(function() {
                                     </svg>
                                 </a>`;
                     } else if (data.estado !== 'pendiente_pago') {
-                         // Show regenerate button if PDF missing and not pending payment
+                         // Botón Regenerar PDF (Usando clases y data-attributes en vez de onclick)
                          html += `<div class="flex flex-col items-center gap-1">
                                     <span class="text-xs text-red-400 font-medium">PDF no generado</span>
-                                    <button onclick="regenerarPDF(${data.id})" 
-                                            class="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded text-xs font-semibold transition flex items-center gap-1"
+                                    <button type="button" class="btn-regenerar-pdf px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded text-xs font-semibold transition flex items-center gap-1"
+                                            data-id="${data.id}"
                                             title="Intentar regenerar el archivo PDF">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                                         Regenerar
@@ -287,58 +271,48 @@ $(document).ready(function() {
                                 </div>`;
                     }
 
-                    // Close the flex container div
                     html += '</div>';
                     return html;
-                },
-                // Center align this column
-                className: 'text-center'
+                }
             }
         ],
-        // Spanish language configuration for DataTables interface
         language: {
-            "decimal": ",", // Decimal separator
-            "thousands": ".", // Thousands separator
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ certificados", // Info text
-            "infoEmpty": "Mostrando 0 a 0 de 0 certificados", // Empty table text
-            "infoFiltered": "(filtrado de _MAX_ certificados totales)", // Filtered text
-            "infoPostFix": "", // Text after info
-            "lengthMenu": "Mostrar _MENU_ certificados", // Length menu text
-            "loadingRecords": "Cargando...", // Loading text
-            "processing": "Procesando...", // Processing text
-            "search": "Buscar:", // Search label
-            "zeroRecords": "No se encontraron certificados", // No records text
-            // Pagination button texts
+            "decimal": ",",
+            "thousands": ".",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ certificados",
+            "infoEmpty": "Mostrando 0 a 0 de 0 certificados",
+            "infoFiltered": "(filtrado de _MAX_ certificados totales)",
+            "lengthMenu": "Mostrar _MENU_ certificados",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "No se encontraron certificados",
             "paginate": {
                 "first": "Primero",
                 "last": "Último",
                 "next": "Siguiente",
                 "previous": "Anterior"
-            },
-            // Accessibility labels
-            "aria": {
-                "sortAscending": ": activar para ordenar la columna de manera ascendente",
-                "sortDescending": ": activar para ordenar la columna de manera descendente"
             }
         },
-        // Default sorting: column 0 (ID) descending
         order: [[0, 'desc']],
-        // Show 25 rows per page by default
         pageLength: 25
     });
 
-    // Define global function to register cash payment
-    window.registrarPago = function(id, precio) {
-        // Format price to Colombian currency
+    // ============================================================================
+    // 2. MANEJO DE PAGOS DESDE DATATABLES (DELEGACIÓN DE EVENTOS)
+    // ============================================================================
+    $('#tablaCertificados tbody').on('click', '.btn-recibir-pago', function() {
+        const id = $(this).data('id');
+        const precio = parseFloat($(this).data('precio')) || 0;
+
         const precioFormateado = new Intl.NumberFormat('es-CO', { 
             style: 'currency', 
             currency: 'COP',
             minimumFractionDigits: 0
         }).format(precio);
 
-        // Show confirmation dialog with formatted price
         Swal.fire({
-            title: 'Registrar Pago en Efectivo', // Dialog title
+            title: 'Registrar Pago en Efectivo',
             html: `
                 <p class="mb-4">¿Confirmas recibir el pago por este certificado?</p>
                 <div class="bg-green-50 p-4 rounded-lg border border-green-200">
@@ -346,181 +320,151 @@ $(document).ready(function() {
                     <div class="text-3xl font-bold text-green-600 mt-1">${precioFormateado}</div>
                 </div>
             `,
-            icon: 'question', // Question icon
-            showCancelButton: true, // Show cancel button
-            confirmButtonText: 'Sí, recibir pago', // Confirm button text
-            cancelButtonText: 'Cancelar', // Cancel button text
-            confirmButtonColor: '#10B981', // Green confirm button
-            cancelButtonColor: '#6B7280' // Gray cancel button
-        }).then((result) => { // Handle user's choice
-            if (result.isConfirmed) { // If user confirmed
-                // Show loading state
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, recibir pago',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#10B981',
+            cancelButtonColor: '#6B7280'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 Swal.fire({
                     title: 'Procesando...',
-                    didOpen: () => Swal.showLoading() // Show spinner
+                    didOpen: () => Swal.showLoading()
                 });
 
-                // Send AJAX request to register payment
                 $.ajax({
-                    url: '<?= url('pagos/registrar-efectivo') ?>', // Endpoint URL
-                    method: 'POST', // HTTP method
-                    data: { // Data to send
+                    url: '<?= url('pagos/registrar-efectivo') ?>',
+                    method: 'POST',
+                    data: {
                         certificado_id: id,
                         monto: precio
                     },
-                    dataType: 'json', // Expected response type
-                    success: function(response) { // Success callback (OOP: callback function)
-                        if (response.success) { // If server returned success
-                            // Show success message
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
                             Swal.fire('¡Pago registrado!', response.message, 'success');
-                            // Reload table data to show updated status
-                            table.ajax.reload();
-                        } else { // If server returned error
-                            // Show error message
+                            table.ajax.reload(null, false);
+                        } else {
                             Swal.fire('Error', response.message, 'error');
                         }
                     },
-                    error: function() { // Error callback
-                        // Show generic error message
-                        Swal.fire('Error', 'No se pudo registrar el pago', 'error');
+                    error: function(xhr) {
+                        console.error(xhr);
+                        Swal.fire('Error', 'No se pudo registrar el pago. Revisa la consola.', 'error');
                     }
                 });
             }
         });
-    };
+    });
 
-    // Define global function to regenerate PDF
-    window.regenerarPDF = function(id) {
-        // Show confirmation dialog
+    // ============================================================================
+    // 3. REGENERAR PDF DESDE DATATABLES (DELEGACIÓN DE EVENTOS)
+    // ============================================================================
+    $('#tablaCertificados tbody').on('click', '.btn-regenerar-pdf', function() {
+        const id = $(this).data('id');
+
         Swal.fire({
             title: 'Regenerar Certificado',
             text: "¿Desea intentar generar nuevamente el archivo PDF?",
-            icon: 'warning', // Warning icon
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#D0B8A8', // Custom color
-            cancelButtonColor: '#d33', // Red cancel
+            confirmButtonColor: '#D0B8A8',
+            cancelButtonColor: '#d33',
             confirmButtonText: 'Sí, regenerar'
-        }).then((result) => { // Handle user's choice
-            if (result.isConfirmed) { // If user confirmed
-                // Show loading state
+        }).then((result) => {
+            if (result.isConfirmed) {
                 Swal.fire({
                     title: 'Regenerando...',
                     didOpen: () => Swal.showLoading()
                 });
 
-                // Send AJAX request to regenerate PDF
                 $.ajax({
-                    url: '<?= url('certificados/regenerar') ?>', // Endpoint URL
+                    url: '<?= url('certificados/regenerar') ?>',
                     method: 'POST',
-                    data: { id: id }, // Send certificate ID
-                    success: function(response) { // Success callback
+                    data: { id: id },
+                    success: function(response) {
                         if (response.success) {
-                            // Show success message
                             Swal.fire('¡Éxito!', response.message, 'success');
-                            // Reload table to show updated data
-                            table.ajax.reload();
+                            table.ajax.reload(null, false);
                         } else {
-                            // Show error message from server
                             Swal.fire('Error', response.message, 'error');
                         }
                     },
-                    error: function() { // Error callback
-                        // Show connection error message
+                    error: function() {
                         Swal.fire('Error', 'Error de conexión con el servidor', 'error');
                     }
                 });
             }
         });
-    };
+    });
 
-    // Modal controls - Open modal button click handler
+    // ============================================================================
+    // 4. CONTROL DEL MODAL Y FORMULARIO
+    // ============================================================================
     $('#btnAbrirModal').click(function() {
-        // Remove hidden class to show modal
         $('#modalCertificado').removeClass('hidden');
-        // Prevent body scrolling when modal is open
         $('body').addClass('overflow-hidden');
     });
 
-    // Function to close modal and reset state
     function cerrarModal() {
-        // Hide modal by adding hidden class
         $('#modalCertificado').addClass('hidden');
-        // Re-enable body scrolling
         $('body').removeClass('overflow-hidden');
-        // Reset form to empty all fields
         $('#formCertificado')[0].reset();
     }
 
-    // Attach close function to close and cancel buttons
     $('#btnCerrarModal, #btnCancelar').click(cerrarModal);
 
-    // Close modal when clicking outside (on backdrop)
     $('#modalCertificado').click(function(e) {
-        // Check if clicked element is the modal backdrop itself
         if (e.target.id === 'modalCertificado') {
             cerrarModal();
         }
     });
 
-    // Close modal with ESC key
     $(document).keydown(function(e) {
-        // Check if ESC key pressed and modal is visible
         if (e.key === 'Escape' && !$('#modalCertificado').hasClass('hidden')) {
             cerrarModal();
         }
     });
 
-    // Handle form submission via AJAX
     $('#formCertificado').on('submit', function(e) {
-        // Prevent default form submission (page reload)
         e.preventDefault();
-
-        // Create FormData object from form (handles file uploads too)
         const formData = new FormData(this);
 
-        // Show loading alert while processing
         Swal.fire({
             title: 'Generando certificado...',
             text: 'Por favor espere',
-            allowOutsideClick: false, // Prevent closing by clicking outside
-            showConfirmButton: false, // Hide OK button
+            allowOutsideClick: false,
+            showConfirmButton: false,
             willOpen: () => {
-                Swal.showLoading(); // Show spinner
+                Swal.showLoading();
             }
         });
 
-        // Send AJAX request to generate certificate
         $.ajax({
-            url: '<?= url('certificados/generar-simplificado') ?>', // Endpoint URL
-            type: 'POST', // HTTP method
-            data: formData, // Form data to send
-            processData: false, // Don't process FormData (required for file uploads)
-            contentType: false, // Don't set content type (FormData sets it automatically)
-            dataType: 'json', // Expected response format
-            success: function(response) { // Success callback
-                // Close loading alert
+            url: '<?= url('certificados/generar-simplificado') ?>',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
                 Swal.close();
 
-                if (response.success) { // If server returned success
-                    // Show success toast notification (non-blocking)
+                if (response.success) {
                     Swal.fire({
-                        toast: true, // Toast mode
-                        position: 'top-end', // Position in top-right corner
+                        toast: true,
+                        position: 'top-end',
                         icon: 'success',
                         title: response.message,
-                        showConfirmButton: false, // No button
-                        timer: 3000 // Auto-close after 3 seconds
+                        showConfirmButton: false,
+                        timer: 3000
                     });
 
-                    // Close modal and reset form
                     cerrarModal();
+                    table.ajax.reload(null, false);
 
-                    // Reload DataTables to show new certificate
-                    table.ajax.reload();
-
-                    // If PDF was generated with cash payment, show additional message
                     if (response.pdf_generado) {
-                        // Wait 500ms before showing next alert
                         setTimeout(() => {
                             Swal.fire({
                                 icon: 'success',
@@ -530,8 +474,7 @@ $(document).ready(function() {
                             });
                         }, 500);
                     }
-                } else { // If server returned error
-                    // Show error alert with server message
+                } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -540,10 +483,8 @@ $(document).ready(function() {
                     });
                 }
             },
-            error: function(xhr, status, error) { // Error callback
-                // Close loading alert
+            error: function(xhr, status, error) {
                 Swal.close();
-                // Show connection error message
                 Swal.fire({
                     icon: 'error',
                     title: 'Error de conexión',

@@ -2,286 +2,256 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificado de Bautismo</title>
     <style>
         @page {
-            size: A4;
-            margin: 0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            size: A4 portrait;
+            margin: 40px; /* Margen uniforme para la hoja */
         }
 
         body {
             font-family: 'Georgia', 'Times New Roman', serif;
-            background: #fff;
-            color: #333;
-            padding: 40px 60px;
-            line-height: 1.6;
+            color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
         }
 
-        .certificate {
-            border: 5px double #1e3a8a;
-            padding: 40px;
-            position: relative;
-            min-height: 950px;
-            background-color: white;
+        /* Borde exterior e interior elegante */
+        .certificate-wrapper {
+            border: 2px solid #1e3a8a;
+            padding: 4px;
         }
 
-        .inner-border {
-            border: 2px solid #3b82f6;
-            padding: 30px;
-            min-height: 870px;
+        .certificate-inner {
+            border: 1px solid #1e3a8a;
+            padding: 30px 40px;
             position: relative;
         }
 
+        /* Marca de agua centrada */
+        .watermark {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(30, 58, 138, 0.04);
+            font-weight: bold;
+            z-index: -1;
+            white-space: nowrap;
+        }
+
+        /* Encabezado */
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 15px;
         }
 
         .church-name {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             color: #1e3a8a;
-            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin-bottom: 5px;
         }
 
         .subtitle {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 20px;
+            font-size: 13px;
+            color: #4b5563;
         }
 
         .certificate-title {
-            font-size: 36px;
-            font-weight: bold;
+            font-size: 26px;
+            font-weight: normal;
+            font-style: italic;
             color: #1e3a8a;
             text-align: center;
-            margin: 30px 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
+            margin: 20px 0;
         }
 
-        .content {
-            font-size: 16px;
-            line-height: 2.2;
+        /* Texto introductorio */
+        .intro-text {
+            font-size: 15px;
             text-align: justify;
-            margin: 40px 0;
-            padding: 0 20px;
+            margin-bottom: 25px;
         }
 
-        .highlight {
-            font-weight: bold;
-            color: #1e3a8a;
-            text-decoration: underline;
-        }
-
-        .data-section {
-            margin: 30px 0;
-            padding: 20px;
-            background: #f9fafb;
-            border-left: 4px solid #3b82f6;
-        }
-
-        .data-row {
-            margin: 10px 0;
+        /* Tabla de datos (DomPDF ama las tablas) */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
             font-size: 14px;
+        }
+
+        .data-table td {
+            padding: 8px 5px;
+            vertical-align: bottom;
         }
 
         .data-label {
             font-weight: bold;
-            color: #4b5563;
-            display: inline-block;
-            width: 150px;
+            color: #374151;
+            width: 35%;
         }
 
         .data-value {
-            color: #1f2937;
+            border-bottom: 1px dotted #9ca3af;
+            color: #111827;
+            width: 65%;
         }
 
-        .signatures {
-            margin-top: 80px;
-            display: table;
+        .highlight {
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        /* Texto de cierre */
+        .closing-text {
+            font-size: 14px;
+            text-align: justify;
+            margin-bottom: 40px;
+        }
+
+        /* Firmas alineadas con tabla */
+        .signatures-table {
             width: 100%;
+            margin-top: 50px;
+            text-align: center;
         }
 
-        .signature-block {
-            display: table-cell;
-            text-align: center;
-            padding: 0 20px;
+        .signatures-table td {
+            width: 50%;
+            vertical-align: bottom;
         }
 
         .signature-line {
-            border-top: 2px solid #374151;
-            margin: 60px auto 10px;
-            width: 250px;
+            border-top: 1px solid #111827;
+            width: 80%;
+            margin: 0 auto 5px auto;
         }
 
         .signature-title {
             font-size: 12px;
             font-weight: bold;
-            color: #4b5563;
-            margin-top: 5px;
+            color: #374151;
+            letter-spacing: 1px;
         }
 
         .signature-name {
-            font-size: 14px;
-            color: #6b7280;
-            margin-top: 3px;
+            font-size: 13px;
+            color: #4b5563;
+            font-style: italic;
         }
 
+        /* Footer y códigos */
         .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 11px;
-            color: #9ca3af;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             border-top: 1px solid #e5e7eb;
-        }
-
-        .qr-section {
-            position: absolute;
-            bottom: 40px;
-            right: 60px;
-            text-align: center;
-        }
-
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #e5e7eb;
-            padding: 5px;
-            background: #fff;
-        }
-
-        .qr-label {
-            font-size: 9px;
+            font-size: 11px;
             color: #6b7280;
-            margin-top: 5px;
-        }
-
-        .certificate-code {
-            font-family: 'Courier New', monospace;
-            font-size: 10px;
-            color: #9ca3af;
             text-align: center;
-            margin-top: 10px;
         }
 
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            color: rgba(59, 130, 246, 0.03);
+        .footer p {
+            margin: 3px 0;
+        }
+
+        .codigo {
+            font-family: 'Courier New', monospace;
             font-weight: bold;
-            z-index: -1;
-            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="certificate">
-        <div class="inner-border">
-            <div class="watermark">PARROQUIA</div>
+    <div class="certificate-wrapper">
+        <div class="certificate-inner">
+            
+            <div class="watermark">{{NOMBRE_PARROQUIA}}</div>
 
             <div class="header">
                 <div class="church-name">{{NOMBRE_PARROQUIA}}</div>
-                <div class="subtitle">{{DIRECCION_PARROQUIA}}</div>
-                <div class="subtitle">{{CIUDAD}}, {{PAIS}}</div>
+                <div class="subtitle">{{DIRECCION_PARROQUIA}} | {{CIUDAD}}, {{PAIS}}</div>
             </div>
 
             <div class="certificate-title">
                 Certificado de Bautismo
             </div>
 
-            <div class="content">
-                <p>
-                    El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>,
-                    certifica que según consta en el Libro de Bautismos Número <strong>{{NUMERO_LIBRO}}</strong>,
-                    Página <strong>{{NUMERO_PAGINA}}</strong>, Número <strong>{{NUMERO_REGISTRO}}</strong>:
-                </p>
+            <div class="intro-text">
+                El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>, certifica que según consta en los archivos parroquiales, en el Libro de Bautismos Número <strong>{{NUMERO_LIBRO}}</strong>, Folio <strong>{{NUMERO_PAGINA}}</strong>, Acta Número <strong>{{NUMERO_REGISTRO}}</strong>, se encuentran los siguientes datos:
             </div>
 
-            <div class="data-section">
-                <div class="data-row">
-                    <span class="data-label">Nombre del Bautizado:</span>
-                    <span class="data-value highlight">{{NOMBRE_COMPLETO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Fecha de Nacimiento:</span>
-                    <span class="data-value">{{FECHA_NACIMIENTO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Lugar de Nacimiento:</span>
-                    <span class="data-value">{{LUGAR_NACIMIENTO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Fecha del Bautismo:</span>
-                    <span class="data-value">{{FECHA_BAUTISMO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Lugar del Bautismo:</span>
-                    <span class="data-value">{{LUGAR_BAUTISMO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Nombre del Padre:</span>
-                    <span class="data-value">{{NOMBRE_PADRE}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Nombre de la Madre:</span>
-                    <span class="data-value">{{NOMBRE_MADRE}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Padrinos:</span>
-                    <span class="data-value">{{NOMBRE_PADRINOS}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Ministro:</span>
-                    <span class="data-value">{{NOMBRE_MINISTRO}}</span>
-                </div>
+            <table class="data-table">
+                <tr>
+                    <td class="data-label">Nombre del Bautizado(a):</td>
+                    <td class="data-value highlight">{{NOMBRE_COMPLETO}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Fecha de Nacimiento:</td>
+                    <td class="data-value">{{FECHA_NACIMIENTO}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Lugar de Nacimiento:</td>
+                    <td class="data-value">{{LUGAR_NACIMIENTO}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Fecha del Bautismo:</td>
+                    <td class="data-value">{{FECHA_BAUTISMO}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Lugar del Bautismo:</td>
+                    <td class="data-value">{{LUGAR_BAUTISMO}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Padre:</td>
+                    <td class="data-value">{{NOMBRE_PADRE}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Madre:</td>
+                    <td class="data-value">{{NOMBRE_MADRE}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Padrinos:</td>
+                    <td class="data-value">{{NOMBRE_PADRINOS}}</td>
+                </tr>
+                <tr>
+                    <td class="data-label">Ministro del Sacramento:</td>
+                    <td class="data-value">{{NOMBRE_MINISTRO}}</td>
+                </tr>
+            </table>
+
+            <div class="closing-text">
+                Se expide el presente certificado a solicitud de la parte interesada, para los fines religiosos y/o civiles que estime convenientes. 
             </div>
 
-            <div class="content">
-                <p>
-                    Se expide el presente certificado a solicitud del interesado
-                    para los fines que estime conveniente.
-                </p>
-            </div>
-
-            <div class="signatures">
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">PÁRROCO</div>
-                    <div class="signature-name">{{NOMBRE_PARROCO}}</div>
-                </div>
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">SECRETARIO(A)</div>
-                    <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
-                </div>
-            </div>
-
-            <div class="qr-section">
-                <img src="{{QR_CODE}}" alt="QR Code" class="qr-code">
-                <div class="qr-label">Escanea para verificar</div>
-            </div>
+            <table class="signatures-table">
+                <tr>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">PÁRROCO</div>
+                        <div class="signature-name">{{NOMBRE_PARROCO}}</div>
+                    </td>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">SECRETARIO(A)</div>
+                        <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
+                    </td>
+                </tr>
+            </table>
 
             <div class="footer">
-                <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
-                <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
-                <p>Este certificado es válido únicamente con sello y firma original</p>
+                <p><strong>Fecha de Expedición:</strong> {{FECHA_EXPEDICION}}</p>
+                <p><strong>Código de Verificación:</strong> <span class="codigo">{{CODIGO_CERTIFICADO}}</span></p>
+                <p><em>Este documento es válido únicamente con el sello parroquial impreso o firma original.</em></p>
             </div>
+
         </div>
     </div>
 </body>

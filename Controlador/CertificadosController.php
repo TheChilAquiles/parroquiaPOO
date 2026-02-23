@@ -80,7 +80,7 @@ class CertificadosController extends BaseController
         // Obtener ID del usuario y rol
         $usuarioId = $_SESSION['user-id'];
         $rolUsuario = $_SESSION['user-rol'] ?? 'Feligrés';
-        
+
         // Obtener ID del certificado
         $certificadoId = $_GET['id'] ?? null;
 
@@ -101,7 +101,7 @@ class CertificadosController extends BaseController
 
         // Validar permisos: el usuario debe ser el solicitante, el dueño del sacramento (feligrés), o ser administrador/secretario
         $esAdminOSecretario = in_array($rolUsuario, ['Administrador', 'Secretario']);
-        
+
         $feligresIdUsuario = $this->obtenerFeligresIdUsuario($usuarioId);
         $esPropio = ($certificado['feligres_certificado_id'] == $feligresIdUsuario);
         $esSolicitante = ($certificado['solicitante_id'] == $feligresIdUsuario);
@@ -114,24 +114,24 @@ class CertificadosController extends BaseController
 
         // Validar que exista el archivo
         if (empty($certificado['ruta_archivo'])) {
-             $_SESSION['error'] = 'El archivo no ha sido generado aún.';
-             $this->mostrar();
-             return;
+            $_SESSION['error'] = 'El archivo no ha sido generado aún.';
+            $this->mostrar();
+            return;
         }
 
         // Construir rutas posibles (absoluta vs relativa)
         $rutaArchivo = $certificado['ruta_archivo'];
-        
+
         // Si es ruta relativa, prepend base dir
         if (!file_exists($rutaArchivo)) {
-             // Intentar con __DIR__ si la ruta es relativa desde root
-             $rutaAlternativa = __DIR__ . '/../' . $rutaArchivo;
-             if (file_exists($rutaAlternativa)) {
-                 $rutaArchivo = $rutaAlternativa;
-             } elseif (file_exists(__DIR__ . '/../certificados_generados/' . basename($rutaArchivo))) {
-                 // Intentar buscar solo por nombre en carpeta de output
-                 $rutaArchivo = __DIR__ . '/../certificados_generados/' . basename($rutaArchivo);
-             } else {
+            // Intentar con __DIR__ si la ruta es relativa desde root
+            $rutaAlternativa = __DIR__ . '/../' . $rutaArchivo;
+            if (file_exists($rutaAlternativa)) {
+                $rutaArchivo = $rutaAlternativa;
+            } elseif (file_exists(__DIR__ . '/../certificados_generados/' . basename($rutaArchivo))) {
+                // Intentar buscar solo por nombre en carpeta de output
+                $rutaArchivo = __DIR__ . '/../certificados_generados/' . basename($rutaArchivo);
+            } else {
                 Logger::error("Archivo físico no encontrado para descarga", [
                     'ruta_bd' => $certificado['ruta_archivo'],
                     'ruta_alt' => $rutaAlternativa,
@@ -140,7 +140,7 @@ class CertificadosController extends BaseController
                 $_SESSION['error'] = 'Archivo físico no encontrado en el servidor.';
                 $this->mostrar();
                 return;
-             }
+            }
         }
 
         // Marcar como descargado (si aún no lo está y es la primera vez que se descarga)
@@ -273,8 +273,8 @@ class CertificadosController extends BaseController
                 <h1>Certificado de ' . htmlspecialchars($data['sacramento']) . '</h1>
                 <div class="content">
                     Se certifica que ' . htmlspecialchars($_POST['nombre_feligres']) . ' ha recibido el sacramento de ' .
-                    htmlspecialchars($data['sacramento']) . ' en fecha ' . htmlspecialchars($data['fecha_realizacion']) .
-                    ' en ' . htmlspecialchars($data['lugar']) . '.
+                htmlspecialchars($data['sacramento']) . ' en fecha ' . htmlspecialchars($data['fecha_realizacion']) .
+                ' en ' . htmlspecialchars($data['lugar']) . '.
                 </div>
                 <div class="firma">Firmado por la parroquia</div>
             </body>
@@ -306,7 +306,6 @@ class CertificadosController extends BaseController
             header('Content-Disposition: attachment; filename="' . $filename . '"');
             readfile($outPath);
             exit();
-
         } catch (Exception $e) {
             Logger::error("Error al generar certificado (método legacy)", [
                 'user_id' => $_SESSION['user-id'] ?? 'guest',
@@ -360,7 +359,7 @@ class CertificadosController extends BaseController
 
             // Obtener participantes del sacramento para datos adicionales
             $participantes = $this->modeloSacramento->getParticipantes($certificado['sacramento_id']);
-
+            
             // Preparar datos para el generador de certificados
             $modeloConfiguracion = new ModeloConfiguracion();
 
@@ -371,47 +370,56 @@ class CertificadosController extends BaseController
                 ($feligres['segundo_apellido'] ?? '')
             );
 
-            // Determinar tipo de sacramento (normalizar)
+            // 🔥 DEFINIR EL TIPO DE SACRAMENTO AQUÍ PARA QUE NO FALLE EL LOGGER NI EL ARRAY
             $tipoSacramento = strtolower($certificado['tipo_certificado'] ?? 'bautismo');
             if (!in_array($tipoSacramento, ['bautismo', 'confirmacion', 'matrimonio', 'defuncion'])) {
                 $tipoSacramento = 'bautismo'; // Default
             }
 
-            // Preparar datos para la plantilla
+            // Código único del certificado
+            $codigoCertificado = 'CERT-' . date('Y') . '-' . str_pad($certificadoId, 5, '0', STR_PAD_LEFT);
+
+            // Preparar datos EXACTOS para la plantilla
             $datos = [
-                // Datos de la parroquia (desde configuración)
-                'NOMBRE_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_nombre', 'Parroquia'),
-                'DIRECCION_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_direccion', ''),
-                'CIUDAD' => $modeloConfiguracion->obtenerPorClave('parroquia_ciudad', ''),
+                // Datos de la parroquia
+                'NOMBRE_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_nombre', 'Parroquia Local'),
+                'DIRECCION_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_direccion', 'Dirección no registrada'),
+                'CIUDAD' => $modeloConfiguracion->obtenerPorClave('parroquia_ciudad', 'Ciudad'),
                 'PAIS' => $modeloConfiguracion->obtenerPorClave('parroquia_pais', 'Colombia'),
 
-                // Firmantes (desde configuración)
-                'NOMBRE_PARROCO' => $modeloConfiguracion->obtenerPorClave('parroco_nombre', 'Párroco'),
-                'NOMBRE_SECRETARIO' => $modeloConfiguracion->obtenerPorClave('secretario_nombre', 'Secretario(a)'),
+                // Firmantes
+                'NOMBRE_PARROCO' => $modeloConfiguracion->obtenerPorClave('parroco_nombre', 'Sacerdote Titular'),
+                'NOMBRE_SECRETARIO' => $modeloConfiguracion->obtenerPorClave('secretario_nombre', 'Secretario(a) Titular'),
 
-                // Datos del libro
-                'NUMERO_LIBRO' => $sacramento['libro_id'] ?? '',
-                'NUMERO_PAGINA' => $sacramento['num_pagina'] ?? '',
-                'NUMERO_REGISTRO' => $sacramento['num_registro'] ?? '',
+                // Datos del libro 
+                'NUMERO_LIBRO' => $sacramento['libro_numero'] ?? 'S/N',
+                'NUMERO_PAGINA' => $sacramento['folio'] ?? 'S/N',
+                'NUMERO_REGISTRO' => $sacramento['acta'] ?? 'S/N',
 
-                // Datos del certificado
+                // Datos del feligrés
                 'NOMBRE_COMPLETO' => $nombreCompleto,
-                'FECHA_NACIMIENTO' => isset($feligres['fecha_nacimiento']) ? date('d/m/Y', strtotime($feligres['fecha_nacimiento'])) : '',
-                'LUGAR_NACIMIENTO' => $feligres['lugar_nacimiento'] ?? '',
+                'FECHA_NACIMIENTO' => (!empty($feligres['fecha_nacimiento']) && $feligres['fecha_nacimiento'] != '0000-00-00') ? date('d/m/Y', strtotime($feligres['fecha_nacimiento'])) : 'No registrada',
+                'LUGAR_NACIMIENTO' => $feligres['lugar_nacimiento'] ?? 'No registrado en sistema',
 
-                // Datos del sacramento
-                'FECHA_' . strtoupper($tipoSacramento) => date('d/m/Y', strtotime($sacramento['fecha_generacion'])),
-                'LUGAR_' . strtoupper($tipoSacramento) => $sacramento['lugar'] ?? '',
-                'NOMBRE_MINISTRO' => $sacramento['ministro'] ?? '',
+                // Datos del sacramento (Usa el tipo dinámicamente: FECHA_BAUTISMO, FECHA_CONFIRMACION, etc.)
+                'FECHA_' . strtoupper($tipoSacramento) => (!empty($sacramento['fecha_generacion']) && $sacramento['fecha_generacion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_generacion'])) : 'No registrada',
+                'LUGAR_' . strtoupper($tipoSacramento) => $sacramento['lugar'] ?? 'Parroquia Local',
+                'NOMBRE_MINISTRO' => $sacramento['ministro'] ?? 'Ministro no registrado',
 
-                // Datos de padrinos/padres (extraer de participantes)
-                'NOMBRE_PADRE' => $this->obtenerNombreParticipante($participantes, 'Padre') ?: '',
-                'NOMBRE_MADRE' => $this->obtenerNombreParticipante($participantes, 'Madre') ?: '',
-                'NOMBRE_PADRINOS' => $this->obtenerNombreParticipante($participantes, 'Padrino') ?: '',
-                'NOMBRE_PADRINO' => $this->obtenerNombreParticipante($participantes, 'Padrino') ?: '',
+                // Datos de padrinos/padres (extraídos con la nueva función flexible)
+                'NOMBRE_PADRE' => $this->obtenerNombreParticipante($participantes, 'padre'),
+                'NOMBRE_MADRE' => $this->obtenerNombreParticipante($participantes, 'madre'),
+                'NOMBRE_PADRINOS' => $this->obtenerNombreParticipante($participantes, 'padrino'),
+                
+                // Metadatos finales
+                'FECHA_EXPEDICION' => date('d/m/Y'),
+                'CODIGO_CERTIFICADO' => $codigoCertificado,
+                
+                // Generador de QR
+                'QR_CODE' => 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode('Verificar cert: ' . $codigoCertificado)
             ];
 
-            // Usar el nuevo servicio de generación
+            // Usar el nuevo servicio de generación pasando la variable dinámica
             $generador = new CertificadoGenerador();
             $resultado = $generador->generar($tipoSacramento, $datos, $certificadoId);
 
@@ -434,6 +442,7 @@ class CertificadosController extends BaseController
                 return false;
             }
 
+            // AHORA SÍ CONOCE LA VARIABLE $tipoSacramento
             Logger::info("Certificado generado exitosamente con plantilla", [
                 'certificado_id' => $certificadoId,
                 'tipo' => $tipoSacramento,
@@ -441,7 +450,6 @@ class CertificadosController extends BaseController
             ]);
 
             return true;
-
         } catch (Exception $e) {
             Logger::error("Error al generar certificado automático:", ['error' => $e->getMessage()]);
             return false;
@@ -449,21 +457,26 @@ class CertificadosController extends BaseController
     }
 
     /**
-     * Obtiene el nombre de un participante por su rol
+     * Obtiene el nombre de un participante por su rol (Versión Mejorada y Flexible)
      */
-    private function obtenerNombreParticipante($participantes, $rol)
+    private function obtenerNombreParticipante($participantes, $rolBuscado)
     {
-        foreach ($participantes as $participante) {
-            if ($participante['rol'] === $rol) {
-                return trim(
-                    $participante['primer_nombre'] . ' ' .
-                    ($participante['segundo_nombre'] ?? '') . ' ' .
-                    $participante['primer_apellido'] . ' ' .
-                    ($participante['segundo_apellido'] ?? '')
+        if (empty($participantes)) return 'No registrado';
+
+        $nombres = [];
+        foreach ($participantes as $p) {
+            // stripos busca ignorando mayúsculas y minúsculas. Ej: "padrino" encuentra "Padrino" o "PADRINOS"
+            if (stripos($p['rol'], $rolBuscado) !== false) {
+                $nombres[] = trim(
+                    $p['primer_nombre'] . ' ' .
+                        ($p['segundo_nombre'] ?? '') . ' ' .
+                        $p['primer_apellido'] . ' ' .
+                        ($p['segundo_apellido'] ?? '')
                 );
             }
         }
-        return '';
+
+        return !empty($nombres) ? implode(' y ', $nombres) : 'No registrado';
     }
 
     /**
@@ -550,7 +563,7 @@ class CertificadosController extends BaseController
             // Crear solicitud de certificado "Pendiente de Pago"
             // Usamos modeloSolicitud->mdlCrearSolicitud o insertamos directamente si necesitamos campos específicos de admin
             // Reutilizaremos mdlCrearCertificadoDirecto que ya tenemos para simplificar, pero adaptando los datos
-            
+
             $datos = [
                 'usuario_generador_id' => $_SESSION['user-id'],
                 'tipo_documento_id' => $participantePrincipal['tipo_documento_id'], // No usado x mdlCrearCertificadoDirecto en select feligres, pero...
@@ -564,11 +577,11 @@ class CertificadosController extends BaseController
                         parentesco_id, fecha_solicitud, tipo_certificado,
                         motivo_solicitud, sacramento_id, estado
                     ) VALUES (?, ?, ?, NULL, NOW(), ?, 'Solicitud desde Sacramentos', ?, 'pendiente_pago')";
-            
+
             // Nota: Asumimos que el solicitante es el Admin que está logueado haciendo la gestión? 
             // NO, la tabla pide un feligres_id como solicitante. Si es un Admin, usuario_generador_id queda set, y solicitante_id...
             // En lógica anterior de 'crear', se usaba el feligres del certificado como solicitante si era directo.
-            
+
             $conexion = Conexion::conectar();
             $stmt = $conexion->prepare($sql);
             $stmt->execute([
@@ -588,7 +601,6 @@ class CertificadosController extends BaseController
             $_SESSION['success'] = "Solicitud creada. El certificado está PENDIENTE DE PAGO. Por favor proceda a registrar el pago.";
             header('Location: ?route=certificados');
             exit();
-
         } catch (Exception $e) {
             Logger::error("Error al generar solicitud desde sacramento:", [
                 'error' => $e->getMessage(),
@@ -735,7 +747,6 @@ class CertificadosController extends BaseController
                     'estado' => 'pendiente_pago'
                 ]);
             }
-
         } catch (Exception $e) {
             Logger::error("Error en generarSimplificado:", [
                 'user_id' => $_SESSION['user-id'] ?? 'guest',
@@ -791,7 +802,6 @@ class CertificadosController extends BaseController
             } else {
                 echo json_encode(['success' => false, 'message' => 'Falló la regeneración del PDF']);
             }
-
         } catch (Exception $e) {
             Logger::error("Excepción al regenerar certificado", ['id' => $id, 'error' => $e->getMessage()]);
             echo json_encode(['success' => false, 'message' => $e->getMessage()]);
@@ -809,7 +819,7 @@ class CertificadosController extends BaseController
         while (ob_get_level()) {
             ob_end_clean();
         }
-        
+
         Logger::info("Listado de certificados solicitado", [
             'user_id' => $_SESSION['user-id'] ?? 'guest',
             'rol' => $_SESSION['user-rol'] ?? 'none'
@@ -830,14 +840,14 @@ class CertificadosController extends BaseController
         try {
             // Instanciar modelo de configuración para obtener precios
             $modeloConfig = new ModeloConfiguracion();
-            
+
             $certificados = $this->modeloSolicitud->mdlObtenerTodosLosCertificados();
 
             $data = [];
             foreach ($certificados as $cert) {
                 // Obtener precio según tipo de sacramento
                 $precio = $modeloConfig->obtenerPrecioCertificado($cert['tipo_sacramento']);
-                
+
                 $data[] = [
                     'id' => $cert['id'],
                     'tipo_sacramento' => $cert['tipo_sacramento'],
@@ -856,7 +866,6 @@ class CertificadosController extends BaseController
 
             header('Content-Type: application/json');
             echo json_encode(['data' => $data]);
-
         } catch (Exception $e) {
             Logger::error("Error al listar certificados", [
                 'error' => $e->getMessage()
@@ -981,7 +990,6 @@ class CertificadosController extends BaseController
             } else {
                 throw new Exception($resultado['message'] ?? 'No se pudo crear la solicitud');
             }
-
         } catch (Exception $e) {
             if (ob_get_level()) ob_clean();
             header('Content-Type: application/json');
@@ -1076,7 +1084,6 @@ class CertificadosController extends BaseController
                 'success' => true,
                 'data' => $familiares
             ]);
-
         } catch (Exception $e) {
             Logger::error("Error al obtener familiares", [
                 'user_id' => $_SESSION['user-id'] ?? null,
@@ -1094,97 +1101,5 @@ class CertificadosController extends BaseController
         }
 
         exit;
-    }
-
-
-
-    /**
-     * Verifica la autenticidad de un certificado por código (ruta pública para QR)
-     * Muestra información del certificado si es válido
-     */
-    public function verificar()
-    {
-        $codigo = $_GET['codigo'] ?? null;
-
-        Logger::info("Intento de verificación de certificado", [
-            'codigo' => $codigo ?? 'no_proporcionado',
-            'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
-        ]);
-
-        try {
-            // Obtener código del certificado desde GET
-            if (empty($codigo)) {
-                Logger::warning("Verificación de certificado sin código", [
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
-                $_SESSION['error'] = 'No se proporcionó un código de verificación válido.';
-                include_once __DIR__ . '/../Vista/verificar-certificado.php';
-                return;
-            }
-
-            // Buscar certificado por ID
-            $certificado = $this->modelo->mdlObtenerPorId($codigo);
-
-            if (!$certificado) {
-                Logger::warning("Verificación fallida - certificado no encontrado", [
-                    'codigo' => $codigo,
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
-                $mensaje = 'Certificado no encontrado. Verifique el código e intente nuevamente.';
-                $valido = false;
-                include_once __DIR__ . '/../Vista/verificar-certificado.php';
-                return;
-            }
-
-            // Verificar que el certificado esté generado
-            if (empty($certificado['ruta_archivo'])) {
-                Logger::warning("Verificación fallida - certificado no generado", [
-                    'codigo' => $codigo,
-                    'certificado_id' => $certificado['id'],
-                    'estado' => $certificado['estado'] ?? 'unknown',
-                    'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-                ]);
-                $mensaje = 'Este certificado aún no ha sido generado por la parroquia.';
-                $valido = false;
-                include_once __DIR__ . '/../Vista/verificar-certificado.php';
-                return;
-            }
-
-            // Certificado válido
-            Logger::info("Certificado verificado exitosamente", [
-                'codigo' => $codigo,
-                'certificado_id' => $certificado['id'],
-                'tipo' => $certificado['tipo_certificado'] ?? 'N/A',
-                'fecha_generacion' => $certificado['fecha_generacion'] ?? 'N/A',
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
-
-            $mensaje = 'Certificado válido y verificado.';
-            $valido = true;
-
-            // Preparar datos para la vista
-            $datos = [
-                'id' => $certificado['id'],
-                'tipo' => $certificado['tipo_certificado'] ?? 'N/A',
-                'feligres' => $certificado['feligres_nombre'] ?? 'N/A',
-                'fecha_emision' => $certificado['fecha_generacion'] ? date('d/m/Y', strtotime($certificado['fecha_generacion'])) : 'N/A',
-                'fecha_sacramento' => $certificado['fecha_sacramento'] ? date('d/m/Y', strtotime($certificado['fecha_sacramento'])) : 'N/A',
-                'estado' => ucfirst(str_replace('_', ' ', $certificado['estado']))
-            ];
-
-            include_once __DIR__ . '/../Vista/verificar-certificado.php';
-
-        } catch (Exception $e) {
-            Logger::error("Error al verificar certificado:", [
-                'error' => $e->getMessage(),
-                'codigo' => $codigo ?? 'N/A',
-                'trace' => $e->getTraceAsString(),
-                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-            ]);
-            $mensaje = 'Error al verificar el certificado. Por favor, intente más tarde.';
-            $valido = false;
-            include_once __DIR__ . '/../Vista/verificar-certificado.php';
-        }
     }
 }
