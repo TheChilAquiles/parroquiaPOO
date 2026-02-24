@@ -22,7 +22,7 @@ class ModeloSacramento
     }
 
 
-    
+
 
 
 
@@ -30,17 +30,17 @@ class ModeloSacramento
      * Obtiene los participantes de un sacramento con datos completos del documento
      */
     public function getParticipantes($sacramentoId)
-{
-    // ✅ AGREGAR ESTAS LÍNEAS
-    if (!is_numeric($sacramentoId) || $sacramentoId <= 0) {
-        Logger::error("ID de sacramento inválido:", ['info' => $sacramentoId]);
-        return [];
-    }
+    {
+        // ✅ AGREGAR ESTAS LÍNEAS
+        if (!is_numeric($sacramentoId) || $sacramentoId <= 0) {
+            Logger::error("ID de sacramento inválido:", ['info' => $sacramentoId]);
+            return [];
+        }
 
-    $sacramentoId = (int)$sacramentoId; // Cast explícito
+        $sacramentoId = (int)$sacramentoId; // Cast explícito
 
-    try {
-        $sql = "SELECT
+        try {
+            $sql = "SELECT
                     pr.rol,
                     pr.id AS rol_id,
                     p.feligres_id,
@@ -50,6 +50,9 @@ class ModeloSacramento
                     f.segundo_nombre,
                     f.primer_apellido,
                     f.segundo_apellido,
+                    f.fecha_nacimiento, 
+                    f.telefono, 
+                    f.direccion,
                     CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ',
                            f.primer_apellido, ' ', COALESCE(f.segundo_apellido, '')) AS nombre
                 FROM participantes p
@@ -57,14 +60,14 @@ class ModeloSacramento
                 JOIN participantes_rol pr ON pr.id = p.rol_participante_id
                 WHERE p.sacramento_id = ?";
 
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->execute([$sacramentoId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        Logger::error("Error al obtener participantes:", ['error' => $e->getMessage()]);
-        return [];
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->execute([$sacramentoId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            Logger::error("Error al obtener participantes:", ['error' => $e->getMessage()]);
+            return [];
+        }
     }
-}
 
     /**
      * Establece el ID del libro
@@ -77,7 +80,7 @@ class ModeloSacramento
                     LIMIT 1";
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$this->sacramentoTipo, $this->numero]);
-            
+
             $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->libroID = $resultado['id'] ?? null;
         } catch (PDOException $e) {
@@ -167,7 +170,7 @@ class ModeloSacramento
                               VALUES (?, ?, ?, ?, NOW())";
             $stmt = $this->conexion->prepare($sql_sacramento);
             $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio]);
-            
+
             $sacramentoID = $this->conexion->lastInsertId();
 
             // Procesar integrantes (participantes del sacramento)
@@ -210,30 +213,44 @@ class ModeloSacramento
     private function obtenerOCrearFeligres($datos)
     {
         try {
-            // Convertimos a null si vienen vacíos (ideal para bebés o padrinos sin ID a la mano)
             $tipoDoc = !empty($datos['tipoDoc']) ? $datos['tipoDoc'] : null;
             $numeroDoc = !empty($datos['numeroDoc']) ? $datos['numeroDoc'] : null;
 
-            // 1. Si enviaron documento completo, intentamos buscar si ya existe en la BD
+            // 1. Si enviaron documento completo, intentamos buscar si ya existe
             if ($tipoDoc && $numeroDoc) {
                 $sql_buscar = "SELECT id FROM feligreses
-                              WHERE tipo_documento_id = ? AND numero_documento = ?
-                              AND estado_registro IS NULL
-                              LIMIT 1";
+                           WHERE tipo_documento_id = ? AND numero_documento = ?
+                           AND estado_registro IS NULL LIMIT 1";
                 $stmt = $this->conexion->prepare($sql_buscar);
                 $stmt->execute([$tipoDoc, $numeroDoc]);
                 $feligres = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($feligres) {
+                    // UPDATE EXCELENTE: Si el usuario ya existe, le actualizamos los datos de contacto 
+                    // en caso de que antes los tuviera en NULL.
+                    $sql_update = "UPDATE feligreses SET 
+                               fecha_nacimiento = COALESCE(NULLIF(?, ''), fecha_nacimiento),
+                               telefono = COALESCE(NULLIF(?, ''), telefono),
+                               direccion = COALESCE(NULLIF(?, ''), direccion)
+                               WHERE id = ?";
+                    $stmt_upd = $this->conexion->prepare($sql_update);
+                    $stmt_upd->execute([
+                        $datos['fechaNacimiento'] ?? null,
+                        $datos['telefono'] ?? null,
+                        $datos['direccion'] ?? null,
+                        $feligres['id']
+                    ]);
+
                     return $feligres['id']; // Ya existe, devolvemos su ID
                 }
             }
 
-            // 2. Si no hay documento o es un feligrés nuevo, lo creamos
+            // 2. Si no hay documento o es un feligrés nuevo, lo creamos con TODOS los datos
             $sql_crear = "INSERT INTO feligreses
-                         (tipo_documento_id, numero_documento, primer_nombre,
-                          segundo_nombre, primer_apellido, segundo_apellido)
-                         VALUES (?, ?, ?, ?, ?, ?)";
+                     (tipo_documento_id, numero_documento, primer_nombre,
+                      segundo_nombre, primer_apellido, segundo_apellido,
+                      fecha_nacimiento, telefono, direccion)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt_crear = $this->conexion->prepare($sql_crear);
             $stmt_crear->execute([
                 $tipoDoc,
@@ -241,7 +258,10 @@ class ModeloSacramento
                 $datos['primerNombre'] ?? '',
                 $datos['segundoNombre'] ?? '',
                 $datos['primerApellido'] ?? '',
-                $datos['segundoApellido'] ?? ''
+                $datos['segundoApellido'] ?? '',
+                !empty($datos['fechaNacimiento']) ? $datos['fechaNacimiento'] : null,
+                !empty($datos['telefono']) ? $datos['telefono'] : null,
+                !empty($datos['direccion']) ? $datos['direccion'] : null
             ]);
 
             return $this->conexion->lastInsertId();
@@ -406,7 +426,7 @@ class ModeloSacramento
 
                 // Mantener todos los participantes para la lista completa
                 $todosParticipantes = $this->getParticipantes($sacramento['id']);
-                $listaParticipantes = array_map(function($p) {
+                $listaParticipantes = array_map(function ($p) {
                     return $p['nombre'] . ' (' . $p['rol'] . ')';
                 }, $todosParticipantes);
 
@@ -414,7 +434,6 @@ class ModeloSacramento
             }
 
             return $sacramentos;
-
         } catch (PDOException $e) {
             Logger::error("Error al obtener sacramentos por libro:", ['error' => $e->getMessage()]);
             return [];
@@ -454,7 +473,7 @@ class ModeloSacramento
                     LEFT JOIN feligreses f ON f.id = p.feligres_id
                     WHERE s.libro_id = ?
                     AND s.estado_registro IS NULL";
-            
+
             $params = [$libroId];
 
             if (!empty($search)) {
@@ -474,7 +493,6 @@ class ModeloSacramento
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute($params);
             return $stmt->fetchColumn();
-
         } catch (PDOException $e) {
             return 0;
         }
@@ -538,7 +556,6 @@ class ModeloSacramento
 
             // Para otros sacramentos, devolver el primero
             return $participantes[0] ?? null;
-
         } catch (PDOException $e) {
             Logger::error("Error al obtener participante principal:", ['error' => $e->getMessage()]);
             return null;
@@ -588,7 +605,6 @@ class ModeloSacramento
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$feligresId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         } catch (PDOException $e) {
             Logger::error("Error al obtener sacramentos por feligrés", [
                 'feligres_id' => $feligresId,
@@ -654,7 +670,6 @@ class ModeloSacramento
             ]);
 
             return $sacramentoId;
-
         } catch (PDOException $e) {
             $this->conexion->rollBack();
             Logger::error("Error al actualizar sacramento", [
@@ -705,7 +720,6 @@ class ModeloSacramento
             ]);
 
             return $this->conexion->lastInsertId();
-
         } catch (PDOException $e) {
             Logger::error("Error al buscar/crear feligrés", [
                 'datos' => $datos,

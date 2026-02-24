@@ -228,6 +228,23 @@
                         </div>
                     </div>
 
+                    <h4 class="font-bold text-gray-800 mt-6 mb-4 border-b pb-2 text-lg">3. Información de Contacto y Nacimiento</h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="fechaNacimiento" class="block text-sm font-medium mb-1 text-gray-700">Fecha Nacimiento *</label>
+                            <input type="date" id="fechaNacimiento" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                        </div>
+                        <div>
+                            <label for="telefono" class="block text-sm font-medium mb-1 text-gray-700">Teléfono *</label>
+                            <input type="text" id="telefono" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Ej: 3001234567">
+                        </div>
+                        <div>
+                            <label for="direccion" class="block text-sm font-medium mb-1 text-gray-700">Dirección *</label>
+                            <input type="text" id="direccion" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Ej: Calle 123 #45-67">
+                        </div>
+                    </div>
+
                     <div class="mt-5 pt-4 border-t border-gray-100">
                         <label for="rolParticipante" class="block text-sm font-bold text-[#ab876f] mb-2">Rol en el Sacramento *</label>
                         <select id="rolParticipante" class="border border-[#D0B8A8] rounded-lg p-3 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none bg-[#F9F6F4] text-gray-800 font-medium">
@@ -392,6 +409,10 @@
                     $('#segundoNombre').val(response.data.segundo_nombre || '');
                     $('#primerApellido').val(response.data.primer_apellido).removeClass('border-red-500');
                     $('#segundoApellido').val(response.data.segundo_apellido || '');
+                    // Agrega esto debajo de donde llenas los apellidos
+                    $('#fechaNacimiento').val(response.data.fecha_nacimiento || '');
+                    $('#telefono').val(response.data.telefono || '');
+                    $('#direccion').val(response.data.direccion || '');
 
                     // Ocultamos el mensaje de que no existe
                     $('#feligresNoExiste').addClass('hidden');
@@ -439,7 +460,11 @@
         $('#primerApellido').val('').removeClass('border-red-500');
         $('#segundoApellido').val('').removeClass('border-red-500');
         $('#rolParticipante').val('').removeClass('border-red-500');
+        $('#fechaNacimiento').val('').removeClass('border-red-500');
+        $('#telefono').val('').removeClass('border-red-500');
+        $('#direccion').val('').removeClass('border-red-500');
         $('#feligresNoExiste').addClass('hidden');
+
     }
 
     // Función para resaltar campos obligatorios faltantes
@@ -461,6 +486,11 @@
         const primerApellido = document.getElementById('primerApellido').value.trim();
         const segundoApellido = document.getElementById('segundoApellido').value.trim();
 
+        // 1. Capturar los nuevos valores (ponlo junto a las otras variables arriba)
+        const fechaNacimiento = document.getElementById('fechaNacimiento').value.trim();
+        const telefono = document.getElementById('telefono').value.trim();
+        const direccion = document.getElementById('direccion').value.trim();
+
         // 1. Validaciones de campos obligatorios
         // Nota: El número de documento puede no ser obligatorio si es un menor sin documento aún,
         // pero generalmente se pide. Asumiremos obligatorio si se selecciona tipo de documento.
@@ -468,6 +498,10 @@
             if (!primerNombre) resaltarCampo('#primerNombre');
             if (!primerApellido) resaltarCampo('#primerApellido');
             if (!rolParticipante) resaltarCampo('#rolParticipante');
+            // Nuevos resaltados
+            if (!fechaNacimiento) resaltarCampo('#fechaNacimiento');
+            if (!telefono) resaltarCampo('#telefono');
+            if (!direccion) resaltarCampo('#direccion');
 
             // Si hay tipo de documento pero no número, o viceversa
             if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
@@ -478,7 +512,7 @@
             Swal.fire({
                 icon: 'warning',
                 title: 'Campos incompletos',
-                text: 'Por favor, complete los campos obligatorios (Nombre, Apellido, Rol).',
+                text: 'Por favor, complete todos los campos obligatorios (Nombres, Fecha, Teléfono, Dirección y Rol).',
                 confirmButtonColor: '#D0B8A8'
             });
             return false;
@@ -571,11 +605,11 @@
         li.innerHTML = `
             <div class="bg-white border border-gray-200 rounded-lg mb-2 mx-1 p-3 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
                 <div class="flex items-center gap-3">
-                     <span class="font-bold px-3 py-1 rounded-full text-xs border ${claseColor} ">${grupoRol}</span>
-                     <div class="flex flex-col">
+                        <span class="font-bold px-3 py-1 rounded-full text-xs border ${claseColor} ">${grupoRol}</span>
+                        <div class="flex flex-col">
                         <span class="font-semibold text-gray-800">${nombreCompleto}</span>
                         <span class="text-xs text-gray-500">${docTexto}</span>
-                     </div>
+                        </div>
                 </div>
                 
                 <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
@@ -585,6 +619,9 @@
                 <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${segundoNombre}">
                 <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
                 <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
+                <input type="hidden" name="integrantes[${contador}][fechaNacimiento]" value="${fechaNacimiento}">
+                <input type="hidden" name="integrantes[${contador}][telefono]" value="${telefono}">
+                <input type="hidden" name="integrantes[${contador}][direccion]" value="${direccion}">
 
                 <button type="button" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition" onclick="eliminarIntegrante(this)" title="Eliminar">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
