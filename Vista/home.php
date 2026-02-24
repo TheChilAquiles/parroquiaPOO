@@ -2,40 +2,180 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-SnH5WK+BZxgPHs44uWIX+LLMDJ8f6y/YJ3iEIAgCg1QYI4m7fQ2a4gR2n7aT5D0W2mB75K2I5M94v9j6Z8hYQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <section class="relative h-screen parallax-bg bg-gradient-to-br from-[#D0B8A8] via-[#b5a394] to-[#ab876f] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 bg-black/40"></div>
-        <link rel="stylesheet" href="assets/css/estilos.css">
-        <script src="assets/js/home.js"></script>
+    <!-- 
+    =====================================================
+    REEMPLAZA tu <section> hero por este bloque completo
+    =====================================================
+-->
 
-        <div class="absolute top-20 left-10 floating-animation">
-            <div class="w-20 h-20 bg-white/10 rounded-full glass-effect"></div>
-        </div>
-        <div class="absolute bottom-32 right-16 floating-animation" style="animation-delay: -2s">
-            <div class="w-16 h-16 bg-white/10 rounded-full glass-effect"></div>
-        </div>
-        <div class="absolute top-1/2 left-1/4 floating-animation" style="animation-delay: -4s">
-            <div class="w-12 h-12 bg-white/10 rounded-full glass-effect"></div>
-        </div>
+<section class="relative h-screen flex items-center justify-center overflow-hidden">
 
-        <div class="relative text-center text-white px-4 max-w-4xl">
-            <h1 class="text-6xl md:text-7xl font-bold mb-6 drop-shadow-2xl">
-                San Francisco de Asís
-            </h1>
-            <p class="text-2xl md:text-3xl mb-8 opacity-90 font-light">
-                Descubre nuestra historia, ministerios y comunidad de fe
-            </p>
-            <div class="pulse-glow inline-block">
-                <a href="#historia" class="bg-white text-[#ab876f] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300 shadow-2xl flex items-center justify-center mx-auto cursor-pointer">
-                    <span class="material-icons mr-2">church</span>
-                    Explorar Nuestra Historia
-                </a>
-            </div>
-        </div>
+    <!-- ===== CARRUSEL DE FONDO ===== -->
+    <div id="carousel" class="absolute inset-0 z-0">
+        <div class="carousel-slide active" style="background-image: url('assets/img/parroquia1.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('assets/img/parroquia2.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('assets/img/parroquia3.jpeg');"></div>
+        <div class="carousel-slide" style="background-image: url('assets/img/parroquia4.jpeg');"></div>
+    </div>
 
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-            <span class="material-icons text-4xl">keyboard_arrow_down</span>
+    <!-- Overlay oscuro encima de las imágenes -->
+    <div class="absolute inset-0 bg-black/50 z-10"></div>
+
+    <!-- ===== FLECHA IZQUIERDA ===== -->
+    <button onclick="changeSlide(-1)" class="carousel-arrow left-4 md:left-8" aria-label="Anterior">
+        <span class="material-icons text-3xl">chevron_left</span>
+    </button>
+
+    <!-- ===== FLECHA DERECHA ===== -->
+    <button onclick="changeSlide(1)" class="carousel-arrow right-4 md:right-8" aria-label="Siguiente">
+        <span class="material-icons text-3xl">chevron_right</span>
+    </button>
+
+    <!-- ===== CONTENIDO CENTRAL ===== -->
+    <div class="relative z-20 text-center text-white px-4 max-w-4xl">
+        <h1 class="text-6xl md:text-7xl font-bold mb-6 drop-shadow-2xl">
+            San Francisco de Asís
+        </h1>
+        <p class="text-2xl md:text-3xl mb-8 opacity-90 font-light">
+            Descubre nuestra historia, ministerios y comunidad de fe
+        </p>
+        <div class="pulse-glow inline-block">
+            <a href="#historia" class="bg-white text-[#ab876f] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300 shadow-2xl inline-flex items-center justify-center cursor-pointer">
+                <span class="material-icons mr-2">church</span>
+                Explorar Nuestra Historia
+            </a>
         </div>
-    </section>
+    </div>
+
+    <!-- ===== PUNTOS INDICADORES ===== -->
+    <div class="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+        <button class="carousel-dot active" onclick="goToSlide(0)"></button>
+        <button class="carousel-dot" onclick="goToSlide(1)"></button>
+        <button class="carousel-dot" onclick="goToSlide(2)"></button>
+        <button class="carousel-dot" onclick="goToSlide(3)"></button>
+    </div>
+
+    <!-- Flecha de scroll hacia abajo -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce z-20">
+        <span class="material-icons text-4xl">keyboard_arrow_down</span>
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ESTILOS — pega esto dentro de tu <style> o en estilos.css
+     ===================================================== -->
+<style>
+/* --- Slides de fondo --- */
+.carousel-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+.carousel-slide.active {
+    opacity: 1;
+}
+
+/* --- Flechas de navegación --- */
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+.carousel-arrow:hover {
+    background: rgba(208, 184, 168, 0.5);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* --- Puntos indicadores --- */
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+.carousel-dot.active {
+    background: white;
+    transform: scale(1.3);
+}
+</style>
+
+
+<!-- =====================================================
+     JAVASCRIPT — pega esto antes de </body> o en home.js
+     ===================================================== -->
+<script>
+(function() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots   = document.querySelectorAll('.carousel-dot');
+    let current  = 0;
+    let timer;
+
+    function showSlide(index) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+
+        current = (index + slides.length) % slides.length;
+
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+
+    function autoPlay() {
+        timer = setInterval(() => showSlide(current + 1), 5000);
+    }
+
+    function resetTimer() {
+        clearInterval(timer);
+        autoPlay();
+    }
+
+    // Exponer funciones globales que usa el HTML inline
+    window.changeSlide = function(dir) {
+        showSlide(current + dir);
+        resetTimer();
+    };
+
+    window.goToSlide = function(index) {
+        showSlide(index);
+        resetTimer();
+    };
+
+    // Soporte para swipe en móvil
+    let touchStartX = 0;
+    const section = document.querySelector('#carousel').parentElement;
+    section.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    section.addEventListener('touchend',   e => {
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+            changeSlide(diff > 0 ? 1 : -1);
+        }
+    });
+
+    autoPlay();
+})();
+</script>
 
     <section id="historia" class="py-20 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-4">
