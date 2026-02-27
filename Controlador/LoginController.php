@@ -29,7 +29,7 @@ class LoginController
             redirect('dashboard');
             exit();
         }
-        
+
         include_once __DIR__ . '/../Vista/login.php';
     }
 
@@ -87,11 +87,11 @@ class LoginController
             $_SESSION['user-id'] = $usuario['id'];
             $_SESSION['user-datos'] = $usuario['datos_completos'] ?? false;
             $_SESSION['user-rol'] = $usuario['rol'];
-            
+
             // Obtener nombre real del usuario (si es Feligrés)
             $modeloFeligres = new ModeloFeligres();
             $feligres = $modeloFeligres->mdlObtenerPorUsuarioId($usuario['id']);
-            
+
             if ($feligres) {
                 $_SESSION['user-name'] = $feligres['primer_nombre'] . ' ' . $feligres['primer_apellido'];
             } else {
@@ -218,7 +218,8 @@ class LoginController
             ]);
 
             // 3. Guardar el token en la BD
-            if (!$this->modelo->mdlGuardarTokenReset($email, $token)) {
+            $expiracion = date('Y-m-d H:i:s', strtotime('+1 hour'));
+            if (!$this->modelo->mdlGuardarTokenReset($email, $token, $expiracion)) {
                 Logger::error("Error al guardar token de recuperación en BD", [
                     'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
                     'user_id' => $usuario['id']
@@ -228,8 +229,15 @@ class LoginController
                 exit();
             }
 
-            // 4. Enviar el email con PHPMailer
-            $urlReseteo = BASE_URL . "/index.php?route=resetear&token=" . $token;
+            // 4. Limpiamos BASE_URL para evitar dobles slashes y armamos la ruta correcta
+            $baseUrl = rtrim(BASE_URL, '/');
+
+            // Si en tu sistema accedes usando index.php?route=... usa esto:
+            $urlReseteo = $baseUrl . "/index.php?route=resetear&token=" . $token;
+
+            // NOTA: Si tu sistema usa URLs amigables (ej. tusitio.com/resetear?token=...), 
+            // cambia la línea de arriba por esta:
+            // $urlReseteo = $baseUrl . "/resetear?token=" . $token;
             $mail = new PHPMailer(true);
 
             try {
@@ -267,16 +275,11 @@ class LoginController
                 redirect('olvido');
                 exit();
             } catch (Exception $e) {
-                Logger::error("Error al enviar email de recuperación", [
-                    'error' => $mail->ErrorInfo,
-                    'exception' => $e->getMessage(),
-                    'email' => substr($email, 0, 3) . '***@' . substr(strstr($email, '@'), 1),
-                    'user_id' => $usuario['id']
-                ]);
-                $_SESSION['error'] = 'No se pudo enviar el email. Contacta al administrador.';
-                redirect('olvido');
-                exit();
-            }
+    // Imprimimos el error exacto de PHPMailer en la pantalla
+    $_SESSION['error'] = 'Error técnico: ' . $mail->ErrorInfo; 
+    redirect('olvido');
+    exit();
+}
         } catch (Exception $e) {
             Logger::error("Error crítico en proceso de recuperación de contraseña", [
                 'error' => $e->getMessage(),
@@ -344,7 +347,9 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = 'Todos los campos son requeridos.';
-                header('Location: ?route=resetear&token=' . urlencode($token));
+                // Cámbialo por esto:
+                $baseUrl = rtrim(BASE_URL, '/');
+                header('Location: ' . $baseUrl . '/index.php?route=resetear&token=' . urlencode($token));
                 exit();
             }
 
@@ -354,7 +359,9 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = 'Las contraseñas no coinciden.';
-                header('Location: ?route=resetear&token=' . urlencode($token));
+                // Cámbialo por esto:
+                $baseUrl = rtrim(BASE_URL, '/');
+                header('Location: ' . $baseUrl . '/index.php?route=resetear&token=' . urlencode($token));
                 exit();
             }
 
@@ -365,7 +372,9 @@ class LoginController
                     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
                 ]);
                 $_SESSION['error'] = 'La contraseña debe tener al menos 8 caracteres.';
-                header('Location: ?route=resetear&token=' . urlencode($token));
+                // Cámbialo por esto:
+                $baseUrl = rtrim(BASE_URL, '/');
+                header('Location: ' . $baseUrl . '/index.php?route=resetear&token=' . urlencode($token));
                 exit();
             }
 
@@ -399,7 +408,9 @@ class LoginController
                     'token_prefix' => substr($token, 0, 8) . '...'
                 ]);
                 $_SESSION['error'] = 'Hubo un error al actualizar tu contraseña. Intenta de nuevo.';
-                header('Location: ?route=resetear&token=' . urlencode($token));
+                // Cámbialo por esto:
+                $baseUrl = rtrim(BASE_URL, '/');
+                header('Location: ' . $baseUrl . '/index.php?route=resetear&token=' . urlencode($token));
                 exit();
             }
         } catch (Exception $e) {

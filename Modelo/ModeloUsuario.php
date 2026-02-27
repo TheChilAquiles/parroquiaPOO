@@ -244,21 +244,20 @@ class ModeloUsuario
     // ========================================================================
 
     /**
-     * Guarda el token y le dice a MySQL que calcule 1 hora desde "AHORA"
-     * Eliminamos el parámetro $expires de PHP para evitar conflicto de horas
+     * Guarda el token usando la hora generada por PHP
      */
-    public function mdlGuardarTokenReset($email, $token) // Quitamos $expires de aquí
+    public function mdlGuardarTokenReset($email, $token, $expiracion) 
     {
         try {
-            // USAMOS DATE_ADD(NOW(), INTERVAL 1 HOUR) para que sea la hora exacta de la BD
             $sql = "UPDATE usuarios 
                     SET reset_token = :token, 
-                        reset_token_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) 
+                        reset_token_expires = :expiracion 
                     WHERE email = :email";
             
             $stmt = $this->conexion->prepare($sql);
             
             $stmt->bindParam(":token", $token, PDO::PARAM_STR);
+            $stmt->bindParam(":expiracion", $expiracion, PDO::PARAM_STR);
             $stmt->bindParam(":email", $email, PDO::PARAM_STR);
             
             return $stmt->execute();
@@ -270,17 +269,20 @@ class ModeloUsuario
     }
 
     /**
-     * Busca por token y verifica que la fecha de expiración sea mayor a la hora actual de la BD
+     * Busca por token usando la hora actual de PHP
      */
     public function mdlBuscarUsuarioPorToken($token)
     {
         try {
+            $ahora = date('Y-m-d H:i:s');
+            
             $sql = "SELECT * FROM usuarios 
                     WHERE reset_token = :token 
-                    AND reset_token_expires > NOW()"; // Compara peras con peras (hora BD vs hora BD)
+                    AND reset_token_expires > :ahora"; 
             
             $stmt = $this->conexion->prepare($sql);
             $stmt->bindParam(":token", $token, PDO::PARAM_STR);
+            $stmt->bindParam(":ahora", $ahora, PDO::PARAM_STR);
             $stmt->execute();
             
             return $stmt->fetch(PDO::FETCH_ASSOC);
