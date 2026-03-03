@@ -339,245 +339,262 @@
         </div>
     </section>
 
-    <section id="ministerios" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-16 scroll-reveal">
-                <h2 class="text-5xl font-bold text-gray-900 mb-6">Ministerios Parroquiales</h2>
-                <p class="text-xl text-gray-600 mb-8">Encuentra tu lugar en nuestra comunidad de fe</p>
+    
+<style>
+  .ministry-item {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+  }
+  .ministry-item.hidden-item {
+    display: none;
+  }
+  .ministry-item.fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .filter-btn {
+    transition: all 0.25s ease;
+  }
+  .filter-btn.active {
+    background-color: #D0B8A8 !important;
+    color: white !important;
+  }
+  .filter-btn:not(.active) {
+    background-color: #e5e7eb;
+    color: #374151;
+  }
+  .filter-btn:not(.active):hover {
+    background-color: #d1d5db;
+  }
+</style>
+</head>
+<body>
 
-                <div class="flex flex-wrap justify-center gap-4 mb-12">
-                    <button class="filter-btn active bg-[#D0B8A8] text-white px-6 py-3 rounded-full font-semibold hover:bg-[#ab876f] transition duration-300" data-filter="all">
-                        Todos los Ministerios
-                    </button>
-                    <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="liturgico">
-                        Litúrgicos
-                    </button>
-                    <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="pastoral">
-                        Pastorales
-                    </button>
-                    <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="formacion">
-                        Formación
-                    </button>
-                    <button class="filter-btn bg-gray-200 text-gray-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-300 transition duration-300" data-filter="social">
-                        Social
-                    </button>
-                </div>
-            </div>
+<section id="ministerios" class="py-20 bg-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-16">
+      <h2 class="text-5xl font-bold text-gray-900 mb-6">Ministerios Parroquiales</h2>
+      <p class="text-xl text-gray-600 mb-8">Encuentra tu lugar en nuestra comunidad de fe</p>
 
-            <div id="ministries-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="ministry-card ministry-item bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral" onclick="openMinistryModal('legion')">
-                    <div class="relative mb-6">
-                        <img src="https://i.pinimg.com/originals/90/c9/30/90c930833a634c3ee26925ebdded25cf.png" alt="Legión de María" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">group</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Legión de María</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Apostolado mariano dedicado a la santificación y evangelización</p>
-                    <div class="flex items-center justify-center text-sm text-blue-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Sábados • 4:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-blue-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        35 Legionarios Activos
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span>
-                    </div>
-                </div>
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <button class="filter-btn active px-6 py-3 rounded-full font-semibold" data-filter="all">Todos los Ministerios</button>
+        <button class="filter-btn px-6 py-3 rounded-full font-semibold" data-filter="liturgico">Litúrgicos</button>
+        <button class="filter-btn px-6 py-3 rounded-full font-semibold" data-filter="pastoral">Pastorales</button>
+        <button class="filter-btn px-6 py-3 rounded-full font-semibold" data-filter="formacion">Formación</button>
+        <button class="filter-btn px-6 py-3 rounded-full font-semibold" data-filter="social">Social</button>
+      </div>
+    </div>
 
-                <div class="ministry-card ministry-item bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('monaguillos')">
-                    <div class="relative mb-6">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMc6kqE_oMj4Rpwazy6dHq8iLnjb_7hLPcXg&s" alt="Monaguillos" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">child_care</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Monaguillos</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Jóvenes servidores del altar en las celebraciones litúrgicas</p>
-                    <div class="flex items-center justify-center text-sm text-green-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Viernes • 4:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-green-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        18 Monaguillos (8-17 años)
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                    </div>
-                </div>
+    <div id="ministries-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-                <div class="ministry-card ministry-item bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('lectores')">
-                    <div class="relative mb-6">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0cLzgMrZVQLhFurSO7MqGfUeBGaPWEt6eqA&s" alt="Lectores" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">menu_book</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Lectores</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Proclamadores de la Palabra de Dios en la liturgia</p>
-                    <div class="flex items-center justify-center text-sm text-purple-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Viernes • 4:30 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-purple-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        25 Lectores Certificados
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('coro')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">music_note</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">queue_music</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Voces de Asís</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Coro parroquial con alabanza y música sacra</p>
-                    <div class="flex items-center justify-center text-sm text-orange-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Jueves • 7:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-orange-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        22 Coristas + Director
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="formacion" onclick="openMinistryModal('catequistas')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">school</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">people</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Catequistas</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Formación cristiana para niños, jóvenes y adultos</p>
-                    <div class="flex items-center justify-center text-sm text-red-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Domingos • 9:00 AM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-red-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        15 Catequistas + 180 Niños
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Formación</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-teal-50 to-teal-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="social" onclick="openMinistryModal('social')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">volunteer_activism</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">favorite</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Manos Franciscanas</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Servicio a los más necesitados de nuestra comunidad</p>
-                    <div class="flex items-center justify-center text-sm text-teal-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Sábados • 2:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-teal-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        40 Voluntarios Activos
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">Social</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral" onclick="openMinistryModal('juvenil')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">groups</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">celebration</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Francisco Digital</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Pastoral juvenil moderna con tecnología y fe</p>
-                    <div class="flex items-center justify-center text-sm text-pink-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Sábados • 6:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-pink-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        45 Jóvenes (14-28 años)
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico" onclick="openMinistryModal('musica')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">library_music</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">piano</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Ministerio Musical</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Instrumentistas y cantores para todas las celebraciones</p>
-                    <div class="flex items-center justify-center text-sm text-indigo-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Miércoles • 7:30 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-indigo-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        12 Músicos Profesionales
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span>
-                    </div>
-                </div>
-
-                <div class="ministry-card ministry-item bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="formacion" onclick="openMinistryModal('oracion')">
-                    <div class="relative mb-6">
-                        <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-white shadow-lg">
-                            <span class="material-icons text-white text-3xl">self_improvement</span>
-                        </div>
-                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span class="material-icons text-white text-sm">star</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Corazones en Oración</h3>
-                    <p class="text-gray-600 text-center mb-4 text-sm">Grupo de oración carismática y adoración</p>
-                    <div class="flex items-center justify-center text-sm text-yellow-600 font-semibold mb-2">
-                        <span class="material-icons mr-1 text-lg">schedule</span>
-                        Martes • 7:00 PM
-                    </div>
-                    <div class="flex items-center justify-center text-sm text-yellow-600 font-semibold mb-4">
-                        <span class="material-icons mr-1 text-lg">people</span>
-                        60 Miembros Regulares
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">Formación</span>
-                    </div>
-                </div>
-            </div>
+      <div class="ministry-card ministry-item bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral">
+        <div class="relative mb-6">
+          <img src="https://i.pinimg.com/originals/90/c9/30/90c930833a634c3ee26925ebdded25cf.png" alt="Legión de María" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">group</span>
+          </div>
         </div>
-    </section>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Legión de María</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Apostolado mariano dedicado a la santificación y evangelización</p>
+        <div class="flex items-center justify-center text-sm text-blue-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Sábados • 4:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-blue-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 35 Legionarios Activos
+        </div>
+        <div class="flex justify-center"><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span></div>
+      </div>
 
+      <div class="ministry-card ministry-item bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico">
+        <div class="relative mb-6">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMc6kqE_oMj4Rpwazy6dHq8iLnjb_7hLPcXg&s" alt="Monaguillos" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">child_care</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Monaguillos</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Jóvenes servidores del altar en las celebraciones litúrgicas</p>
+        <div class="flex items-center justify-center text-sm text-green-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Viernes • 4:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-green-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 18 Monaguillos (8-17 años)
+        </div>
+        <div class="flex justify-center"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico">
+        <div class="relative mb-6">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0cLzgMrZVQLhFurSO7MqGfUeBGaPWEt6eqA&s" alt="Lectores" class="w-24 h-24 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">menu_book</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Lectores</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Proclamadores de la Palabra de Dios en la liturgia</p>
+        <div class="flex items-center justify-center text-sm text-purple-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Viernes • 4:30 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-purple-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 25 Lectores Certificados
+        </div>
+        <div class="flex justify-center"><span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">music_note</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">queue_music</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Voces de Asís</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Coro parroquial con alabanza y música sacra</p>
+        <div class="flex items-center justify-center text-sm text-orange-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Jueves • 7:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-orange-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 22 Coristas + Director
+        </div>
+        <div class="flex justify-center"><span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-red-50 to-red-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="formacion">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">school</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">people</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Catequistas</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Formación cristiana para niños, jóvenes y adultos</p>
+        <div class="flex items-center justify-center text-sm text-red-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Domingos • 9:00 AM
+        </div>
+        <div class="flex items-center justify-center text-sm text-red-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 15 Catequistas + 180 Niños
+        </div>
+        <div class="flex justify-center"><span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-semibold">Formación</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-teal-50 to-teal-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="social">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">volunteer_activism</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">favorite</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Manos Franciscanas</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Servicio a los más necesitados de nuestra comunidad</p>
+        <div class="flex items-center justify-center text-sm text-teal-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Sábados • 2:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-teal-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 40 Voluntarios Activos
+        </div>
+        <div class="flex justify-center"><span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-semibold">Social</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-pink-50 to-pink-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="pastoral">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">groups</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">celebration</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Francisco Digital</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Pastoral juvenil moderna con tecnología y fe</p>
+        <div class="flex items-center justify-center text-sm text-pink-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Sábados • 6:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-pink-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 45 Jóvenes (14-28 años)
+        </div>
+        <div class="flex justify-center"><span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-xs font-semibold">Pastoral</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-indigo-50 to-indigo-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="liturgico">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">library_music</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">piano</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Ministerio Musical</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Instrumentistas y cantores para todas las celebraciones</p>
+        <div class="flex items-center justify-center text-sm text-indigo-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Miércoles • 7:30 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-indigo-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 12 Músicos Profesionales
+        </div>
+        <div class="flex justify-center"><span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-xs font-semibold">Litúrgico</span></div>
+      </div>
+
+      <div class="ministry-card ministry-item bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-2xl shadow-xl cursor-pointer" data-category="formacion">
+        <div class="relative mb-6">
+          <div class="w-24 h-24 rounded-full mx-auto bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center border-4 border-white shadow-lg">
+            <span class="material-icons text-white text-3xl">self_improvement</span>
+          </div>
+          <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+            <span class="material-icons text-white text-sm">star</span>
+          </div>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900 text-center mb-3">Corazones en Oración</h3>
+        <p class="text-gray-600 text-center mb-4 text-sm">Grupo de oración carismática y adoración</p>
+        <div class="flex items-center justify-center text-sm text-yellow-600 font-semibold mb-2">
+          <span class="material-icons mr-1 text-lg">schedule</span> Martes • 7:00 PM
+        </div>
+        <div class="flex items-center justify-center text-sm text-yellow-600 font-semibold mb-4">
+          <span class="material-icons mr-1 text-lg">people</span> 60 Miembros Regulares
+        </div>
+        <div class="flex justify-center"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-semibold">Formación</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.ministry-item');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active button
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      items.forEach(item => {
+        const match = filter === 'all' || item.dataset.category === filter;
+        if (match) {
+          item.classList.remove('hidden-item');
+          item.classList.add('fade-in');
+          // Remove animation class after it ends so it can replay
+          item.addEventListener('animationend', () => item.classList.remove('fade-in'), { once: true });
+        } else {
+          item.classList.add('hidden-item');
+          item.classList.remove('fade-in');
+        }
+      });
+    });
+  });
+</script>
     <section class="py-20 bg-gradient-to-br from-[#D0B8A8] to-[#ab876f] text-white">
         <div class="max-w-7xl mx-auto px-4">
             <div class="text-center mb-16 scroll-reveal">
