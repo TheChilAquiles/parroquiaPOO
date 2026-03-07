@@ -291,6 +291,14 @@ if (isset($_SESSION['error_confirm'])) unset($_SESSION['error_confirm']);
             passwordError.innerHTML = '<span class="material-icons text-[14px]">error</span> La contraseña es obligatoria';
             isValid = false;
             setTimeout(() => password.classList.remove("animate-shake"), 500);
+
+        } else if (password.value.toLowerCase().includes(email.value.toLowerCase())) {
+            password.classList.add("border-red-300", "ring-2", "ring-red-300/60", "bg-red-500/10", "animate-shake");
+            passwordError.classList.remove("hidden");
+            passwordError.innerHTML = '<span class="material-icons text-[14px]">error</span> La contraseña no puede contener el correo';
+            isValid = false;
+            setTimeout(() => password.classList.remove("animate-shake"), 500);
+
         } else {
             password.classList.remove("border-red-300", "ring-2", "ring-red-300/60", "bg-red-500/10");
             passwordError.classList.add("hidden");
