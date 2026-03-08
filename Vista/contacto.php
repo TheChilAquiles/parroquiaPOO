@@ -68,7 +68,7 @@
                         <!-- Title row with name and badge -->
                         <div class="mb-3 flex flex-col sm:flex-row sm:items-center gap-2">
                             <!-- Page title with text truncation if too long -->
-                            <h1 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight truncate">Parroquia San José</h1>
+                            <h1 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight truncate">Parroquia San Francisco de Asís</h1>
                             <!-- Verified badge with Facebook icon -->
                             <span class="inline-flex items-center self-start rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 border border-slate-200">
                                 <!-- Facebook logo SVG -->

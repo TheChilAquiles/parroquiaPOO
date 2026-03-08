@@ -85,22 +85,14 @@ $nuevos = $nuevos ?? [];
                         <tr class="border-b">
                             <td class="px-4 py-2"><?= htmlspecialchars($row['nombre_completo'] ?? 'N/A') ?></td>
                             <td class="px-4 py-2"><?= htmlspecialchars($row['numero_documento'] ?? 'N/A') ?></td>
-                            <td class="px-4 py-2"><?= formatearFecha($row['fecha_registro'] ?? '') ?></td>
+                            <td class="px-4 py-2"><?= !empty($row['fecha_registro']) ? date('d/m/Y', strtotime($row['fecha_registro'])) : 'N/A' ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
 
-        <!-- Botones de Exportación -->
-        <div class="flex gap-4">
-            <a href="index.php?route=reportes/exportarCSV&tipo=feligreses" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                <i class="fas fa-file-excel mr-2"></i>Exportar Excel
-            </a>
-            <a href="index.php?route=reportes/exportarPDF&tipo=feligreses" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
-            </a>
-        </div>
+
     </div>
 </body>
 </html>

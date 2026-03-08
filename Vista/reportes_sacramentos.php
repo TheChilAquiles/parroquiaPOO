@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Vista/reportes_sacramentos.php - Reporte de Sacramentos
  */
@@ -10,12 +11,14 @@ $tendencias = $tendencias ?? [];
 ?>
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte de Sacramentos</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-50">
     <div class="container mx-auto px-4 py-8">
         <div class="mb-6">
@@ -28,7 +31,7 @@ $tendencias = $tendencias ?? [];
         <!-- Sacramentos por Tipo -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 class="text-2xl font-semibold mb-4">Sacramentos por Tipo</h2>
-            <table class="w-full">
+            <table id="tabla-tipos" class="w-full">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-4 py-2 text-left">Tipo Sacramento</th>
@@ -49,7 +52,7 @@ $tendencias = $tendencias ?? [];
         <!-- Sacramentos por Libro -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 class="text-2xl font-semibold mb-4">Sacramentos por Libro</h2>
-            <table class="w-full">
+            <table id="tabla-libros" class="w-full">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-4 py-2 text-left">Libro</th>
@@ -70,7 +73,7 @@ $tendencias = $tendencias ?? [];
         <!-- Tendencias -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h2 class="text-2xl font-semibold mb-4">Tendencias (Últimos 12 meses)</h2>
-            <table class="w-full">
+            <table id="tabla-tendencias" class="w-full">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="px-4 py-2 text-left">Mes</th>
@@ -90,13 +93,38 @@ $tendencias = $tendencias ?? [];
 
         <!-- Botones de Exportación -->
         <div class="flex gap-4">
-            <a href="index.php?route=reportes/exportarCSV&tipo=sacramentos" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+            <button onclick="exportarExcelTodo()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
                 <i class="fas fa-file-excel mr-2"></i>Exportar Excel
-            </a>
+            </button>
             <a href="index.php?route=reportes/exportarPDF&tipo=sacramentos" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                 <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
             </a>
         </div>
     </div>
+
+
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <script>
+        function exportarExcelTodo() {
+            // 1. Crear un nuevo libro de Excel
+            var wb = XLSX.utils.book_new();
+            
+            // 2. Extraer cada tabla y crear su pestaña
+            var ws1 = XLSX.utils.table_to_sheet(document.getElementById('tabla-tipos'));
+            XLSX.utils.book_append_sheet(wb, ws1, "Por Tipo");
+            
+            var ws2 = XLSX.utils.table_to_sheet(document.getElementById('tabla-libros'));
+            XLSX.utils.book_append_sheet(wb, ws2, "Por Libro");
+            
+            var ws3 = XLSX.utils.table_to_sheet(document.getElementById('tabla-tendencias'));
+            XLSX.utils.book_append_sheet(wb, ws3, "Tendencias");
+            
+            // 3. Descargar el archivo
+            XLSX.writeFile(wb, 'Reporte_Sacramentos_<?= date('Y-m-d') ?>.xlsx');
+        }
+    </script>
 </body>
+
 </html>

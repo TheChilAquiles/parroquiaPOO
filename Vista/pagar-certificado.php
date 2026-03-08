@@ -45,7 +45,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             <div class="flex justify-between items-center pt-3 border-t-2 border-gray-300">
                 <span class="text-lg font-semibold text-gray-700">Total a Pagar:</span>
                 <span class="text-2xl font-bold text-blue-600">
-                    $<?= number_format(PAYMENT_CERTIFICATE_PRICE, 0, ',', '.') ?> <?= PAYMENT_DEFAULT_CURRENCY ?>
+                    $<?= number_format($precioCertificado ?? 0, 0, ',', '.') ?> <?= defined('PAYMENT_DEFAULT_CURRENCY') ? PAYMENT_DEFAULT_CURRENCY : 'COP' ?>
                 </span>
             </div>
         </div>

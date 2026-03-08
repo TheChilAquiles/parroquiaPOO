@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 03, 2026 at 01:38 AM
+-- Generation Time: Mar 08, 2026 at 10:56 PM
 -- Server version: 11.7.2-MariaDB
 -- PHP Version: 8.3.26
 
@@ -54,7 +54,13 @@ INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `par
 (1, NULL, 1, NULL, 12, '2025-12-06', NULL, '2025-12-07 14:58:17', '2026-01-06', 'Bautismo', NULL, '2025-12-06 20:44:44', 1, 'certificados_generados/cert_1_bautismo_20251207_195817.pdf', 'descargado', NULL),
 (2, 15, 2, NULL, 12, NULL, '2026-02-22 19:49:46', '2026-02-22 19:49:46', '2026-03-24', 'Confirmación', 'Solicitud desde Sacramentos', '2025-12-07 14:58:00', 2, 'certificados_generados/cert_2_bautismo_20260223_004946.pdf', 'descargado', NULL),
 (3, 15, 12, NULL, 12, NULL, '2026-02-22 18:54:22', '2026-02-22 18:54:27', '2026-03-24', 'Bautismo', 'Solicitud desde Sacramentos', '2026-02-20 20:04:54', 8, 'certificados_generados/cert_3_bautismo_20260222_235427.pdf', 'descargado', NULL),
-(4, 15, 1, NULL, 1, NULL, '2026-02-22 19:52:36', '2026-02-22 19:52:37', '2026-03-24', 'Bautismo', 'Solicitud desde Sacramentos', '2026-02-22 19:32:04', 9, 'certificados_generados/cert_4_bautismo_20260223_005237.pdf', 'descargado', NULL);
+(4, 15, 1, NULL, 1, NULL, '2026-02-22 19:52:36', '2026-02-22 19:52:37', '2026-03-24', 'Bautismo', 'Solicitud desde Sacramentos', '2026-02-22 19:32:04', 9, 'certificados_generados/cert_4_bautismo_20260223_005237.pdf', 'descargado', NULL),
+(5, 15, 12, NULL, 12, NULL, '2026-03-08 16:46:05', '2026-03-08 16:46:08', '2026-04-07', 'Bautizo', 'Generación directa', '2026-03-08 16:46:03', 9, 'certificados_generados/cert_5_bautismo_20260308_214608.pdf', 'descargado', NULL),
+(6, NULL, 20, NULL, 20, NULL, NULL, '2025-10-02 10:00:00', '2025-11-02', 'Matrimonio', NULL, '2025-10-01 10:00:00', 10, NULL, 'expirado', NULL),
+(7, NULL, 21, NULL, 22, NULL, '2026-03-08 17:41:25', '2026-03-08 17:41:26', '2026-04-07', 'Bautismo', NULL, '2026-03-08 17:04:27', 11, 'certificados_generados/cert_7_bautismo_20260308_224126.pdf', 'generado', NULL),
+(8, NULL, 20, NULL, 22, NULL, NULL, '2026-03-08 17:41:29', '2026-04-07', 'Bautismo', NULL, '2026-03-08 17:04:27', 11, 'certificados_generados/cert_8_bautismo_20260308_224129.pdf', 'generado', NULL),
+(9, 15, 22, NULL, 22, NULL, '2026-03-08 17:40:50', '2026-03-08 17:40:50', '2026-04-07', 'Bautismo', 'Solicitud desde Sacramentos', '2026-03-08 17:40:45', 11, 'certificados_generados/cert_9_bautismo_20260308_224050.pdf', 'descargado', NULL),
+(10, 15, 3, NULL, 3, NULL, NULL, NULL, NULL, 'Matrimonio', 'Solicitud desde Sacramentos', '2026-03-08 17:42:45', 4, NULL, 'pendiente_pago', NULL);
 
 -- --------------------------------------------------------
 
@@ -87,8 +93,9 @@ INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `des
 (5, 'pago_moneda', 'COP', 'texto', 'pagos', 'Moneda', 1, '2025-12-06 20:44:38', '2025-12-11 20:09:40', 15),
 (6, 'pago_modo', 'production', 'texto', 'pagos', 'Modo pasarela', 1, '2025-12-06 20:44:38', '2025-12-11 20:09:40', 15),
 (7, 'sistema_registro_abierto', '1', 'booleano', 'sistema', 'Registro abierto', 1, '2025-12-06 20:44:38', '2025-12-11 20:09:40', 15),
-(9, 'cert_precio_confirmacion', '50000', 'numero', 'certificados', 'Precio Certificado de Confirmaci??n', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15),
-(10, 'cert_precio_defuncion', '15000', 'numero', 'certificados', 'Precio Certificado de Defunci??n', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15);
+(9, 'cert_precio_confirmacion', '50000', 'numero', 'certificados', 'Precio Certificado de Confirmación', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15),
+(10, 'cert_precio_defuncion', '15000', 'numero', 'certificados', 'Precio Certificado de Defunción', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15),
+(11, 'cert_precio_general', '10000', 'numero', 'certificados', 'Precio Certificado General (Por Defecto)', 1, '2026-03-08 17:30:59', '2026-03-08 17:30:59', 15);
 
 -- --------------------------------------------------------
 
@@ -128,9 +135,9 @@ CREATE TABLE `feligreses` (
   `telefono` varchar(20) DEFAULT NULL,
   `direccion` varchar(50) DEFAULT NULL,
   `primer_nombre` varchar(30) NOT NULL,
-  `segundo_nombre` varchar(30) NOT NULL,
+  `segundo_nombre` varchar(30) DEFAULT NULL,
   `primer_apellido` varchar(30) NOT NULL,
-  `segundo_apellido` varchar(30) NOT NULL,
+  `segundo_apellido` varchar(30) DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -152,11 +159,11 @@ INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_docum
 (10, NULL, 1, '2005', '0000000', 'N/A', 'Marcos', '', 'Ruiz', '', NULL, NULL),
 (11, NULL, 1, '2006', '0000000', 'N/A', 'Sofia', '', 'Vargas', '', NULL, '2026-02-20 19:42:32'),
 (12, 15, 1, '1031422232', '3166347898', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'David', 'Bedoya', 'Garcia', '2006-06-23', NULL),
-(13, NULL, NULL, NULL, NULL, NULL, '1', '', '1', '', NULL, NULL),
-(14, NULL, NULL, NULL, NULL, NULL, '1', '', '1', '', NULL, NULL),
-(15, NULL, NULL, NULL, NULL, NULL, '1', '', '1', '', NULL, NULL),
-(16, NULL, NULL, NULL, NULL, NULL, '1', '', '1', '', NULL, NULL),
-(17, 17, 1, '111111111', '111111111', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'Samuel David', 'Bedoya', 'Garcia', '2026-02-04', '2026-02-27 20:30:24');
+(17, 17, 1, '111111111', '111111111', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'Samuel David', 'Bedoya', 'Garcia', '2026-02-04', '2026-02-27 20:30:24'),
+(20, NULL, 1, '10203040', '3110000000', NULL, 'Carlos', NULL, 'Gómez', NULL, NULL, NULL),
+(21, NULL, 1, '50607080', '3120000000', NULL, 'Laura', NULL, 'Ríos', NULL, NULL, NULL),
+(22, NULL, 2, '11223344', 'N/A', NULL, 'Mateo', NULL, 'Gómez', NULL, NULL, NULL),
+(23, NULL, 1, '99887766', '3150000000', NULL, 'Esteban', NULL, 'Quito', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -270,11 +277,11 @@ CREATE TABLE `noticias` (
 --
 
 INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `fecha_publicacion`, `estado_registro`) VALUES
-(1, 1, 'Inscripciones Abiertas', '¡Claro que sí, crack! El error es súper común y es de lógica de ubicación.\r\n\r\nEl problema es que metiste la etiqueta &amp;lt;script src=&amp;quot;assets/js/noticias.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt; DENTRO del bloque PHP que verifica si eres administrador (if ($esAdmin)).\r\n\r\n¿Qué está pasando?\r\nSi entras como Administrador: El script se carga y el botón funciona.\r\n\r\nSi entras como Usuario normal (o sin loguear): El PHP oculta el script, por lo tanto, no hay nadie &amp;quot;escuchando&amp;quot; el clic del botón &amp;quot;Leer más&amp;quot;.', 'assets/img/noticias/noticia_6935d5b539f339.00351054.png', '2025-12-06 20:44:44', '2025-12-08 18:03:57'),
+(1, 1, 'Horarios de Semana Santa', 'Conoce nuestra programación oficial para la Semana Mayor. Tendremos confesiones todos los días de 4:00 PM a 6:00 PM.', 'assets/img/noticias/noticia_6935d5b539f339.00351054.png', '2025-12-06 20:44:44', '2025-12-08 18:03:57'),
 (2, 15, 'Gran Campaña de Donación Manos Solidarias', 'Querida comunidad, este fin de semana estaremos recolectando alimentos no perecederos y ropa en buen estado para las familias más vulnerables del sector. Pueden dejar sus aportes en el salón parroquial antes y después de la Eucaristía de las 10:00 AM y 6:00 PM. ¡Su generosidad es esperanza para muchos! Dios los bendiga.', 'assets/img/noticias/noticia_69371ff230a4a7.88656607.jpg', '2025-12-08 13:58:58', '2025-12-08 19:12:57'),
-(3, 15, '¡Gran Kermés Familiar este Sábado!', 'No se pierdan nuestra gran Kermés Familiar este sábado a partir de las 12:00 pm en los jardines de la parroquia. Habrá deliciosos puestos de comida, juegos para los niños y nuestro famoso concurso de postres. ¡Ven a disfrutar en comunidad y apoya a nuestra parroquia! ¡Los esperamos!', 'assets/img/noticias/noticia_6937221dd1a561.26446344.jpg', '2025-12-08 14:08:13', NULL),
-(4, 15, 'Charla Juvenil: El Papel de los Jóvenes en la Iglesia', 'Invitamos a todos los jóvenes de la comunidad a una charla especial este viernes a las 7:00 pm en el salón parroquial. El Padre Roberto nos hablará sobre &quot;El Papel de los Jóvenes en la Iglesia de Hoy&quot;. ¡Ven a compartir, aprender y fortalecer tu fe junto a otros jóvenes! Habrá un refrigerio al finalizar.', 'assets/img/noticias/noticia_69372237930395.35370410.jpg', '2025-12-08 14:08:39', NULL),
-(5, 15, 'Misa de Sanación para Enfermos y Adultos Mayores', 'Este próximo jueves a las 6:00 pm celebraremos una Misa de Sanación especialmente dedicada a nuestros enfermos y adultos mayores. Únanse a nosotros en oración para pedir por su salud y bienestar. Durante la misa se administrará el sacramento de la Unción de los Enfermos a quienes lo deseen.', 'assets/img/noticias/noticia_6937224fbdee52.65131932.jpg', '2025-12-08 14:09:03', NULL);
+(3, 15, '¡Gran Kermés Familiar este Sábado!', 'No se pierdan nuestra gran Kermés Familiar este sábado a partir de las 12:00 pm en los jardines de la parroquia. Habrá deliciosos puestos de comida, juegos para los niños y nuestro famoso concurso de postres. ¡Ven a disfrutar en comunidad y apoya a nuestra parroquia! ¡Los esperamos!', 'assets/img/noticias/noticia_69aded126b1a99.38380663.png', '2025-12-08 14:08:13', NULL),
+(4, 15, 'Charla Juvenil: El Papel de los Jóvenes en la Iglesia', 'Invitamos a todos los jóvenes de la comunidad a una charla especial este viernes a las 7:00 pm en el salón parroquial. El Padre Roberto nos hablará sobre &amp;quot;El Papel de los Jóvenes en la Iglesia de Hoy&amp;quot;. ¡Ven a compartir, aprender y fortalecer tu fe junto a otros jóvenes! Habrá un refrigerio al finalizar.', 'assets/img/noticias/noticia_69aded39b4a326.83834255.png', '2025-12-08 14:08:39', NULL),
+(5, 15, 'Misa de Sanación para Enfermos y Adultos Mayores', 'Este próximo jueves a las 6:00 pm celebraremos una Misa de Sanación especialmente dedicada a nuestros enfermos y adultos mayores. Únanse a nosotros en oración para pedir por su salud y bienestar. Durante la misa se administrará el sacramento de la Unción de los Enfermos a quienes lo deseen.', 'assets/img/noticias/noticia_69aded53142601.31930919.png', '2025-12-08 14:09:03', NULL);
 
 -- --------------------------------------------------------
 
@@ -285,7 +292,7 @@ INSERT INTO `noticias` (`id`, `id_usuario`, `titulo`, `descripcion`, `imagen`, `
 CREATE TABLE `pagos` (
   `id` int(10) NOT NULL,
   `certificado_id` int(10) DEFAULT NULL,
-  `valor` float DEFAULT NULL,
+  `valor` decimal(10,2) DEFAULT NULL,
   `estado` varchar(20) DEFAULT NULL,
   `fecha_pago` datetime DEFAULT NULL,
   `tipo_pago_id` int(10) DEFAULT NULL,
@@ -298,10 +305,13 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `transaction_id`, `tipo_concepto`) VALUES
-(1, 1, 25000, 'pagado', '2025-12-06 20:44:45', 1, NULL, 'certificado'),
-(2, 3, 10000, 'pagado', '2026-02-22 18:54:22', 3, NULL, 'certificado'),
-(3, 2, 50000, 'pagado', '2026-02-22 19:49:46', 3, NULL, 'certificado'),
-(4, 4, 10000, 'pagado', '2026-02-22 19:52:36', 3, NULL, 'certificado');
+(1, 1, 25000.00, 'pagado', '2025-12-06 20:44:45', 1, NULL, 'certificado'),
+(2, 3, 10000.00, 'pagado', '2026-02-22 18:54:22', 3, NULL, 'certificado'),
+(3, 2, 50000.00, 'pagado', '2026-02-22 19:49:46', 3, NULL, 'certificado'),
+(4, 4, 10000.00, 'pagado', '2026-02-22 19:52:36', 3, NULL, 'certificado'),
+(5, 5, 10000.00, 'pagado', '2026-03-08 16:46:05', 3, NULL, 'certificado'),
+(6, 9, 10000.00, 'pagado', '2026-03-08 17:40:50', 3, NULL, 'certificado'),
+(7, 7, 10000.00, 'pagado', '2026-03-08 17:41:25', 3, NULL, 'certificado');
 
 -- --------------------------------------------------------
 
@@ -398,15 +408,14 @@ INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_particip
 (11, 10, 4, 9, NULL),
 (12, 11, 4, 9, NULL),
 (13, 12, 8, 1, NULL),
-(14, 13, 8, 6, NULL),
-(15, 14, 8, 7, NULL),
-(16, 15, 8, 8, NULL),
-(17, 16, 8, 9, NULL),
-(18, 12, 9, 6, NULL),
 (19, 1, 9, 1, NULL),
-(20, 2, 9, 7, NULL),
-(21, 3, 9, 9, NULL),
-(22, 4, 9, 8, NULL);
+(23, 20, 10, 7, NULL),
+(24, 21, 10, 8, NULL),
+(25, 23, 10, 9, NULL),
+(26, 22, 11, 1, NULL),
+(27, 20, 11, 4, NULL),
+(28, 21, 11, 5, NULL),
+(29, 23, 11, 2, NULL);
 
 -- --------------------------------------------------------
 
@@ -478,7 +487,9 @@ INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `foli
 (3, 3, 3, 301, 30, '2023-11-01', NULL),
 (4, 4, 4, 401, 40, '2024-02-14', NULL),
 (8, 1, 1, 102, 51, '2026-02-20', NULL),
-(9, 1, 1, 103, 52, '2026-02-22', NULL);
+(9, 1, 1, 103, 52, '2026-02-22', NULL),
+(10, 4, 4, 405, 45, '2020-05-15', NULL),
+(11, 1, 1, 106, 54, '2026-03-08', NULL);
 
 -- --------------------------------------------------------
 
@@ -787,7 +798,7 @@ ALTER TABLE `usuario_roles`
 -- AUTO_INCREMENT for table `certificados`
 --
 ALTER TABLE `certificados`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `configuraciones`
@@ -805,7 +816,7 @@ ALTER TABLE `documento_tipos`
 -- AUTO_INCREMENT for table `feligreses`
 --
 ALTER TABLE `feligreses`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `grupos`
@@ -841,7 +852,7 @@ ALTER TABLE `noticias`
 -- AUTO_INCREMENT for table `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `pago_ordenes`
@@ -865,7 +876,7 @@ ALTER TABLE `parientes`
 -- AUTO_INCREMENT for table `participantes`
 --
 ALTER TABLE `participantes`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `participantes_rol`
@@ -883,7 +894,7 @@ ALTER TABLE `reportes`
 -- AUTO_INCREMENT for table `sacramentos`
 --
 ALTER TABLE `sacramentos`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `sacramento_tipo`
@@ -933,13 +944,20 @@ ALTER TABLE `certificados`
 -- Constraints for table `feligreses`
 --
 ALTER TABLE `feligreses`
-  ADD CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `feligreses_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `fk_feligres_tipo_doc` FOREIGN KEY (`tipo_documento_id`) REFERENCES `documento_tipos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `libros`
 --
 ALTER TABLE `libros`
   ADD CONSTRAINT `libros_ibfk_1` FOREIGN KEY (`libro_tipo_id`) REFERENCES `libro_tipo` (`id`);
+
+--
+-- Constraints for table `noticias`
+--
+ALTER TABLE `noticias`
+  ADD CONSTRAINT `fk_noticias_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `pagos`

@@ -10,41 +10,17 @@ class ReportesController extends BaseController
 
     public function __construct()
     {
-        $this->modelo = new ReporteModelo();
+        $this->modelo = new ModeloReporte();
     }
 
     /**
      * Muestra la lista de reportes con estadísticas
      */
     public function index()
-    {
-        $this->requiereAutenticacion();
-
-        try {
-            // Delegar toda la lógica al modelo
-            $reportes = $this->modelo->obtenerReportes();
-            $estadisticas = $this->modelo->obtenerEstadisticas();
-
-            // Extraer estadísticas para la vista
-            $totalReportes = $estadisticas['totalReportes'];
-            $totalValor = $estadisticas['totalValor'];
-            $pagosCompletados = $estadisticas['pagosCompletados'];
-            $pagosPendientes = $estadisticas['pagosPendientes'];
-            $reportesActivos = $estadisticas['reportesActivos'];
-
-            include __DIR__ . '/../Vista/reportes.php';
-        } catch (Exception $e) {
-            Logger::error("Error en ReportesController::index:", ['error' => $e->getMessage()]);
-            $_SESSION['error'] = 'Error al cargar reportes. Por favor, intente nuevamente.';
-            $reportes = [];
-            $totalReportes = 0;
-            $totalValor = 0.0;
-            $pagosCompletados = 0;
-            $pagosPendientes = 0;
-            $reportesActivos = 0;
-            include __DIR__ . '/../Vista/reportes.php';
-        }
-    }
+{
+    $this->requiereAutenticacion();
+    include __DIR__ . '/../Vista/reportes.php';
+}
 
     /**
      * Muestra el formulario para crear un nuevo reporte
@@ -233,7 +209,7 @@ class ReportesController extends BaseController
     }
 
     /**
-     * Exporta reportes a PDF
+     * Exporta reportes a PDF por Tipo
      */
     public function exportarPDF()
     {
@@ -242,15 +218,17 @@ class ReportesController extends BaseController
         try {
             require_once __DIR__ . '/../vendor/autoload.php';
 
-            // Obtener datos para exportación
-            $datos = $this->modelo->obtenerDatosParaExportacion();
-            $reportes = $datos['reportes'];
-            $estadisticas = $datos['estadisticas'];
+            $tipo = $_GET['tipo'] ?? 'general';
+            $datos = $this->obtenerDatosParaExportar($tipo);
 
-            // Generar HTML para el PDF
-            $html = $this->generarHTMLParaPDF($reportes, $estadisticas);
+            if (empty($datos)) {
+                $_SESSION['error'] = 'No hay datos disponibles para exportar.';
+                header('Location: index.php?route=reportes');
+                exit;
+            }
 
-            // Configurar DomPDF
+            $html = $this->generarHTMLParaPDF($datos, $tipo);
+
             $options = new \Dompdf\Options();
             $options->set('isHtml5ParserEnabled', true);
             $options->set('isRemoteEnabled', true);
@@ -260,8 +238,14 @@ class ReportesController extends BaseController
             $dompdf->setPaper('A4', 'landscape');
             $dompdf->render();
 
-            // Enviar PDF al navegador
-            $dompdf->stream('reportes_' . date('Y-m-d') . '.pdf', ['Attachment' => true]);
+            // --- LA SOLUCIÓN MÁGICA AQUÍ ---
+            // Limpiamos cualquier basura en el buffer de salida antes de enviar el PDF
+            if (ob_get_length()) {
+                ob_end_clean();
+            }
+
+            $dompdf->stream('reporte_' . $tipo . '_' . date('Y-m-d') . '.pdf', ['Attachment' => true]);
+            exit; // Importante poner exit aquí
         } catch (Exception $e) {
             Logger::error("Error en ReportesController::exportarPDF:", ['error' => $e->getMessage()]);
             $_SESSION['error'] = 'Error al generar el PDF.';

@@ -5,7 +5,7 @@
         <div class="relative mx-auto max-w-7xl px-4 py-24">
             <div class="text-center">
                 <h1 class="text-5xl md:text-6xl font-bold mb-6 drop-shadow-lg">
-                    Parroquia San José
+                    Parroquia San Francisco de Asís
                 </h1>
                 <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto font-light">
                     Un lugar de fe, esperanza y amor donde cada corazón encuentra su hogar espiritual

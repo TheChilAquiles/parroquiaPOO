@@ -9,12 +9,14 @@ class PagosController extends BaseController
     private $modelo;
     private $modeloSolicitud;
     private $controladorCertificados;
+    private $modeloConfiguracion; 
 
     public function __construct()
     {
         $this->modelo = new ModeloPago();
         $this->modeloSolicitud = new ModeloSolicitudCertificado();
         $this->controladorCertificados = new CertificadosController();
+        $this->modeloConfiguracion = new ModeloConfiguracion(); 
     }
 
     /**
@@ -394,6 +396,8 @@ class PagosController extends BaseController
             'certificado_id' => $certificadoId,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ]);
+        
+        $precioCertificado = $this->modeloConfiguracion->obtenerPrecioCertificado($certificado['tipo_certificado'] ?? 'general');
 
         if (empty($certificadoId) || !is_numeric($certificadoId)) {
             Logger::warning("Pago de certificado fallido: ID inválido", [
@@ -521,10 +525,12 @@ class PagosController extends BaseController
 
             // Crear instancia del gateway de pago
             $gateway = PaymentGatewayFactory::create();
+            // --- AGREGA ESTA LÍNEA ---
+            $precioCertificado = $this->modeloConfiguracion->obtenerPrecioCertificado($certificado['tipo_certificado'] ?? 'general');
 
             // Preparar datos del pago
             $paymentData = [
-                'amount' => PAYMENT_CERTIFICATE_PRICE,
+                'amount' => $precioCertificado, 
                 'currency' => PAYMENT_DEFAULT_CURRENCY,
                 'description' => "Pago de certificado #{$certificadoId}",
                 'metadata' => [
@@ -934,9 +940,11 @@ class PagosController extends BaseController
             // Si el pago fue exitoso
             if ($callbackResult['success']) {
                 // Registrar pago en la base de datos
+                // --- AGREGA ESTA LÍNEA ---
+                $precioCertificado = $this->modeloConfiguracion->obtenerPrecioCertificado($certificado['tipo_certificado'] ?? 'general');
                 $resultadoPago = $this->modelo->mdlCrear([
                     'certificado_id' => $certificadoId,
-                    'valor' => PAYMENT_CERTIFICATE_PRICE,
+                    'valor' => $precioCertificado,
                     'estado' => 'pagado',
                     'metodo_de_pago' => 'paymentway',
                     'transaction_id' => $callbackResult['transaction_id']

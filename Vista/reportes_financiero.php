@@ -114,15 +114,7 @@ $valoresPromedio = $valoresPromedio ?? [];
             </table>
         </div>
 
-        <!-- Botones de Exportación -->
-        <div class="flex gap-4">
-            <a href="index.php?route=reportes/exportarCSV&tipo=financiero" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                <i class="fas fa-file-excel mr-2"></i>Exportar Excel
-            </a>
-            <a href="index.php?route=reportes/exportarPDF&tipo=financiero" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
-            </a>
-        </div>
+        
     </div>
 </body>
 </html>
