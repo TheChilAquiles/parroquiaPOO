@@ -24,7 +24,7 @@
                 <?php
                 if (isset($_SESSION["logged"])) {
                     $menu = [
-                        'Dashboard' => ['all'],
+                        'Dashboard' => ['Administrador', 'Secretario'],
                         'Feligreses' => ['Secretario', 'Administrador'],
                         'Libros'  => ['Secretario', 'Administrador'],
                         'Noticias' =>  ['all'],
@@ -33,6 +33,7 @@
                         'Grupos' =>  ['Secretario', 'Administrador'],
                         'Reportes' => ['Administrador'],
                         'Certificados' => ['all'],
+                        'Contacto' => ['all'],
                         'Configuración' => ['Administrador'],
                         'pqrs' => ['all']
                     ];

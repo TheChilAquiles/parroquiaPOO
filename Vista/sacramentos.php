@@ -489,42 +489,42 @@
 
     // Función principal para agregar participante a la lista provisional
     function agregarParticipante() {
-        const rolParticipante = document.getElementById('rolParticipante').value.trim();
-        const tipoDoc = document.getElementById('tipo-doc').value.trim();
-        const numeroDoc = document.getElementById('numero-doc').value.trim();
+        const rolParticipante = document.getElementById('rolParticipante').value?.trim();
+        const tipoDoc = document.getElementById('tipo-doc').value?.trim();
+        const numeroDoc = document.getElementById('numero-doc').value?.trim();
 
-        const primerNombre = document.getElementById('primerNombre').value.trim();
-        const segundoNombre = document.getElementById('segundoNombre').value.trim();
-        const primerApellido = document.getElementById('primerApellido').value.trim();
-        const segundoApellido = document.getElementById('segundoApellido').value.trim();
+        const primerNombre = document.getElementById('primerNombre').value?.trim();
+        const segundoNombre = document.getElementById('segundoNombre').value?.trim();
+        const primerApellido = document.getElementById('primerApellido').value?.trim();
+        const segundoApellido = document.getElementById('segundoApellido').value?.trim();
 
-        // 1. Capturar los nuevos valores (ponlo junto a las otras variables arriba)
-        const fechaNacimiento = document.getElementById('fechaNacimiento').value.trim();
-        const telefono = document.getElementById('telefono').value.trim();
-        const direccion = document.getElementById('direccion').value.trim();
+        const fechaNacimiento = document.getElementById('fechaNacimiento').value?.trim();
+        const telefono = document.getElementById('telefono').value?.trim();
+        const direccion = document.getElementById('direccion').value?.trim();
 
         // 1. Validaciones de campos obligatorios
-        // Nota: El número de documento puede no ser obligatorio si es un menor sin documento aún,
-        // pero generalmente se pide. Asumiremos obligatorio si se selecciona tipo de documento.
-        if (!rolParticipante || !primerNombre || !primerApellido) {
-            if (!primerNombre) resaltarCampo('#primerNombre');
-            if (!primerApellido) resaltarCampo('#primerApellido');
-            if (!rolParticipante) resaltarCampo('#rolParticipante');
-            // Nuevos resaltados
-            if (!fechaNacimiento) resaltarCampo('#fechaNacimiento');
-            if (!telefono) resaltarCampo('#telefono');
-            if (!direccion) resaltarCampo('#direccion');
+        let camposFaltantes = false;
 
-            // Si hay tipo de documento pero no número, o viceversa
-            if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
-                resaltarCampo('#tipo-doc');
-                resaltarCampo('#numero-doc');
-            }
+        if (!primerNombre) { resaltarCampo('#primerNombre'); camposFaltantes = true; }
+        if (!primerApellido) { resaltarCampo('#primerApellido'); camposFaltantes = true; }
+        if (!fechaNacimiento) { resaltarCampo('#fechaNacimiento'); camposFaltantes = true; }
+        if (!telefono) { resaltarCampo('#telefono'); camposFaltantes = true; }
+        if (!direccion) { resaltarCampo('#direccion'); camposFaltantes = true; }
+        if (!rolParticipante) { resaltarCampo('#rolParticipante'); camposFaltantes = true; }
 
+        // Si hay tipo de documento pero no número, o viceversa
+        if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
+            if (!tipoDoc) resaltarCampo('#tipo-doc');
+            if (!numeroDoc) resaltarCampo('#numero-doc');
+            camposFaltantes = true;
+        }
+
+        // Si detectamos que falta al menos un campo obligatorio, detenemos la ejecución
+        if (camposFaltantes) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Campos incompletos',
-                text: 'Por favor, complete todos los campos obligatorios (Nombres, Fecha, Teléfono, Dirección y Rol).',
+                text: 'Por favor, complete todos los campos obligatorios marcados con asterisco (*).',
                 confirmButtonColor: '#D0B8A8'
             });
             return false;

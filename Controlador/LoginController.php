@@ -24,9 +24,14 @@ class LoginController
 
     public function mostrarFormulario()
     {
-        // Si ya está logueado, redirigir al dashboard
+        // Si ya está logueado, redirigir según el rol
         if (isset($_SESSION['logged']) && $_SESSION['logged'] === true) {
-            redirect('dashboard');
+            // Evaluamos el rol guardado en la sesión
+            if (isset($_SESSION['user-rol']) && $_SESSION['user-rol'] === 'Feligres') {
+                redirect('informacion');
+            } else {
+                redirect('dashboard');
+            }
             exit();
         }
 
@@ -110,7 +115,13 @@ class LoginController
                 'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
             ]);
 
-            redirect('dashboard');
+            // Redirección basada en el rol recién consultado
+            if ($usuario['rol'] === 'Feligres') {
+                redirect('informacion');
+            } else {
+                // Asumimos que el Administrador (u otros roles) van al dashboard
+                redirect('dashboard');
+            }
 
             exit();
         } catch (Exception $e) {
