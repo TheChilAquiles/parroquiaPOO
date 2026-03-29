@@ -1,13 +1,24 @@
 FROM php:8.2-apache
 
-# Instalar extensiones de PHP necesarias para MySQL
-RUN docker-php-ext-install pdo pdo_mysql
+# 1. Instalar dependencias del sistema y extensiones de PHP
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo pdo_mysql zip
 
-# Habilitar mod_rewrite para el .htaccess del MVC
+# 2. Instalar Composer globalmente
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# 3. Habilitar mod_rewrite para el .htaccess
 RUN a2enmod rewrite
 
-# Copiar el código del proyecto al servidor
+# 4. Copiar el código al servidor
 COPY . /var/www/html/
 
-# Ajustar permisos
+# 5. Ejecutar composer install para generar la carpeta /vendor
+# Usamos --no-dev para que sea más ligero en producción
+RUN composer install --no-interaction --no-dev --optimize-autoloader
+
+# 6. Ajustar permisos para que Apache pueda leer todo
 RUN chown -R www-data:www-data /var/www/html
