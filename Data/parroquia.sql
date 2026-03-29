@@ -44,7 +44,7 @@ CREATE TABLE `certificados` (
   `ruta_archivo` varchar(130) DEFAULT NULL,
   `estado` enum('pendiente_pago','generado','descargado','expirado','vigente') DEFAULT 'pendiente_pago' COMMENT 'Estado del certificado: pendiente_pago, generado, descargado, expirado',
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `certificados`
@@ -79,7 +79,7 @@ CREATE TABLE `configuraciones` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `usuario_actualizacion` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='Configuraciones generales del sistema';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Configuraciones generales del sistema';
 
 --
 -- Dumping data for table `configuraciones`
@@ -107,7 +107,7 @@ CREATE TABLE `documento_tipos` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `documento_tipos`
@@ -140,7 +140,7 @@ CREATE TABLE `feligreses` (
   `segundo_apellido` varchar(30) DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `feligreses`
@@ -175,7 +175,7 @@ CREATE TABLE `grupos` (
   `id` int(10) NOT NULL,
   `nombre` varchar(80) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `grupos`
@@ -198,7 +198,7 @@ CREATE TABLE `grupo_roles` (
   `id` int(10) NOT NULL,
   `rol` varchar(20) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `grupo_roles`
@@ -221,7 +221,7 @@ CREATE TABLE `libros` (
   `libro_tipo_id` int(10) DEFAULT NULL,
   `numero` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `libros`
@@ -244,7 +244,7 @@ CREATE TABLE `libro_tipo` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `libro_tipo`
@@ -270,7 +270,7 @@ CREATE TABLE `noticias` (
   `imagen` longtext NOT NULL,
   `fecha_publicacion` datetime NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `noticias`
@@ -298,7 +298,7 @@ CREATE TABLE `pagos` (
   `tipo_pago_id` int(10) DEFAULT NULL,
   `transaction_id` varchar(30) DEFAULT NULL COMMENT 'ID de transacción del gateway de pago (Stripe, PayPal, etc.)',
   `tipo_concepto` enum('certificado','donacion','evento','otro') DEFAULT 'certificado' COMMENT 'Concepto del pago'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `pagos`
@@ -348,7 +348,7 @@ CREATE TABLE `parentescos` (
   `id` int(10) NOT NULL,
   `parentesco` varchar(40) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `parentescos`
@@ -374,7 +374,7 @@ CREATE TABLE `parientes` (
   `feligres_sujeto_id` int(10) DEFAULT NULL,
   `feligres_pariente_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -388,7 +388,7 @@ CREATE TABLE `participantes` (
   `sacramento_id` int(10) DEFAULT NULL,
   `rol_participante_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `participantes`
@@ -427,7 +427,7 @@ CREATE TABLE `participantes_rol` (
   `id` int(10) NOT NULL,
   `rol` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `participantes_rol`
@@ -459,7 +459,7 @@ CREATE TABLE `reportes` (
   `categoria` varchar(60) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -475,7 +475,7 @@ CREATE TABLE `sacramentos` (
   `folio` int(10) NOT NULL,
   `fecha_generacion` date NOT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `sacramentos`
@@ -501,7 +501,7 @@ CREATE TABLE `sacramento_tipo` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `sacramento_tipo`
@@ -522,7 +522,7 @@ INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 CREATE TABLE `tipos_pago` (
   `id` int(10) NOT NULL,
   `descripcion` varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `tipos_pago`
@@ -550,7 +550,7 @@ CREATE TABLE `usuarios` (
   `estado_registro` datetime DEFAULT NULL,
   `reset_token` varchar(70) DEFAULT NULL,
   `reset_token_expires` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `usuarios`
@@ -580,7 +580,7 @@ CREATE TABLE `usuario_grupos` (
   `grupo_parroquial_id` int(10) DEFAULT NULL,
   `grupo_rol_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `usuario_grupos`
@@ -608,7 +608,7 @@ CREATE TABLE `usuario_roles` (
   `id` int(10) NOT NULL,
   `rol` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `usuario_roles`

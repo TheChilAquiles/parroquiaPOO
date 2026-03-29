@@ -24,10 +24,6 @@ class Conexion
             $options = [
                 PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                // Ruta al certificado que acabas de subir a GitHub
-                PDO::MYSQL_ATTR_SSL_CA => __DIR__ . '/../isrgrootx1.pem',
-                // Deshabilitar la verificación del nombre del host si da problemas (opcional)
-                PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false
             ];
 
             self::$conexion = new PDO($dsn, DB_USER, DB_PASS, $options);
