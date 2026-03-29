@@ -1,13 +1,15 @@
 <?php
 
+// URL Base dinámica
+define('BASE_URL', getenv('APP_URL') ?: 'https://parroquiapoo.onrender.com');
 
-define('BASE_URL', $_ENV['APP_URL'] ?? 'http://parroquiapoo.test');
-// Database configuration
-// Leemos desde $_ENV en lugar de getenv()
-define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
-define('DB_NAME', $_ENV['DB_NAME'] ?? 'parroquia');
-define('DB_USER', $_ENV['DB_USER'] ?? 'root');
-define('DB_PASS', $_ENV['DB_PASS'] ?? '');
+// Database configuration - Render + TiDB Cloud
+// getenv() busca las variables que pusiste en el panel de Render
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'parroquia');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_PORT', getenv('DB_PORT') ?: '3306'); // Añadimos el puerto
 
 // SMTP Email configuration
 // Leemos desde $_ENV en lugar de getenv()
