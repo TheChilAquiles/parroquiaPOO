@@ -40,7 +40,7 @@ class ModeloFeligres
         try {
             $sql = "INSERT INTO feligreses 
                     (usuario_id, tipo_documento_id, numero_documento, primer_nombre, 
-                     segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, telefono, direccion) 
+                     segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, lugar_nacimiento, telefono, direccion) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
 
@@ -53,6 +53,7 @@ class ModeloFeligres
                 $datos['primer-apellido'],
                 $datos['segundo-apellido'] ?? '',
                 $datos['fecha-nacimiento'],
+                $datos['lugar-nacimiento'] ?? '',                  
                 $datos['telefono'] ?? '',
                 $datos['direccion']
             ]);
@@ -90,7 +91,7 @@ class ModeloFeligres
                     SET tipo_documento_id = ?, numero_documento = ?,
                         primer_nombre = ?, segundo_nombre = ?,
                         primer_apellido = ?, segundo_apellido = ?,
-                        fecha_nacimiento = ?, telefono = ?, direccion = ?
+                        fecha_nacimiento = ?, lugar_nacimiento = ?, telefono = ?, direccion = ?
                     WHERE id = ?";
             $stmt = $this->conexion->prepare($sql);
 
@@ -102,6 +103,7 @@ class ModeloFeligres
                 $datos['primer-apellido'],
                 $datos['segundo-apellido'] ?? '',
                 $datos['fecha-nacimiento'],
+                $datos['lugar-nacimiento'] ?? '',
                 $datos['telefono'] ?? '',
                 $datos['direccion'],
                 $datos['id']  // Usar ID en vez de documento

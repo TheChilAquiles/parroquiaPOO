@@ -1,7 +1,7 @@
-<?php 
+<?php
 // Include the top template/header file (reusable component - MODULAR DESIGN)
 // __DIR__ is a PHP magic constant that gets the current directory path
-include_once __DIR__ . '/componentes/plantillaTop.php'; 
+include_once __DIR__ . '/componentes/plantillaTop.php';
 ?>
 
 <!-- Main container with responsive padding -->
@@ -23,7 +23,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
         <!-- Right side: Add button -->
         <!-- Button to open add modal (event handler in JavaScript below) -->
         <button id="addFeligres"
-                class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
+            class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
             <!-- Plus icon SVG -->
             <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -43,16 +43,16 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             <div class="flex items-center">
                 <!-- Checkmark icon SVG -->
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                 </svg>
                 <!-- Display success message with XSS protection -->
                 <!-- ENT_QUOTES converts both single and double quotes -->
                 <?= htmlspecialchars($_SESSION['success'], ENT_QUOTES, 'UTF-8') ?>
             </div>
         </div>
-        <?php 
+        <?php
         // Remove message from session after displaying (prevents repeated display)
-        unset($_SESSION['success']); 
+        unset($_SESSION['success']);
         ?>
     <?php endif; ?>
 
@@ -63,15 +63,15 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             <div class="flex items-center">
                 <!-- X icon SVG for errors -->
                 <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                 </svg>
                 <!-- Display error message with XSS protection -->
                 <?= htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8') ?>
             </div>
         </div>
-        <?php 
+        <?php
         // Remove error message from session after displaying
-        unset($_SESSION['error']); 
+        unset($_SESSION['error']);
         ?>
     <?php endif; ?>
 
@@ -168,7 +168,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                         </label>
                         <!-- Select dropdown with document types -->
                         <select name="tipo-doc" id="tipoDoc" required
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
                             <!-- Empty option as placeholder -->
                             <option value="">Seleccione...</option>
                             <!-- Document type options (values are database IDs) -->
@@ -188,8 +188,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                         </label>
                         <!-- Text input for document number (required field) -->
                         <input type="text" name="documento" id="documento" required
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: 1234567890">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: 1234567890">
                     </div>
                 </div>
 
@@ -204,8 +204,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Primer Nombre <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="primer-nombre" id="primerNombre" required
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: Juan">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Juan">
                     </div>
 
                     <!-- Second name (optional) -->
@@ -214,8 +214,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Segundo Nombre
                         </label>
                         <input type="text" name="segundo-nombre" id="segundoNombre"
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: Carlos">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Carlos">
                     </div>
                 </div>
 
@@ -230,8 +230,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Primer Apellido <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="primer-apellido" id="primerApellido" required
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: Pérez">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Pérez">
                     </div>
 
                     <!-- Second last name (optional) -->
@@ -240,8 +240,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Segundo Apellido
                         </label>
                         <input type="text" name="segundo-apellido" id="segundoApellido"
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: Gómez">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Gómez">
                     </div>
                 </div>
 
@@ -256,8 +256,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Teléfono
                         </label>
                         <input type="text" name="telefono" id="telefono"
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: 3001234567">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: 3001234567">
                     </div>
 
                     <!-- Address (required) -->
@@ -266,8 +266,28 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                             Dirección <span class="text-red-500">*</span>
                         </label>
                         <input type="text" name="direccion" id="direccion" required
-                               class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
-                               placeholder="Ej: Calle 123 #45-67">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Calle 123 #45-67">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Fecha Nacimiento <span class="text-red-500">*</span>
+                        </label>
+                        <input type="date" name="fecha-nacimiento" id="fechaNacimiento" required
+                            max="<?= date('Y-m-d') ?>"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Lugar Nacimiento <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="lugar-nacimiento" id="lugarNacimiento" required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition"
+                            placeholder="Ej: Bogotá, Cundinamarca">
                     </div>
                 </div>
 
@@ -278,7 +298,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                 <div class="flex gap-3 pt-4">
                     <!-- Submit button with checkmark icon -->
                     <button type="submit" id="btnGuardar"
-                            class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-3 rounded-lg shadow-md font-semibold transition duration-200">
+                        class="flex-1 bg-[#D0B8A8] hover:bg-[#ab876f] text-white px-6 py-3 rounded-lg shadow-md font-semibold transition duration-200">
                         <!-- Checkmark icon SVG -->
                         <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -297,62 +317,82 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
      jQuery code for table initialization and CRUD operations
 ============================================================================= -->
 <script>
-// Wait for DOM to be fully loaded (jQuery ready event)
-$(document).ready(function() {
+    // Wait for DOM to be fully loaded (jQuery ready event)
+    $(document).ready(function() {
 
-    // ========================================================================
-    // DATATABLES INITIALIZATION
-    // Configure and initialize the DataTables plugin for the table
-    // ========================================================================
-    // Create DataTable instance and store reference in variable
-    const table = new DataTable('#tableFeligreses', {
-        processing: true,  // Show processing indicator during load
-        serverSide: true,  // Enable server-side processing (data loaded via AJAX)
-        serverMethod: 'post',  // Use POST method for AJAX requests
-        order: [[0, 'desc']],  // Default sort: first column (ID) descending
-        // Spanish language configuration for DataTables UI
-        language: {
-            lengthMenu: "Mostrar _MENU_ registros",  // "Show X records" dropdown
-            zeroRecords: "No se encontraron resultados",  // No data message
-            info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",  // Pagination info
-            infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",  // Empty state message
-            infoFiltered: "(filtrado de un total de _MAX_ registros)",  // Filtered results info
-            sSearch: "Buscar: ",  // Search box label
-            // Pagination button labels
-            oPaginate: {
-                sFirst: "Primero",
-                sLast: "Último",
-                sNext: "Siguiente",
-                sPrevious: "Anterior"
+        // ========================================================================
+        // DATATABLES INITIALIZATION
+        // Configure and initialize the DataTables plugin for the table
+        // ========================================================================
+        // Create DataTable instance and store reference in variable
+        const table = new DataTable('#tableFeligreses', {
+            processing: true, // Show processing indicator during load
+            serverSide: true, // Enable server-side processing (data loaded via AJAX)
+            serverMethod: 'post', // Use POST method for AJAX requests
+            order: [
+                [0, 'desc']
+            ], // Default sort: first column (ID) descending
+            // Spanish language configuration for DataTables UI
+            language: {
+                lengthMenu: "Mostrar _MENU_ registros", // "Show X records" dropdown
+                zeroRecords: "No se encontraron resultados", // No data message
+                info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros", // Pagination info
+                infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros", // Empty state message
+                infoFiltered: "(filtrado de un total de _MAX_ registros)", // Filtered results info
+                sSearch: "Buscar: ", // Search box label
+                // Pagination button labels
+                oPaginate: {
+                    sFirst: "Primero",
+                    sLast: "Último",
+                    sNext: "Siguiente",
+                    sPrevious: "Anterior"
+                },
+                sProcessing: "Procesando...", // Loading message
             },
-            sProcessing: "Procesando...",  // Loading message
-        },
-        // AJAX configuration for loading data
-        ajax: {
-            url: "?route=feligreses/listar",  // Server endpoint for data
-            type: "POST",  // HTTP method
-            dataType: "json"  // Expected response format
-        },
-        // Column definitions (maps data fields to table columns)
-        columns: [
-            { data: 'id', title: 'ID', width: "50px" },  // ID column with fixed width
-            { data: 'nombre_completo', title: 'Nombre Completo' },  // Full name
-            { data: 'tipo_documento', title: 'Tipo Documento' },  // Document type
-            { data: 'numero_documento', title: 'Número Documento' },  // Document number
-            { data: 'telefono', title: 'Teléfono' },  // Phone
-            { data: 'direccion', title: 'Dirección' },  // Address
-            {
-                // Actions column (custom rendering)
-                data: null,  // No specific data field
-                title: 'Acciones',
-                orderable: false,  // Cannot be sorted
-                className: 'text-center',  // Center-align content
-                // Custom render function for action buttons
-                // Parameters: data (full row data), type, row (row object)
-                render: function(data, type, row) {
-                    // Return HTML string with edit and delete buttons
-                    // Template literal (`) allows multi-line strings and ${} interpolation
-                    return `
+            // AJAX configuration for loading data
+            ajax: {
+                url: "?route=feligreses/listar", // Server endpoint for data
+                type: "POST", // HTTP method
+                dataType: "json" // Expected response format
+            },
+            // Column definitions (maps data fields to table columns)
+            columns: [{
+                    data: 'id',
+                    title: 'ID',
+                    width: "50px"
+                }, // ID column with fixed width
+                {
+                    data: 'nombre_completo',
+                    title: 'Nombre Completo'
+                }, // Full name
+                {
+                    data: 'tipo_documento',
+                    title: 'Tipo Documento'
+                }, // Document type
+                {
+                    data: 'numero_documento',
+                    title: 'Número Documento'
+                }, // Document number
+                {
+                    data: 'telefono',
+                    title: 'Teléfono'
+                }, // Phone
+                {
+                    data: 'direccion',
+                    title: 'Dirección'
+                }, // Address
+                {
+                    // Actions column (custom rendering)
+                    data: null, // No specific data field
+                    title: 'Acciones',
+                    orderable: false, // Cannot be sorted
+                    className: 'text-center', // Center-align content
+                    // Custom render function for action buttons
+                    // Parameters: data (full row data), type, row (row object)
+                    render: function(data, type, row) {
+                        // Return HTML string with edit and delete buttons
+                        // Template literal (`) allows multi-line strings and ${} interpolation
+                        return `
                         <button class="btn-editar bg-[#E8DFD5] hover:bg-[#DFD3C3] text-[#ab876f] px-3 py-1.5 rounded-lg text-sm mr-1 font-medium transition duration-200"
                                 data-id="${row.id}"
                                 title="Editar feligrés">
@@ -372,208 +412,214 @@ $(document).ready(function() {
                         </button>
                         <?php endif; ?>
                     `;
+                    }
                 }
-            }
-        ],
-        pageLength: 10  // Show 10 records per page by default
-    });
+            ],
+            pageLength: 10 // Show 10 records per page by default
+        });
 
-    // ========================================================================
-    // OPEN MODAL TO ADD NEW FELIGRES
-    // Click handler for "Add" button
-    // ========================================================================
-    // jQuery event binding: .on('click', selector, handler)
-    $('#addFeligres').on('click', function() {
-        // Change modal title to "Add"
-        $('#modalTitle').text('Agregar Feligrés');
-        // Reset form fields (clear all inputs)
-        $('#feligresForm')[0].reset();
-        // Clear hidden ID field (indicates new record, not edit)
-        $('#feligresId').val('');
-        // Show modal by removing 'hidden' class
-        $('#feligresModal').removeClass('hidden');
-        // Focus cursor on first name field for better UX
-        $('#primerNombre').focus();
-    });
+        // ========================================================================
+        // OPEN MODAL TO ADD NEW FELIGRES
+        // Click handler for "Add" button
+        // ========================================================================
+        // jQuery event binding: .on('click', selector, handler)
+        $('#addFeligres').on('click', function() {
+            // Change modal title to "Add"
+            $('#modalTitle').text('Agregar Feligrés');
+            // Reset form fields (clear all inputs)
+            $('#feligresForm')[0].reset();
+            // Clear hidden ID field (indicates new record, not edit)
+            $('#feligresId').val('');
+            // Show modal by removing 'hidden' class
+            $('#feligresModal').removeClass('hidden');
+            // Focus cursor on first name field for better UX
+            $('#primerNombre').focus();
+        });
 
-    // ========================================================================
-    // CLOSE MODAL
-    // Click handler for cancel/close button
-    // ========================================================================
-    $('#btnCancelar').on('click', function() {
-        // Hide modal by adding 'hidden' class
-        $('#feligresModal').addClass('hidden');
-    });
-
-    // ========================================================================
-    // CLOSE MODAL WITH ESC KEY
-    // Keyboard shortcut for closing modal
-    // ========================================================================
-    // Document-level keydown event (GLOBAL EVENT LISTENER)
-    $(document).on('keydown', function(e) {
-        // Check if Escape key pressed AND modal is visible
-        if (e.key === 'Escape' && !$('#feligresModal').hasClass('hidden')) {
-            // Hide modal
+        // ========================================================================
+        // CLOSE MODAL
+        // Click handler for cancel/close button
+        // ========================================================================
+        $('#btnCancelar').on('click', function() {
+            // Hide modal by adding 'hidden' class
             $('#feligresModal').addClass('hidden');
-        }
-    });
+        });
 
-    // ========================================================================
-    // EDIT BUTTON HANDLER
-    // Opens modal with existing feligres data for editing
-    // ========================================================================
-    // Event delegation: listen on document for dynamically added buttons
-    $(document).on('click', '.btn-editar', function() {
-        // Get feligres ID from button's data attribute
-        const id = $(this).data('id');
-        // Get full row data from DataTable
-        // .row() gets row element, .data() returns row data object
-        const row = table.row($(this).closest('tr')).data();
+        // ========================================================================
+        // CLOSE MODAL WITH ESC KEY
+        // Keyboard shortcut for closing modal
+        // ========================================================================
+        // Document-level keydown event (GLOBAL EVENT LISTENER)
+        $(document).on('keydown', function(e) {
+            // Check if Escape key pressed AND modal is visible
+            if (e.key === 'Escape' && !$('#feligresModal').hasClass('hidden')) {
+                // Hide modal
+                $('#feligresModal').addClass('hidden');
+            }
+        });
 
-        // Populate form fields with existing data (PRE-FILLING FORM)
-        $('#modalTitle').text('Editar Feligrés');  // Change title to "Edit"
-        $('#feligresId').val(row.id);  // Set hidden ID field
-        // Use || '' to provide empty string if value is null/undefined
-        $('#tipoDoc').val(row.tipo_documento_id || '');
-        $('#documento').val(row.numero_documento || '');
-        $('#primerNombre').val(row.primer_nombre || '');
-        $('#segundoNombre').val(row.segundo_nombre || '');
-        $('#primerApellido').val(row.primer_apellido || '');
-        $('#segundoApellido').val(row.segundo_apellido || '');
-        $('#telefono').val(row.telefono || '');
-        $('#direccion').val(row.direccion || '');
+        // ========================================================================
+        // EDIT BUTTON HANDLER
+        // Opens modal with existing feligres data for editing
+        // ========================================================================
+        // Event delegation: listen on document for dynamically added buttons
+        $(document).on('click', '.btn-editar', function() {
+            // Get feligres ID from button's data attribute
+            const id = $(this).data('id');
+            // Get full row data from DataTable
+            // .row() gets row element, .data() returns row data object
+            const row = table.row($(this).closest('tr')).data();
 
-        // Show modal
-        $('#feligresModal').removeClass('hidden');
-        // Focus on first name field
-        $('#primerNombre').focus();
-    });
+            // Populate form fields with existing data (PRE-FILLING FORM)
+            $('#modalTitle').text('Editar Feligrés'); // Change title to "Edit"
+            $('#feligresId').val(row.id); // Set hidden ID field
+            // Use || '' to provide empty string if value is null/undefined
+            $('#tipoDoc').val(row.tipo_documento_id || '');
+            $('#documento').val(row.numero_documento || '');
+            $('#primerNombre').val(row.primer_nombre || '');
+            $('#segundoNombre').val(row.segundo_nombre || '');
+            $('#primerApellido').val(row.primer_apellido || '');
+            $('#segundoApellido').val(row.segundo_apellido || '');
+            $('#telefono').val(row.telefono || '');
+            $('#direccion').val(row.direccion || '');
+            $('#fechaNacimiento').val(row.fecha_nacimiento || '');
+            $('#lugarNacimiento').val(row.lugar_nacimiento || '');
 
-    // ========================================================================
-    // FORM SUBMIT HANDLER
-    // Handles both create and update operations via AJAX
-    // ========================================================================
-    $(document).on('submit', '#feligresForm', function(event) {
-        // Prevent default form submission (would reload page)
-        event.preventDefault();
+            // Show modal
+            $('#feligresModal').removeClass('hidden');
+            // Focus on first name field
+            $('#primerNombre').focus();
+        });
 
-        // Determine if this is edit or create operation
-        const feligresId = $('#feligresId').val();
-        const isEdit = feligresId !== '';  // If ID exists, it's an edit
-        // Build URL based on operation type (CONDITIONAL URL BUILDING)
-        const url = isEdit ? `?route=feligreses/editar&id=${feligresId}` : "?route=feligreses/crear";
-        // Serialize form data into URL-encoded string (key=value&key=value)
-        const formData = $(this).serialize();
+        // ========================================================================
+        // FORM SUBMIT HANDLER
+        // Handles both create and update operations via AJAX
+        // ========================================================================
+        $(document).on('submit', '#feligresForm', function(event) {
+            // Prevent default form submission (would reload page)
+            event.preventDefault();
 
-        // AJAX request to save data (ASYNCHRONOUS COMMUNICATION)
-        $.ajax({
-            url: url,  // Server endpoint
-            method: "POST",  // HTTP method
-            data: formData,  // Form data to send
-            dataType: "json",  // Expected response format
-            // Before sending request: show loading state
-            beforeSend: function() {
-                // Disable submit button to prevent double-submission
-                $('#btnGuardar').prop('disabled', true)
-                    // Change button text to show loading spinner
-                    .html('<svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Guardando...');
-            },
-            // On successful response
-            success: function(response) {
-                // Check if server returned success status
-                if (response.status === 'success') {
-                    // Reset form fields
-                    $('#feligresForm')[0].reset();
-                    // Close modal
-                    $('#feligresModal').addClass('hidden');
+            // Determine if this is edit or create operation
+            const feligresId = $('#feligresId').val();
+            const isEdit = feligresId !== ''; // If ID exists, it's an edit
+            // Build URL based on operation type (CONDITIONAL URL BUILDING)
+            const url = isEdit ? `?route=feligreses/editar&id=${feligresId}` : "?route=feligreses/crear";
+            // Serialize form data into URL-encoded string (key=value&key=value)
+            const formData = $(this).serialize();
 
-                    // Reload DataTable to show updated data
-                    // null = no callback, false = stay on current page
-                    table.ajax.reload(null, false);
+            // AJAX request to save data (ASYNCHRONOUS COMMUNICATION)
+            $.ajax({
+                url: url, // Server endpoint
+                method: "POST", // HTTP method
+                data: formData, // Form data to send
+                dataType: "json", // Expected response format
+                // Before sending request: show loading state
+                beforeSend: function() {
+                    // Disable submit button to prevent double-submission
+                    $('#btnGuardar').prop('disabled', true)
+                        // Change button text to show loading spinner
+                        .html('<svg class="w-5 h-5 mr-2 inline animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Guardando...');
+                },
+                // On successful response
+                success: function(response) {
+                    // Check if server returned success status
+                    if (response.status === 'success') {
+                        // Reset form fields
+                        $('#feligresForm')[0].reset();
+                        // Close modal
+                        $('#feligresModal').addClass('hidden');
 
-                    // Show success notification using SweetAlert2 library
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Completado',
-                        text: response.message || 'Feligrés guardado correctamente',
-                        timer: 2000,  // Auto-close after 2 seconds
-                        showConfirmButton: false,  // No confirm button
-                        confirmButtonColor: '#D0B8A8'
+                        // Reload DataTable to show updated data
+                        // null = no callback, false = stay on current page
+                        table.ajax.reload(null, false);
+
+                        // Show success notification using SweetAlert2 library
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Completado',
+                            text: response.message || 'Feligrés guardado correctamente',
+                            timer: 2000, // Auto-close after 2 seconds
+                            showConfirmButton: false, // No confirm button
+                            confirmButtonColor: '#D0B8A8'
+                        });
+                    } else {
+                        // Server returned error status
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'Error al guardar el feligrés',
+                            confirmButtonColor: '#D0B8A8'
+                        });
+                    }
+                },
+                // On AJAX error (network error, server error, etc.)
+                error: function(xhr, status, error) {
+                    // Log error details to console for debugging
+                    console.error('Error AJAX:', {
+                        xhr,
+                        status,
+                        error
                     });
-                } else {
-                    // Server returned error status
+
+                    // Try to extract error message from response
+                    let mensaje = 'Error al guardar el feligrés';
+                    // Check if server returned JSON with error message
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        mensaje = xhr.responseJSON.message;
+                    }
+
+                    // Show error alert
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: response.message || 'Error al guardar el feligrés',
+                        text: mensaje,
                         confirmButtonColor: '#D0B8A8'
                     });
+                },
+                // Always runs after success or error (CLEANUP CODE)
+                complete: function() {
+                    // Re-enable submit button
+                    $('#btnGuardar').prop('disabled', false)
+                        // Restore original button text
+                        .html('<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Guardar');
                 }
-            },
-            // On AJAX error (network error, server error, etc.)
-            error: function(xhr, status, error) {
-                // Log error details to console for debugging
-                console.error('Error AJAX:', {xhr, status, error});
+            });
+        });
 
-                // Try to extract error message from response
-                let mensaje = 'Error al guardar el feligrés';
-                // Check if server returned JSON with error message
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    mensaje = xhr.responseJSON.message;
+        // ========================================================================
+        // DELETE BUTTON HANDLER
+        // Shows confirmation dialog then deletes record
+        // ========================================================================
+        $(document).on('click', '.btn-eliminar', function() {
+            // Get feligres ID from button
+            const id = $(this).data('id');
+
+            // Show confirmation dialog using SweetAlert2
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Esta acción no se puede revertir",
+                icon: 'warning',
+                showCancelButton: true, // Show cancel button
+                confirmButtonColor: '#dc2626', // Red color for danger action
+                cancelButtonColor: '#6b7280', // Gray color for cancel
+                confirmButtonText: 'Sí, eliminar', // Confirm button text
+                cancelButtonText: 'Cancelar' // Cancel button text
+                // .then() handles the promise returned by Swal.fire (PROMISE HANDLING)
+            }).then((result) => {
+                // Check if user clicked confirm button
+                if (result.isConfirmed) {
+                    // Redirect to delete endpoint (page refresh with GET request)
+                    // This triggers server-side deletion
+                    window.location.href = `?route=feligreses/eliminar&id=${id}`;
                 }
-
-                // Show error alert
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: mensaje,
-                    confirmButtonColor: '#D0B8A8'
-                });
-            },
-            // Always runs after success or error (CLEANUP CODE)
-            complete: function() {
-                // Re-enable submit button
-                $('#btnGuardar').prop('disabled', false)
-                    // Restore original button text
-                    .html('<svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Guardar');
-            }
+                // If cancelled, do nothing (dialog closes automatically)
+            });
         });
+
     });
-
-    // ========================================================================
-    // DELETE BUTTON HANDLER
-    // Shows confirmation dialog then deletes record
-    // ========================================================================
-    $(document).on('click', '.btn-eliminar', function() {
-        // Get feligres ID from button
-        const id = $(this).data('id');
-
-        // Show confirmation dialog using SweetAlert2
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede revertir",
-            icon: 'warning',
-            showCancelButton: true,  // Show cancel button
-            confirmButtonColor: '#dc2626',  // Red color for danger action
-            cancelButtonColor: '#6b7280',  // Gray color for cancel
-            confirmButtonText: 'Sí, eliminar',  // Confirm button text
-            cancelButtonText: 'Cancelar'  // Cancel button text
-        // .then() handles the promise returned by Swal.fire (PROMISE HANDLING)
-        }).then((result) => {
-            // Check if user clicked confirm button
-            if (result.isConfirmed) {
-                // Redirect to delete endpoint (page refresh with GET request)
-                // This triggers server-side deletion
-                window.location.href = `?route=feligreses/eliminar&id=${id}`;
-            }
-            // If cancelled, do nothing (dialog closes automatically)
-        });
-    });
-
-});
 </script>
 
-<?php 
+<?php
 // Include the bottom template/footer file (closes HTML tags)
-include_once __DIR__ . '/componentes/plantillaBottom.php'; 
+include_once __DIR__ . '/componentes/plantillaBottom.php';
 ?>

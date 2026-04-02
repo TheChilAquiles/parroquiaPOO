@@ -73,6 +73,31 @@ class SacramentosController extends BaseController
             return;
         }
 
+        // --- LIMPIEZA ANTICRASH DE MYSQL ---
+        // Convertimos los documentos vacíos en valores nulos reales para la BD
+        foreach ($integrantes as $key => $int) {
+            if (empty($int['tipoDoc'])) $_POST['integrantes'][$key]['tipoDoc'] = null;
+            if (empty($int['numeroDoc'])) $_POST['integrantes'][$key]['numeroDoc'] = null;
+        }
+
+        // --- VALIDACIÓN DE FECHAS FUTURAS ACTUALIZADA ---
+        $fechaActual = time();
+        // Usamos el nuevo nombre: fecha_generacion
+        if (!empty($_POST['fecha_generacion']) && strtotime($_POST['fecha_generacion']) > $fechaActual) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'La fecha del evento no puede ser en el futuro']);
+            return;
+        }
+
+        foreach ($_POST['integrantes'] as $int) {
+            if (!empty($int['fechaNacimiento']) && strtotime($int['fechaNacimiento']) > $fechaActual) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'La fecha de nacimiento de un participante no puede ser en el futuro']);
+                return;
+            }
+        }
+        // --- FIN VALIDACIÓN ---
+
         try {
             // Limpiar buffer para evitar HTML contaminado
             if (ob_get_level()) {
@@ -111,7 +136,7 @@ class SacramentosController extends BaseController
                 http_response_code(400);
                 echo json_encode([
                     'success' => false,
-                    'message' => 'Error al procesar sacramento'
+                    'message' => 'Error al procesar sacramento (posible error en Base de Datos)'
                 ]);
             }
             exit();

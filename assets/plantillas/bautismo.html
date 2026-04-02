@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Certificado de Bautismo</title>
     <style>
+        /* Ajuste de página para evitar el salto a 2 hojas */
         @page {
             size: A4 portrait;
-            margin: 40px; /* Margen uniforme para la hoja */
+            margin: 25px; /* Reducido para dar más espacio al contenido */
         }
 
         body {
@@ -14,29 +15,49 @@
             color: #1a1a1a;
             margin: 0;
             padding: 0;
-            line-height: 1.5;
+            line-height: 1.4;
+            background-color: #fff;
         }
 
         /* Borde exterior e interior elegante */
         .certificate-wrapper {
             border: 2px solid #1e3a8a;
             padding: 4px;
+            height: 96%; /* Fuerza a que no se pase del alto */
+            box-sizing: border-box;
         }
 
         .certificate-inner {
             border: 1px solid #1e3a8a;
-            padding: 30px 40px;
+            padding: 25px 35px;
+            height: 100%;
             position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Información superior (Libro, Folio, Acta) */
+        .top-info {
+            text-align: right;
+            font-size: 11px;
+            color: #4b5563;
+            margin-bottom: 10px;
+        }
+
+        .top-info span {
+            border: 1px solid #e5e7eb;
+            padding: 3px 8px;
+            margin-left: 5px;
+            background-color: #f9fafb;
         }
 
         /* Marca de agua centrada */
         .watermark {
             position: absolute;
-            top: 40%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 100px;
-            color: rgba(30, 58, 138, 0.04);
+            font-size: 80px;
+            color: rgba(30, 58, 138, 0.05);
             font-weight: bold;
             z-index: -1;
             white-space: nowrap;
@@ -45,13 +66,13 @@
         /* Encabezado */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #e5e7eb;
             padding-bottom: 15px;
         }
 
         .church-name {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #1e3a8a;
             text-transform: uppercase;
@@ -60,68 +81,68 @@
         }
 
         .subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: #4b5563;
         }
 
         .certificate-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: normal;
             font-style: italic;
             color: #1e3a8a;
             text-align: center;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         /* Texto introductorio */
         .intro-text {
-            font-size: 15px;
+            font-size: 14px;
             text-align: justify;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        /* Tabla de datos (DomPDF ama las tablas) */
+        /* Tabla de datos */
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 25px;
-            font-size: 14px;
+            margin-bottom: 20px;
+            font-size: 13px; /* Reducido para ahorrar espacio */
         }
 
         .data-table td {
-            padding: 8px 5px;
+            padding: 7px 5px;
             vertical-align: bottom;
         }
 
         .data-label {
             font-weight: bold;
             color: #374151;
-            width: 35%;
+            width: 30%;
         }
 
         .data-value {
             border-bottom: 1px dotted #9ca3af;
             color: #111827;
-            width: 65%;
+            width: 70%;
         }
 
         .highlight {
             font-weight: bold;
-            font-size: 16px;
+            font-size: 15px;
             text-transform: uppercase;
         }
 
         /* Texto de cierre */
         .closing-text {
-            font-size: 14px;
+            font-size: 13px;
             text-align: justify;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         /* Firmas alineadas con tabla */
         .signatures-table {
             width: 100%;
-            margin-top: 50px;
+            margin-top: 40px;
             text-align: center;
         }
 
@@ -132,40 +153,60 @@
 
         .signature-line {
             border-top: 1px solid #111827;
-            width: 80%;
+            width: 75%;
             margin: 0 auto 5px auto;
         }
 
         .signature-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #374151;
             letter-spacing: 1px;
         }
 
         .signature-name {
-            font-size: 13px;
+            font-size: 12px;
             color: #4b5563;
             font-style: italic;
         }
 
         /* Footer y códigos */
-        .footer {
+        .footer-table {
+            width: 100%;
             margin-top: 30px;
-            padding-top: 15px;
+            padding-top: 10px;
             border-top: 1px solid #e5e7eb;
-            font-size: 11px;
-            color: #6b7280;
-            text-align: center;
         }
 
-        .footer p {
+        .footer-text {
+            font-size: 10px;
+            color: #6b7280;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .footer-text p {
             margin: 3px 0;
         }
 
         .codigo {
             font-family: 'Courier New', monospace;
             font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .qr-container {
+            text-align: right;
+            vertical-align: middle;
+            width: 80px;
+        }
+
+        /* Placeholder para el QR (Se reemplazará con la imagen real en PHP) */
+        .qr-img {
+            width: 70px;
+            height: 70px;
+            background-color: #f3f4f6; /* Fondo gris temporal */
+            border: 1px solid #e5e7eb;
         }
     </style>
 </head>
@@ -174,6 +215,12 @@
         <div class="certificate-inner">
             
             <div class="watermark">{{NOMBRE_PARROQUIA}}</div>
+
+            <div class="top-info">
+                <span><b>Libro:</b> {{NUMERO_LIBRO}}</span>
+                <span><b>Folio:</b> {{NUMERO_PAGINA}}</span>
+                <span><b>Acta:</b> {{NUMERO_REGISTRO}}</span>
+            </div>
 
             <div class="header">
                 <div class="church-name">{{NOMBRE_PARROQUIA}}</div>
@@ -185,7 +232,7 @@
             </div>
 
             <div class="intro-text">
-                El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>, certifica que según consta en los archivos parroquiales, en el Libro de Bautismos Número <strong>{{NUMERO_LIBRO}}</strong>, Folio <strong>{{NUMERO_PAGINA}}</strong>, Acta Número <strong>{{NUMERO_REGISTRO}}</strong>, se encuentran los siguientes datos:
+                El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>, certifica que según consta en los archivos de esta parroquia, se encuentran registrados los siguientes datos correspondientes al sacramento del bautismo:
             </div>
 
             <table class="data-table">
@@ -246,11 +293,18 @@
                 </tr>
             </table>
 
-            <div class="footer">
-                <p><strong>Fecha de Expedición:</strong> {{FECHA_EXPEDICION}}</p>
-                <p><strong>Código de Verificación:</strong> <span class="codigo">{{CODIGO_CERTIFICADO}}</span></p>
-                <p><em>Este documento es válido únicamente con el sello parroquial impreso o firma original.</em></p>
-            </div>
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-text">
+                        <p><strong>Fecha de Expedición:</strong> {{FECHA_EXPEDICION}}</p>
+                        <p><strong>Código de Verificación:</strong> <span class="codigo">{{CODIGO_CERTIFICADO}}</span></p>
+                        <p><em>Este documento es válido únicamente con el sello parroquial impreso o firma original.</em></p>
+                    </td>
+                    <td class="qr-container">
+                        <img src="{{IMAGEN_QR}}" alt="QR" class="qr-img" onerror="this.style.display='none'">
+                    </td>
+                </tr>
+            </table>
 
         </div>
     </div>

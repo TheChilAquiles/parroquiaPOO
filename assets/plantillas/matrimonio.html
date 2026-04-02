@@ -3,220 +3,247 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificado de Matrimonio</title>
     <style>
+        /* Ajuste de página estricto para A4 */
         @page {
-            size: A4;
-            margin: 0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            size: A4 portrait;
+            margin: 25px;
         }
 
         body {
             font-family: 'Georgia', 'Times New Roman', serif;
             background: #fff;
             color: #333;
-            padding: 40px 60px;
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            line-height: 1.3; /* Reducido un poco para encajar tanta info */
         }
 
+        /* Contenedores con altura relativa */
         .certificate {
             border: 5px double #881337;
-            padding: 40px;
-            position: relative;
-            min-height: 950px;
-            background-color: white;
+            padding: 5px;
+            height: 96%;
+            box-sizing: border-box;
         }
 
         .inner-border {
             border: 2px solid #e11d48;
-            padding: 30px;
-            min-height: 870px;
+            padding: 20px 30px;
+            height: 100%;
             position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Información superior (Libro, Folio, Acta) en tonos vino tinto */
+        .top-info {
+            text-align: right;
+            font-size: 11px;
+            color: #4b5563;
+            margin-bottom: 5px;
+        }
+
+        .top-info span {
+            border: 1px solid #e11d48;
+            padding: 3px 8px;
+            margin-left: 5px;
+            background-color: #fef2f2;
+            color: #881337;
+            font-weight: bold;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100px;
+            color: rgba(225, 29, 72, 0.04);
+            font-weight: bold;
+            z-index: -1;
+            white-space: nowrap;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #e5e7eb;
         }
 
         .church-name {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
             color: #881337;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
         .subtitle {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
-            margin-bottom: 20px;
         }
 
         .certificate-title {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: bold;
             color: #881337;
             text-align: center;
-            margin: 30px 0;
+            margin: 10px 0;
             text-transform: uppercase;
             letter-spacing: 3px;
         }
 
         .content {
-            font-size: 16px;
-            line-height: 2.2;
+            font-size: 13px;
             text-align: justify;
-            margin: 40px 0;
-            padding: 0 20px;
+            margin-bottom: 15px;
         }
 
-        .highlight {
-            font-weight: bold;
-            color: #881337;
-            text-decoration: underline;
-        }
-
-        .spouses-section {
-            display: table;
+        /* Estructura de tablas para Esposos (A prueba de DomPDF) */
+        .spouses-table {
             width: 100%;
-            margin: 30px 0;
+            border-collapse: collapse;
+            margin-bottom: 15px;
         }
 
-        .spouse-column {
-            display: table-cell;
+        .spouse-cell {
             width: 48%;
-            padding: 20px;
             background: #fef2f2;
             border: 2px solid #fecaca;
+            padding: 10px;
             vertical-align: top;
         }
 
-        .spouse-column:first-child {
-            margin-right: 4%;
+        .spouse-spacer {
+            width: 4%; /* Espacio entre las dos cajas */
         }
 
         .spouse-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #881337;
             text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
             border-bottom: 2px solid #fca5a5;
+            text-transform: uppercase;
         }
 
         .data-section {
-            margin: 30px 0;
-            padding: 20px;
+            padding: 10px 15px;
             background: #fef2f2;
             border-left: 4px solid #e11d48;
+            margin-bottom: 15px;
         }
 
-        .data-row {
-            margin: 10px 0;
-            font-size: 14px;
+        /* Tablas de datos internas */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .data-table td {
+            padding: 4px 2px;
+            vertical-align: bottom;
         }
 
         .data-label {
             font-weight: bold;
             color: #4b5563;
-            display: inline-block;
-            width: 150px;
+            width: 38%; /* Ajustado para las columnas estrechas */
+        }
+
+        .data-label-wide {
+            font-weight: bold;
+            color: #4b5563;
+            width: 25%; /* Para la tabla de abajo que es más ancha */
         }
 
         .data-value {
             color: #1f2937;
+            border-bottom: 1px dotted #9ca3af;
         }
 
-        .signatures {
-            margin-top: 80px;
-            display: table;
+        .highlight {
+            font-weight: bold;
+            color: #881337;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        /* Firmas y Footer (Mismo estilo que los demás) */
+        .signatures-table {
             width: 100%;
+            margin-top: 25px;
+            text-align: center;
         }
 
-        .signature-block {
-            display: table-cell;
-            text-align: center;
-            padding: 0 20px;
+        .signatures-table td {
+            width: 50%;
+            vertical-align: bottom;
         }
 
         .signature-line {
             border-top: 2px solid #374151;
-            margin: 60px auto 10px;
-            width: 250px;
+            width: 75%;
+            margin: 0 auto 5px auto;
         }
 
         .signature-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #4b5563;
-            margin-top: 5px;
+            letter-spacing: 1px;
         }
 
         .signature-name {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
+            font-style: italic;
             margin-top: 3px;
         }
 
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 11px;
-            color: #9ca3af;
-            padding-top: 20px;
+        .footer-table {
+            width: 100%;
+            margin-top: 20px;
+            padding-top: 10px;
             border-top: 1px solid #e5e7eb;
         }
 
-        .qr-section {
-            position: absolute;
-            bottom: 40px;
-            right: 60px;
-            text-align: center;
+        .footer-text {
+            font-size: 10px;
+            color: #9ca3af;
+            text-align: left;
+            vertical-align: middle;
         }
 
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #e5e7eb;
-            padding: 5px;
-            background: #fff;
-        }
-
-        .qr-label {
-            font-size: 9px;
-            color: #6b7280;
-            margin-top: 5px;
+        .footer-text p {
+            margin: 3px 0;
         }
 
         .certificate-code {
             font-family: 'Courier New', monospace;
-            font-size: 10px;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 10px;
+            font-size: 11px;
+            color: #881337;
+            font-weight: bold;
         }
 
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            color: rgba(225, 29, 72, 0.03);
-            font-weight: bold;
-            z-index: -1;
-            pointer-events: none;
+        .qr-container {
+            text-align: right;
+            vertical-align: middle;
+            width: 80px;
+        }
+
+        .qr-img {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #e5e7eb;
+            padding: 3px;
+            background: #fff;
         }
     </style>
 </head>
@@ -224,7 +251,14 @@
 <body>
     <div class="certificate">
         <div class="inner-border">
+            
             <div class="watermark">MATRIMONIO</div>
+
+            <div class="top-info">
+                <span>LIBRO: {{NUMERO_LIBRO}}</span>
+                <span>FOLIO: {{NUMERO_PAGINA}}</span>
+                <span>ACTA: {{NUMERO_REGISTRO}}</span>
+            </div>
 
             <div class="header">
                 <div class="church-name">{{NOMBRE_PARROQUIA}}</div>
@@ -237,120 +271,128 @@
             </div>
 
             <div class="content">
-                <p>
-                    El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>,
-                    certifica que según consta en el Libro de Matrimonios Número <strong>{{NUMERO_LIBRO}}</strong>,
-                    Página <strong>{{NUMERO_PAGINA}}</strong>, Número <strong>{{NUMERO_REGISTRO}}</strong>:
-                </p>
+                El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>, certifica que según consta en los archivos de esta parroquia, se encuentran registrados los siguientes datos correspondientes al sacramento del matrimonio:
             </div>
 
-            <div class="spouses-section">
-                <div class="spouse-column">
-                    <div class="spouse-title">ESPOSO</div>
-                    <div class="data-row">
-                        <span class="data-label">Nombre:</span>
-                        <span class="data-value highlight">{{NOMBRE_ESPOSO}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Documento:</span>
-                        <span class="data-value">{{DOCUMENTO_ESPOSO}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Fecha de Nac.:</span>
-                        <span class="data-value">{{FECHA_NAC_ESPOSO}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Lugar de Nac.:</span>
-                        <span class="data-value">{{LUGAR_NAC_ESPOSO}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Padre:</span>
-                        <span class="data-value">{{PADRE_ESPOSO}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Madre:</span>
-                        <span class="data-value">{{MADRE_ESPOSO}}</span>
-                    </div>
-                </div>
+            <table class="spouses-table">
+                <tr>
+                    <td class="spouse-cell">
+                        <div class="spouse-title">ESPOSO</div>
+                        <table class="data-table">
+                            <tr>
+                                <td class="data-label">Nombre:</td>
+                                <td class="data-value highlight">{{NOMBRE_ESPOSO}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Documento:</td>
+                                <td class="data-value">{{DOCUMENTO_ESPOSO}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Fecha Nac.:</td>
+                                <td class="data-value">{{FECHA_NAC_ESPOSO}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Lugar Nac.:</td>
+                                <td class="data-value">{{LUGAR_NAC_ESPOSO}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Padre:</td>
+                                <td class="data-value">{{PADRE_ESPOSO}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Madre:</td>
+                                <td class="data-value">{{MADRE_ESPOSO}}</td>
+                            </tr>
+                        </table>
+                    </td>
 
-                <div class="spouse-column">
-                    <div class="spouse-title">ESPOSA</div>
-                    <div class="data-row">
-                        <span class="data-label">Nombre:</span>
-                        <span class="data-value highlight">{{NOMBRE_ESPOSA}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Documento:</span>
-                        <span class="data-value">{{DOCUMENTO_ESPOSA}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Fecha de Nac.:</span>
-                        <span class="data-value">{{FECHA_NAC_ESPOSA}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Lugar de Nac.:</span>
-                        <span class="data-value">{{LUGAR_NAC_ESPOSA}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Padre:</span>
-                        <span class="data-value">{{PADRE_ESPOSA}}</span>
-                    </div>
-                    <div class="data-row">
-                        <span class="data-label">Madre:</span>
-                        <span class="data-value">{{MADRE_ESPOSA}}</span>
-                    </div>
-                </div>
-            </div>
+                    <td class="spouse-spacer"></td>
+
+                    <td class="spouse-cell">
+                        <div class="spouse-title">ESPOSA</div>
+                        <table class="data-table">
+                            <tr>
+                                <td class="data-label">Nombre:</td>
+                                <td class="data-value highlight">{{NOMBRE_ESPOSA}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Documento:</td>
+                                <td class="data-value">{{DOCUMENTO_ESPOSA}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Fecha Nac.:</td>
+                                <td class="data-value">{{FECHA_NAC_ESPOSA}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Lugar Nac.:</td>
+                                <td class="data-value">{{LUGAR_NAC_ESPOSA}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Padre:</td>
+                                <td class="data-value">{{PADRE_ESPOSA}}</td>
+                            </tr>
+                            <tr>
+                                <td class="data-label">Madre:</td>
+                                <td class="data-value">{{MADRE_ESPOSA}}</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
 
             <div class="data-section">
-                <div class="data-row">
-                    <span class="data-label">Fecha del Matrimonio:</span>
-                    <span class="data-value">{{FECHA_MATRIMONIO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Lugar del Matrimonio:</span>
-                    <span class="data-value">{{LUGAR_MATRIMONIO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Ministro:</span>
-                    <span class="data-value">{{NOMBRE_MINISTRO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Testigos:</span>
-                    <span class="data-value">{{NOMBRE_TESTIGOS}}</span>
-                </div>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-label-wide">Fecha del Matrimonio:</td>
+                        <td class="data-value">{{FECHA_MATRIMONIO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label-wide">Lugar del Matrimonio:</td>
+                        <td class="data-value">{{LUGAR_MATRIMONIO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label-wide">Ministro:</td>
+                        <td class="data-value">{{NOMBRE_MINISTRO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label-wide">Testigos:</td>
+                        <td class="data-value">{{NOMBRE_TESTIGOS}}</td>
+                    </tr>
+                </table>
             </div>
 
-            <div class="content">
-                <p>
-                    Se expide el presente certificado a solicitud de los interesados
-                    para los fines que estimen conveniente.
-                </p>
+            <div class="content" style="margin-top: 10px; margin-bottom: 0;">
+                Se expide el presente certificado a solicitud de los interesados para los fines religiosos y/o civiles que estimen conveniente.
             </div>
 
-            <div class="signatures">
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">PÁRROCO</div>
-                    <div class="signature-name">{{NOMBRE_PARROCO}}</div>
-                </div>
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">SECRETARIO(A)</div>
-                    <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
-                </div>
-            </div>
+            <table class="signatures-table">
+                <tr>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">PÁRROCO</div>
+                        <div class="signature-name">{{NOMBRE_PARROCO}}</div>
+                    </td>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">SECRETARIO(A)</div>
+                        <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
+                    </td>
+                </tr>
+            </table>
 
-            <div class="qr-section">
-                <img src="{{QR_CODE}}" alt="QR Code" class="qr-code">
-                <div class="qr-label">Escanea para verificar</div>
-            </div>
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-text">
+                        <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
+                        <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
+                        <p>Este certificado es válido únicamente con sello parroquial impreso o firma original.</p>
+                    </td>
+                    <td class="qr-container">
+                        <img src="{{QR_CODE}}" alt="QR Code" class="qr-img" onerror="this.style.display='none'">
+                    </td>
+                </tr>
+            </table>
 
-            <div class="footer">
-                <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
-                <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
-                <p>Este certificado es válido únicamente con sello y firma original</p>
-            </div>
         </div>
     </div>
 </body>

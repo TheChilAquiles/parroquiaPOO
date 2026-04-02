@@ -334,7 +334,7 @@ $(document).ready(function() {
                 });
 
                 $.ajax({
-                    url: '<?= url('pagos/registrar-efectivo') ?>',
+                    url: '?route=pagos/registrar-efectivo', // <-- ¡EL CAMBIO MÁGICO!
                     method: 'POST',
                     data: {
                         certificado_id: id,

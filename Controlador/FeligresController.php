@@ -25,7 +25,7 @@ class FeligresController extends BaseController
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para acceder a esta sección';
             redirect('inicio');
-            
+
             exit();
         }
 
@@ -61,13 +61,13 @@ class FeligresController extends BaseController
 
             // Obtener registros filtrados y paginados
             $feligreses = $this->modelo->mdlListarTodos($start, $length, $search);
-            
+
             // Total sin filtro
             $total = $this->modelo->mdlContarTodos();
-            
+
             // Total filtrado
-            $totalFiltrado = !empty($search) 
-                ? $this->modelo->mdlContarFiltrados($search) 
+            $totalFiltrado = !empty($search)
+                ? $this->modelo->mdlContarFiltrados($search)
                 : $total;
 
             // Formatear datos para DataTables (incluir todos los campos para edición)
@@ -84,7 +84,9 @@ class FeligresController extends BaseController
                     'primer_apellido' => $feligres['primer_apellido'],
                     'segundo_apellido' => $feligres['segundo_apellido'],
                     'telefono' => $feligres['telefono'] ?? 'N/A',
-                    'direccion' => $feligres['direccion'] ?? 'N/A'
+                    'direccion' => $feligres['direccion'] ?? 'N/A',
+                    'fecha_nacimiento' => $feligres['fecha_nacimiento'] ?? '',
+                    'lugar_nacimiento' => $feligres['lugar_nacimiento'] ?? '',
                 ];
             }
 
@@ -96,7 +98,6 @@ class FeligresController extends BaseController
                 'data' => $data
             ]);
             exit();
-
         } catch (Exception $e) {
             if (ob_get_level()) {
                 ob_clean();
@@ -120,7 +121,7 @@ class FeligresController extends BaseController
         if (!in_array($_SESSION['user-rol'], ['Administrador', 'Secretario'])) {
             $_SESSION['error'] = 'No tienes permisos para realizar esta acción';
             redirect('feligreses');
-            
+
             exit();
         }
 
@@ -133,7 +134,7 @@ class FeligresController extends BaseController
 
                     // Detectar si es AJAX
                     $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+                        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
                     if ($isAjax) {
                         if (ob_get_level()) {
@@ -146,7 +147,25 @@ class FeligresController extends BaseController
                     } else {
                         $_SESSION['error'] = $error;
                         redirect('feligreses');
-                        
+
+                        exit();
+                    }
+                }
+
+                // Validación Backend de fecha futura
+                if (strtotime($_POST['fecha-nacimiento']) > time()) {
+                    $error = "La fecha de nacimiento no puede ser en el futuro";
+                    // Mismo manejo de error ajax/session que ya tienes
+                    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+                    if ($isAjax) {
+                        if (ob_get_level()) ob_clean();
+                        header('Content-Type: application/json');
+                        http_response_code(400);
+                        echo json_encode(['status' => 'error', 'message' => $error]);
+                        exit();
+                    } else {
+                        $_SESSION['error'] = $error;
+                        redirect('feligreses');
                         exit();
                     }
                 }
@@ -156,7 +175,7 @@ class FeligresController extends BaseController
 
             // Detectar si es AJAX
             $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                      strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
             if ($isAjax) {
                 // Respuesta JSON para AJAX
@@ -212,7 +231,7 @@ class FeligresController extends BaseController
 
             // Detectar si es AJAX
             $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&
-                      strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
             if ($isAjax) {
                 // Respuesta JSON para AJAX

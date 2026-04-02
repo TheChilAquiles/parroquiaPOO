@@ -50,7 +50,8 @@ class ModeloSacramento
                     f.segundo_nombre,
                     f.primer_apellido,
                     f.segundo_apellido,
-                    f.fecha_nacimiento, 
+                    f.fecha_nacimiento,
+                    f.lugar_nacimiento, /* <-- NUEVO */ 
                     f.telefono, 
                     f.direccion,
                     CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ',
@@ -144,8 +145,9 @@ class ModeloSacramento
      */
     public function CrearSacramento($data)
     {
+        // 1. PRIMER CAMBIO: Lanzar error si el libro no existe
         if (!$this->libroID) {
-            return false;
+            throw new Exception("ERROR FATAL: El Libro (Tipo: {$this->sacramentoTipo}, Número: {$this->numero}) NO EXISTE en la base de datos. ¡Asegúrate de que el libro esté creado primero!");
         }
 
         try {
@@ -154,22 +156,26 @@ class ModeloSacramento
             // Obtener próxima acta y folio disponibles
             $proximaInfo = $this->mdlObtenerProximaActaDisponible($this->libroID);
 
-            // Validar si hay error (libro lleno)
+            // 2. SEGUNDO CAMBIO: Lanzar error si el libro está lleno
             if (isset($proximaInfo['error'])) {
-                Logger::error("Libro lleno:", ['info' => $proximaInfo['error']]);
                 $this->conexion->rollBack();
-                return false;
+                throw new Exception("Límite alcanzado: " . $proximaInfo['error']);
             }
 
             $acta = $proximaInfo['acta'];
             $folio = $proximaInfo['folio'];
+            // Capturamos la fecha del formulario (si no viene, usamos hoy)
+            // Capturamos la fecha del formulario
+            $fechaEvento = $data['fecha-evento'] ?? date('Y-m-d');
 
-            // Crear sacramento con acta y folio auto-calculados
+            // Insertamos ambas fechas: la del evento y la de hoy (NOW)
             $sql_sacramento = "INSERT INTO sacramentos
-                              (libro_id, tipo_sacramento_id, acta, folio, fecha_generacion)
-                              VALUES (?, ?, ?, ?, NOW())";
+                              (libro_id, tipo_sacramento_id, acta, folio, fecha_sacramento, fecha_generacion)
+                              VALUES (?, ?, ?, ?, ?, NOW())";
             $stmt = $this->conexion->prepare($sql_sacramento);
-            $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio]);
+            
+            // Le pasamos la fecha del evento a la consulta
+            $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio, $fechaEvento]);
 
             $sacramentoID = $this->conexion->lastInsertId();
 
@@ -201,7 +207,9 @@ class ModeloSacramento
         } catch (PDOException $e) {
             $this->conexion->rollBack();
             Logger::error("Error al crear sacramento:", ['error' => $e->getMessage()]);
-            return false;
+            
+            // ¡Quitamos el return false y lanzamos el error para verlo en red!
+            throw new Exception("CHISME DE BD: " . $e->getMessage()); 
         }
     }
 
@@ -219,8 +227,8 @@ class ModeloSacramento
             // 1. Si enviaron documento completo, intentamos buscar si ya existe
             if ($tipoDoc && $numeroDoc) {
                 $sql_buscar = "SELECT id FROM feligreses
-                           WHERE tipo_documento_id = ? AND numero_documento = ?
-                           AND estado_registro IS NULL LIMIT 1";
+                            WHERE tipo_documento_id = ? AND numero_documento = ?
+                            AND estado_registro IS NULL LIMIT 1";
                 $stmt = $this->conexion->prepare($sql_buscar);
                 $stmt->execute([$tipoDoc, $numeroDoc]);
                 $feligres = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -228,29 +236,32 @@ class ModeloSacramento
                 if ($feligres) {
                     // UPDATE EXCELENTE: Si el usuario ya existe, le actualizamos los datos de contacto 
                     // en caso de que antes los tuviera en NULL.
-                    $sql_update = "UPDATE feligreses SET 
-                               fecha_nacimiento = COALESCE(NULLIF(?, ''), fecha_nacimiento),
-                               telefono = COALESCE(NULLIF(?, ''), telefono),
-                               direccion = COALESCE(NULLIF(?, ''), direccion)
-                               WHERE id = ?";
-                    $stmt_upd = $this->conexion->prepare($sql_update);
-                    $stmt_upd->execute([
-                        $datos['fechaNacimiento'] ?? null,
-                        $datos['telefono'] ?? null,
-                        $datos['direccion'] ?? null,
-                        $feligres['id']
-                    ]);
+                    // En el UPDATE (si existe):
+                $sql_update = "UPDATE feligreses SET 
+                                fecha_nacimiento = COALESCE(NULLIF(?, ''), fecha_nacimiento),
+                                lugar_nacimiento = COALESCE(NULLIF(?, ''), lugar_nacimiento),
+                                telefono = COALESCE(NULLIF(?, ''), telefono),
+                                direccion = COALESCE(NULLIF(?, ''), direccion)
+                                WHERE id = ?";
+                $stmt_upd = $this->conexion->prepare($sql_update);
+                $stmt_upd->execute([
+                    $datos['fechaNacimiento'] ?? null,
+                    $datos['lugarNacimiento'] ?? null, // <-- NUEVO
+                    $datos['telefono'] ?? null,
+                    $datos['direccion'] ?? null,
+                    $feligres['id']
+                ]);
 
                     return $feligres['id']; // Ya existe, devolvemos su ID
                 }
             }
 
-            // 2. Si no hay documento o es un feligrés nuevo, lo creamos con TODOS los datos
+            // En el INSERT (si no existe):
             $sql_crear = "INSERT INTO feligreses
-                     (tipo_documento_id, numero_documento, primer_nombre,
-                      segundo_nombre, primer_apellido, segundo_apellido,
-                      fecha_nacimiento, telefono, direccion)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                        (tipo_documento_id, numero_documento, primer_nombre,
+                        segundo_nombre, primer_apellido, segundo_apellido,
+                        fecha_nacimiento, lugar_nacimiento, telefono, direccion)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt_crear = $this->conexion->prepare($sql_crear);
             $stmt_crear->execute([
                 $tipoDoc,
@@ -260,6 +271,7 @@ class ModeloSacramento
                 $datos['primerApellido'] ?? '',
                 $datos['segundoApellido'] ?? '',
                 !empty($datos['fechaNacimiento']) ? $datos['fechaNacimiento'] : null,
+                !empty($datos['lugarNacimiento']) ? $datos['lugarNacimiento'] : null, // <-- NUEVO
                 !empty($datos['telefono']) ? $datos['telefono'] : null,
                 !empty($datos['direccion']) ? $datos['direccion'] : null
             ]);
@@ -267,7 +279,8 @@ class ModeloSacramento
             return $this->conexion->lastInsertId();
         } catch (PDOException $e) {
             Logger::error("Error al obtener/crear feligrés:", ['error' => $e->getMessage()]);
-            return false;
+            // Lanzamos el error hacia arriba para que CrearSacramento lo escuche
+            throw new Exception("Error SQL al guardar feligrés: " . $e->getMessage());
         }
     }
 
@@ -629,15 +642,15 @@ class ModeloSacramento
             $fechaEvento = $datos['fecha-evento'] ?? date('Y-m-d');
 
             $sqlUpdate = "UPDATE sacramentos
-                         SET fecha_generacion = ?
-                         WHERE id = ? AND estado_registro IS NULL";
+                            SET fecha_generacion = ?
+                            WHERE id = ? AND estado_registro IS NULL";
             $stmtUpdate = $this->conexion->prepare($sqlUpdate);
             $stmtUpdate->execute([$fechaEvento, $sacramentoId]);
 
             // 2. Eliminar participantes actuales (soft delete)
             $sqlDeletePart = "UPDATE participantes
-                             SET estado_registro = NOW()
-                             WHERE sacramento_id = ? AND estado_registro IS NULL";
+                                SET estado_registro = NOW()
+                                WHERE sacramento_id = ? AND estado_registro IS NULL";
             $stmtDelete = $this->conexion->prepare($sqlDeletePart);
             $stmtDelete->execute([$sacramentoId]);
 
@@ -646,7 +659,7 @@ class ModeloSacramento
 
             foreach ($integrantes as $integrante) {
                 // Buscar o crear feligrés
-                $feligresId = $this->buscarOCrearFeligres($integrante);
+                $feligresId = $this->obtenerOCrearFeligres($integrante);
 
                 if (!$feligresId) {
                     throw new Exception('Error al procesar participante');
@@ -654,7 +667,7 @@ class ModeloSacramento
 
                 // Insertar participante
                 $sqlPart = "INSERT INTO participantes (sacramento_id, feligres_id, rol_participante_id)
-                           VALUES (?, ?, ?)";
+                            VALUES (?, ?, ?)";
                 $stmtPart = $this->conexion->prepare($sqlPart);
                 $stmtPart->execute([
                     $sacramentoId,
@@ -677,55 +690,6 @@ class ModeloSacramento
                 'error' => $e->getMessage()
             ]);
             return false;
-        }
-    }
-
-    /**
-     * Busca o crea un feligrés basado en su documento
-     * @param array $datos Datos del feligrés
-     * @return int|null ID del feligrés o null si hay error
-     */
-    private function buscarOCrearFeligres($datos)
-    {
-        try {
-            $tipoDoc = $datos['tipoDoc'];
-            $numeroDoc = $datos['numeroDoc'];
-
-            // Buscar feligrés existente
-            $sqlBuscar = "SELECT id FROM feligreses
-                         WHERE tipo_documento_id = ? AND numero_documento = ?
-                         AND estado_registro IS NULL
-                         LIMIT 1";
-            $stmtBuscar = $this->conexion->prepare($sqlBuscar);
-            $stmtBuscar->execute([$tipoDoc, $numeroDoc]);
-            $feligres = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
-
-            if ($feligres) {
-                return $feligres['id'];
-            }
-
-            // Crear nuevo feligrés
-            $sqlCrear = "INSERT INTO feligreses
-                        (tipo_documento_id, numero_documento, primer_nombre, segundo_nombre,
-                         primer_apellido, segundo_apellido)
-                        VALUES (?, ?, ?, ?, ?, ?)";
-            $stmtCrear = $this->conexion->prepare($sqlCrear);
-            $stmtCrear->execute([
-                $tipoDoc,
-                $numeroDoc,
-                $datos['primerNombre'] ?? '',
-                $datos['segundoNombre'] ?? '',
-                $datos['primerApellido'] ?? '',
-                $datos['segundoApellido'] ?? ''
-            ]);
-
-            return $this->conexion->lastInsertId();
-        } catch (PDOException $e) {
-            Logger::error("Error al buscar/crear feligrés", [
-                'datos' => $datos,
-                'error' => $e->getMessage()
-            ]);
-            return null;
         }
     }
 }

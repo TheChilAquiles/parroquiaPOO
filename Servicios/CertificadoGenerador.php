@@ -4,6 +4,8 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
+use chillerlan\QRCode\Common\EccLevel; // <-- Agrega esta
+use chillerlan\QRCode\Output\QRGdImagePNG; // <-- Agrega esta
 
 /**
  * CertificadoGenerador
@@ -93,7 +95,6 @@ class CertificadoGenerador
             $pdfResult = $this->generarPDF($html, $certificadoId, $tipo);
 
             return $pdfResult;
-
         } catch (Exception $e) {
             Logger::error("Error al generar certificado", [
                 'error' => $e->getMessage(),
@@ -120,13 +121,15 @@ class CertificadoGenerador
             // URL de verificación
             $verificationUrl = $this->baseUrl . '/index.php?route=certificados/verificar&codigo=' . $certificadoId;
 
-            // Configuración del QR
+            // Configuración del QR actualizada para v5
             $options = new QROptions([
-                'version'      => 5,
-                'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
-                'eccLevel'     => QRCode::ECC_L,
-                'scale'        => 5,
-                'imageBase64'  => true,
+                'version'         => 5,
+                // En v5 ya no se usa OUTPUT_IMAGE_PNG, se usa la clase de la interfaz
+                'outputInterface' => QRGdImagePNG::class,
+                // En v5 los niveles de error están en su propio namespace
+                'eccLevel'        => EccLevel::L,
+                'scale'           => 5,
+                'imageBase64'     => true,
             ]);
 
             // Generar QR
@@ -137,7 +140,6 @@ class CertificadoGenerador
                 'success' => true,
                 'data_uri' => $qrImage
             ];
-
         } catch (Exception $e) {
             Logger::error("Error al generar QR code", [
                 'error' => $e->getMessage(),
@@ -243,7 +245,6 @@ class CertificadoGenerador
                 'filename' => $filename,
                 'message' => 'Certificado generado exitosamente'
             ];
-
         } catch (Exception $e) {
             Logger::error("Error al generar PDF", [
                 'error' => $e->getMessage(),

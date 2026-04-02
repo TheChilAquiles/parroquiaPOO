@@ -13,18 +13,18 @@
             <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <?php 
-                $textoBoton = "Agregar nuevo Registro";
-                if ($tipo == 1) {
-                    $textoBoton = "Agregar nuevo Bautizado";
-                } elseif ($tipo == 2) {
-                    $textoBoton = "Agregar nuevo Confirmando";
-                } elseif ($tipo == 3) {
-                    $textoBoton = "Agregar nueva Defunción";
-                } elseif ($tipo == 4) {
-                    $textoBoton = "Agregar nuevo Matrimonio";
-                }
-                echo $textoBoton;
+            <?php
+            $textoBoton = "Agregar nuevo Registro";
+            if ($tipo == 1) {
+                $textoBoton = "Agregar nuevo Bautizado";
+            } elseif ($tipo == 2) {
+                $textoBoton = "Agregar nuevo Confirmando";
+            } elseif ($tipo == 3) {
+                $textoBoton = "Agregar nueva Defunción";
+            } elseif ($tipo == 4) {
+                $textoBoton = "Agregar nuevo Matrimonio";
+            }
+            echo $textoBoton;
             ?>
         </button>
     </div>
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Formulario -->
-        <form id="recordForm" method="POST" class="flex flex-col flex-1 overflow-hidden">
+        <form id="recordForm" method="POST" class="flex flex-col flex-1 overflow-hidden" novalidate>
             <div class="overflow-y-auto flex-1 p-6">
                 <div class="space-y-5">
 
@@ -101,7 +101,7 @@
                                 Fecha Evento
                             </div>
                             <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
-                            <input type="date" id="fecha-evento" name="fecha-evento" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                            <input type="date" id="fecha-evento" name="fecha_generacion" max="<?= date('Y-m-d') ?>" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
                         </div>
                     </div>
 
@@ -242,10 +242,14 @@
 
                     <h4 class="font-bold text-gray-800 mt-6 mb-4 border-b pb-2 text-lg">3. Información de Contacto y Nacimiento</h4>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="fechaNacimiento" class="block text-sm font-medium mb-1 text-gray-700">Fecha Nacimiento *</label>
-                            <input type="date" id="fechaNacimiento" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                            <input type="date" id="fechaNacimiento" max="<?= date('Y-m-d') ?>" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                        </div>
+                        <div>
+                            <label for="lugarNacimiento" class="block text-sm font-medium mb-1 text-gray-700">Lugar Nacimiento *</label>
+                            <input type="text" id="lugarNacimiento" class="border border-gray-300 rounded-lg p-2.5 w-full focus:ring-2 focus:ring-[#C4A68A] outline-none transition" placeholder="Ej: Bogotá">
                         </div>
                         <div>
                             <label for="telefono" class="block text-sm font-medium mb-1 text-gray-700">Teléfono *</label>
@@ -263,27 +267,24 @@
                             <option value="" disabled selected>-- Selecciona un Rol --</option>
                             <?php
                             if ($tipo == 1) {
-                                echo '<option value="10">Abuelo</option>';
-                                echo '<option value="11">Abuela</option>';
+                                echo '<option value="6">Abuelo</option>';
+                                echo '<option value="7">Abuela</option>';
                                 echo '<option value="1">Bautizado</option>';
                             } elseif ($tipo == 2) {
-                                echo '<option value="2">Confirmando</option>';
+                                echo '<option value="8">Confirmando</option>';
                             } elseif ($tipo == 3) {
-                                echo '<option value="3">Difunto</option>';
+                                echo '<option value="9">Difunto</option>';
                             } elseif ($tipo == 4) {
-                                echo '<option value="4">Esposo</option>';
-                                echo '<option value="5">Esposa</option>';
-                                echo '<option value="12">Esposo Padrino</option>';
-                                echo '<option value="13">Esposo Madrina</option>';
-                                echo '<option value="14">Esposa Padrino</option>';
-                                echo '<option value="15">Esposa Madrina</option>';
+                                echo '<option value="10">Esposo</option>';
+                                echo '<option value="11">Esposa</option>';
+                                /* NOTA: Oculté los roles de 'Esposo Padrino', etc. porque NO existen en tu base de datos actual (llega hasta el 11). Si los dejas, dará error de MySQL. */
                             }
                             ?>
-                            <option value="6">Padre</option>
-                            <option value="7">Madre</option>
+                            <option value="2">Padre</option>
+                            <option value="3">Madre</option>
                             <?php if ($tipo !== 3 && $tipo !== 4) {
-                                echo '<option value="8">Padrino</option>';
-                                echo '<option value="9">Madrina</option>';
+                                echo '<option value="4">Padrino</option>';
+                                echo '<option value="5">Madrina</option>';
                             } ?>
                         </select>
                     </div>
@@ -305,19 +306,15 @@
 
 
 
-<!-- </div>  
-            <div class="insert-post-ads1" style="margin-top:20px;">
-            </div>
-        </div> -->
-
-
-
 
 
 <script>
     // ============================================================================
     // VARIABLES GLOBALES
     // ============================================================================
+
+
+    let contador = 0; // <-- ¡AÑADE ESTA LÍNEA AQUÍ!
 
     // Definir roles obligatorios según el tipo de sacramento
     const rolesObligatorios = (() => {
@@ -331,25 +328,26 @@
             case 3: // Defunciones
                 return ['Difunto'];
             case 4: // Matrimonios
-                return ['Esposo', 'Esposa', 'Esposo Padrino', 'Esposa Padrino', 'Testigo 1', 'Testigo 2'];
+                return ['Esposo', 'Esposa'];
             default:
                 return [];
         }
     })();
 
     // Mapa de IDs a nombres de roles (consolidado, usado en múltiples lugares)
+    // Mapa de IDs a nombres de roles (Ajustado a tu base de datos real)
     const roles = {
         1: 'Bautizado',
-        2: 'Confirmando',
-        3: 'Difunto',
-        4: 'Esposo',
-        5: 'Esposa',
-        6: 'Padre',
-        7: 'Madre',
-        8: 'Padrino',
-        9: 'Madrina',
-        10: 'Abuelo',
-        11: 'Abuela'
+        2: 'Padre',
+        3: 'Madre',
+        4: 'Padrino',
+        5: 'Madrina',
+        6: 'Abuelo',
+        7: 'Abuela',
+        8: 'Confirmando',
+        9: 'Difunto',
+        10: 'Esposo',
+        11: 'Esposa'
     };
 
     // ============================================================================
@@ -423,6 +421,7 @@
                     $('#segundoApellido').val(response.data.segundo_apellido || '');
                     // Agrega esto debajo de donde llenas los apellidos
                     $('#fechaNacimiento').val(response.data.fecha_nacimiento || '');
+                    $('#lugarNacimiento').val(response.data.lugar_nacimiento || ''); // <-- NUEVO
                     $('#telefono').val(response.data.telefono || '');
                     $('#direccion').val(response.data.direccion || '');
 
@@ -473,6 +472,7 @@
         $('#segundoApellido').val('').removeClass('border-red-500');
         $('#rolParticipante').val('').removeClass('border-red-500');
         $('#fechaNacimiento').val('').removeClass('border-red-500');
+        $('#lugarNacimiento').val('').removeClass('border-red-500'); // <-- NUEVO
         $('#telefono').val('').removeClass('border-red-500');
         $('#direccion').val('').removeClass('border-red-500');
         $('#feligresNoExiste').addClass('hidden');
@@ -499,18 +499,53 @@
         const segundoApellido = document.getElementById('segundoApellido').value?.trim();
 
         const fechaNacimiento = document.getElementById('fechaNacimiento').value?.trim();
+        const lugarNacimiento = document.getElementById('lugarNacimiento').value?.trim(); // <-- NUEVO
         const telefono = document.getElementById('telefono').value?.trim();
         const direccion = document.getElementById('direccion').value?.trim();
+
+        // NUEVO: Validar que el nacimiento no sea en el futuro
+        if (fechaNacimiento && esFechaFutura(fechaNacimiento)) {
+            resaltarCampo('#fechaNacimiento');
+            Swal.fire({
+                icon: 'error',
+                title: 'Nacimiento en el futuro',
+                text: 'La fecha de nacimiento no puede ser mayor al día de hoy.',
+                confirmButtonColor: '#D0B8A8'
+            });
+            return false;
+        }
 
         // 1. Validaciones de campos obligatorios
         let camposFaltantes = false;
 
-        if (!primerNombre) { resaltarCampo('#primerNombre'); camposFaltantes = true; }
-        if (!primerApellido) { resaltarCampo('#primerApellido'); camposFaltantes = true; }
-        if (!fechaNacimiento) { resaltarCampo('#fechaNacimiento'); camposFaltantes = true; }
-        if (!telefono) { resaltarCampo('#telefono'); camposFaltantes = true; }
-        if (!direccion) { resaltarCampo('#direccion'); camposFaltantes = true; }
-        if (!rolParticipante) { resaltarCampo('#rolParticipante'); camposFaltantes = true; }
+        if (!primerNombre) {
+            resaltarCampo('#primerNombre');
+            camposFaltantes = true;
+        }
+        if (!primerApellido) {
+            resaltarCampo('#primerApellido');
+            camposFaltantes = true;
+        }
+        if (!fechaNacimiento) {
+            resaltarCampo('#fechaNacimiento');
+            camposFaltantes = true;
+        }
+        if (!lugarNacimiento) {
+            resaltarCampo('#lugarNacimiento');
+            camposFaltantes = true;
+        } // <-- NUEVO
+        if (!telefono) {
+            resaltarCampo('#telefono');
+            camposFaltantes = true;
+        }
+        if (!direccion) {
+            resaltarCampo('#direccion');
+            camposFaltantes = true;
+        }
+        if (!rolParticipante) {
+            resaltarCampo('#rolParticipante');
+            camposFaltantes = true;
+        }
 
         // Si hay tipo de documento pero no número, o viceversa
         if ((tipoDoc && !numeroDoc) || (!tipoDoc && numeroDoc)) {
@@ -559,7 +594,9 @@
 
         // Roles que permiten multiples personas (ej: abuelos, padrinos si son varios)
         // Pero roles únicos como 'Bautizado', 'Padre', 'Madre' deben validarse.
-        const rolesUnicos = ['1', '2', '3', '4', '5', '6', '7']; // IDs como strings
+        // Roles que solo pueden aparecer una vez (NUEVOS IDs)
+        // 1=Bautizado, 2=Padre, 3=Madre, 8=Confirmando, 9=Difunto, 10=Esposo, 11=Esposa
+        const rolesUnicos = [1, 2, 3, 8, 9, 10, 11];
 
         if (inputEncontrado && rolesUnicos.includes(rolParticipante)) {
             resaltarCampo('#rolParticipante');
@@ -632,6 +669,7 @@
                 <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
                 <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
                 <input type="hidden" name="integrantes[${contador}][fechaNacimiento]" value="${fechaNacimiento}">
+                <input type="hidden" name="integrantes[${contador}][lugarNacimiento]" value="${lugarNacimiento}">
                 <input type="hidden" name="integrantes[${contador}][telefono]" value="${telefono}">
                 <input type="hidden" name="integrantes[${contador}][direccion]" value="${direccion}">
 
@@ -714,10 +752,21 @@
         }
     }
 
+    $(document).on('click', '#Anterior', function(e) {
+        e.preventDefault(); // 🛑 Frena cualquier locura del navegador
+
+        if (form > 1) {
+            form--;
+            mostrarFormulario(form);
+        }
+    });
+
     $(document).on('click', '#Siguiente', function() {
         // Validar fecha antes de avanzar del Form1
         if (form === 1) {
             const fechaEvento = $('#fecha-evento').val();
+
+            // Verificamos si está vacía
             if (!fechaEvento || fechaEvento.trim() === '') {
                 Swal.fire({
                     icon: 'warning',
@@ -730,17 +779,23 @@
                     $('#fecha-evento').removeClass('animate-pulse');
                 }, 2000);
                 return;
+            }
+            // NUEVO: Verificamos si es del futuro (por si se saltó el evento change)
+            else if (esFechaFutura(fechaEvento)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Fecha inválida',
+                    text: 'La fecha del sacramento no puede estar en el futuro.',
+                    confirmButtonColor: '#D0B8A8'
+                });
+                $('#fecha-evento').addClass('border-red-500');
+                return;
             } else {
                 $('#fecha-evento').removeClass('border-red-500');
             }
         }
 
         if (form < totalForms) form++;
-        mostrarFormulario(form);
-    });
-
-    $(document).on('click', '#Anterior', function() {
-        if (form > 1) form--;
         mostrarFormulario(form);
     });
 
@@ -887,6 +942,9 @@
                         <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${p.segundo_nombre || ''}">
                         <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${p.primer_apellido}">
                         <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${p.segundo_apellido || ''}">
+                        <input type="hidden" name="integrantes[${contador}][fechaNacimiento]" value="${p.fecha_nacimiento || ''}">
+                        <input type="hidden" name="integrantes[${contador}][lugarNacimiento]" value="${p.lugar_nacimiento || ''}">
+                        
                         <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
                     </div>
                 `;
@@ -1215,7 +1273,11 @@
         }
 
 
+        if ($('#id').val() === '') {
+            $('#id').prop('disabled', true); // Lo apagamos para que no viaje
+        }
         var formData = $(this).serialize();
+        $('#id').prop('disabled', false); // Lo volvemos a prender por si acaso
 
         $.ajax({
             url: "?route=sacramentos/crear",
@@ -1314,6 +1376,38 @@
             }
         });
     }
+
+
+    // ============================================================================
+    // FUNCIONES DE VALIDACIÓN DE FECHAS
+    // ============================================================================
+    function esFechaFutura(fechaString) {
+        if (!fechaString) return false;
+
+        // Creamos la fecha seleccionada y forzamos la hora al final del día
+        // para evitar problemas con zonas horarias
+        const fechaSeleccionada = new Date(fechaString);
+        fechaSeleccionada.setHours(23, 59, 59, 999);
+
+        const hoy = new Date();
+        return fechaSeleccionada > hoy;
+    }
+
+    // Escuchador en vivo: Si el usuario escribe una fecha futura, se la borramos
+    $(document).on('change input', '#fecha-evento, #fechaNacimiento', function() {
+        if (esFechaFutura($(this).val())) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Fecha no permitida!',
+                text: 'Ni los sacramentos ni los nacimientos pueden ocurrir en el futuro. 😅',
+                confirmButtonColor: '#D0B8A8'
+            });
+            $(this).val(''); // Limpiamos el campo
+            $(this).addClass('border-red-500');
+        } else {
+            $(this).removeClass('border-red-500');
+        }
+    });
 </script>
 
 <?php include_once __DIR__ . '/componentes/plantillaBottom.php'; ?>

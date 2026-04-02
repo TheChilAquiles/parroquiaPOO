@@ -3,52 +3,77 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificado de Confirmación</title>
     <style>
+        /* Ajuste de página estricto para A4 */
         @page {
-            size: A4;
-            margin: 0;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            size: A4 portrait;
+            margin: 25px;
         }
 
         body {
             font-family: 'Georgia', 'Times New Roman', serif;
             background: #fff;
             color: #333;
-            padding: 40px 60px;
-            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            line-height: 1.4;
         }
 
+        /* Contenedores con altura relativa para que DomPDF no colapse */
         .certificate {
             border: 5px double #7c2d12;
-            padding: 40px;
-            position: relative;
-            min-height: 950px;
-            background-color: white;
+            padding: 5px;
+            height: 96%;
+            box-sizing: border-box;
         }
 
         .inner-border {
             border: 2px solid #ea580c;
-            padding: 30px;
-            min-height: 870px;
+            padding: 25px 35px;
+            height: 100%;
             position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Información superior (Libro, Folio, Acta) combinando con tu diseño */
+        .top-info {
+            text-align: right;
+            font-size: 11px;
+            color: #4b5563;
+            margin-bottom: 10px;
+        }
+
+        .top-info span {
+            border: 1px solid #ea580c;
+            padding: 3px 8px;
+            margin-left: 5px;
+            background-color: #fef2f2;
+            color: #7c2d12;
+            font-weight: bold;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 90px;
+            color: rgba(234, 88, 12, 0.04);
+            font-weight: bold;
+            z-index: -1;
+            white-space: nowrap;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #e5e7eb;
         }
 
         .church-name {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             color: #7c2d12;
             margin-bottom: 5px;
@@ -57,137 +82,138 @@
         }
 
         .subtitle {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
-            margin-bottom: 20px;
         }
 
         .certificate-title {
-            font-size: 36px;
+            font-size: 26px;
             font-weight: bold;
             color: #7c2d12;
             text-align: center;
-            margin: 30px 0;
+            margin: 15px 0;
             text-transform: uppercase;
             letter-spacing: 3px;
         }
 
         .content {
-            font-size: 16px;
-            line-height: 2.2;
+            font-size: 14px;
             text-align: justify;
-            margin: 40px 0;
-            padding: 0 20px;
-        }
-
-        .highlight {
-            font-weight: bold;
-            color: #7c2d12;
-            text-decoration: underline;
+            margin-bottom: 15px;
         }
 
         .data-section {
-            margin: 30px 0;
-            padding: 20px;
+            margin: 15px 0;
+            padding: 15px;
             background: #fef2f2;
             border-left: 4px solid #ea580c;
         }
 
-        .data-row {
-            margin: 10px 0;
-            font-size: 14px;
+        /* Convertimos la lista de datos a tabla para que DomPDF lo renderice perfecto */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .data-table td {
+            padding: 6px 5px;
+            vertical-align: bottom;
         }
 
         .data-label {
             font-weight: bold;
             color: #4b5563;
-            display: inline-block;
-            width: 150px;
+            width: 35%;
         }
 
         .data-value {
             color: #1f2937;
+            width: 65%;
+            border-bottom: 1px dotted #9ca3af;
         }
 
-        .signatures {
-            margin-top: 80px;
-            display: table;
+        .highlight {
+            font-weight: bold;
+            color: #7c2d12;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .closing-text {
+            font-size: 13px;
+            text-align: justify;
+            margin: 20px 0;
+        }
+
+        .signatures-table {
             width: 100%;
+            margin-top: 35px;
+            text-align: center;
         }
 
-        .signature-block {
-            display: table-cell;
-            text-align: center;
-            padding: 0 20px;
+        .signatures-table td {
+            width: 50%;
+            vertical-align: bottom;
         }
 
         .signature-line {
             border-top: 2px solid #374151;
-            margin: 60px auto 10px;
-            width: 250px;
+            width: 75%;
+            margin: 0 auto 5px auto;
         }
 
         .signature-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #4b5563;
-            margin-top: 5px;
+            letter-spacing: 1px;
         }
 
         .signature-name {
-            font-size: 14px;
+            font-size: 12px;
             color: #6b7280;
+            font-style: italic;
             margin-top: 3px;
         }
 
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 11px;
-            color: #9ca3af;
-            padding-top: 20px;
+        .footer-table {
+            width: 100%;
+            margin-top: 25px;
+            padding-top: 10px;
             border-top: 1px solid #e5e7eb;
         }
 
-        .qr-section {
-            position: absolute;
-            bottom: 40px;
-            right: 60px;
-            text-align: center;
+        .footer-text {
+            font-size: 10px;
+            color: #9ca3af;
+            text-align: left;
+            vertical-align: middle;
         }
 
-        .qr-code {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #e5e7eb;
-            padding: 5px;
-            background: #fff;
-        }
-
-        .qr-label {
-            font-size: 9px;
-            color: #6b7280;
-            margin-top: 5px;
+        .footer-text p {
+            margin: 3px 0;
         }
 
         .certificate-code {
             font-family: 'Courier New', monospace;
-            font-size: 10px;
-            color: #9ca3af;
-            text-align: center;
-            margin-top: 10px;
+            font-size: 11px;
+            color: #7c2d12;
+            font-weight: bold;
         }
 
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            color: rgba(234, 88, 12, 0.03);
-            font-weight: bold;
-            z-index: -1;
-            pointer-events: none;
+        .qr-container {
+            text-align: right;
+            vertical-align: middle;
+            width: 80px;
+        }
+
+        .qr-img {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #e5e7eb;
+            padding: 3px;
+            background: #fff;
         }
     </style>
 </head>
@@ -195,7 +221,14 @@
 <body>
     <div class="certificate">
         <div class="inner-border">
+            
             <div class="watermark">CONFIRMACIÓN</div>
+
+            <div class="top-info">
+                <span>LIBRO: {{NUMERO_LIBRO}}</span>
+                <span>FOLIO: {{NUMERO_PAGINA}}</span>
+                <span>ACTA: {{NUMERO_REGISTRO}}</span>
+            </div>
 
             <div class="header">
                 <div class="church-name">{{NOMBRE_PARROQUIA}}</div>
@@ -208,74 +241,74 @@
             </div>
 
             <div class="content">
-                <p>
-                    El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>,
-                    certifica que según consta en el Libro de Confirmaciones Número <strong>{{NUMERO_LIBRO}}</strong>,
-                    Página <strong>{{NUMERO_PAGINA}}</strong>, Número <strong>{{NUMERO_REGISTRO}}</strong>:
-                </p>
+                El suscrito Párroco de <strong>{{NOMBRE_PARROQUIA}}</strong>, certifica que según consta en los archivos de esta parroquia, se encuentran registrados los siguientes datos correspondientes al sacramento de la confirmación:
             </div>
 
             <div class="data-section">
-                <div class="data-row">
-                    <span class="data-label">Nombre del Confirmado:</span>
-                    <span class="data-value highlight">{{NOMBRE_COMPLETO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Fecha de Nacimiento:</span>
-                    <span class="data-value">{{FECHA_NACIMIENTO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Lugar de Nacimiento:</span>
-                    <span class="data-value">{{LUGAR_NACIMIENTO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Fecha de Confirmación:</span>
-                    <span class="data-value">{{FECHA_CONFIRMACION}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Lugar de Confirmación:</span>
-                    <span class="data-value">{{LUGAR_CONFIRMACION}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Padrino/Madrina:</span>
-                    <span class="data-value">{{NOMBRE_PADRINO}}</span>
-                </div>
-                <div class="data-row">
-                    <span class="data-label">Obispo Confirmante:</span>
-                    <span class="data-value">{{NOMBRE_OBISPO}}</span>
-                </div>
+                <table class="data-table">
+                    <tr>
+                        <td class="data-label">Nombre del Confirmado:</td>
+                        <td class="data-value highlight">{{NOMBRE_COMPLETO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Fecha de Nacimiento:</td>
+                        <td class="data-value">{{FECHA_NACIMIENTO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Lugar de Nacimiento:</td>
+                        <td class="data-value">{{LUGAR_NACIMIENTO}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Fecha de Confirmación:</td>
+                        <td class="data-value">{{FECHA_CONFIRMACION}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Lugar de Confirmación:</td>
+                        <td class="data-value">{{LUGAR_CONFIRMACION}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Padrino/Madrina:</td>
+                        <td class="data-value">{{NOMBRE_PADRINOS}}</td>
+                    </tr>
+                    <tr>
+                        <td class="data-label">Obispo/Ministro Confirmante:</td>
+                        <td class="data-value">{{NOMBRE_MINISTRO}}</td>
+                    </tr>
+                </table>
             </div>
 
-            <div class="content">
-                <p>
-                    Se expide el presente certificado a solicitud del interesado
-                    para los fines que estime conveniente.
-                </p>
+            <div class="closing-text">
+                Se expide el presente certificado a solicitud del interesado para los fines religiosos y/o civiles que estime conveniente.
             </div>
 
-            <div class="signatures">
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">PÁRROCO</div>
-                    <div class="signature-name">{{NOMBRE_PARROCO}}</div>
-                </div>
-                <div class="signature-block">
-                    <div class="signature-line"></div>
-                    <div class="signature-title">SECRETARIO(A)</div>
-                    <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
-                </div>
-            </div>
+            <table class="signatures-table">
+                <tr>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">PÁRROCO</div>
+                        <div class="signature-name">{{NOMBRE_PARROCO}}</div>
+                    </td>
+                    <td>
+                        <div class="signature-line"></div>
+                        <div class="signature-title">SECRETARIO(A)</div>
+                        <div class="signature-name">{{NOMBRE_SECRETARIO}}</div>
+                    </td>
+                </tr>
+            </table>
 
-            <div class="qr-section">
-                <img src="{{QR_CODE}}" alt="QR Code" class="qr-code">
-                <div class="qr-label">Escanea para verificar</div>
-            </div>
+            <table class="footer-table">
+                <tr>
+                    <td class="footer-text">
+                        <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
+                        <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
+                        <p>Este certificado es válido únicamente con sello parroquial impreso o firma original.</p>
+                    </td>
+                    <td class="qr-container">
+                        <img src="{{QR_CODE}}" alt="QR Code" class="qr-img" onerror="this.style.display='none'">
+                    </td>
+                </tr>
+            </table>
 
-            <div class="footer">
-                <p>Fecha de Expedición: {{FECHA_EXPEDICION}}</p>
-                <p class="certificate-code">Código de Verificación: {{CODIGO_CERTIFICADO}}</p>
-                <p>Este certificado es válido únicamente con sello y firma original</p>
-            </div>
         </div>
     </div>
 </body>

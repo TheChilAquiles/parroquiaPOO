@@ -175,16 +175,12 @@ class Router
             'pagos/procesar-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
             'pagos/registrar-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],
             'pagos/webhook' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
-            'pagos' => ['controlador' => 'PagosController', 'accion' => 'index'],
-            'pagos/crear' => ['controlador' => 'PagosController', 'accion' => 'crear'],
-            'pagos/actualizar' => ['controlador' => 'PagosController', 'accion' => 'actualizar'],
+            // Consolidated Pagos Routes - Removed duplicates
             'pagos/eliminar' => ['controlador' => 'PagosController', 'accion' => 'eliminar'],
-
-            // Pagos de certificados
             'pagos/mis-pagos' => ['controlador' => 'PagosController', 'accion' => 'misPagos'],
             'pagos/pagar-certificado' => ['controlador' => 'PagosController', 'accion' => 'pagarCertificado'],
-            'pagos/procesar-pago-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
-            'pagos/registrar-pago-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],
+            'pagos/procesar-online' => ['controlador' => 'PagosController', 'accion' => 'procesarPagoOnline'],
+            'pagos/registrar-efectivo' => ['controlador' => 'PagosController', 'accion' => 'registrarPagoEfectivo'],
 
             // Webhook para confirmación de pagos externos (PÚBLICA)
             'pagos/webhook-confirmacion' => ['controlador' => 'PagosController', 'accion' => 'webhookConfirmacion'],
