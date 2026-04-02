@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Mar 08, 2026 at 10:56 PM
+-- Generation Time: Apr 02, 2026 at 10:06 PM
 -- Server version: 11.7.2-MariaDB
 -- PHP Version: 8.3.26
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `certificados` (
   `id` int(10) NOT NULL,
+  `codigo_verificacion` varchar(15) DEFAULT NULL,
   `usuario_generador_id` int(10) DEFAULT NULL,
   `solicitante_id` int(10) NOT NULL,
   `parentesco_id` int(10) DEFAULT NULL,
@@ -44,23 +45,14 @@ CREATE TABLE `certificados` (
   `ruta_archivo` varchar(130) DEFAULT NULL,
   `estado` enum('pendiente_pago','generado','descargado','expirado','vigente') DEFAULT 'pendiente_pago' COMMENT 'Estado del certificado: pendiente_pago, generado, descargado, expirado',
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `certificados`
 --
 
-INSERT INTO `certificados` (`id`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
-(1, NULL, 1, NULL, 12, '2025-12-06', NULL, '2025-12-07 14:58:17', '2026-01-06', 'Bautismo', NULL, '2025-12-06 20:44:44', 1, 'certificados_generados/cert_1_bautismo_20251207_195817.pdf', 'descargado', NULL),
-(2, 15, 2, NULL, 12, NULL, '2026-02-22 19:49:46', '2026-02-22 19:49:46', '2026-03-24', 'Confirmación', 'Solicitud desde Sacramentos', '2025-12-07 14:58:00', 2, 'certificados_generados/cert_2_bautismo_20260223_004946.pdf', 'descargado', NULL),
-(3, 15, 12, NULL, 12, NULL, '2026-02-22 18:54:22', '2026-02-22 18:54:27', '2026-03-24', 'Bautismo', 'Solicitud desde Sacramentos', '2026-02-20 20:04:54', 8, 'certificados_generados/cert_3_bautismo_20260222_235427.pdf', 'descargado', NULL),
-(4, 15, 1, NULL, 1, NULL, '2026-02-22 19:52:36', '2026-02-22 19:52:37', '2026-03-24', 'Bautismo', 'Solicitud desde Sacramentos', '2026-02-22 19:32:04', 9, 'certificados_generados/cert_4_bautismo_20260223_005237.pdf', 'descargado', NULL),
-(5, 15, 12, NULL, 12, NULL, '2026-03-08 16:46:05', '2026-03-08 16:46:08', '2026-04-07', 'Bautizo', 'Generación directa', '2026-03-08 16:46:03', 9, 'certificados_generados/cert_5_bautismo_20260308_214608.pdf', 'descargado', NULL),
-(6, NULL, 20, NULL, 20, NULL, NULL, '2025-10-02 10:00:00', '2025-11-02', 'Matrimonio', NULL, '2025-10-01 10:00:00', 10, NULL, 'expirado', NULL),
-(7, NULL, 21, NULL, 22, NULL, '2026-03-08 17:41:25', '2026-03-08 17:41:26', '2026-04-07', 'Bautismo', NULL, '2026-03-08 17:04:27', 11, 'certificados_generados/cert_7_bautismo_20260308_224126.pdf', 'generado', NULL),
-(8, NULL, 20, NULL, 22, NULL, NULL, '2026-03-08 17:41:29', '2026-04-07', 'Bautismo', NULL, '2026-03-08 17:04:27', 11, 'certificados_generados/cert_8_bautismo_20260308_224129.pdf', 'generado', NULL),
-(9, 15, 22, NULL, 22, NULL, '2026-03-08 17:40:50', '2026-03-08 17:40:50', '2026-04-07', 'Bautismo', 'Solicitud desde Sacramentos', '2026-03-08 17:40:45', 11, 'certificados_generados/cert_9_bautismo_20260308_224050.pdf', 'descargado', NULL),
-(10, 15, 3, NULL, 3, NULL, NULL, NULL, NULL, 'Matrimonio', 'Solicitud desde Sacramentos', '2026-03-08 17:42:45', 4, NULL, 'pendiente_pago', NULL);
+INSERT INTO `certificados` (`id`, `codigo_verificacion`, `usuario_generador_id`, `solicitante_id`, `parentesco_id`, `feligres_certificado_id`, `fecha_emision`, `fecha_pago`, `fecha_generacion`, `fecha_expiracion`, `tipo_certificado`, `motivo_solicitud`, `fecha_solicitud`, `sacramento_id`, `ruta_archivo`, `estado`, `estado_registro`) VALUES
+(14, NULL, 15, 12, NULL, 12, NULL, '2026-04-02 16:41:34', '2026-04-02 16:41:35', '2026-05-02', 'Bautismo', 'Solicitud desde Sacramentos', '2026-04-02 16:41:31', 13, 'certificados_generados/cert_14_bautismo_20260402_214135.pdf', 'descargado', NULL);
 
 -- --------------------------------------------------------
 
@@ -79,14 +71,14 @@ CREATE TABLE `configuraciones` (
   `fecha_creacion` datetime DEFAULT current_timestamp(),
   `fecha_actualizacion` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `usuario_actualizacion` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Configuraciones generales del sistema';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci COMMENT='Configuraciones generales del sistema';
 
 --
 -- Dumping data for table `configuraciones`
 --
 
 INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `descripcion`, `editable`, `fecha_creacion`, `fecha_actualizacion`, `usuario_actualizacion`) VALUES
-(1, 'parroquia_nombre', 'Parroquia San Francisco de Asís', 'texto', 'parroquia', 'Nombre de la parroquia', 1, '2025-12-06 20:44:37', '2025-12-11 20:09:40', 15),
+(1, 'parroquia_nombre', 'Parroquia San Francisco de Asis', 'texto', 'parroquia', 'Nombre de la parroquia', 1, '2025-12-06 20:44:37', '2026-04-02 16:58:35', 15),
 (2, 'parroquia_telefono', '601 402 3526', 'texto', 'parroquia', 'Teléfono principal', 1, '2025-12-06 20:44:37', '2025-12-11 20:09:40', 15),
 (3, 'cert_precio_bautismo', '25000', 'numero', 'certificados', 'Precio Certificado de Bautismo', 1, '2025-12-06 20:44:37', '2025-12-11 20:09:40', 15),
 (4, 'cert_precio_matrimonio', '35000', 'numero', 'certificados', 'Precio Certificado de Matrimonio', 1, '2025-12-06 20:44:37', '2025-12-11 20:09:40', 15),
@@ -95,7 +87,16 @@ INSERT INTO `configuraciones` (`id`, `clave`, `valor`, `tipo`, `categoria`, `des
 (7, 'sistema_registro_abierto', '1', 'booleano', 'sistema', 'Registro abierto', 1, '2025-12-06 20:44:38', '2025-12-11 20:09:40', 15),
 (9, 'cert_precio_confirmacion', '50000', 'numero', 'certificados', 'Precio Certificado de Confirmación', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15),
 (10, 'cert_precio_defuncion', '15000', 'numero', 'certificados', 'Precio Certificado de Defunción', 1, '2025-12-06 21:00:22', '2025-12-11 20:09:40', 15),
-(11, 'cert_precio_general', '10000', 'numero', 'certificados', 'Precio Certificado General (Por Defecto)', 1, '2026-03-08 17:30:59', '2026-03-08 17:30:59', 15);
+(11, 'cert_precio_general', '10000', 'numero', 'certificados', 'Precio Certificado General (Por Defecto)', 1, '2026-03-08 17:30:59', '2026-03-08 17:30:59', 15),
+(12, 'nombre_parroquia', 'Parroquia San Francisco de Asís', 'texto', 'general', 'Nombre oficial de la parroquia para los encabezados', 1, '2026-04-02 13:10:09', '2026-04-02 13:10:09', NULL),
+(13, 'direccion_parroquia', 'Bogotá', 'texto', 'general', 'Dirección que sale bajo el título en los PDF', 1, '2026-04-02 13:10:09', '2026-04-02 16:48:57', NULL),
+(14, 'parroco_actual', 'Alejandro Medina', 'texto', 'general', 'Nombre del párroco que firma los documentos', 1, '2026-04-02 13:10:09', '2026-04-02 16:48:52', NULL),
+(15, 'secretario_actual', 'Sebastian Perez', 'texto', 'general', 'Nombre del secretario(a) que firma los documentos', 1, '2026-04-02 13:10:09', '2026-04-02 16:48:40', NULL),
+(16, 'parroquia_direccion', 'Calle 65 Sur # 37a 86a, Bogotá', 'texto', 'general', NULL, 1, '2026-04-02 16:58:35', '2026-04-02 16:58:35', NULL),
+(17, 'parroquia_ciudad', 'Bogotá', 'texto', 'general', NULL, 1, '2026-04-02 16:58:35', '2026-04-02 16:58:35', NULL),
+(18, 'parroquia_pais', 'Colombia', 'texto', 'general', NULL, 1, '2026-04-02 16:58:35', '2026-04-02 16:58:35', NULL),
+(19, 'parroco_nombre', 'José María García', 'texto', 'general', NULL, 1, '2026-04-02 16:58:35', '2026-04-02 16:58:35', NULL),
+(20, 'secretario_nombre', 'Ana Sofía Mendoza', 'texto', 'general', NULL, 1, '2026-04-02 16:58:35', '2026-04-02 16:58:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -107,7 +108,7 @@ CREATE TABLE `documento_tipos` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) NOT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `documento_tipos`
@@ -139,31 +140,32 @@ CREATE TABLE `feligreses` (
   `primer_apellido` varchar(30) NOT NULL,
   `segundo_apellido` varchar(30) DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
+  `lugar_nacimiento` varchar(50) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `feligreses`
 --
 
-INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `fecha_nacimiento`, `estado_registro`) VALUES
-(1, 10, 1, '1001', '3001234567', 'Calle Falsa 123', 'Juan', '', 'Perez', '', NULL, NULL),
-(2, 11, 1, '1002', '3001234567', 'Calle Falsa 123', 'Maria', '', 'Gomez', '', NULL, NULL),
-(3, 12, 1, '1003', '3001234567', 'Calle Falsa 123', 'Pedro', '', 'Rodriguez', '', NULL, NULL),
-(4, 13, 1, '1004', '3001234567', 'Calle Falsa 123', 'Ana', '', 'Martinez', '', NULL, NULL),
-(5, 14, 1, '1005', '3001234567', 'Calle Falsa 123', 'Roberto', '', 'Diaz', '', NULL, NULL),
-(6, NULL, 1, '2001', '0000000', 'N/A', 'Carlos', '', 'Perez', '', NULL, NULL),
-(7, NULL, 1, '2002', '0000000', 'N/A', 'Luisa', '', 'Mendez', '', NULL, NULL),
-(8, NULL, 1, '2003', '0000000', 'N/A', 'Andres', '', 'Lopez', '', NULL, NULL),
-(9, NULL, 1, '2004', '0000000', 'N/A', 'Elena', '', 'Gacia', '', NULL, NULL),
-(10, NULL, 1, '2005', '0000000', 'N/A', 'Marcos', '', 'Ruiz', '', NULL, NULL),
-(11, NULL, 1, '2006', '0000000', 'N/A', 'Sofia', '', 'Vargas', '', NULL, '2026-02-20 19:42:32'),
-(12, 15, 1, '1031422232', '3166347898', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'David', 'Bedoya', 'Garcia', '2006-06-23', NULL),
-(17, 17, 1, '111111111', '111111111', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'Samuel David', 'Bedoya', 'Garcia', '2026-02-04', '2026-02-27 20:30:24'),
-(20, NULL, 1, '10203040', '3110000000', NULL, 'Carlos', NULL, 'Gómez', NULL, NULL, NULL),
-(21, NULL, 1, '50607080', '3120000000', NULL, 'Laura', NULL, 'Ríos', NULL, NULL, NULL),
-(22, NULL, 2, '11223344', 'N/A', NULL, 'Mateo', NULL, 'Gómez', NULL, NULL, NULL),
-(23, NULL, 1, '99887766', '3150000000', NULL, 'Esteban', NULL, 'Quito', NULL, NULL, NULL);
+INSERT INTO `feligreses` (`id`, `usuario_id`, `tipo_documento_id`, `numero_documento`, `telefono`, `direccion`, `primer_nombre`, `segundo_nombre`, `primer_apellido`, `segundo_apellido`, `fecha_nacimiento`, `lugar_nacimiento`, `estado_registro`) VALUES
+(1, 10, 1, '1001', '3001234567', 'Calle Falsa 123', 'Juan', 'David', 'Perez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(2, 11, 1, '1002', '3001234567', 'Calle Falsa 123', 'Maria', 'David', 'Gomez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(3, 12, 1, '1003', '3001234567', 'Calle Falsa 123', 'Pedro', 'David', 'Rodriguez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(4, 13, 1, '1004', '3001234567', 'Calle Falsa 123', 'Ana', 'David', 'Martinez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(5, 14, 1, '1005', '3001234567', 'Calle Falsa 123', 'Roberto', 'David', 'Diaz', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(6, NULL, 1, '2001', '3001234567', 'Calle Falsa 123', 'Carlos', 'David', 'Perez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(7, NULL, 1, '2002', '3001234567', 'Calle Falsa 123', 'Luisa', 'David', 'Mendez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(8, NULL, 1, '2003', '3001234567', 'Calle Falsa 123', 'Andres', 'David', 'Lopez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(9, NULL, 1, '2004', '3001234567', 'Calle Falsa 123', 'Elena', 'David', 'Gacia', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(10, NULL, 1, '2005', '3001234567', 'Calle Falsa 123', 'Marcos', 'David', 'Ruiz', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(11, NULL, 1, '2006', '3001234567', 'Calle Falsa 123', 'Sofia', 'David', 'Vargas', 'Garcia', '2000-02-01', 'Bogotá', '2026-02-20 19:42:32'),
+(12, 15, 1, '1031422232', '3166347898', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'David', 'Bedoya', 'Garcia', '2006-06-23', 'Bogotá', NULL),
+(17, 17, 1, '10203040', '3001234567', 'Diagonal 61 sur N 20 a 30', 'Samuel', 'David', 'Bedoya', 'Garcia', '2026-02-04', 'Bogotá', '2026-02-27 20:30:24'),
+(20, NULL, 1, '10203040', '3110000000', 'Calle Falsa 123', 'Carlos', 'David', 'Gómez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(21, NULL, 1, '50607080', '3120000000', 'Calle Falsa 123', 'Laura', 'David', 'Ríos', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(22, NULL, 2, '11223344', '3001234567', 'Calle Falsa 123', 'Mateo', 'David', 'Gómez', 'Garcia', '2000-02-01', 'Bogotá', NULL),
+(23, NULL, 1, '99887766', '3150000000', 'Calle Falsa 123', 'Esteban', 'David', 'Quito', 'Garcia', '2000-02-01', 'Bogotá', NULL);
 
 -- --------------------------------------------------------
 
@@ -175,7 +177,7 @@ CREATE TABLE `grupos` (
   `id` int(10) NOT NULL,
   `nombre` varchar(80) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `grupos`
@@ -198,7 +200,7 @@ CREATE TABLE `grupo_roles` (
   `id` int(10) NOT NULL,
   `rol` varchar(20) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `grupo_roles`
@@ -221,18 +223,14 @@ CREATE TABLE `libros` (
   `libro_tipo_id` int(10) DEFAULT NULL,
   `numero` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `libros`
 --
 
 INSERT INTO `libros` (`id`, `libro_tipo_id`, `numero`, `estado_registro`) VALUES
-(1, 1, 1, NULL),
-(2, 2, 1, NULL),
-(3, 3, 1, NULL),
-(4, 4, 1, NULL),
-(5, 1, 3, NULL);
+(6, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -244,7 +242,7 @@ CREATE TABLE `libro_tipo` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `libro_tipo`
@@ -270,7 +268,7 @@ CREATE TABLE `noticias` (
   `imagen` longtext NOT NULL,
   `fecha_publicacion` datetime NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `noticias`
@@ -298,20 +296,14 @@ CREATE TABLE `pagos` (
   `tipo_pago_id` int(10) DEFAULT NULL,
   `transaction_id` varchar(30) DEFAULT NULL COMMENT 'ID de transacción del gateway de pago (Stripe, PayPal, etc.)',
   `tipo_concepto` enum('certificado','donacion','evento','otro') DEFAULT 'certificado' COMMENT 'Concepto del pago'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `pagos`
 --
 
 INSERT INTO `pagos` (`id`, `certificado_id`, `valor`, `estado`, `fecha_pago`, `tipo_pago_id`, `transaction_id`, `tipo_concepto`) VALUES
-(1, 1, 25000.00, 'pagado', '2025-12-06 20:44:45', 1, NULL, 'certificado'),
-(2, 3, 10000.00, 'pagado', '2026-02-22 18:54:22', 3, NULL, 'certificado'),
-(3, 2, 50000.00, 'pagado', '2026-02-22 19:49:46', 3, NULL, 'certificado'),
-(4, 4, 10000.00, 'pagado', '2026-02-22 19:52:36', 3, NULL, 'certificado'),
-(5, 5, 10000.00, 'pagado', '2026-03-08 16:46:05', 3, NULL, 'certificado'),
-(6, 9, 10000.00, 'pagado', '2026-03-08 17:40:50', 3, NULL, 'certificado'),
-(7, 7, 10000.00, 'pagado', '2026-03-08 17:41:25', 3, NULL, 'certificado');
+(11, 14, 10000.00, 'pagado', '2026-04-02 16:41:34', 3, NULL, 'certificado');
 
 -- --------------------------------------------------------
 
@@ -331,13 +323,6 @@ CREATE TABLE `pago_ordenes` (
   `fecha_actualizacion` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='??rdenes de pago procesadas a trav??s de PaymentsWay (VePay)';
 
---
--- Dumping data for table `pago_ordenes`
---
-
-INSERT INTO `pago_ordenes` (`id`, `certificado_id`, `order_number`, `amount`, `estado`, `transaction_id`, `metadata`, `fecha_creacion`, `fecha_actualizacion`) VALUES
-(1, 1, 'ORD-1765071885', 25000.00, 'pendiente', NULL, NULL, '2025-12-07 01:44:45', '2025-12-07 01:44:45');
-
 -- --------------------------------------------------------
 
 --
@@ -348,7 +333,7 @@ CREATE TABLE `parentescos` (
   `id` int(10) NOT NULL,
   `parentesco` varchar(40) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `parentescos`
@@ -374,7 +359,7 @@ CREATE TABLE `parientes` (
   `feligres_sujeto_id` int(10) DEFAULT NULL,
   `feligres_pariente_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
 
@@ -388,34 +373,20 @@ CREATE TABLE `participantes` (
   `sacramento_id` int(10) DEFAULT NULL,
   `rol_participante_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `participantes`
 --
 
 INSERT INTO `participantes` (`id`, `feligres_id`, `sacramento_id`, `rol_participante_id`, `estado_registro`) VALUES
-(1, 1, 1, 1, NULL),
-(2, 6, 1, 4, NULL),
-(3, 7, 1, 5, NULL),
-(4, 8, 1, 2, NULL),
-(5, 9, 1, 3, NULL),
-(6, 2, 2, 6, NULL),
-(7, 8, 2, 2, NULL),
-(8, 5, 3, 10, NULL),
-(9, 3, 4, 7, NULL),
-(10, 4, 4, 8, NULL),
-(11, 10, 4, 9, NULL),
-(12, 11, 4, 9, NULL),
-(13, 12, 8, 1, NULL),
-(19, 1, 9, 1, NULL),
-(23, 20, 10, 7, NULL),
-(24, 21, 10, 8, NULL),
-(25, 23, 10, 9, NULL),
-(26, 22, 11, 1, NULL),
-(27, 20, 11, 4, NULL),
-(28, 21, 11, 5, NULL),
-(29, 23, 11, 2, NULL);
+(37, 12, 13, 1, NULL),
+(38, 1, 13, 6, NULL),
+(39, 2, 13, 7, NULL),
+(40, 3, 13, 2, NULL),
+(41, 4, 13, 3, NULL),
+(42, 5, 13, 4, NULL),
+(43, 6, 13, 5, NULL);
 
 -- --------------------------------------------------------
 
@@ -427,7 +398,7 @@ CREATE TABLE `participantes_rol` (
   `id` int(10) NOT NULL,
   `rol` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `participantes_rol`
@@ -459,7 +430,7 @@ CREATE TABLE `reportes` (
   `categoria` varchar(60) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
 
@@ -473,23 +444,21 @@ CREATE TABLE `sacramentos` (
   `tipo_sacramento_id` int(10) DEFAULT NULL,
   `acta` int(10) NOT NULL,
   `folio` int(10) NOT NULL,
-  `fecha_generacion` date NOT NULL,
-  `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `fecha_generacion` date DEFAULT NULL,
+  `fecha_sacramento` date NOT NULL COMMENT 'Fecha en la que se realizó el sacramento',
+  `lugar_sacramento` varchar(50) DEFAULT 'Parroquia Local',
+  `cementerio` varchar(120) DEFAULT NULL COMMENT 'Lugar donde fue sepultado',
+  `ministro` varchar(50) DEFAULT NULL COMMENT 'Nombre del sacerdote que ofició',
+  `estado_registro` datetime DEFAULT NULL,
+  `fecha_defuncion` date DEFAULT NULL COMMENT 'Solo para defunciones'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `sacramentos`
 --
 
-INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`, `estado_registro`) VALUES
-(1, 1, 1, 101, 10, '2000-01-15', NULL),
-(2, 2, 2, 201, 20, '2015-06-20', NULL),
-(3, 3, 3, 301, 30, '2023-11-01', NULL),
-(4, 4, 4, 401, 40, '2024-02-14', NULL),
-(8, 1, 1, 102, 51, '2026-02-20', NULL),
-(9, 1, 1, 103, 52, '2026-02-22', NULL),
-(10, 4, 4, 405, 45, '2020-05-15', NULL),
-(11, 1, 1, 106, 54, '2026-03-08', NULL);
+INSERT INTO `sacramentos` (`id`, `libro_id`, `tipo_sacramento_id`, `acta`, `folio`, `fecha_generacion`, `fecha_sacramento`, `lugar_sacramento`, `cementerio`, `ministro`, `estado_registro`, `fecha_defuncion`) VALUES
+(13, 6, 1, 1, 1, '2026-04-02', '2026-04-02', 'Parroquia Local', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -501,7 +470,7 @@ CREATE TABLE `sacramento_tipo` (
   `id` int(10) NOT NULL,
   `tipo` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `sacramento_tipo`
@@ -522,7 +491,7 @@ INSERT INTO `sacramento_tipo` (`id`, `tipo`, `estado_registro`) VALUES
 CREATE TABLE `tipos_pago` (
   `id` int(10) NOT NULL,
   `descripcion` varchar(40) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `tipos_pago`
@@ -550,7 +519,7 @@ CREATE TABLE `usuarios` (
   `estado_registro` datetime DEFAULT NULL,
   `reset_token` varchar(70) DEFAULT NULL,
   `reset_token_expires` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `usuarios`
@@ -580,7 +549,7 @@ CREATE TABLE `usuario_grupos` (
   `grupo_parroquial_id` int(10) DEFAULT NULL,
   `grupo_rol_id` int(10) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `usuario_grupos`
@@ -608,7 +577,7 @@ CREATE TABLE `usuario_roles` (
   `id` int(10) NOT NULL,
   `rol` varchar(30) DEFAULT NULL,
   `estado_registro` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
 -- Dumping data for table `usuario_roles`
@@ -798,13 +767,13 @@ ALTER TABLE `usuario_roles`
 -- AUTO_INCREMENT for table `certificados`
 --
 ALTER TABLE `certificados`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `configuraciones`
 --
 ALTER TABLE `configuraciones`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `documento_tipos`
@@ -834,7 +803,7 @@ ALTER TABLE `grupo_roles`
 -- AUTO_INCREMENT for table `libros`
 --
 ALTER TABLE `libros`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `libro_tipo`
@@ -852,7 +821,7 @@ ALTER TABLE `noticias`
 -- AUTO_INCREMENT for table `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `pago_ordenes`
@@ -876,7 +845,7 @@ ALTER TABLE `parientes`
 -- AUTO_INCREMENT for table `participantes`
 --
 ALTER TABLE `participantes`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `participantes_rol`
@@ -894,7 +863,7 @@ ALTER TABLE `reportes`
 -- AUTO_INCREMENT for table `sacramentos`
 --
 ALTER TABLE `sacramentos`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `sacramento_tipo`
