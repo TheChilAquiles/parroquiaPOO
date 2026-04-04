@@ -56,6 +56,7 @@ $direccion = $feligres['direccion'] ?? '';
             primerNombre: '<?= htmlspecialchars($primerNombre) ?>',
             primerApellido: '<?= htmlspecialchars($primerApellido) ?>',
             fechaNacimiento: '<?= $fechaNacimiento ?>',
+            lugarNacimiento: '<?= htmlspecialchars($feligres["lugar_nacimiento"] ?? "") ?>', // 🔥 NUEVO CAMPO
             tipoDocumento: '<?= $tipoDoc ?>',
             numeroDocumento: '<?= $numDoc ?>',
             telefono: '<?= htmlspecialchars($telefono) ?>',
@@ -273,16 +274,21 @@ $direccion = $feligres['direccion'] ?? '';
                                    class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
                         </div>
                         <!-- Birth Date field (spans 2 columns on desktop) -->
-                        <div class="form-group md:col-span-2">
+                        <div class="form-group">
                             <label class="block text-sm font-semibold text-gray-700 mb-1">
                                 Fecha Nacimiento <span class="text-red-500">*</span>
                             </label>
-                            <!-- Date input type provides native date picker -->
-                            <!-- :max binds today's date dynamically using Alpine.js -->
-                            <!-- new Date().toLocaleDateString('en-CA') returns YYYY-MM-DD format -->
-                            <!-- This prevents selecting any future date in the calendar picker -->
                             <input type="date" name="fechaNacimiento" x-model="data.fechaNacimiento" required
                                    :max="new Date().toLocaleDateString('en-CA')"
+                                   class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">
+                                Lugar Nacimiento <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="lugar-nacimiento" x-model="data.lugarNacimiento" required
+                                   placeholder="Ej: Bogotá, Cundinamarca"
                                    class="w-full border-gray-200 bg-gray-50 rounded-xl focus:ring-[#ab876f] focus:border-[#ab876f] transition p-3">
                         </div>
                     </div>

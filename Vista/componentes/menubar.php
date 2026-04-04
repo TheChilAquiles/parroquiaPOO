@@ -1,30 +1,26 @@
-<!-- HEADER REFACTORIZADO -->
 <header class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
     <div class="max-w-8xl mx-auto px-4">
         <div class="flex justify-between items-center py-3">
 
-            <!-- LOGO Y NOMBRE -->
             <div class="flex items-center space-x-3">
                 <a href="<?= url('inicio') ?>" class="flex items-center space-x-3 group">
-                    <!-- Logo con tamaño fijo -->
                     <div class="flex-shrink-0">
                         <img class="h-14 w-14 rounded-lg object-cover shadow-sm transition-transform duration-300 group-hover:scale-105"
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-As_mLQ9e2pUmMq1yfIbaHVeZ43CPnSnOOg&s"
                                 alt="Logo Parroquia">
                     </div>
-                    <!-- Nombre de la parroquia -->
                     <div class="hidden lg:block">
                         <span class="font-bold text-lg text-gray-800">ParroquiaApp</span>
                     </div>
                 </a>
             </div>
 
-            <!-- MENÚ NAVEGACIÓN DESKTOP -->
             <nav class="hidden md:flex items-center space-x-1">
                 <?php
                 if (isset($_SESSION["logged"])) {
                     $menu = [
                         'Dashboard' => ['Administrador', 'Secretario'],
+                        'Usuarios' => ['Administrador'], // 🔥 NUEVO: Solo el Admin puede gestionar usuarios
                         'Feligreses' => ['Secretario', 'Administrador'],
                         'Libros'  => ['Secretario', 'Administrador'],
                         'Noticias' =>  ['all'],
@@ -58,10 +54,8 @@
                 ?>
             </nav>
 
-            <!-- MENÚ USUARIO DROPDOWN / LOGIN -->
             <div class="flex items-center space-x-4">
                 <?php if (isset($_SESSION["logged"])): ?>
-                    <!-- MENÚ DESPLEGABLE USUARIO -->
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open"
                                 @click.away="open = false"
@@ -76,7 +70,6 @@
                                :class="{ 'rotate-180': open }"></i>
                         </button>
 
-                        <!-- DROPDOWN MENU -->
                         <div x-show="open"
                              x-transition:enter="transition ease-out duration-200"
                              x-transition:enter-start="opacity-0 transform scale-95"
@@ -87,7 +80,6 @@
                              class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50"
                              style="display: none;">
 
-                            <!-- Información del usuario -->
                             <div class="px-4 py-3 border-b border-gray-100">
                                 <p class="text-sm font-semibold text-gray-900">
                                     <?= htmlspecialchars($_SESSION['user-name'] ?? $_SESSION['user-email'] ?? 'Usuario', ENT_QUOTES, 'UTF-8') ?>
@@ -97,7 +89,6 @@
                                 </p>
                             </div>
 
-                            <!-- Opciones del menú -->
                             <a href="<?= url('perfil') ?>"
                                class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-[#F5EFE7] transition-colors duration-150">
                                 <i class="fas fa-user-circle w-5 text-[#D0B8A8] mr-3"></i>
@@ -120,7 +111,6 @@
                         </div>
                     </div>
                 <?php else: ?>
-                    <!-- BOTONES LOGIN/REGISTRO -->
                     <div class="hidden md:flex items-center space-x-3">
                         <a href="<?= url('login') ?>"
                            class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200">
@@ -133,7 +123,6 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- BOTÓN HAMBURGUESA MÓVIL -->
                 <button id="menu-toggle"
                         class="md:hidden p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#D0B8A8]">
                     <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" stroke-width="2"
@@ -144,13 +133,13 @@
             </div>
         </div>
 
-        <!-- MENÚ MÓVIL -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 py-4">
             <nav class="flex flex-col space-y-2">
                 <?php
                 if (isset($_SESSION["logged"])) {
                     $menu_mobile = [
                         'Dashboard' => ['all'],
+                        'Usuarios' => ['Administrador'], // 🔥 NUEVO: Usuarios en móvil
                         'Feligreses' => ['Secretario', 'Administrador'],
                         'Libros'  => ['Secretario', 'Administrador'],
                         'Noticias' =>  ['all'],
@@ -164,7 +153,7 @@
                     ];
 
                     foreach ($menu_mobile as $item => $roles) {
-                        $is_mobile = true; // Mobile
+                        $is_mobile = true; 
                         if (is_array($roles)) {
                             foreach ($roles as $role) {
                                 if ($_SESSION["user-rol"] == $role || $role == 'all') {
@@ -175,13 +164,12 @@
                         }
                     }
 
-                    // Opciones de usuario en móvil
                     echo '<div class="border-t border-gray-200 mt-3 pt-3">';
                     echo '<p class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">Cuenta</p>';
 
                     $user_menu = ['Perfil' => 'perfil', 'Manual' => 'manual', 'Salir' => 'salir'];
                     foreach ($user_menu as $item => $route) {
-                        $is_mobile = true; // Mobile
+                        $is_mobile = true; 
                         $item_route = $route;
                         include('link-menu.php');
                     }
@@ -189,7 +177,7 @@
                 } else {
                     $menu_mobile = ['Inicio', 'Noticias', 'Información', 'Contacto'];
                     foreach ($menu_mobile as $item) {
-                        $is_mobile = true; // Mobile
+                        $is_mobile = true; 
                         include('link-menu.php');
                     }
 

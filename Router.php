@@ -198,6 +198,14 @@ class Router
             'reportes/eliminar' => ['controlador' => 'ReportesController', 'accion' => 'eliminar'],
             'reportes/exportarPDF' => ['controlador' => 'ReportesController', 'accion' => 'exportarPDF'],
             'reportes/filtrar' => ['controlador' => 'ReportesController', 'accion' => 'filtrar'],
+
+            // ================================================================
+            // RUTAS AUTENTICADAS - USUARIOS (ADMINISTRACIÓN)
+            // ================================================================
+            'usuarios' => ['controlador' => 'UsuariosController', 'accion' => 'index'],
+            'usuarios/crear' => ['controlador' => 'UsuariosController', 'accion' => 'crear'],
+            'usuarios/actualizar' => ['controlador' => 'UsuariosController', 'accion' => 'actualizar'],
+            'usuarios/eliminar' => ['controlador' => 'UsuariosController', 'accion' => 'eliminar'],
             
             // Nuevos reportes analíticos
             'reportes/reporteCertificados' => ['controlador' => 'ReportesController', 'accion' => 'reporteCertificados'],

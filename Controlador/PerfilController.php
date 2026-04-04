@@ -47,6 +47,7 @@ class PerfilController extends BaseController
                 'primer-apellido'   => trim($_POST['primerApellido'] ?? ''),
                 'segundo-apellido'  => trim($_POST['segundoApellido'] ?? ''),
                 'fecha-nacimiento'  => $_POST['fechaNacimiento'] ?? null,
+                'lugar-nacimiento'  => trim($_POST['lugar-nacimiento'] ?? ''), // 🔥 ASEGÚRATE DE QUE ESTA LÍNEA EXISTA
                 'telefono'          => trim($_POST['telefono'] ?? ''),
                 'direccion'         => trim($_POST['direccion'] ?? ''),
             ];
@@ -59,6 +60,7 @@ class PerfilController extends BaseController
                 empty($datosFeligres['primer-nombre']) ||
                 empty($datosFeligres['primer-apellido']) ||
                 empty($datosFeligres['fecha-nacimiento']) ||
+                empty($datosFeligres['lugar-nacimiento']) || 
                 empty($datosFeligres['direccion'])
             ) {
                 $_SESSION['error'] = 'Completa todos los campos requeridos.';

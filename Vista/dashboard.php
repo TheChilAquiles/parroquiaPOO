@@ -190,17 +190,7 @@
                 <i class="fas fa-chart-pie mr-2 text-[#8D7B68]"></i>Mi Actividad
             </h2>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Gráfico Mis Certificados -->
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-stone-200 card-hover fade-in"
-                    style="animation-delay: 0.9s">
-                    <h3 class="text-lg font-semibold text-[#5A4D41] mb-4 text-center">
-                        <i class="fas fa-certificate mr-2 text-[#8D7B68]"></i>Mis Certificados
-                    </h3>
-                    <div class="chart-container">
-                        <canvas id="graficoCertificados"></canvas>
-                    </div>
-                </div>
+            
 
                 <!-- Gráfico Estados de Pagos -->
                 <div class="bg-white p-6 rounded-3xl shadow-lg border border-stone-200 card-hover fade-in"

@@ -41,7 +41,7 @@ class ModeloFeligres
             $sql = "INSERT INTO feligreses 
                     (usuario_id, tipo_documento_id, numero_documento, primer_nombre, 
                      segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, lugar_nacimiento, telefono, direccion) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; 
             $stmt = $this->conexion->prepare($sql);
 
             $stmt->execute([

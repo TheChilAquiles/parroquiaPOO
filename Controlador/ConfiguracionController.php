@@ -31,8 +31,7 @@ class ConfiguracionController extends BaseController
         $configuraciones = $this->modeloConfiguracion->obtenerTodas();
         $categorias = $this->modeloConfiguracion->obtenerCategorias();
 
-        // Obtener proveedores de pago disponibles
-        $proveedoresPago = PaymentGatewayFactory::getAvailableProviders();
+       
 
         include __DIR__ . '/../Vista/admin/configuraciones.php';
     }

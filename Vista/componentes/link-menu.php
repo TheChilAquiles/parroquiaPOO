@@ -15,6 +15,7 @@ if (!isset($item)) {
 $routes_map = [
     'Inicio' => 'inicio',
     'Dashboard' => 'dashboard',
+    'Usuarios' => 'usuarios', 
     'Feligreses' => 'feligreses',
     'Libros' => 'libros',
     'Noticias' => 'noticias',
@@ -39,6 +40,7 @@ $routes_map = [
 $icons_map = [
     'Inicio' => 'home',
     'Dashboard' => 'dashboard',
+    'Usuarios' => 'manage_accounts', 
     'Feligreses' => 'groups',
     'Libros' => 'menu_book',
     'Noticias' => 'campaign',
