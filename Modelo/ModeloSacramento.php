@@ -164,18 +164,24 @@ class ModeloSacramento
 
             $acta = $proximaInfo['acta'];
             $folio = $proximaInfo['folio'];
-            // Capturamos la fecha del formulario (si no viene, usamos hoy)
-            // Capturamos la fecha del formulario
-            $fechaEvento = $data['fecha-evento'] ?? date('Y-m-d');
+            
+           $fechaEvento = $data['fecha_generacion'] ?? date('Y-m-d');
+            $lugar = $data['lugar_sacramento'] ?? 'Parroquia Local';
+            $ministro = $data['ministro'] ?? '';
+            
+            // Datos del difunto
+            $fDefuncion = !empty($data['fecha_defuncion']) ? $data['fecha_defuncion'] : null;
+            $lDefuncion = !empty($data['lugar_defuncion']) ? $data['lugar_defuncion'] : null;
+            $cDefuncion = !empty($data['causa_defuncion']) ? $data['causa_defuncion'] : null;
+            $estCivil = !empty($data['estado_civil']) ? $data['estado_civil'] : null;
+            $cementerio = !empty($data['cementerio']) ? $data['cementerio'] : null;
 
-            // Insertamos ambas fechas: la del evento y la de hoy (NOW)
             $sql_sacramento = "INSERT INTO sacramentos
-                              (libro_id, tipo_sacramento_id, acta, folio, fecha_sacramento, fecha_generacion)
-                              VALUES (?, ?, ?, ?, ?, NOW())";
+                              (libro_id, tipo_sacramento_id, acta, folio, fecha_sacramento, fecha_generacion, lugar_sacramento, ministro, fecha_defuncion, lugar_defuncion, causa_defuncion, estado_civil, cementerio)
+                              VALUES (?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conexion->prepare($sql_sacramento);
             
-            // Le pasamos la fecha del evento a la consulta
-            $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio, $fechaEvento]);
+            $stmt->execute([$this->libroID, $this->sacramentoTipo, $acta, $folio, $fechaEvento, $lugar, $ministro, $fDefuncion, $lDefuncion, $cDefuncion, $estCivil, $cementerio]);
 
             $sacramentoID = $this->conexion->lastInsertId();
 
@@ -316,7 +322,7 @@ class ModeloSacramento
     public function mdlObtenerPorFeligres($feligresId)
     {
         try {
-            $sql = "SELECT DISTINCT s.id, st.tipo, s.fecha_generacion, s.lugar
+            $sql = "SELECT DISTINCT s.id, st.tipo, s.fecha_generacion, s.lugar_sacramento
                     FROM sacramentos s
                     JOIN sacramento_tipo st ON s.tipo_sacramento_id = st.id
                     JOIN participantes p ON p.sacramento_id = s.id
@@ -639,13 +645,23 @@ class ModeloSacramento
             $this->conexion->beginTransaction();
 
             // 1. Actualizar datos del sacramento
-            $fechaEvento = $datos['fecha-evento'] ?? date('Y-m-d');
+            $fechaEvento = $datos['fecha_generacion'] ?? date('Y-m-d');
+            $lugar = $datos['lugar_sacramento'] ?? 'Parroquia Local';
+            $ministro = $datos['ministro'] ?? '';
+            
+            // Datos del difunto
+            $fDefuncion = !empty($datos['fecha_defuncion']) ? $datos['fecha_defuncion'] : null;
+            $lDefuncion = !empty($datos['lugar_defuncion']) ? $datos['lugar_defuncion'] : null;
+            $cDefuncion = !empty($datos['causa_defuncion']) ? $datos['causa_defuncion'] : null;
+            $estCivil = !empty($datos['estado_civil']) ? $datos['estado_civil'] : null;
+            $cementerio = !empty($datos['cementerio']) ? $datos['cementerio'] : null;
 
             $sqlUpdate = "UPDATE sacramentos
-                            SET fecha_generacion = ?
+                            SET fecha_generacion = ?, lugar_sacramento = ?, ministro = ?,
+                                fecha_defuncion = ?, lugar_defuncion = ?, causa_defuncion = ?, estado_civil = ?, cementerio = ?
                             WHERE id = ? AND estado_registro IS NULL";
             $stmtUpdate = $this->conexion->prepare($sqlUpdate);
-            $stmtUpdate->execute([$fechaEvento, $sacramentoId]);
+            $stmtUpdate->execute([$fechaEvento, $lugar, $ministro, $fDefuncion, $lDefuncion, $cDefuncion, $estCivil, $cementerio, $sacramentoId]);;
 
             // 2. Eliminar participantes actuales (soft delete)
             $sqlDeletePart = "UPDATE participantes

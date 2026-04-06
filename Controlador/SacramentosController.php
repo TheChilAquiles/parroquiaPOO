@@ -184,9 +184,10 @@ class SacramentosController extends BaseController
         if (ob_get_level()) ob_clean();
 
         try {
-            // Obtener datos del sacramento
+            // ¡AÑADIMOS TODOS LOS CAMPOS AQUÍ!
             $conexion = Conexion::conectar();
-            $sql = "SELECT id, fecha_generacion, tipo_sacramento_id, libro_id
+            $sql = "SELECT id, fecha_generacion, tipo_sacramento_id, libro_id, lugar_sacramento, ministro, 
+                           fecha_defuncion, lugar_defuncion, causa_defuncion, estado_civil, cementerio
                     FROM sacramentos
                     WHERE id = ? AND estado_registro IS NULL";
             $stmt = $conexion->prepare($sql);
@@ -197,7 +198,6 @@ class SacramentosController extends BaseController
                 throw new Exception('Sacramento no encontrado');
             }
 
-            // Obtener participantes con datos completos
             $participantes = $this->modeloSacramento->getParticipantes((int)$sacramentoId);
 
             header('Content-Type: application/json');
@@ -208,6 +208,13 @@ class SacramentosController extends BaseController
                     'fecha_generacion' => $sacramento['fecha_generacion'],
                     'tipo_sacramento_id' => $sacramento['tipo_sacramento_id'],
                     'libro_id' => $sacramento['libro_id'],
+                    'lugar_sacramento' => $sacramento['lugar_sacramento'],
+                    'ministro' => $sacramento['ministro'],
+                    'fecha_defuncion' => $sacramento['fecha_defuncion'],
+                    'lugar_defuncion' => $sacramento['lugar_defuncion'],
+                    'causa_defuncion' => $sacramento['causa_defuncion'],
+                    'estado_civil' => $sacramento['estado_civil'],
+                    'cementerio' => $sacramento['cementerio'],
                     'participantes' => $participantes
                 ]
             ]);
@@ -215,16 +222,8 @@ class SacramentosController extends BaseController
         } catch (Exception $e) {
             header('Content-Type: application/json');
             http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => $e->getMessage()
-            ]);
-            Logger::error("Error al obtener sacramento", [
-                'sacramento_id' => $sacramentoId,
-                'error' => $e->getMessage()
-            ]);
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
         }
-
         exit();
     }
 

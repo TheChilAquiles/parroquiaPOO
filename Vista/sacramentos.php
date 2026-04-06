@@ -98,11 +98,57 @@
                     <div id="Form1">
                         <div>
                             <div class=" text-center text-lg font-bold my-4">
-                                Fecha Evento
+                                Datos del Sacramento
                             </div>
-                            <label for="fecha-evento" class="block font-medium">Fecha Evento</label>
-                            <input type="date" id="fecha-evento" name="fecha_generacion" max="<?= date('Y-m-d') ?>" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                            <div class="mb-4">
+                                <label for="fecha-evento" class="block font-medium">Fecha Evento *</label>
+                                <input type="date" id="fecha-evento" name="fecha_generacion" max="<?= date('Y-m-d') ?>" placeholder="Fecha" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] focus:border-transparent outline-none transition">
+                            </div>
+                            <div class="mb-4">
+                                <label for="lugar-evento" class="block font-medium text-gray-700">Lugar del Sacramento *</label>
+                                <input type="text" id="lugar-evento" name="lugar_sacramento" placeholder="Ej: Parroquia San Juan Bautista" value="Parroquia Local" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                            </div>
+                            <div class="mb-4">
+                                <label for="ministro-evento" class="block font-medium text-gray-700">Ministro (Sacerdote) *</label>
+                                <input type="text" id="ministro-evento" name="ministro" placeholder="Ej: Pbro. Juan Pérez" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                            </div>
                         </div>
+
+                        <?php if ($tipo == 3): ?>
+                            <div class="mt-6 pt-4 border-t border-gray-200">
+                                <div class="text-center text-lg font-bold my-4 text-gray-800">
+                                    Datos de Defunción
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="mb-4">
+                                        <label for="fecha-defuncion" class="block font-medium">Fecha de Defunción *</label>
+                                        <input type="date" id="fecha-defuncion" name="fecha_defuncion" max="<?= date('Y-m-d') ?>" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="lugar-defuncion" class="block font-medium">Lugar de Defunción</label>
+                                        <input type="text" id="lugar-defuncion" name="lugar_defuncion" placeholder="Ej: Hospital San José" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="causa-defuncion" class="block font-medium">Causa de Defunción</label>
+                                        <input type="text" id="causa-defuncion" name="causa_defuncion" placeholder="Ej: Paro Cardiorrespiratorio" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="estado-civil" class="block font-medium">Estado Civil del Difunto</label>
+                                        <select id="estado-civil" name="estado_civil" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition bg-white">
+                                            <option value="" disabled selected>-- Seleccione --</option>
+                                            <option value="Soltero(a)">Soltero(a)</option>
+                                            <option value="Casado(a)">Casado(a)</option>
+                                            <option value="Viudo(a)">Viudo(a)</option>
+                                            <option value="Unión Libre">Unión Libre</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-4 md:col-span-2">
+                                        <label for="cementerio" class="block font-medium">Cementerio / Lugar de sepultura</label>
+                                        <input type="text" id="cementerio" name="cementerio" placeholder="Ej: Cementerio Central" class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C4A68A] outline-none transition">
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
                     </div>
 
                     <div id="Form2" class="hidden py-4">
@@ -282,10 +328,13 @@
                             ?>
                             <option value="2">Padre</option>
                             <option value="3">Madre</option>
-                            <?php if ($tipo !== 3 && $tipo !== 4) {
-                                echo '<option value="4">Padrino</option>';
-                                echo '<option value="5">Madrina</option>';
+                            <option value="2">Padre</option>
+                            <option value="3">Madre</option>
+                            <?php if ($tipo !== 3) { // Le quitamos la restricción del matrimonio ($tipo !== 4)
+                                echo '<option value="4">Padrino / Testigo</option>';
+                                echo '<option value="5">Madrina / Testigo</option>';
                             } ?>
+                        </select>
                         </select>
                     </div>
                 </div>
@@ -765,23 +814,30 @@
         // Validar fecha antes de avanzar del Form1
         if (form === 1) {
             const fechaEvento = $('#fecha-evento').val();
+            const lugarEvento = $('#lugar-evento').val().trim();
+            const ministroEvento = $('#ministro-evento').val().trim();
+            let errores = false;
 
-            // Verificamos si está vacía
-            if (!fechaEvento || fechaEvento.trim() === '') {
+            // Limpiar bordes rojos
+            $('#fecha-evento, #lugar-evento, #ministro-evento').removeClass('border-red-500');
+
+            if (!fechaEvento || !lugarEvento || !ministroEvento) {
+                if (!fechaEvento) $('#fecha-evento').addClass('border-red-500 animate-pulse');
+                if (!lugarEvento) $('#lugar-evento').addClass('border-red-500 animate-pulse');
+                if (!ministroEvento) $('#ministro-evento').addClass('border-red-500 animate-pulse');
+
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Fecha requerida',
-                    text: 'Por favor, ingrese la fecha del evento antes de continuar',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, ingrese la fecha, el lugar y el ministro antes de continuar.',
                     confirmButtonColor: '#D0B8A8'
                 });
-                $('#fecha-evento').addClass('border-red-500 animate-pulse');
+
                 setTimeout(() => {
-                    $('#fecha-evento').removeClass('animate-pulse');
+                    $('#fecha-evento, #lugar-evento, #ministro-evento').removeClass('animate-pulse');
                 }, 2000);
                 return;
-            }
-            // NUEVO: Verificamos si es del futuro (por si se saltó el evento change)
-            else if (esFechaFutura(fechaEvento)) {
+            } else if (esFechaFutura(fechaEvento)) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Fecha inválida',
@@ -790,8 +846,6 @@
                 });
                 $('#fecha-evento').addClass('border-red-500');
                 return;
-            } else {
-                $('#fecha-evento').removeClass('border-red-500');
             }
         }
 
@@ -876,7 +930,18 @@
                     // Llenar datos básicos
                     $('#id').val(sacramentoId);
                     $('#fecha-evento').val(response.data.fecha_generacion);
+                    $('#lugar-evento').val(response.data.lugar_sacramento); // <-- NUEVO
+                    $('#ministro-evento').val(response.data.ministro); // <-- NUEVO
                     $('#Doaction').val('editRecord');
+
+
+                    if (response.data.tipo_sacramento_id == 3) {
+                        $('#fecha-defuncion').val(response.data.fecha_defuncion || '');
+                        $('#lugar-defuncion').val(response.data.lugar_defuncion || '');
+                        $('#causa-defuncion').val(response.data.causa_defuncion || '');
+                        $('#estado-civil').val(response.data.estado_civil || '');
+                        $('#cementerio').val(response.data.cementerio || '');
+                    }
 
                     // Actualizar título
                     $('.modal-title').html("✏️ Editar Sacramento");
