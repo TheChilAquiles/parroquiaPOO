@@ -139,7 +139,7 @@
                         <div class="w-14 h-14 bg-[#F4EBE7] border border-[#E6D5CC] rounded-full flex items-center justify-center mx-auto mb-4">
                             <i class="fas fa-chart-bar text-[#8D7B68] text-xl"></i>
                         </div>
-                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Reportes</h3>
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Reportes Descargados</h3>
                         <p class="text-3xl font-bold text-[#5A4D41] stat-number">
                             <?= htmlspecialchars($estadisticas['reportes']['total'], ENT_QUOTES, 'UTF-8') ?></p>
                         <div class="mt-2 text-xs text-gray-500">
@@ -169,41 +169,13 @@
                     </div>
                 </div>
 
-                <!-- Contactos -->
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-stone-200 card-hover fade-in"
-                    style="animation-delay: 0.8s">
-                    <div class="text-center">
-                        <div class="w-14 h-14 bg-[#F4EBE7] border border-[#E6D5CC] rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-address-book text-[#8D7B68] text-xl"></i>
-                        </div>
-                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">Contactos</h3>
-                        <p class="text-3xl font-bold text-[#5A4D41] stat-number">
-                            <?= htmlspecialchars($estadisticas['contactos']['total'], ENT_QUOTES, 'UTF-8') ?></p>
-                    </div>
-                </div>
+                
+                
             </div>
         </section>
 
-        <!-- Gráficos -->
-        <section>
-            <h2 class="text-2xl font-bold text-[#5A4D41] mb-8">
-                <i class="fas fa-chart-pie mr-2 text-[#8D7B68]"></i>Mi Actividad
-            </h2>
-
-            
-
-                <!-- Gráfico Estados de Pagos -->
-                <div class="bg-white p-6 rounded-3xl shadow-lg border border-stone-200 card-hover fade-in"
-                    style="animation-delay: 1.0s">
-                    <h3 class="text-lg font-semibold text-[#5A4D41] mb-4 text-center">
-                        <i class="fas fa-dollar-sign mr-2 text-[#8D7B68]"></i>Estados de Pagos
-                    </h3>
-                    <div class="chart-container">
-                        <canvas id="graficoPagos"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
+        
     </main>
 
 
