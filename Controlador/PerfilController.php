@@ -176,7 +176,7 @@ class PerfilController extends BaseController
             $_SESSION['user-datos'] = true;
             $_SESSION['success']    = 'Datos actualizados correctamente.';
 
-            header('Location: ?route=dashboard');
+            header('Location: ?route=informacion');
             exit();
 
         } catch (Exception $e) {
