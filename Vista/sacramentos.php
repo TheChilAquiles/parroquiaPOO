@@ -976,41 +976,78 @@
         contenedor.html('');
         contador = 0;
 
+        // Necesitamos el diccionario de tipos de documentos aquí también
+        const tiposDocs = {
+            1: "Cedula Ciudadania",
+            2: "Tarjeta Identidad",
+            3: "Cedula Extranjeria",
+            4: "Registro Civil",
+            5: "Permiso Especial",
+            6: "Numero Identificación Tributaria"
+        };
+
         if (participantes && participantes.length > 0) {
             participantes.forEach(function(p) {
                 contador++;
 
                 const colores = {
-                    1: 'bg-blue-50',
-                    2: 'bg-red-50',
-                    3: 'bg-violet-50',
-                    4: 'bg-yellow-50',
-                    5: 'bg-pink-50',
-                    6: 'bg-indigo-50',
-                    7: 'bg-lime-50',
-                    8: 'bg-cyan-50',
-                    9: 'bg-emerald-50',
-                    10: 'bg-violet-50',
-                    11: 'bg-fuchsia-50'
+                    1: 'bg-blue-50 text-blue-700 border-blue-200',
+                    2: 'bg-red-50 text-red-700 border-red-200',
+                    3: 'bg-violet-50 text-violet-700 border-violet-200',
+                    4: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                    5: 'bg-pink-50 text-pink-700 border-pink-200',
+                    6: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                    7: 'bg-lime-50 text-lime-700 border-lime-200',
+                    8: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+                    9: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    10: 'bg-violet-50 text-violet-700 border-violet-200',
+                    11: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200'
                 };
 
+                // 1. Normalización de variables (Los OR "||" evitan que salga undefined)
+                const rolParticipante = p.rol_id || '';
+                const grupoRol = roles[rolParticipante] || p.rol || 'Desconocido';
+                const claseColor = colores[rolParticipante] || 'bg-gray-50 text-gray-700 border-gray-200';
+
+                const tipoDocId = p.tipo_documento_id || '';
+                const numeroDoc = p.numero_documento || '';
+                const tipDocTexto = tiposDocs[tipoDocId] || p.tipo_documento || '';
+                
+                // Si hay documento armamos el texto, si no, ponemos "Sin Documento"
+                const docTexto = (tipoDocId && numeroDoc) ? `${tipDocTexto} - ${numeroDoc}` : 'Sin Documento';
+
+                // Preferir el nombre compuesto si no viene uno ya armado
+                const primerNombre = p.primer_nombre || '';
+                const segundoNombre = p.segundo_nombre || '';
+                const primerApellido = p.primer_apellido || '';
+                const segundoApellido = p.segundo_apellido || '';
+                const nombreCompleto = p.nombre || [primerNombre, segundoNombre, primerApellido, segundoApellido].filter(Boolean).join(' ');
+
+                // 2. Armar el HTML con el MISMO diseño moderno que tienes en la función "agregarParticipante"
                 const li = document.createElement('li');
                 li.innerHTML = `
-                    <div class="bg-gray-100 border border-gray-300 rounded mb-2 mx-1 flex justify-between items-center">
-                        <span class="font-bold p-2 ${colores[p.rol_id] || 'bg-gray-50'}">${p.rol}</span>
-                        <span class="font-medium">${p.tipo_documento} - ${p.numero_documento}</span>
-                        <span class="font-medium">${p.nombre}</span>
-                        <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${p.rol_id}">
-                        <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${p.tipo_documento_id}">
-                        <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${p.numero_documento}">
-                        <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${p.primer_nombre}">
-                        <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${p.segundo_nombre || ''}">
-                        <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${p.primer_apellido}">
-                        <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${p.segundo_apellido || ''}">
+                    <div class="bg-white border border-gray-200 rounded-lg mb-2 mx-1 p-3 flex justify-between items-center shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold px-3 py-1 rounded-full text-xs border ${claseColor}">${grupoRol}</span>
+                            <div class="flex flex-col">
+                                <span class="font-semibold text-gray-800">${nombreCompleto}</span>
+                                <span class="text-xs text-gray-500">${docTexto}</span>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" name="integrantes[${contador}][rolParticipante]" value="${rolParticipante}">
+                        <input type="hidden" name="integrantes[${contador}][tipoDoc]" value="${tipoDocId}">
+                        <input type="hidden" name="integrantes[${contador}][numeroDoc]" value="${numeroDoc}">
+                        <input type="hidden" name="integrantes[${contador}][primerNombre]" value="${primerNombre}">
+                        <input type="hidden" name="integrantes[${contador}][segundoNombre]" value="${segundoNombre}">
+                        <input type="hidden" name="integrantes[${contador}][primerApellido]" value="${primerApellido}">
+                        <input type="hidden" name="integrantes[${contador}][segundoApellido]" value="${segundoApellido}">
                         <input type="hidden" name="integrantes[${contador}][fechaNacimiento]" value="${p.fecha_nacimiento || ''}">
                         <input type="hidden" name="integrantes[${contador}][lugarNacimiento]" value="${p.lugar_nacimiento || ''}">
                         
-                        <button type="button" class="eliminar" onclick="eliminarIntegrante(this)">X</button>
+                        <button type="button" class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition" onclick="eliminarIntegrante(this)" title="Eliminar">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
                     </div>
                 `;
                 contenedor.append(li);
@@ -1019,7 +1056,7 @@
             contenedor.html(`
                 <li id="integranteVacio">
                     <div class="bg-gray-100 border border-gray-300 rounded p-2 mb-2 mx-1 flex justify-center items-center">
-                        <span class="font-bold"> --- Vacio --- </span>
+                        <span class="font-bold text-gray-500"> --- Sin participantes --- </span>
                     </div>
                 </li>
             `);

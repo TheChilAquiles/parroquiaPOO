@@ -74,14 +74,10 @@ class CertificadosController extends BaseController
      */
     public function descargar()
     {
-        // Verificar autenticación
         $this->requiereAutenticacion();
 
-        // Obtener ID del usuario y rol
-        $usuarioId = $_SESSION['user-id'];
-        $rolUsuario = $_SESSION['user-rol'] ?? 'Feligrés';
-
-        // Obtener ID del certificado
+        $usuarioId    = $_SESSION['user-id'];
+        $rolUsuario   = $_SESSION['user-rol'] ?? 'Feligrés';
         $certificadoId = $_GET['id'] ?? null;
 
         if (empty($certificadoId) || !is_numeric($certificadoId)) {
@@ -90,7 +86,6 @@ class CertificadosController extends BaseController
             return;
         }
 
-        // Obtener datos del certificado
         $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
 
         if (!$certificado) {
@@ -99,11 +94,11 @@ class CertificadosController extends BaseController
             return;
         }
 
-        // Validar permisos: el usuario debe ser el solicitante...
+        // Validar permisos
         $esAdminOSecretario = in_array($rolUsuario, ['Administrador', 'Secretario']);
-        $feligresIdUsuario = $this->obtenerFeligresIdUsuario($usuarioId);
-        $esPropio = ($certificado['feligres_certificado_id'] == $feligresIdUsuario);
-        $esSolicitante = ($certificado['solicitante_id'] == $feligresIdUsuario);
+        $feligresIdUsuario  = $this->obtenerFeligresIdUsuario($usuarioId);
+        $esPropio           = ($certificado['feligres_certificado_id'] == $feligresIdUsuario);
+        $esSolicitante      = ($certificado['solicitante_id'] == $feligresIdUsuario);
 
         if (!$esAdminOSecretario && !$esPropio && !$esSolicitante) {
             $_SESSION['error'] = 'No tiene permiso para descargar este certificado.';
@@ -111,38 +106,44 @@ class CertificadosController extends BaseController
             return;
         }
 
-        // 🔥 NUEVO: Forzar la regeneración del PDF con los datos más frescos de la BD
-        // Solo lo hacemos si ya no está pendiente de pago
-        if ($certificado['estado'] !== 'pendiente_pago') {
-            $this->generarAutomatico($certificadoId);
-            // Volvemos a consultar el certificado para asegurarnos de tener la ruta del archivo recién creado
-            $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
-        }
-
-        // Validar que exista el archivo
-        if (empty($certificado['ruta_archivo'])) {
-            $_SESSION['error'] = 'El archivo no ha sido generado aún.';
+        // Bloquear si aún no ha pagado
+        if ($certificado['estado'] === 'pendiente_pago') {
+            $_SESSION['error'] = 'Este certificado está pendiente de pago y no puede descargarse aún.';
             $this->mostrar();
             return;
         }
 
-        // Construir rutas posibles (absoluta vs relativa)
+        // Siempre regenerar el PDF desde cero con datos frescos de la BD
+        $generado = $this->generarAutomatico($certificadoId);
+
+        if (!$generado) {
+            $_SESSION['error'] = 'No se pudo generar el PDF. Contacte al administrador.';
+            $this->mostrar();
+            return;
+        }
+
+        // Refrescar para obtener la nueva ruta del archivo recién generado
+        $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
+
+        if (empty($certificado['ruta_archivo'])) {
+            $_SESSION['error'] = 'El archivo no fue encontrado tras la generación.';
+            $this->mostrar();
+            return;
+        }
+
+        // Resolver ruta física
         $rutaArchivo = $certificado['ruta_archivo'];
 
-        // Si es ruta relativa, prepend base dir
         if (!file_exists($rutaArchivo)) {
-            // Intentar con __DIR__ si la ruta es relativa desde root
             $rutaAlternativa = __DIR__ . '/../' . $rutaArchivo;
             if (file_exists($rutaAlternativa)) {
                 $rutaArchivo = $rutaAlternativa;
             } elseif (file_exists(__DIR__ . '/../certificados_generados/' . basename($rutaArchivo))) {
-                // Intentar buscar solo por nombre en carpeta de output
                 $rutaArchivo = __DIR__ . '/../certificados_generados/' . basename($rutaArchivo);
             } else {
-                Logger::error("Archivo físico no encontrado para descarga", [
+                Logger::error("Archivo físico no encontrado tras regeneración", [
                     'ruta_bd' => $certificado['ruta_archivo'],
-                    'ruta_alt' => $rutaAlternativa,
-                    'id' => $certificadoId
+                    'id'      => $certificadoId
                 ]);
                 $_SESSION['error'] = 'Archivo físico no encontrado en el servidor.';
                 $this->mostrar();
@@ -150,32 +151,28 @@ class CertificadosController extends BaseController
             }
         }
 
-        // Marcar como descargado (si aún no lo está y es la primera vez que se descarga)
+        // Marcar como descargado solo si venía de 'generado'
         if ($certificado['estado'] === 'generado') {
             $this->modeloSolicitud->mdlMarcarDescargado($certificadoId);
         }
 
-        // Limpiar cualquier salida previa del buffer
+        // Limpiar buffer y servir el PDF
         while (ob_get_level()) {
             ob_end_clean();
         }
 
-        // Servir archivo
+        Logger::info("Sirviendo descarga de certificado", [
+            'id'         => $certificadoId,
+            'ruta_final' => $rutaArchivo,
+            'size'       => filesize($rutaArchivo),
+            'user'       => $_SESSION['user-id']
+        ]);
+
         header('Content-Type: application/pdf');
         header('Content-Disposition: inline; filename="certificado_' . $certificadoId . '.pdf"');
         header('Content-Length: ' . filesize($rutaArchivo));
-        header('Cache-Control: private, max-age=0, must-revalidate');
-        header('Pragma: public');
-
-        // Log para depuración
-        Logger::info("Sirviendo descarga de certificado", [
-            'id' => $certificadoId,
-            'ruta_final' => $rutaArchivo,
-            'size' => filesize($rutaArchivo),
-            'mime' => mime_content_type($rutaArchivo),
-            'user' => $_SESSION['user-id']
-        ]);
-
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
         readfile($rutaArchivo);
         exit;
     }
@@ -334,7 +331,6 @@ class CertificadosController extends BaseController
     public function generarAutomatico($certificadoId)
     {
         try {
-            // Obtener datos del certificado
             $certificado = $this->modeloSolicitud->mdlObtenerPorId($certificadoId);
 
             if (!$certificado) {
@@ -342,15 +338,16 @@ class CertificadosController extends BaseController
                 return false;
             }
 
-            // Validar que esté en estado pendiente_pago o ya pagado
-            if (!in_array($certificado['estado'], ['pendiente_pago', 'generado'])) {
-                Logger::error("Estado inválido para generación:", ['info' => $certificado['estado']]);
+            // Solo bloqueamos si está pendiente de pago — todos los demás estados permiten (re)generar
+            if ($certificado['estado'] === 'pendiente_pago') {
+                Logger::error("No se puede generar PDF: certificado pendiente de pago", [
+                    'id' => $certificadoId
+                ]);
                 return false;
             }
 
             // Obtener datos del sacramento
             $sacramento = $this->modeloSacramento->mdlObtenerPorId($certificado['sacramento_id']);
-
             if (!$sacramento) {
                 Logger::error("Sacramento no encontrado:", ['info' => $certificado['sacramento_id']]);
                 return false;
@@ -358,16 +355,12 @@ class CertificadosController extends BaseController
 
             // Obtener datos del feligrés
             $feligres = $this->modeloFeligres->mdlObtenerPorId($certificado['feligres_certificado_id']);
-
             if (!$feligres) {
                 Logger::error("Feligrés no encontrado:", ['info' => $certificado['feligres_certificado_id']]);
                 return false;
             }
 
-            // Obtener participantes del sacramento para datos adicionales
             $participantes = $this->modeloSacramento->getParticipantes($certificado['sacramento_id']);
-
-            // Preparar datos para el generador de certificados
             $modeloConfiguracion = new ModeloConfiguracion();
 
             $nombreCompleto = trim(
@@ -377,11 +370,7 @@ class CertificadosController extends BaseController
                     ($feligres['segundo_apellido'] ?? '')
             );
 
-            // 🔥 DEFINIR EL TIPO DE SACRAMENTO AQUÍ PARA QUE NO FALLE EL LOGGER NI EL ARRAY
-            // 🔥 DEFINIR EL TIPO DE SACRAMENTO AQUÍ PARA QUE NO FALLE EL LOGGER NI EL ARRAY
             $tipoSacramentoStr = mb_strtolower($certificado['tipo_certificado'] ?? 'bautismo', 'UTF-8');
-
-            // Quitar tildes para que coincida exactamente con los nombres de tus archivos HTML
             $tipoSacramento = str_replace(
                 ['á', 'é', 'í', 'ó', 'ú'],
                 ['a', 'e', 'i', 'o', 'u'],
@@ -389,126 +378,91 @@ class CertificadosController extends BaseController
             );
 
             if (!in_array($tipoSacramento, ['bautismo', 'confirmacion', 'matrimonio', 'defuncion'])) {
-                $tipoSacramento = 'bautismo'; // Default
+                $tipoSacramento = 'bautismo';
             }
 
-            // Código único del certificado
             $codigoCertificado = 'CERT-' . date('Y') . '-' . str_pad($certificadoId, 5, '0', STR_PAD_LEFT);
 
-            // 🔥 NUEVO: Calcular la edad del difunto automáticamente
             $edadDifunto = 'N/A';
-            if (!empty($feligres['fecha_nacimiento']) && $feligres['fecha_nacimiento'] != '0000-00-00' && 
-                !empty($sacramento['fecha_defuncion']) && $sacramento['fecha_defuncion'] != '0000-00-00') {
+            if (
+                !empty($feligres['fecha_nacimiento']) && $feligres['fecha_nacimiento'] != '0000-00-00' &&
+                !empty($sacramento['fecha_defuncion']) && $sacramento['fecha_defuncion'] != '0000-00-00'
+            ) {
                 $nacimiento = new DateTime($feligres['fecha_nacimiento']);
-                $defuncion = new DateTime($sacramento['fecha_defuncion']);
+                $defuncion  = new DateTime($sacramento['fecha_defuncion']);
                 $edadDifunto = $nacimiento->diff($defuncion)->y;
             }
 
-            // Preparar datos EXACTOS para la plantilla
             $datos = [
-                // Datos de la parroquia
-                'NOMBRE_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_nombre', 'Parroquia Local'),
+                'NOMBRE_PARROQUIA'    => $modeloConfiguracion->obtenerPorClave('parroquia_nombre', 'Parroquia Local'),
                 'DIRECCION_PARROQUIA' => $modeloConfiguracion->obtenerPorClave('parroquia_direccion', 'Dirección no registrada'),
-                'CIUDAD' => $modeloConfiguracion->obtenerPorClave('parroquia_ciudad', 'Ciudad'),
-                'PAIS' => $modeloConfiguracion->obtenerPorClave('parroquia_pais', 'Colombia'),
-
-                // Firmantes
-                'NOMBRE_PARROCO' => $modeloConfiguracion->obtenerPorClave('parroco_nombre', 'Sacerdote Titular'),
-                'NOMBRE_SECRETARIO' => $modeloConfiguracion->obtenerPorClave('secretario_nombre', 'Secretario(a) Titular'),
-
-                // Datos del libro 
-                'NUMERO_LIBRO' => $sacramento['libro_numero'] ?? 'S/N',
-                'NUMERO_PAGINA' => $sacramento['folio'] ?? 'S/N',
-                'NUMERO_REGISTRO' => $sacramento['acta'] ?? 'S/N',
-
-                // Datos del feligrés
-                'NOMBRE_COMPLETO' => $nombreCompleto,
-                'FECHA_NACIMIENTO' => (!empty($feligres['fecha_nacimiento']) && $feligres['fecha_nacimiento'] != '0000-00-00') ? date('d/m/Y', strtotime($feligres['fecha_nacimiento'])) : 'No registrada',
-                'LUGAR_NACIMIENTO' => $feligres['lugar_nacimiento'] ?? 'No registrado en sistema',
-
-                // Datos del sacramento (Bautizo, Confirmación, Matrimonio)
-                'FECHA_' . strtoupper($tipoSacramento) => (!empty($sacramento['fecha_generacion']) && $sacramento['fecha_generacion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_generacion'])) : 'No registrada',
-                'LUGAR_' . strtoupper($tipoSacramento) => $sacramento['lugar_sacramento'] ?? 'Parroquia Local', // Corregido: antes decía 'lugar' y podía causar fallos
-                'NOMBRE_MINISTRO' => $sacramento['ministro'] ?? 'Ministro no registrado',
-
-                // 🔥 NUEVOS: Datos exclusivos para Defunciones
-                'FECHA_DEFUNCION' => (!empty($sacramento['fecha_defuncion']) && $sacramento['fecha_defuncion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_defuncion'])) : 'No registrada',
-                'LUGAR_DEFUNCION' => $sacramento['lugar_defuncion'] ?? 'No registrado',
-                'CAUSA_DEFUNCION' => $sacramento['causa_defuncion'] ?? 'No registrada',
-                'FECHA_SEPELIO' => (!empty($sacramento['fecha_generacion']) && $sacramento['fecha_generacion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_generacion'])) : 'No registrada',
-                'LUGAR_SEPELIO' => $sacramento['cementerio'] ?? 'No registrado',
-                'ESTADO_CIVIL' => $sacramento['estado_civil'] ?? 'No registrado',
-                'EDAD' => $edadDifunto,
-
-                // Datos de padrinos/padres/abuelos
-                'NOMBRE_PADRE'   => $this->obtenerNombreParticipante($participantes, 'padre'),
-                'NOMBRE_MADRE'   => $this->obtenerNombreParticipante($participantes, 'madre'),
-                'NOMBRE_ABUELO'  => $this->obtenerNombreParticipante($participantes, 'abuelo'),
-                'NOMBRE_ABUELA'  => $this->obtenerNombreParticipante($participantes, 'abuela'),
-                'NOMBRE_PADRINO' => $this->obtenerNombreParticipante($participantes, 'padrino'),
-                'NOMBRE_MADRINA' => $this->obtenerNombreParticipante($participantes, 'madrina'),
-
-                // Metadatos finales
-                'FECHA_EXPEDICION' => date('d/m/Y'),
-                'CODIGO_CERTIFICADO' => $codigoCertificado,
-
-                // Generador de QR
-                'QR_CODE' => 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode('Verificar cert: ' . $codigoCertificado)
+                'CIUDAD'              => $modeloConfiguracion->obtenerPorClave('parroquia_ciudad', 'Ciudad'),
+                'PAIS'                => $modeloConfiguracion->obtenerPorClave('parroquia_pais', 'Colombia'),
+                'NOMBRE_PARROCO'      => $modeloConfiguracion->obtenerPorClave('parroco_nombre', 'Sacerdote Titular'),
+                'NOMBRE_SECRETARIO'   => $modeloConfiguracion->obtenerPorClave('secretario_nombre', 'Secretario(a) Titular'),
+                'NUMERO_LIBRO'        => $sacramento['libro_numero'] ?? 'S/N',
+                'NUMERO_PAGINA'       => $sacramento['folio'] ?? 'S/N',
+                'NUMERO_REGISTRO'     => $sacramento['acta'] ?? 'S/N',
+                'NOMBRE_COMPLETO'     => $nombreCompleto,
+                'FECHA_NACIMIENTO'    => (!empty($feligres['fecha_nacimiento']) && $feligres['fecha_nacimiento'] != '0000-00-00') ? date('d/m/Y', strtotime($feligres['fecha_nacimiento'])) : 'No registrada',
+                'LUGAR_NACIMIENTO'    => $feligres['lugar_nacimiento'] ?? 'No registrado en sistema',
+                'FECHA_' . strtoupper($tipoSacramento) => (!empty($sacramento['fecha_sacramento']) && $sacramento['fecha_sacramento'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_sacramento'])) : 'No registrada',
+                'LUGAR_' . strtoupper($tipoSacramento) => $sacramento['lugar_sacramento'] ?? 'Parroquia Local',
+                'NOMBRE_MINISTRO'     => $sacramento['ministro'] ?? 'Ministro no registrado',
+                'FECHA_DEFUNCION'     => (!empty($sacramento['fecha_defuncion']) && $sacramento['fecha_defuncion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_defuncion'])) : 'No registrada',
+                'LUGAR_DEFUNCION'     => $sacramento['lugar_defuncion'] ?? 'No registrado',
+                'CAUSA_DEFUNCION'     => $sacramento['causa_defuncion'] ?? 'No registrada',
+                'FECHA_SEPELIO'       => (!empty($sacramento['fecha_generacion']) && $sacramento['fecha_generacion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_generacion'])) : 'No registrada',
+                'LUGAR_SEPELIO'       => $sacramento['cementerio'] ?? 'No registrado',
+                'ESTADO_CIVIL'        => $sacramento['estado_civil'] ?? 'No registrado',
+                'EDAD'                => $edadDifunto,
+                'NOMBRE_PADRE'        => $this->obtenerNombreParticipante($participantes, 'padre'),
+                'NOMBRE_MADRE'        => $this->obtenerNombreParticipante($participantes, 'madre'),
+                'NOMBRE_ABUELO'       => $this->obtenerNombreParticipante($participantes, 'abuelo'),
+                'NOMBRE_ABUELA'       => $this->obtenerNombreParticipante($participantes, 'abuela'),
+                'NOMBRE_PADRINO'      => $this->obtenerNombreParticipante($participantes, 'padrino'),
+                'NOMBRE_MADRINA'      => $this->obtenerNombreParticipante($participantes, 'madrina'),
+                'FECHA_EXPEDICION'    => date('d/m/Y'),
+                'CODIGO_CERTIFICADO'  => $codigoCertificado,
+                'QR_CODE'             => 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' . urlencode('Verificar cert: ' . $codigoCertificado)
             ];
 
             if ($tipoSacramento === 'matrimonio') {
-                $esposo = null;
-                $esposa = null;
-                $testigos = [];
+                $esposo  = null;
+                $esposa  = null;
 
-                // Recorremos los participantes para identificar quién es quién
                 foreach ($participantes as $p) {
                     $rolStr = mb_strtolower($p['rol'], 'UTF-8');
-                    
                     if (strpos($rolStr, 'esposo') !== false && strpos($rolStr, 'esposa') === false) {
                         $esposo = $p;
                     } elseif (strpos($rolStr, 'esposa') !== false) {
                         $esposa = $p;
-                    } elseif (in_array($rolStr, ['padrino', 'madrina', 'padrino / testigo', 'madrina / testigo', 'testigo'])) {
-                        // Agrupamos a los padrinos como testigos
-                        $testigos[] = trim($p['primer_nombre'] . ' ' . $p['primer_apellido']);
                     }
                 }
 
-                // --- DATOS DEL ESPOSO ---
-                $datos['NOMBRE_ESPOSO'] = $esposo ? trim($esposo['primer_nombre'] . ' ' . ($esposo['segundo_nombre'] ?? '') . ' ' . $esposo['primer_apellido'] . ' ' . ($esposo['segundo_apellido'] ?? '')) : 'No registrado';
+                $datos['NOMBRE_ESPOSO']    = $esposo ? trim($esposo['primer_nombre'] . ' ' . ($esposo['segundo_nombre'] ?? '') . ' ' . $esposo['primer_apellido'] . ' ' . ($esposo['segundo_apellido'] ?? '')) : 'No registrado';
                 $datos['DOCUMENTO_ESPOSO'] = $esposo['numero_documento'] ?? 'No registrado';
                 $datos['FECHA_NAC_ESPOSO'] = (!empty($esposo['fecha_nacimiento']) && $esposo['fecha_nacimiento'] != '0000-00-00') ? date('d/m/Y', strtotime($esposo['fecha_nacimiento'])) : 'No registrada';
                 $datos['LUGAR_NAC_ESPOSO'] = $esposo['lugar_nacimiento'] ?? 'No registrado';
-                
-
-                // --- DATOS DE LA ESPOSA ---
-                $datos['NOMBRE_ESPOSA'] = $esposa ? trim($esposa['primer_nombre'] . ' ' . ($esposa['segundo_nombre'] ?? '') . ' ' . $esposa['primer_apellido'] . ' ' . ($esposa['segundo_apellido'] ?? '')) : 'No registrado';
+                $datos['NOMBRE_ESPOSA']    = $esposa ? trim($esposa['primer_nombre'] . ' ' . ($esposa['segundo_nombre'] ?? '') . ' ' . $esposa['primer_apellido'] . ' ' . ($esposa['segundo_apellido'] ?? '')) : 'No registrado';
                 $datos['DOCUMENTO_ESPOSA'] = $esposa['numero_documento'] ?? 'No registrado';
                 $datos['FECHA_NAC_ESPOSA'] = (!empty($esposa['fecha_nacimiento']) && $esposa['fecha_nacimiento'] != '0000-00-00') ? date('d/m/Y', strtotime($esposa['fecha_nacimiento'])) : 'No registrada';
                 $datos['LUGAR_NAC_ESPOSA'] = $esposa['lugar_nacimiento'] ?? 'No registrado';
-                
-
-                
-                
-                // Aseguramos de que las fechas y el lugar vayan exactos a como los pide el HTML
-                $datos['FECHA_MATRIMONIO'] = (!empty($sacramento['fecha_generacion']) && $sacramento['fecha_generacion'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_generacion'])) : 'No registrada';
+                $datos['FECHA_MATRIMONIO'] = (!empty($sacramento['fecha_sacramento']) && $sacramento['fecha_sacramento'] != '0000-00-00') ? date('d/m/Y', strtotime($sacramento['fecha_sacramento'])) : 'No registrada';
                 $datos['LUGAR_MATRIMONIO'] = $sacramento['lugar_sacramento'] ?? 'Parroquia Local';
             }
 
-            // Usar el nuevo servicio de generación pasando la variable dinámica
             $generador = new CertificadoGenerador();
             $resultado = $generador->generar($tipoSacramento, $datos, $certificadoId);
 
             if (!$resultado['success']) {
                 Logger::error("Error al generar certificado con plantilla", [
                     'certificado_id' => $certificadoId,
-                    'mensaje' => $resultado['message']
+                    'mensaje'        => $resultado['message']
                 ]);
                 return false;
             }
 
-            // Actualizar registro en BD
             $actualizado = $this->modeloSolicitud->mdlActualizarTrasGeneracion(
                 $certificadoId,
                 $resultado['relative_path']
@@ -519,11 +473,10 @@ class CertificadosController extends BaseController
                 return false;
             }
 
-            // AHORA SÍ CONOCE LA VARIABLE $tipoSacramento
             Logger::info("Certificado generado exitosamente con plantilla", [
                 'certificado_id' => $certificadoId,
-                'tipo' => $tipoSacramento,
-                'archivo' => $resultado['filename']
+                'tipo'           => $tipoSacramento,
+                'archivo'        => $resultado['filename']
             ]);
 
             return true;
@@ -544,18 +497,28 @@ class CertificadosController extends BaseController
         foreach ($participantes as $p) {
             // stripos busca ignorando mayúsculas y minúsculas. Ej: "padrino" encuentra "Padrino" o "PADRINOS"
             if (stripos($p['rol'], $rolBuscado) !== false) {
-                $nombres[] = trim(
+                // Unimos el nombre y limpiamos espacios dobles accidentales
+                $nombreArmado = trim(
                     $p['primer_nombre'] . ' ' .
-                        ($p['segundo_nombre'] ?? '') . ' ' .
-                        $p['primer_apellido'] . ' ' .
-                        ($p['segundo_apellido'] ?? '')
+                    ($p['segundo_nombre'] ?? '') . ' ' .
+                    $p['primer_apellido'] . ' ' .
+                    ($p['segundo_apellido'] ?? '')
                 );
+                
+                // Eliminamos espacios extra que puedan engañar al filtro de duplicados
+                $nombreLimpio = preg_replace('/\s+/', ' ', $nombreArmado);
+                
+                if (!empty($nombreLimpio)) {
+                    $nombres[] = $nombreLimpio;
+                }
             }
         }
 
-        return !empty($nombres) ? implode(' y ', $nombres) : 'No registrado';
-    }
+        // AQUÍ ESTÁ LA SOLUCIÓN: array_unique elimina cualquier registro idéntico
+        $nombresFiltrados = array_unique($nombres);
 
+        return !empty($nombresFiltrados) ? implode(' y ', $nombresFiltrados) : 'No registrado';
+    }
     /**
      * Genera certificado directamente desde un sacramento_id
      * Llamado cuando se hace clic en "Generar Certificado" desde la vista de sacramentos

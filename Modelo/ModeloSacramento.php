@@ -31,7 +31,6 @@ class ModeloSacramento
      */
     public function getParticipantes($sacramentoId)
     {
-        // ✅ AGREGAR ESTAS LÍNEAS
         if (!is_numeric($sacramentoId) || $sacramentoId <= 0) {
             Logger::error("ID de sacramento inválido:", ['info' => $sacramentoId]);
             return [];
@@ -51,7 +50,7 @@ class ModeloSacramento
                     f.primer_apellido,
                     f.segundo_apellido,
                     f.fecha_nacimiento,
-                    f.lugar_nacimiento, /* <-- NUEVO */ 
+                    f.lugar_nacimiento, 
                     f.telefono, 
                     f.direccion,
                     CONCAT(f.primer_nombre, ' ', COALESCE(f.segundo_nombre, ''), ' ',
@@ -59,7 +58,9 @@ class ModeloSacramento
                 FROM participantes p
                 JOIN feligreses f ON f.id = p.feligres_id
                 JOIN participantes_rol pr ON pr.id = p.rol_participante_id
-                WHERE p.sacramento_id = ?";
+                WHERE p.sacramento_id = ? 
+                AND p.estado_registro IS NULL /* <-- AQUÍ ESTÁ LA MAGIA, FILTRAMOS LOS BORRADOS */
+                AND f.estado_registro IS NULL"; /* <-- Y por seguridad, también filtramos feligreses inactivos */
 
             $stmt = $this->conexion->prepare($sql);
             $stmt->execute([$sacramentoId]);
