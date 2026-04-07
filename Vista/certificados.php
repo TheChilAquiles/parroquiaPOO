@@ -15,14 +15,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
         </div>
 
         <!-- Button to open modal for new certificate -->
-        <button id="btnAbrirModal"
-            class="px-6 py-3 bg-[#D0B8A8] text-white rounded-lg shadow-md hover:bg-[#ab876f] transition duration-200 font-medium">
-            <!-- Plus icon SVG -->
-            <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-            </svg>
-            Nuevo Certificado
-        </button>
+        
     </div>
 
     <!-- Certificates history section (DataTables) -->
