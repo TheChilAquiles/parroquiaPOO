@@ -54,7 +54,7 @@ $icons_map = [
     'Configuración' => 'settings',
     'Configuracion' => 'settings',
     'Contacto' => 'contact_support',
-    'pqrs' => 'feedback',
+    
     'Perfil' => 'person',
     'Manual' => 'help_center',
     'Salir' => 'logout',
