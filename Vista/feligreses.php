@@ -89,10 +89,12 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
         <!-- Table content area -->
         <div class="p-6">
             <!-- Scrollable container for table (responsive on mobile) -->
-            <div class="overflow-x-auto">
+            <div class="w-full">
+
                 <!-- DataTables will populate this table via AJAX -->
                 <!-- ID is used by jQuery DataTables plugin for initialization -->
-                <table id="tableFeligreses" class="table-auto w-full">
+                    <table id="tableFeligreses" class="w-full">
+
                     <!-- Table header row -->
                     <thead class="bg-gray-50">
                         <tr>
@@ -329,6 +331,8 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             processing: true, // Show processing indicator during load
             serverSide: true, // Enable server-side processing (data loaded via AJAX)
             serverMethod: 'post', // Use POST method for AJAX requests
+            responsive: true, // <-- agrega esto
+
             order: [
                 [0, 'desc']
             ], // Default sort: first column (ID) descending
@@ -383,35 +387,30 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
                 }, // Address
                 {
                     // Actions column (custom rendering)
-                    data: null, // No specific data field
+                    data: null,
                     title: 'Acciones',
-                    orderable: false, // Cannot be sorted
-                    className: 'text-center', // Center-align content
-                    // Custom render function for action buttons
-                    // Parameters: data (full row data), type, row (row object)
+                    orderable: false,
+                    className: 'text-center',
                     render: function(data, type, row) {
-                        // Return HTML string with edit and delete buttons
-                        // Template literal (`) allows multi-line strings and ${} interpolation
                         return `
-                        <button class="btn-editar bg-[#E8DFD5] hover:bg-[#DFD3C3] text-[#ab876f] px-3 py-1.5 rounded-lg text-sm mr-1 font-medium transition duration-200"
-                                data-id="${row.id}"
-                                title="Editar feligrés">
-                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Editar
-                        </button>
-                        <?php if ($_SESSION['user-rol'] === 'Administrador'): ?>
-                        <button class="btn-eliminar bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1.5 rounded-lg text-sm font-medium transition duration-200"
-                                data-id="${row.id}"
-                                title="Eliminar feligrés">
-                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Eliminar
-                        </button>
-                        <?php endif; ?>
-                    `;
+    <div class="flex gap-2 justify-center flex-wrap">
+        <button class="btn-editar inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#F5F0EB] hover:bg-[#EAE3DA] text-[#8B6F47] rounded-md text-xs font-medium transition duration-200"
+                data-id="${row.id}" title="Editar feligrés">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Editar
+        </button>
+        <?php if ($_SESSION['user-rol'] === 'Administrador'): ?>
+        <button class="btn-inactivar inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FEF2F2] hover:bg-[#FEE2E2] text-red-500 rounded-md text-xs font-medium transition duration-200"
+                data-id="${row.id}" title="Inactivar feligrés">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Inactivar
+        </button>
+        <?php endif; ?>
+    </div>`;
                     }
                 }
             ],
@@ -463,17 +462,34 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
         // Opens modal with existing feligres data for editing
         // ========================================================================
         // Event delegation: listen on document for dynamically added buttons
-        $(document).on('click', '.btn-editar', function() {
-            // Get feligres ID from button's data attribute
+        $(document).on('click', '.btn-inactivar', function() {
             const id = $(this).data('id');
-            // Get full row data from DataTable
-            // .row() gets row element, .data() returns row data object
+
+            Swal.fire({
+                title: '¿Inactivar feligrés?',
+                text: "El registro quedará inactivo y podrá reactivarse después",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Sí, inactivar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `?route=feligreses/inactivar&id=${id}`;
+                }
+            });
+        });
+
+        // ========================================================================
+        // EDIT BUTTON HANDLER
+        // ========================================================================
+        $(document).on('click', '.btn-editar', function() {
+            const id = $(this).data('id');
             const row = table.row($(this).closest('tr')).data();
 
-            // Populate form fields with existing data (PRE-FILLING FORM)
-            $('#modalTitle').text('Editar Feligrés'); // Change title to "Edit"
-            $('#feligresId').val(row.id); // Set hidden ID field
-            // Use || '' to provide empty string if value is null/undefined
+            $('#modalTitle').text('Editar Feligrés');
+            $('#feligresId').val(row.id);
             $('#tipoDoc').val(row.tipo_documento_id || '');
             $('#documento').val(row.numero_documento || '');
             $('#primerNombre').val(row.primer_nombre || '');
@@ -485,9 +501,7 @@ include_once __DIR__ . '/componentes/plantillaTop.php';
             $('#fechaNacimiento').val(row.fecha_nacimiento || '');
             $('#lugarNacimiento').val(row.lugar_nacimiento || '');
 
-            // Show modal
             $('#feligresModal').removeClass('hidden');
-            // Focus on first name field
             $('#primerNombre').focus();
         });
 

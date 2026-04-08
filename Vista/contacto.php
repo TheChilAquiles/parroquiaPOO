@@ -1,4 +1,5 @@
-<main class="min-h-screen p-4 md:p-8 bg-slate-50 font-sans text-slate-800">
+<main class="min-h-screen p-4 md:p-8 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5] font-sans text-slate-800">
+
     <section class="mb-6 md:mb-8 rounded-2xl bg-white p-6 md:p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div class="flex items-start space-x-4 md:space-x-6">

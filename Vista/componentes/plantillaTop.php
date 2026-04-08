@@ -15,8 +15,11 @@
     <!-- <script src="Vista/js/ajax.js"></script> -->
 
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+    <!-- DESPUÉS (agrega estas dos líneas) -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css">
+<script src="https://cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
 
 
     <title>Parroquia</title>

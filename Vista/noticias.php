@@ -182,7 +182,7 @@ $esAdmin = isset($_SESSION['user-rol']) &&
                                         <button class="flex-1 delete-btn bg-red-50 text-red-600 hover:bg-red-100 font-semibold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center"
                                             data-id="<?= $noticiaItem['id'] ?>">
                                             <i class='bx bx-trash mr-2 text-xl'></i>
-                                            Eliminar
+                                            Inactivar
                                         </button>
                                     </div>
                                 </div>
@@ -285,7 +285,7 @@ $esAdmin = isset($_SESSION['user-rol']) &&
                     <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
                         <i class='bx bx-error text-red-600 text-4xl'></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">¿Eliminar noticia?</h3>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">¿Inactivar noticia?</h3>
                     <p class="text-gray-600 mb-8">Esta acción no se puede deshacer.</p>
 
                     <div class="flex gap-4">
@@ -293,7 +293,7 @@ $esAdmin = isset($_SESSION['user-rol']) &&
                             Cancelar
                         </button>
                         <button id="confirmDeleteBtn" data-id="" class="flex-1 px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 transition">
-                            Eliminar
+                            Inactivar
                         </button>
                     </div>
                 </div>

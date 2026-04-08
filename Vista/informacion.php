@@ -29,7 +29,7 @@
     </section>
 
     <!-- Sobre Nosotros -->
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5]">
         <div class="mx-auto max-w-7xl px-4">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestra Parroquia</h2>
@@ -98,7 +98,8 @@
     </section>
 
     <!-- Horarios de Misa -->
-    <section id="horarios" class="py-16 bg-gray-50">
+    <section id="horarios" class="py-16 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5]">
+        
         <div class="mx-auto max-w-7xl px-4">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Horarios de Celebración</h2>
@@ -150,7 +151,7 @@
     </section>
 
     <!-- Servicios -->
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-gradient-to-r from-[#F5F0EB] to-[#E8DFD5]">
         <div class="mx-auto max-w-7xl px-4">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold text-gray-900 mb-4">Nuestros Servicios</h2>
